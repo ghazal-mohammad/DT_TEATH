@@ -96,7 +96,8 @@ class _AppSidebarSystemSwitcherState extends State<AppSidebarSystemSwitcher> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    // التصميم الموحّد فاتح دائماً (يطابق السايدبار الأبيض).
+    const bool isLight = true;
 
     // من CSS:
     // idle: background:rgba(255,255,255,0.03)
