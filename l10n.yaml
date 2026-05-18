@@ -1,0 +1,39 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# l10n.yaml
+#
+# تكوين Flutter للـ Internationalization Code Generation.
+# يقرأ ملفات .arb من `arb-dir` ويولّد ملفات Dart في `output-dir`.
+#
+# الأوامر:
+#   flutter gen-l10n            # توليد يدوي
+#   flutter run                 # توليد تلقائي عند التشغيل (بسبب generate: true في pubspec)
+#
+# المرجع:
+#   https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization#adding-your-own-localized-messages
+# ═══════════════════════════════════════════════════════════════════════════
+
+# مسار ملفات .arb (كل ملف = لغة واحدة).
+arb-dir: lib/core/l10n/arb
+
+# الملف الرئيسي (template) — عادةً الإنجليزي لأنه الأساس التقني.
+# الـ metadata (@@locale, @key) تُقرأ من هذا الملف فقط.
+template-arb-file: app_en.arb
+
+# اسم ملف الـ output الرئيسي (سيُولَّد في .dart_tool/flutter_gen/).
+output-localization-file: app_localizations.dart
+
+# اسم الـ class الرئيسي.
+output-class: AppLocalizations
+
+# توليد ملف باسم كل لغة (untranslated) — مفيد للـ debugging.
+untranslated-messages-file: lib/core/l10n/untranslated.txt
+
+# المكان النهائي للملفات المولّدة داخل lib (بدل .dart_tool).
+# يجعل الكود محتفظاً ومستقراً عبر الـ VCS.
+output-dir: lib/core/l10n/generated
+
+# السماح بـ nullable getters — آمنة لأن الـ context دائماً فيه l10n delegate.
+nullable-getter: false
+
+# Format الإخراج.
+format: true

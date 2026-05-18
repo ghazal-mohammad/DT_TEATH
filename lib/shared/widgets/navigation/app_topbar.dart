@@ -1,0 +1,284 @@
+// ════════════════════════════════════════════════════════════════════════════
+// app_topbar.dart
+//
+// التوب بار الرئيسي — مطابق لـ CSS class `.tb`.
+// المرجع: DT_Teeth_Lab_v12_Enhanced.html — الأسطر 604–638
+//
+// القواعد الأصلية:
+//   .tb {
+//     height:64px; background:rgba(26,28,78,0.90);
+//     backdrop-filter:blur(20px);
+//     border-bottom:1px solid var(--cyan-brd);
+//     padding:0 22px; display:flex; align-items:center; gap:11px;
+//     position:sticky; top:0; z-index:50; flex-shrink:0;
+//   }
+//   .tb::after {
+//     content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+//     background:linear-gradient(90deg, transparent, var(--cyan-b), transparent);
+//     opacity:0.3;
+//   }
+//   .tb-title { font-size:16px; font-weight:800; color:var(--t1) }
+//   .tb-sub { font-size:12px; color:var(--t3); margin-top:2px }
+//   .tb-r { margin-right:auto; display:flex; align-items:center; gap:7px }
+//
+// ملاحظة RTL:
+//   - في CSS `.tb-r { margin-right:auto }` يدفع العناصر إلى اليسار (LTR).
+//   - في RTL، نستخدم Spacer للحصول على نفس السلوك المرئي.
+// ════════════════════════════════════════════════════════════════════════════
+
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+
+import '../../../core/constants/app_strings.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/app_sizes.dart';
+import 'app_topbar_action.dart';
+import 'app_topbar_search.dart';
+
+/// التوب بار الرئيسي للتطبيق.
+///
+/// يحتوي على:
+/// 1. زر قائمة (للموبايل فقط) — يفتح السايدبار كـ Drawer
+/// 2. عنوان الصفحة + عنوان فرعي اختياري
+/// 3. حقل بحث (إذا مُفعّل)
+/// 4. أزرار إجراءات: ثيم، إشعارات، بروفايل
+///
+/// يدعم backdrop blur لإعطاء تأثير زجاجي فوق المحتوى.
+/// يدعم Light/Dark mode تلقائياً.
+///
+/// مثال:
+/// ```dart
+/// AppTopbar(
+///   title: AppStrings.dashboard,
+///   subtitle: 'مرحباً بك في نظام المخبر',
+///   showSearch: true,
+///   onSearchChanged: (q) => bloc.search(q),
+///   onThemeToggle: () => themeCubit.toggle(),
+///   onNotificationTap: () => context.go(RouteNames.labNotifications),
+///   notificationCount: 3,
+/// )
+/// ```
+class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
+  const AppTopbar({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.showSearch = true,
+    this.onSearchChanged,
+    this.searchPlaceholder = AppStrings.search,
+    this.onThemeToggle,
+    this.onNotificationTap,
+    this.notificationCount = 0,
+    this.onProfileTap,
+    this.onMenuTap,
+    this.showMenuButton = false,
+    this.currentThemeMode,
+  });
+
+  /// عنوان الصفحة الرئيسي — يعرض بخط كبير.
+  final String title;
+
+  /// عنوان فرعي اختياري — يعرض بخط أصغر تحت العنوان.
+  final String? subtitle;
+
+  /// هل يُعرض حقل البحث؟
+  final bool showSearch;
+
+  /// callback لما النص في حقل البحث يتغيّر.
+  final ValueChanged<String>? onSearchChanged;
+
+  /// نص الـ placeholder لحقل البحث.
+  final String searchPlaceholder;
+
+  /// callback لتبديل الثيم (Dark ↔ Light).
+  final VoidCallback? onThemeToggle;
+
+  /// callback لفتح صفحة الإشعارات.
+  final VoidCallback? onNotificationTap;
+
+  /// عدد الإشعارات غير المقروءة — لو > 0 تظهر نقطة حمراء.
+  final int notificationCount;
+
+  /// callback للضغط على أيقونة البروفايل.
+  final VoidCallback? onProfileTap;
+
+  /// callback لفتح السايدبار (في الموبايل).
+  final VoidCallback? onMenuTap;
+
+  /// هل يُعرض زر القائمة (للموبايل)؟
+  final bool showMenuButton;
+
+  /// الوضع الحالي للثيم — يحدد أيقونة زر التبديل.
+  final ThemeMode? currentThemeMode;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(AppSizes.topbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+
+    // من CSS: background:rgba(26,28,78,0.90)
+    final Color bgColor = isLight
+        ? AppColors.lightSurface.withValues(alpha: 0.92)
+        : AppColors.primary.withValues(alpha: 0.90);
+
+    final Color borderColor =
+        isLight ? AppColors.lightBorder : AppColors.darkBorder;
+
+    return ClipRect(
+      child: BackdropFilter(
+        // من CSS: backdrop-filter:blur(20px)
+        filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Container(
+          height: AppSizes.topbarHeight, // 64px
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.topbarPadding, // 22px
+          ),
+          decoration: BoxDecoration(
+            color: bgColor,
+            border: Border(
+              bottom: BorderSide(color: borderColor),
+            ),
+          ),
+          child: Stack(
+            children: [
+              // ── المحتوى الرئيسي ────────────────────────────────────────
+              Row(
+                children: [
+                  // ── زر القائمة (للموبايل فقط) ─────────────────────────
+                  if (showMenuButton && onMenuTap != null) ...[
+                    AppTopbarAction(
+                      icon: AppIcons.menu,
+                      onPressed: onMenuTap,
+                      tooltip: AppStrings.menu,
+                    ),
+                    const SizedBox(width: AppSizes.topbarGap), // gap:11px
+                  ],
+
+                  // ── العنوان + العنوان الفرعي ─────────────────────────
+                  Flexible(child: _buildTitle(isLight)),
+
+                  // ── Spacer لدفع الأزرار إلى الطرف الآخر ─────────────
+                  // من CSS: .tb-r { margin-right:auto }
+                  const Spacer(),
+
+                  // ── الأدوات (Search + Actions) ────────────────────────
+                  _buildActions(context, isLight),
+                ],
+              ),
+
+              // ── Pseudo-element ::after (خط glow في الأسفل) ──────────
+              // من CSS: bottom:0, left:0, right:0, h:1px
+              // background:linear-gradient(90deg, transparent, cyan-b, transparent)
+              // opacity:0.3
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        AppColors.accent.withValues(alpha: 0.3),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// بناء العنوان + العنوان الفرعي.
+  Widget _buildTitle(bool isLight) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 16, // من CSS: font-size:16px
+            fontWeight: FontWeight.w800,
+            height: 1.2,
+            color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(height: 2), // margin-top:2px
+          Text(
+            subtitle!,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12, // من CSS: font-size:12px
+              fontWeight: FontWeight.w500,
+              height: 1.2,
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// بناء مجموعة الإجراءات (Search + Actions).
+  Widget _buildActions(BuildContext context, bool isLight) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showSearch && MediaQuery.of(context).size.width > 900) ...[
+          AppTopbarSearch(
+            onChanged: onSearchChanged,
+            placeholder: searchPlaceholder,
+          ),
+          const SizedBox(width: 7), // gap:7px في .tb-r
+        ],
+
+        // زر الثيم
+        if (onThemeToggle != null) ...[
+          AppTopbarAction(
+            icon: isLight ? AppIcons.darkMode : AppIcons.lightMode,
+            onPressed: onThemeToggle,
+            tooltip: isLight ? AppStrings.darkMode : AppStrings.lightMode,
+          ),
+          const SizedBox(width: 7),
+        ],
+
+        // زر الإشعارات
+        if (onNotificationTap != null) ...[
+          AppTopbarAction(
+            icon: AppIcons.bell,
+            onPressed: onNotificationTap,
+            hasDot: notificationCount > 0,
+            tooltip: AppStrings.notifications,
+          ),
+          const SizedBox(width: 7),
+        ],
+
+        // زر البروفايل
+        if (onProfileTap != null)
+          AppTopbarAction(
+            icon: AppIcons.profile,
+            onPressed: onProfileTap,
+            tooltip: AppStrings.settings,
+          ),
+      ],
+    );
+  }
+}

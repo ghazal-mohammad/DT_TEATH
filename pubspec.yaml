@@ -1,0 +1,99 @@
+name: dt_teeth
+description: "DT.Teeth — نظام إدارة مركز طب الأسنان الشامل (المخبر والمستودع)"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # --- أيقونات ---
+  cupertino_icons: ^1.0.8
+
+  # --- إدارة الحالة ---
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+
+  # --- التنقل ---
+  go_router: ^14.8.1
+
+  # --- الشبكة ---
+  dio: ^5.8.0
+
+  # --- حقن التبعيات ---
+  get_it: ^8.0.3
+  injectable: ^2.5.0
+
+  # --- البيانات الوظيفية ---
+  dartz: ^0.10.1
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # --- واجهة المستخدم ---
+  flutter_screenutil: ^5.9.3
+  iconsax_flutter: ^1.0.0
+  fl_chart: ^0.70.2
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.15
+  google_fonts: ^6.2.1
+
+  # --- أدوات ---
+  # ملاحظة: intl 0.20+ مطلوب مع Flutter 3.27+ للـ l10n code generation.
+  intl: ^0.20.0
+  flutter_secure_storage: ^9.2.4
+
+  # --- التخزين المحلي (للغة + الثيم + إعدادات المستخدم) ---
+  shared_preferences: ^2.3.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.15
+  freezed: ^2.5.8
+  json_serializable: ^6.9.0
+  injectable_generator: ^2.7.0
+
+flutter:
+  uses-material-design: true
+
+  # --- تفعيل code generation للـ i18n ---
+  # لما يكون true، Flutter يولّد AppLocalizations من ملفات .arb تلقائياً
+  # عند كل `flutter run` أو `flutter gen-l10n`.
+  # المرجع: https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization
+  generate: true
+
+  assets:
+    - assets/images/logo/
+    - assets/images/empty_states/
+    - assets/images/onboarding/
+    - assets/icons/
+    - assets/animations/
+
+  # --- الخطوط (Cairo + Tajawal) — القرار 12 ---
+  # ملاحظة: مؤقتاً نعتمد على google_fonts. عند النشر Production يُفضّل
+  # وضع ملفات الخطوط محلياً في assets/fonts/ لتجنب الاعتماد على الإنترنت.
+  #
+  # fonts:
+  #   - family: Cairo
+  #     fonts:
+  #       - asset: assets/fonts/Cairo-Light.ttf
+  #         weight: 300
+  #       - asset: assets/fonts/Cairo-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/Cairo-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Cairo-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Cairo-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Cairo-ExtraBold.ttf
+  #         weight: 800
+  #       - asset: assets/fonts/Cairo-Black.ttf
+  #         weight: 900

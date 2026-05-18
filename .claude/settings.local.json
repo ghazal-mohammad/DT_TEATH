@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:UsersAsusStudioProjectsdt_teeth_work/lib/features/auth/presentation/pages -type f -name *.dart)",
+      "Bash(find C:UsersAsusStudioProjectsdt_teeth_work/lib/features/lab/presentation -type f -name *.dart)",
+      "Bash(wc -l \"C:\\\\Users\\\\Asus\\\\StudioProjects\\\\dt_teeth_work/lib/features/warehouse/presentation/pages\"/*.dart)",
+      "Bash(wc -l \"C:\\\\Users\\\\Asus\\\\StudioProjects\\\\dt_teeth_work/lib/features/auth/presentation/pages\"/*.dart)",
+      "Bash(find lib/features/warehouse/presentation/pages -name \"*.dart\" -exec wc -l {} +)",
+      "Bash(find lib/features/auth/presentation/pages -name \"*.dart\" -exec wc -l {} +)",
+      "Bash(flutter analyze:*)",
+      "PowerShell(flutter analyze --no-pub 2>&1)"
+    ]
+  }
+}
