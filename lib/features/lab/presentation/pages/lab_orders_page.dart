@@ -1,133 +1,92 @@
 // ════════════════════════════════════════════════════════════════════════════
-// lab_orders_page.dart  — Phase 5.2 ✅
+// lab_orders_page.dart  — Lab Orders (طلبات الأطباء)
 //
-// صفحة طلبات الأطباء — مطابقة للصورة المرجعية.
-//
-// الهيكل:
-//   - AppPageActionBar: filter chips (الكل/جديد/قيد التصنيع/جاهز) + زر إضافة
-//   - قائمة بطاقات (LabOrderCard) — كل بطاقة تعرض طلبية واحدة
-//     محتوى البطاقة: الطبيب + الطلبية + التاريخ + المادة + النوع + الحالة
-//
-// المرجع: DT_Teeth_Lab_v12_Enhanced.html — pg-lo
+// شبكة بطاقات طلبيات الأطباء بتصميم مطابق للصور المرجعية:
+//   - شريط فلاتر علوي (الكل / عاجل / جديد / قيد التصنيع / جاهز) + عدّاد
+//   - شبكة بطاقات مع شريط ملوّن على الحافة اليسرى
+//   - مودالات: تفاصيل + معالجة
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
-import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
-import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
-import '../../../../shared/widgets/primitives/app_badge.dart';
-import '../../../../shared/widgets/primitives/app_button.dart';
-import '../../../../shared/widgets/primitives/app_filter_chip.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 import '../navigation/lab_sidebar_sections.dart';
+import '../widgets/lab_order_details_dialog.dart';
+import '../widgets/lab_order_models.dart';
+import '../widgets/lab_order_process_dialog.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
-//  MOCK DATA — طلبيات كاملة لصفحة الطلبات
+//  MOCK DATA — مطابق للصورة (6 طلبيات)
 // ══════════════════════════════════════════════════════════════════════════
 
-class _LabOrderFull {
-  const _LabOrderFull({
-    required this.id,
-    required this.doctor,
-    required this.patient,
-    required this.type,
-    required this.material,
-    required this.date,
-    required this.statusKey,
-    required this.statusVariant,
-    this.isUrgent = false,
-    this.techName,
-  });
-
-  final String id;
-  final String doctor;
-  final String patient;
-  final String type;
-  final String material;
-  final String date;
-  final String statusKey;
-  final LabOrderBadgeVariant statusVariant;
-  final bool isUrgent;
-  final String? techName;
-}
-
-const _kOrders = [
-  _LabOrderFull(
-    id: 'LAB-145',
-    doctor: 'د. تجربة',
-    patient: 'البشيرة',
-    type: 'تلبيسة',
-    material: 'PFM',
-    date: '2026-03-27',
-    statusKey: 'new',
-    statusVariant: LabOrderBadgeVariant.newOrder,
-  ),
-  _LabOrderFull(
-    id: 'LAB-143',
-    doctor: 'د. أحمد',
-    patient: 'م. ر.',
-    type: 'جسر',
-    material: 'Zircona',
-    date: '2026-04-28',
-    statusKey: 'manufacturing',
-    statusVariant: LabOrderBadgeVariant.manufacturing,
-    techName: 'فني 1',
-  ),
-  _LabOrderFull(
-    id: 'LAB-143',
-    doctor: 'د. أحمد',
-    patient: 'ك. س.',
-    type: 'تلبيسة',
-    material: 'Metal',
-    date: '2026-04-30',
-    statusKey: 'new',
-    statusVariant: LabOrderBadgeVariant.newOrder,
-    isUrgent: true,
-    techName: 'فني 3',
-  ),
-  _LabOrderFull(
-    id: 'LAB-182',
-    doctor: 'د. خالد',
-    patient: 'م. ر.',
-    type: 'تلبيسة',
-    material: 'PFM',
-    date: '2026-05-01',
-    statusKey: 'new',
-    statusVariant: LabOrderBadgeVariant.newOrder,
-    isUrgent: true,
-  ),
-  _LabOrderFull(
-    id: 'LAB-129',
-    doctor: 'د. رنا',
-    patient: 'أ. س.',
-    type: 'طقم',
-    material: 'Acrylic',
-    date: '2026-05-02',
-    statusKey: 'ready',
-    statusVariant: LabOrderBadgeVariant.ready,
-    techName: 'فني 2',
-  ),
-  _LabOrderFull(
-    id: 'LAB-168',
-    doctor: 'د. سارة',
-    patient: 'ل. م.',
-    type: 'جسر',
-    material: 'Zirconia',
-    date: '2026-05-03',
-    statusKey: 'manufacturing',
-    statusVariant: LabOrderBadgeVariant.manufacturing,
-    techName: 'فني 1',
-  ),
-];
+List<LabOrderFull> _seedOrders() => [
+      LabOrderFull(
+        id: 'LAB-045',
+        doctor: 'د. سارة',
+        type: 'تلبيسة',
+        material: 'PFM',
+        tooth: '#14',
+        date: '27-03-2026',
+        statusVariant: LabOrderBadgeVariant.newOrder,
+        isUrgent: true,
+        notes: 'سن مكسور — يلزم استعجال',
+      ),
+      LabOrderFull(
+        id: 'LAB-044',
+        doctor: 'د. خالد',
+        type: 'جسر',
+        material: 'Zirconia',
+        tooth: '#14-12',
+        date: '28-03-2026',
+        statusVariant: LabOrderBadgeVariant.manufacturing,
+      ),
+      LabOrderFull(
+        id: 'LAB-043',
+        doctor: 'د. أحمد',
+        type: 'تلبيسة',
+        material: 'Metal',
+        tooth: '#36',
+        date: '30-03-2026',
+        statusVariant: LabOrderBadgeVariant.ready,
+      ),
+      LabOrderFull(
+        id: 'LAB-042',
+        doctor: 'د. سارة',
+        type: 'وجه',
+        material: 'E-max',
+        tooth: '#21',
+        date: '27-03-2026',
+        statusVariant: LabOrderBadgeVariant.manufacturing,
+        isUrgent: true,
+        notes: 'وجه أمامي — لون A2',
+      ),
+      LabOrderFull(
+        id: 'LAB-041',
+        doctor: 'د. ليلى',
+        type: 'طقم',
+        material: 'Acrylic',
+        tooth: '#كامل',
+        date: '02-04-2026',
+        statusVariant: LabOrderBadgeVariant.newOrder,
+      ),
+      LabOrderFull(
+        id: 'LAB-040',
+        doctor: 'د. خالد',
+        type: 'تلبيسة',
+        material: 'Zirconia',
+        tooth: '#26',
+        date: '29-03-2026',
+        statusVariant: LabOrderBadgeVariant.manufacturing,
+      ),
+    ];
 
 // ══════════════════════════════════════════════════════════════════════════
 //  PAGE
@@ -141,49 +100,69 @@ class LabOrdersPage extends StatefulWidget {
 }
 
 class _LabOrdersPageState extends State<LabOrdersPage> {
-  int _filterIndex = 0; // 0=الكل 1=جديد 2=قيد التصنيع 3=جاهز
+  late List<LabOrderFull> _orders;
+  String _filter = 'all'; // all | urgent | new | manufacturing | ready
 
-  List<_LabOrderFull> get _filtered {
-    switch (_filterIndex) {
-      case 1:
-        return _kOrders
+  @override
+  void initState() {
+    super.initState();
+    _orders = _seedOrders();
+  }
+
+  List<LabOrderFull> get _filtered {
+    switch (_filter) {
+      case 'urgent':
+        return _orders.where((o) => o.isUrgent).toList();
+      case 'new':
+        return _orders
             .where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder)
             .toList();
-      case 2:
-        return _kOrders
-            .where(
-                (o) => o.statusVariant == LabOrderBadgeVariant.manufacturing)
+      case 'manufacturing':
+        return _orders
+            .where((o) =>
+                o.statusVariant == LabOrderBadgeVariant.manufacturing)
             .toList();
-      case 3:
-        return _kOrders
+      case 'ready':
+        return _orders
             .where((o) => o.statusVariant == LabOrderBadgeVariant.ready)
             .toList();
       default:
-        return _kOrders;
+        return _orders;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     return AppShellLayout(
       system: AppSystemType.lab,
       currentRoute: RouteNames.labOrders,
       sections: LabSidebarSections.buildWithBadges(
         context,
-        newOrdersCount: 4,
+        newOrdersCount: _orders
+            .where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder)
+            .length,
         unreadNotifsCount: 2,
       ),
-      pageTitle: l10n.doctorOrders,
-      pageSubtitle: l10n.labTopbarSubtitle,
+      pageTitle: context.l10n.doctorOrders,
+      pageSubtitle: null,
+      searchPlaceholder: 'فلترة طلبات الأطباء... (رقم، طبيب، مادة، سن)',
       userName: MockUserData.labUserName,
-      userRole: l10n.roleLabManager,
+      userRole: context.l10n.roleLabManager,
+      notificationCount: 2,
       body: _LabOrdersBody(
-        filterIndex: _filterIndex,
-        onFilterChanged: (i) => setState(() => _filterIndex = i),
-        orders: _filtered,
-        l10n: l10n,
+        orders: _orders,
+        filtered: _filtered,
+        filter: _filter,
+        onFilterChange: (v) => setState(() => _filter = v),
+        onProcessSaved: (orderId, choice) {
+          final idx = _orders.indexWhere((o) => o.id == orderId);
+          if (idx == -1) return;
+          setState(() {
+            _orders[idx].statusVariant = choice == LabProcessChoice.delivered
+                ? LabOrderBadgeVariant.ready
+                : LabOrderBadgeVariant.newOrder;
+          });
+        },
       ),
     );
   }
@@ -195,54 +174,230 @@ class _LabOrdersPageState extends State<LabOrdersPage> {
 
 class _LabOrdersBody extends StatelessWidget {
   const _LabOrdersBody({
-    required this.filterIndex,
-    required this.onFilterChanged,
     required this.orders,
-    required this.l10n,
+    required this.filtered,
+    required this.filter,
+    required this.onFilterChange,
+    required this.onProcessSaved,
   });
 
-  final int filterIndex;
-  final ValueChanged<int> onFilterChanged;
-  final List<_LabOrderFull> orders;
-  final AppLocalizations l10n;
+  final List<LabOrderFull> orders;
+  final List<LabOrderFull> filtered;
+  final String filter;
+  final ValueChanged<String> onFilterChange;
+  final void Function(String orderId, LabProcessChoice choice) onProcessSaved;
+
+  int _count(bool Function(LabOrderFull) test) =>
+      orders.where(test).length;
 
   @override
   Widget build(BuildContext context) {
+    final urgentCount = _count((o) => o.isUrgent);
+    final newCount =
+        _count((o) => o.statusVariant == LabOrderBadgeVariant.newOrder);
+    final mfgCount = _count(
+        (o) => o.statusVariant == LabOrderBadgeVariant.manufacturing);
+    final readyCount =
+        _count((o) => o.statusVariant == LabOrderBadgeVariant.ready);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSizes.spaceLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Filter Bar ───────────────────────────────────────────────
-          AppPageActionBar(
-            filter: AppFilterChipRow(
-              options: [
-                l10n.labOrdersFilterAll,
-                l10n.labOrdersFilterNew,
-                l10n.labOrdersFilterManufacturing,
-                l10n.labOrdersFilterReady,
-              ],
-              selectedIndex: filterIndex,
-              onChanged: onFilterChanged,
+          // ── Filter bar ─────────────────────────────────────────────
+          _FilterBar(
+            total: orders.length,
+            shown: filtered.length,
+            urgentCount: urgentCount,
+            newCount: newCount,
+            mfgCount: mfgCount,
+            readyCount: readyCount,
+            current: filter,
+            onChange: onFilterChange,
+          ),
+          const SizedBox(height: AppSizes.spaceLG),
+          // ── Grid ───────────────────────────────────────────────────
+          if (filtered.isEmpty)
+            const _EmptyOrders()
+          else
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.maxWidth;
+                final int cols = width > 1200
+                    ? 3
+                    : width > 760
+                        ? 2
+                        : 1;
+                const double spacing = 16;
+                final double cardW =
+                    (width - spacing * (cols - 1)) / cols;
+                return Wrap(
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  children: [
+                    for (final o in filtered)
+                      SizedBox(
+                        width: cardW,
+                        child: _OrderCard(
+                          order: o,
+                          onView: () =>
+                              LabOrderDetailsDialog.show(context, o),
+                          onProcess: () async {
+                            final choice = await LabOrderProcessDialog.show(
+                              context,
+                              o,
+                            );
+                            if (choice != null) onProcessSaved(o.id, choice);
+                          },
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
-            actions: [
-              AppButton.primary(
-                label: '+ طلب جديد',
-                onPressed: () {},
-                size: AppButtonSize.small,
+        ],
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  FILTER BAR — counter + 5 tabs
+// ══════════════════════════════════════════════════════════════════════════
+
+class _FilterBar extends StatelessWidget {
+  const _FilterBar({
+    required this.total,
+    required this.shown,
+    required this.urgentCount,
+    required this.newCount,
+    required this.mfgCount,
+    required this.readyCount,
+    required this.current,
+    required this.onChange,
+  });
+
+  final int total;
+  final int shown;
+  final int urgentCount;
+  final int newCount;
+  final int mfgCount;
+  final int readyCount;
+  final String current;
+  final ValueChanged<String> onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          '$shown طلب من أصل $total',
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.lightText3,
+          ),
+        ),
+        const Spacer(),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            _Tab(
+              label: 'الكل',
+              count: total,
+              active: current == 'all',
+              onTap: () => onChange('all'),
+            ),
+            _Tab(
+              label: 'عاجل',
+              count: urgentCount,
+              active: current == 'urgent',
+              accent: const Color(0xFFEF4444),
+              onTap: () => onChange('urgent'),
+            ),
+            _Tab(
+              label: 'جديد',
+              count: newCount,
+              active: current == 'new',
+              onTap: () => onChange('new'),
+            ),
+            _Tab(
+              label: 'قيد التصنيع',
+              count: mfgCount,
+              active: current == 'manufacturing',
+              onTap: () => onChange('manufacturing'),
+            ),
+            _Tab(
+              label: 'جاهز',
+              count: readyCount,
+              active: current == 'ready',
+              onTap: () => onChange('ready'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _Tab extends StatelessWidget {
+  const _Tab({
+    required this.label,
+    required this.count,
+    required this.active,
+    required this.onTap,
+    this.accent,
+  });
+
+  final String label;
+  final int count;
+  final bool active;
+  final VoidCallback onTap;
+  final Color? accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color activeBg = accent ?? AppColors.primary;
+    final Color idleText = accent ?? AppColors.lightText2;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: active ? activeBg : const Color(0xFFF6F7FB),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: active ? Colors.white : idleText,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '$count',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: active ? Colors.white : AppColors.lightText3,
+                ),
               ),
             ],
           ),
-
-          // ── Cards List ───────────────────────────────────────────────
-          if (orders.isEmpty)
-            const _EmptyOrders()
-          else
-            for (final order in orders) ...[
-              _LabOrderCard(order: order, l10n: l10n),
-              const SizedBox(height: AppSizes.spaceMD),
-            ],
-        ],
+        ),
       ),
     );
   }
@@ -252,202 +407,142 @@ class _LabOrdersBody extends StatelessWidget {
 //  ORDER CARD — مطابق للصورة
 // ══════════════════════════════════════════════════════════════════════════
 
-class _LabOrderCard extends StatefulWidget {
-  const _LabOrderCard({required this.order, required this.l10n});
-  final _LabOrderFull order;
-  final AppLocalizations l10n;
+class _OrderCard extends StatefulWidget {
+  const _OrderCard({
+    required this.order,
+    required this.onView,
+    required this.onProcess,
+  });
+
+  final LabOrderFull order;
+  final VoidCallback onView;
+  final VoidCallback onProcess;
 
   @override
-  State<_LabOrderCard> createState() => _LabOrderCardState();
+  State<_OrderCard> createState() => _OrderCardState();
 }
 
-class _LabOrderCardState extends State<_LabOrderCard> {
-  bool _hovered = false;
-
-  // Map variant → badge
-  static const _variantMap = {
-    LabOrderBadgeVariant.newOrder: AppBadgeVariant.cyan,
-    LabOrderBadgeVariant.manufacturing: AppBadgeVariant.gold,
-    LabOrderBadgeVariant.ready: AppBadgeVariant.green,
-    LabOrderBadgeVariant.urgent: AppBadgeVariant.redAnimated,
-  };
-  static const _textMap = {
-    LabOrderBadgeVariant.newOrder: 'جديد',
-    LabOrderBadgeVariant.manufacturing: 'قيد التصنيع',
-    LabOrderBadgeVariant.ready: 'جاهز',
-    LabOrderBadgeVariant.urgent: 'عاجل',
-  };
-
-  // Map variant → left accent color
-  static const _accentMap = {
-    LabOrderBadgeVariant.newOrder: AppColors.accent,
-    LabOrderBadgeVariant.manufacturing: AppColors.warning,
-    LabOrderBadgeVariant.ready: AppColors.success,
-    LabOrderBadgeVariant.urgent: AppColors.error,
-  };
+class _OrderCardState extends State<_OrderCard> {
+  bool _hover = false;
 
   @override
   Widget build(BuildContext context) {
     final o = widget.order;
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final badgeVariant = o.isUrgent
-        ? AppBadgeVariant.redAnimated
-        : (_variantMap[o.statusVariant] ?? AppBadgeVariant.cyan);
-    final badgeText = o.isUrgent
-        ? 'عاجل'
-        : (_textMap[o.statusVariant] ?? '');
-    final accentColor = o.isUrgent
-        ? AppColors.error
-        : (_accentMap[o.statusVariant] ?? AppColors.accent);
+    final accent = labOrderAccentColor(
+      statusVariant: o.statusVariant,
+      isUrgent: o.isUrgent,
+    );
+    final initial =
+        o.doctor.replaceAll('د. ', '').characters.firstOrNull ?? '';
+    final radius = BorderRadius.circular(16);
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      cursor: SystemMouseCursors.basic,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
+        transform: Matrix4.translationValues(0, _hover ? -3 : 0, 0),
         decoration: BoxDecoration(
-          color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-          border: Border(
-            // حد ملون على الجانب الأيمن (RTL) حسب الحالة
-            right: BorderSide(color: accentColor, width: 3),
-            top: BorderSide(
-              color: _hovered
-                  ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
-                  : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          color: Colors.white,
+          borderRadius: radius,
+          border: Border.all(color: AppColors.lightBorder),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: _hover ? 0.07 : 0.03),
+              blurRadius: _hover ? 18 : 10,
+              offset: Offset(0, _hover ? 8 : 4),
             ),
-            bottom: BorderSide(
-              color: _hovered
-                  ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
-                  : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
-            ),
-            left: BorderSide(
-              color: _hovered
-                  ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
-                  : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
-            ),
-          ),
-          boxShadow: _hovered
-              ? [
-                  BoxShadow(
-                    color: accentColor.withValues(alpha: 0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSizes.spaceLG),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: ClipRRect(
+          borderRadius: radius,
+          child: Stack(
             children: [
-              // ── Row 1: الطبيب + الحالة + الطلبية ────────────────────
-              Row(
-                children: [
-                  // Doctor chip
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondary.withValues(alpha: 0.12),
-                      borderRadius:
-                          BorderRadius.circular(AppSizes.radiusFull),
-                      border: Border.all(
-                          color: AppColors.secondary.withValues(alpha: 0.3)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+              // الشريط الجانبي الملوّن (RTL = left visual)
+              PositionedDirectional(
+                end: 0,
+                top: 0,
+                bottom: 0,
+                child: Container(width: 5, color: accent),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(18, 14, 22, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Header: نوع + رقم ────────────────────────────
+                    Row(
                       children: [
-                        Icon(AppIcons.profile,
-                            size: 12,
-                            color: AppColors.secondary),
-                        const SizedBox(width: 4),
+                        _TypePill(label: o.type),
+                        const Spacer(),
                         Text(
-                          o.doctor,
-                          style: const TextStyle(
+                          o.id,
+                          style: TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.secondary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: AppSizes.spaceSM),
-                  // Status badge
-                  AppBadge(text: badgeText, variant: badgeVariant),
-                  const Spacer(),
-                  // Order ID
-                  Text(
-                    o.id,
-                    style: const TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.accent,
+                    const SizedBox(height: 12),
+                    // ── الطبيب + (شارة عاجل) ────────────────────────
+                    Row(
+                      children: [
+                        if (o.isUrgent)
+                          const _UrgentPill()
+                        else
+                          const SizedBox.shrink(),
+                        const Spacer(),
+                        Text(
+                          o.doctor,
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.lightText1,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 28,
+                          height: 28,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE2EDFF),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            initial,
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: AppSizes.spaceMD),
-              const Divider(
-                  height: 1, color: AppColors.darkBorder),
-              const SizedBox(height: AppSizes.spaceMD),
-
-              // ── Row 2: التفاصيل ──────────────────────────────────────
-              Row(
-                children: [
-                  _infoCell(
-                    context,
-                    icon: AppIcons.calendar,
-                    label: 'التاريخ',
-                    value: o.date,
-                  ),
-                  const SizedBox(width: AppSizes.spaceXL),
-                  _infoCell(
-                    context,
-                    icon: AppIcons.tooth,
-                    label: 'النوع',
-                    value: o.type,
-                  ),
-                  const SizedBox(width: AppSizes.spaceXL),
-                  _infoCell(
-                    context,
-                    icon: AppIcons.box,
-                    label: 'المادة',
-                    value: o.material,
-                  ),
-                  if (o.techName != null) ...[
-                    const SizedBox(width: AppSizes.spaceXL),
-                    _infoCell(
-                      context,
-                      icon: AppIcons.technicians,
-                      label: 'الفني',
-                      value: o.techName!,
-                      valueColor: AppColors.secondary,
+                    const SizedBox(height: 14),
+                    // ── صندوق المعلومات (المادة/السن/الموعد) ────────
+                    _InfoBox(material: o.material, tooth: o.tooth, date: o.date),
+                    const SizedBox(height: 14),
+                    // ── Footer: actions + status badge ──────────────
+                    Row(
+                      children: [
+                        _ProcessButton(onTap: widget.onProcess),
+                        const SizedBox(width: 6),
+                        _ViewButton(onTap: widget.onView),
+                        const Spacer(),
+                        _StatusBadge(variant: o.statusVariant),
+                      ],
                     ),
                   ],
-                  const Spacer(),
-                  // Actions
-                  if (o.techName == null)
-                    AppButton.secondary(
-                      label: widget.l10n.labTeamAssign,
-                      icon: AppIcons.technicians,
-                      onPressed: () {},
-                      size: AppButtonSize.small,
-                    )
-                  else
-                    AppButton.secondary(
-                      label: 'تفاصيل',
-                      icon: AppIcons.eye,
-                      onPressed: () {},
-                      size: AppButtonSize.small,
-                    ),
-                ],
+                ),
               ),
             ],
           ),
@@ -455,45 +550,239 @@ class _LabOrderCardState extends State<_LabOrderCard> {
       ),
     );
   }
+}
 
-  Widget _infoCell(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required String value,
-    Color? valueColor,
-  }) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon,
-                size: 11,
-                color: isLight
-                    ? AppColors.lightText4
-                    : AppColors.darkText4),
-            const SizedBox(width: 3),
-            Text(
-              label,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-                fontSize: 10,
-              ),
-            ),
-          ],
+// ── pieces ─────────────────────────────────────────────────────────────
+
+class _TypePill extends StatelessWidget {
+  const _TypePill({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3F8),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: AppColors.lightText2,
         ),
-        const SizedBox(height: 2),
+      ),
+    );
+  }
+}
+
+class _UrgentPill extends StatelessWidget {
+  const _UrgentPill();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEE2E2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(
+            Icons.local_fire_department_rounded,
+            size: 13,
+            color: Color(0xFFEF4444),
+          ),
+          SizedBox(width: 4),
+          Text(
+            'عاجل',
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFFEF4444),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoBox extends StatelessWidget {
+  const _InfoBox({
+    required this.material,
+    required this.tooth,
+    required this.date,
+  });
+
+  final String material;
+  final String tooth;
+  final String date;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8F9FC),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(child: _cell('الموعد', date)),
+          _divider(),
+          Expanded(child: _cell('السن', tooth)),
+          _divider(),
+          Expanded(child: _cell('المادة', material)),
+        ],
+      ),
+    );
+  }
+
+  Widget _divider() => Container(
+        width: 1,
+        height: 28,
+        color: const Color(0xFFE5E7EE),
+      );
+
+  Widget _cell(String label, String value) {
+    return Column(
+      children: [
         Text(
-          value,
-          style: AppTextStyles.bodyMedium.copyWith(
-            fontWeight: FontWeight.w700,
-            color: valueColor ??
-                (isLight ? AppColors.lightText1 : AppColors.darkText1),
+          label,
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: AppColors.lightText3,
           ),
         ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: AppColors.lightText1,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ],
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.variant});
+  final LabOrderBadgeVariant variant;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = LabStatusColors.of(variant);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: c.bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: c.fg, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            c.label,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: c.fg,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProcessButton extends StatelessWidget {
+  const _ProcessButton({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.check_rounded, size: 14, color: Colors.white),
+              SizedBox(width: 5),
+              Text(
+                'معالجة',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ViewButton extends StatelessWidget {
+  const _ViewButton({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightBorder),
+            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+          ),
+          child: Text(
+            'عرض',
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppColors.lightText1,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -511,11 +800,18 @@ class _EmptyOrders extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 60),
       child: Column(
         children: [
-          Icon(AppIcons.emptyInbox,
-              size: 48, color: AppColors.darkText4),
+          const Icon(
+            Icons.inbox_outlined,
+            size: 48,
+            color: Color(0xFFB0B6C3),
+          ),
           const SizedBox(height: AppSizes.spaceMD),
-          Text('لا توجد طلبيات في هذه الفئة',
-              style: AppTextStyles.bodyMedium),
+          Text(
+            'لا توجد طلبيات في هذه الفئة',
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.lightText3,
+            ),
+          ),
         ],
       ),
     );

@@ -247,7 +247,9 @@ class _EmailFormFieldState extends State<EmailFormField> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.go, // ← يبيّن "Go" للـ keyboard
                   autocorrect: false,
-                  autofillHints: const [AutofillHints.email],
+                  // إيقاف اقتراحات المتصفح — حنا منعرض اقتراحات domains خاصة فينا.
+                  autofillHints: const <String>[],
+                  enableSuggestions: false,
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(RegExp(r'\s')),
                   ],

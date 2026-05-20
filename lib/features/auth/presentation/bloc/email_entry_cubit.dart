@@ -1,28 +1,21 @@
 // ════════════════════════════════════════════════════════════════════════════
 // email_entry_cubit.dart
 //
-// Cubit لإدارة حالة شاشة Email Entry (Phase 3.3).
-//
-// الحالات:
-//   - initial: المستخدم لسه يكتب
-//   - submitting: جاري إرسال الطلب للـ API
-//   - success: نجح الإرسال → سيتم التنقّل للشاشة التالية
-//   - error: فشل (network/validation)
-//
-// Phase 3.6 سيُربط بـ AuthRepository الفعلي.
-// حالياً في Phase 3.3 → mock فقط (يحاكي 1.2s delay + success).
+// Cubit لإدارة شاشة Email Entry — مربوط بـ AuthRepository.
+// يستدعي POST /api/employee/sendVerification.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../../../core/utils/validators.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //                              STATE
 // ══════════════════════════════════════════════════════════════════════════
 
-/// حالة شاشة Email Entry.
 class EmailEntryState extends Equatable {
   const EmailEntryState({
     this.email = '',
@@ -30,21 +23,11 @@ class EmailEntryState extends Equatable {
     this.errorMessage,
   });
 
-  /// النص الحالي في حقل الإيميل.
   final String email;
-
-  /// حالة الـ flow.
   final EmailEntryStatus status;
-
-  /// رسالة خطأ من الـ API (لو موجودة).
   final String? errorMessage;
 
-  /// هل الإيميل صالح للإرسال؟
   bool get isEmailValid => Validators.isValidEmail(email);
-
-  /// هل الزر يجب أن يكون visually disabled؟
-  /// السياسة الجديدة: الزر مفعّل دائماً ما لم يكن جاري الإرسال.
-  /// لو الإيميل غير valid، الـ submit() يعرض رسالة خطأ.
   bool get isSubmitDisabled => status == EmailEntryStatus.submitting;
 
   EmailEntryState copyWith({
@@ -64,76 +47,60 @@ class EmailEntryState extends Equatable {
   List<Object?> get props => [email, status, errorMessage];
 }
 
-/// حالات الـ flow.
-enum EmailEntryStatus {
-  /// المستخدم يكتب.
-  initial,
-
-  /// جاري إرسال الطلب للـ API.
-  submitting,
-
-  /// نجح الإرسال — جاهز للانتقال للـ OTP screen.
-  success,
-
-  /// فشل (errorMessage يحوي السبب).
-  failure,
-}
+enum EmailEntryStatus { initial, submitting, success, failure }
 
 // ══════════════════════════════════════════════════════════════════════════
 //                              CUBIT
 // ══════════════════════════════════════════════════════════════════════════
 
-/// Cubit لإدارة شاشة Email Entry.
 class EmailEntryCubit extends Cubit<EmailEntryState> {
-  EmailEntryCubit() : super(const EmailEntryState());
+  EmailEntryCubit(this._repo) : super(const EmailEntryState());
 
-  /// تحديث الإيميل عند الكتابة.
+  final AuthRepository _repo;
+
   void emailChanged(String value) {
     emit(state.copyWith(email: value, clearError: true));
   }
 
-  /// إرسال الطلب للـ API.
-  ///
-  /// Phase 3.3: mock implementation فقط.
-  /// Phase 3.6: استبدال بـ AuthRepository.requestCode(email).
+  /// يرسل كود التحقق للإيميل عبر AuthRepository.
   Future<void> submit() async {
-    final String trimmed = state.email.trim();
+    final trimmed = state.email.trim();
 
-    // 1. لو فارغ تماماً → خطأ
     if (trimmed.isEmpty) {
-      emit(
-        state.copyWith(
-          status: EmailEntryStatus.failure,
-          errorMessage: 'email_required',
-        ),
-      );
+      emit(state.copyWith(
+        status: EmailEntryStatus.failure,
+        errorMessage: 'email_required',
+      ));
+      return;
+    }
+    if (!Validators.isValidEmail(trimmed)) {
+      emit(state.copyWith(
+        status: EmailEntryStatus.failure,
+        errorMessage: 'invalid_email',
+      ));
       return;
     }
 
-    // 2. لو نص غير فارغ → نتقدّم محلياً حتى يكتمل الربط بالباك.
-    //    هذا يسمح لنا بمراجعة الواجهات الأخرى دون انتظار API.
-    // 3. ابدأ الـ submit
-    emit(state.copyWith(status: EmailEntryStatus.submitting, clearError: true));
+    emit(state.copyWith(
+      status: EmailEntryStatus.submitting,
+      clearError: true,
+    ));
 
     try {
-      // Phase 3.3: الباك-اند لسا مش جاهز، نكمل محلياً.
-      // سيتم ربط هذا بـ _authRepository.requestCode(state.email) في Phase 3.6.
-      await Future<void>.delayed(const Duration(milliseconds: 200));
-
+      await _repo.sendVerification(email: trimmed);
       emit(state.copyWith(status: EmailEntryStatus.success));
-    } catch (e) {
-      // فشل شبكي حقيقي
-      emit(
-        state.copyWith(
-          status: EmailEntryStatus.failure,
-          errorMessage: 'network_error',
-        ),
-      );
+    } on Failure catch (f) {
+      emit(state.copyWith(
+        status: EmailEntryStatus.failure,
+        errorMessage: f.message,
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        status: EmailEntryStatus.failure,
+        errorMessage: 'network_error',
+      ));
     }
   }
 
-  /// إعادة تعيين الحالة (مفيد عند الرجوع للشاشة).
-  void reset() {
-    emit(const EmailEntryState());
-  }
+  void reset() => emit(const EmailEntryState());
 }

@@ -156,11 +156,19 @@ class AppRouter {
         path: RouteNames.authSetPassword,
         name: 'authSetPassword',
         pageBuilder: (context, state) {
-          final email = (state.extra is String) ? state.extra as String : '';
+          String email = '';
+          String code = '';
+          final extra = state.extra;
+          if (extra is Map) {
+            email = (extra['email'] ?? '') as String;
+            code = (extra['code'] ?? '') as String;
+          } else if (extra is String) {
+            email = extra; // توافق رجعي
+          }
           return _authSlide(
             key: state.pageKey,
             direction: 1,
-            child: SetPasswordPage(email: email),
+            child: SetPasswordPage(email: email, verificationCode: code),
           );
         },
       ),

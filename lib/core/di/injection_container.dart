@@ -2,12 +2,7 @@
 // injection_container.dart
 //
 // إعداد Dependency Injection باستخدام GetIt.
-// القرار 8: GetIt + Injectable (سنستخدم Injectable في Features المتقدمة).
-//
-// حالياً (Feature 1 - Foundation) نسجّل فقط:
-//   - Dio client
-//   - ThemeCubit
-// باقي الـ BLoCs والـ Repositories تُسجَّل في Features 3-7.
+// كل الـ Dependencies تُسجَّل هنا، وتُحقن في الـ Cubits/Repositories.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:dio/dio.dart';
@@ -18,6 +13,14 @@ import '../../shared/bloc/locale_cubit.dart';
 import '../../shared/bloc/mock_system_cubit.dart';
 import '../../shared/bloc/theme_cubit.dart';
 
+// ── Auth feature ──────────────────────────────────────────────────────────
+import '../../features/auth/data/datasources/auth_remote_datasource.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/presentation/bloc/email_entry_cubit.dart';
+import '../../features/auth/presentation/bloc/login_cubit.dart';
+import '../../features/auth/presentation/bloc/set_password_cubit.dart';
+
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
 
@@ -26,16 +29,29 @@ Future<void> initDependencies() async {
   // ── External (مكتبات خارجية) ────────────────────────────────────────────
   sl.registerLazySingleton<Dio>(() => DioClient.build());
 
-  // ── Cubits / BLoCs (Singletons) ────────────────────────────────────────
+  // ── Cubits / BLoCs مشتركة ──────────────────────────────────────────────
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
   sl.registerLazySingleton<LocaleCubit>(() => LocaleCubit());
   sl.registerLazySingleton<MockSystemCubit>(() => MockSystemCubit());
 
-  // TODO: في Feature 3 — تسجيل AuthBloc + AuthRepository
-  // TODO: في Feature 4 — تسجيل WarehouseBloc + WarehouseRepository
-  // TODO: في Feature 5 — تسجيل LabBloc + LabRepository
-  // TODO: في Feature 6 — تسجيل AuditService + ExpiryCheckerService
-  // ملاحظة: MockSystemCubit مؤقت — يُستبدل بـ AuthCubit عند توفر الـ Backend.
+  // ── Auth: Data + Domain ────────────────────────────────────────────────
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
+  );
+
+  // ── Auth: Cubits — Factory (instance جديدة لكل شاشة) ───────────────────
+  sl.registerFactory<EmailEntryCubit>(
+    () => EmailEntryCubit(sl<AuthRepository>()),
+  );
+  sl.registerFactory<LoginCubit>(
+    () => LoginCubit(sl<AuthRepository>()),
+  );
+  sl.registerFactory<SetPasswordCubit>(
+    () => SetPasswordCubit(sl<AuthRepository>()),
+  );
 }
 
 /// تصفير كل التسجيلات — مفيد في الاختبارات.

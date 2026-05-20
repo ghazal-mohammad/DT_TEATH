@@ -22,12 +22,15 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/auth/auth_models.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/validators.dart';
+import '../bloc/set_password_cubit.dart';
 import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
@@ -42,9 +45,14 @@ import '../widgets/password_strength_meter.dart';
 // ══════════════════════════════════════════════════════════════════════════
 
 class SetPasswordPage extends StatefulWidget {
-  const SetPasswordPage({super.key, required this.email});
+  const SetPasswordPage({
+    super.key,
+    required this.email,
+    this.verificationCode = '',
+  });
 
   final String email;
+  final String verificationCode;
 
   @override
   State<SetPasswordPage> createState() => _SetPasswordPageState();
@@ -88,6 +96,8 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     super.dispose();
   }
 
+  final SetPasswordCubit _cubit = sl<SetPasswordCubit>();
+
   Future<void> _submit() async {
     setState(() { _errPwd = null; _errCfm = null; });
 
@@ -99,14 +109,53 @@ class _SetPasswordPageState extends State<SetPasswordPage>
       setState(() => _errCfm = context.l10n.passwordMismatch);
       return;
     }
+    if (widget.verificationCode.isEmpty) {
+      setState(() => _errPwd = 'كود التحقق مفقود — ارجع لشاشة الإيميل');
+      return;
+    }
 
     setState(() => _submitting = true);
-    await Future<void>.delayed(const Duration(milliseconds: 1500));
+
+    await _cubit.submit(
+      email: widget.email,
+      verificationCode: widget.verificationCode,
+      password: _pwd,
+    );
     if (!mounted) return;
 
-    await _entryCtrl.reverse();
-    if (!mounted) return;
-    context.go(RouteNames.systemSelection);
+    final state = _cubit.state;
+    setState(() => _submitting = false);
+
+    if (state.status == SetPasswordStatus.success) {
+      // 🔍 DEBUG: نطبع المستخدم اللي رجع من الباك لمعرفة الـ role الفعلي.
+      // ignore: avoid_print
+      print('[DT.Teeth][setPassword] user=${state.user} role=${state.user?.role}');
+
+      await _entryCtrl.reverse();
+      if (!mounted) return;
+      // الباك بيرجع توكن جاهز + role — ندخّل المستخدم مباشرة لنظامه.
+      context.go(_dashboardForRole(state.user?.role));
+    } else {
+      setState(() => _errPwd = state.errorMessage ?? 'فشل تعيين كلمة المرور');
+    }
+  }
+
+  /// يحدّد لوحة التحكم المناسبة حسب دور الموظف.
+  /// Admin → systemSelection. Lab Manager → Lab Dashboard.
+  /// Warehouse Manager → Warehouse Dashboard.
+  /// إذا الـ role unknown/null → Lab Dashboard كـ fallback آمن
+  /// (لأن المستخدم نجح بـ setPassword وعندو توكن صالح).
+  String _dashboardForRole(EmployeeRole? role) {
+    switch (role) {
+      case EmployeeRole.labManager:
+        return RouteNames.labDashboard;
+      case EmployeeRole.warehouseManager:
+        return RouteNames.warehouseDashboard;
+      case EmployeeRole.admin:
+        return RouteNames.systemSelection;
+      default:
+        return RouteNames.labDashboard;
+    }
   }
 
   @override
@@ -176,37 +225,44 @@ class _SetPasswordPageState extends State<SetPasswordPage>
           Positioned(
             left: W * 0.67, right: 0,
             top: 0, bottom: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.space3XL + AppSizes.spaceMD,
-                vertical:   AppSizes.space3XL + AppSizes.spaceMD,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 340),
-                    child: _FormContent(
-                      pwdCtrl: _pwdCtrl,
-                      cfmCtrl: _cfmCtrl,
-                      pwd: _pwd,
-                      valid: _valid,
-                      submitting: _submitting,
-                      errPwd: _errPwd,
-                      errCfm: _errCfm,
-                      isMobile: false,
-                      entryCtrl: _entryCtrl,
-                      onPwdChanged: (v) => setState(() {
-                        _pwd = v; _errPwd = null;
-                      }),
-                      onCfmChanged: (v) => setState(() {
-                        _cfm = v; _errCfm = null;
-                      }),
-                      onSubmit: _submit,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.space3XL + AppSizes.spaceMD,
+                    vertical: AppSizes.space3XL + AppSizes.spaceMD,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 340),
+                          child: _FormContent(
+                            pwdCtrl: _pwdCtrl,
+                            cfmCtrl: _cfmCtrl,
+                            pwd: _pwd,
+                            valid: _valid,
+                            submitting: _submitting,
+                            errPwd: _errPwd,
+                            errCfm: _errCfm,
+                            isMobile: false,
+                            entryCtrl: _entryCtrl,
+                            onPwdChanged: (v) => setState(() {
+                              _pwd = v; _errPwd = null;
+                            }),
+                            onCfmChanged: (v) => setState(() {
+                              _cfm = v; _errCfm = null;
+                            }),
+                            onSubmit: _submit,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ),
         ],

@@ -9,6 +9,13 @@ enum LabOrderBadgeVariant {
   urgent,
 }
 
+/// مستوى أولوية الطلب.
+enum LabOrderPriority {
+  urgent,    // عاجل
+  medium,    // متوسطة
+  normal,    // عادية
+}
+
 /// بيانات طلب واحد في Dashboard المخبر.
 class LabOrderItem {
   const LabOrderItem({
@@ -20,6 +27,9 @@ class LabOrderItem {
     required this.statusVariant,
     required this.statusKey,
     this.isUrgent = false,
+    this.material = '',
+    this.tooth = '',
+    this.priority = LabOrderPriority.normal,
   });
 
   final String orderId;
@@ -30,6 +40,9 @@ class LabOrderItem {
   final LabOrderBadgeVariant statusVariant;
   final String statusKey;
   final bool isUrgent;
+  final String material;
+  final String tooth;
+  final LabOrderPriority priority;
 }
 
 /// بيانات مخبري في جدول الفريق.
@@ -62,44 +75,91 @@ class LabDashboardMockData {
   static const int readyCount = 7;
   static const int urgentTodayCount = 2;
 
-  // Today orders table
+  // Today orders table — مطابق للتصميم المرجعي
   static const List<LabOrderItem> todayOrders = [
     LabOrderItem(
-      orderId: 'LAB-143',
-      patientName: 'سامية ع.',
-      doctorName: 'د. سامية',
+      orderId: 'LAB-045',
+      patientName: '—',
+      doctorName: 'د. سارة س',
       type: 'تلبيسة',
-      dueDate: '27-05-2026',
+      material: 'PFM',
+      tooth: '#14',
+      dueDate: '27-03-2026',
+      priority: LabOrderPriority.urgent,
+      statusVariant: LabOrderBadgeVariant.newOrder,
+      statusKey: 'labOrdersFilterNew',
+    ),
+    LabOrderItem(
+      orderId: 'LAB-044',
+      patientName: '—',
+      doctorName: 'د. خالد خ',
+      type: 'جسر',
+      material: 'Zirconia',
+      tooth: '#14-12',
+      dueDate: '28-03-2026',
+      priority: LabOrderPriority.medium,
       statusVariant: LabOrderBadgeVariant.manufacturing,
       statusKey: 'labOrdersFilterManufacturing',
     ),
     LabOrderItem(
-      orderId: 'LAB-168',
-      patientName: 'م. ر.',
-      doctorName: 'د. خالد',
-      type: 'جسر',
-      dueDate: '27-05-2026',
-      statusVariant: LabOrderBadgeVariant.newOrder,
-      statusKey: 'labOrdersFilterNew',
-      isUrgent: true,
-    ),
-    LabOrderItem(
-      orderId: 'LAB-144',
-      patientName: 'تركيز ع.',
-      doctorName: 'د. رنا',
-      type: 'Zirconia',
-      dueDate: '28-05-2026',
+      orderId: 'LAB-043',
+      patientName: '—',
+      doctorName: 'د. أحمد أ',
+      type: 'تلبيسة',
+      material: 'Metal',
+      tooth: '#36',
+      dueDate: '30-03-2026',
+      priority: LabOrderPriority.normal,
       statusVariant: LabOrderBadgeVariant.ready,
       statusKey: 'labOrdersFilterReady',
     ),
     LabOrderItem(
-      orderId: 'LAB-129',
-      patientName: 'أحمد س.',
-      doctorName: 'د. أحمد',
-      type: 'Metal',
-      dueDate: '29-05-2026',
+      orderId: 'LAB-042',
+      patientName: '—',
+      doctorName: 'د. سارة س',
+      type: 'وجه',
+      material: 'E-max',
+      tooth: '#21',
+      dueDate: '27-03-2026',
+      priority: LabOrderPriority.urgent,
       statusVariant: LabOrderBadgeVariant.manufacturing,
       statusKey: 'labOrdersFilterManufacturing',
+    ),
+    LabOrderItem(
+      orderId: 'LAB-041',
+      patientName: '—',
+      doctorName: 'د. ليلى ل',
+      type: 'طقم',
+      material: 'Acrylic',
+      tooth: '#كامل',
+      dueDate: '02-04-2026',
+      priority: LabOrderPriority.normal,
+      statusVariant: LabOrderBadgeVariant.newOrder,
+      statusKey: 'labOrdersFilterNew',
+    ),
+    LabOrderItem(
+      orderId: 'LAB-040',
+      patientName: '—',
+      doctorName: 'د. خالد خ',
+      type: 'تلبيسة',
+      material: 'Zirconia',
+      tooth: '#26',
+      dueDate: '29-03-2026',
+      priority: LabOrderPriority.medium,
+      statusVariant: LabOrderBadgeVariant.manufacturing,
+      statusKey: 'labOrdersFilterManufacturing',
+    ),
+    LabOrderItem(
+      orderId: 'LAB-039',
+      patientName: '—',
+      doctorName: 'د. أحمد أ',
+      type: 'جسر',
+      material: 'PFM',
+      tooth: '#34-36',
+      dueDate: '31-03-2026',
+      priority: LabOrderPriority.medium,
+      statusVariant: LabOrderBadgeVariant.ready,
+      statusKey: 'labOrdersFilterReady',
     ),
   ];
 

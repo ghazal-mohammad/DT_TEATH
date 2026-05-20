@@ -3,13 +3,12 @@
 //
 // إعداد Dio الرئيسي مع Interceptors:
 //   - إضافة Token تلقائياً لكل طلب.
-//   - معالجة الأخطاء ورفعها كـ Failure.
-//   - Logging (مطفأ في Production).
-//
-// القرار 6: Dio بدل http/Retrofit.
+//   - معالجة الأخطاء.
+//   - Logging مفصّل في وضع التطوير (Chrome Console).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../constants/app_urls.dart';
@@ -29,14 +28,15 @@ class DioClient {
         connectTimeout: AppUrls.connectTimeout,
         receiveTimeout: AppUrls.receiveTimeout,
         sendTimeout: AppUrls.sendTimeout,
+        // Accept فقط — Content-Type يضعه Dio تلقائياً حسب نوع الـ body
+        // (multipart لـ FormData، application/json لـ Map).
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       ),
     );
 
-    // ── Interceptor: إضافة Token تلقائياً ────────────────────────────────
+    // ── Interceptor 1: إضافة Token تلقائياً ──────────────────────────────
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -55,6 +55,21 @@ class DioClient {
         },
       ),
     );
+
+    // ── Interceptor 2: Logging — في وضع التطوير فقط ──────────────────────
+    if (kDebugMode && AppUrls.current == Environment.development) {
+      dio.interceptors.add(
+        LogInterceptor(
+          request: true,
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: false,
+          responseBody: true,
+          error: true,
+          logPrint: (line) => debugPrint('[Dio] $line'),
+        ),
+      );
+    }
 
     return dio;
   }

@@ -358,7 +358,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'آخر تحديث: اليوم — جميع الأنظمة تعمل بشكل طبيعي';
 
   @override
-  String get roleLabManager => 'مدير المخبر';
+  String get roleLabManager => 'رئيس المخبر';
 
   @override
   String get roleWarehouseManager => 'مدير المستودع';

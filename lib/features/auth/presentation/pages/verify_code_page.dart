@@ -109,13 +109,18 @@ class _VerifyCodePageState extends State<VerifyCodePage>
       _hasError  = false;
       _errMsg    = null;
     });
-    await Future<void>.delayed(const Duration(milliseconds: 1000));
+    // الباك ما عندو endpoint منفصل للتحقق من الكود — التحقق بيصير ضمن setPassword.
+    // فبس نمرّر الكود للشاشة التالية.
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     setState(() => _verifying = false);
 
     await _entryCtrl.reverse();
     if (!mounted) return;
-    context.go(RouteNames.authSetPassword, extra: widget.email);
+    context.go(
+      RouteNames.authSetPassword,
+      extra: {'email': widget.email, 'code': _code},
+    );
   }
 
   void _resend() {
@@ -196,36 +201,43 @@ class _VerifyCodePageState extends State<VerifyCodePage>
           Positioned(
             left: 0, right: W * 0.67,
             top: 0, bottom: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.space3XL + AppSizes.spaceMD,
-                vertical:   AppSizes.space3XL + AppSizes.spaceMD,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 340),
-                    child: _FormContent(
-                      otpKey: _otpKey,
-                      email: widget.email,
-                      code: _code,
-                      verifying: _verifying,
-                      hasError: _hasError,
-                      errMsg: _errMsg,
-                      secs: _secs,
-                      isMobile: false,
-                      entryCtrl: _entryCtrl,
-                      onCodeChanged: (v) => setState(() {
-                        _code = v;
-                        if (_hasError) _hasError = false;
-                      }),
-                      onVerify: _verify,
-                      onResend: _resend,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.space3XL + AppSizes.spaceMD,
+                    vertical: AppSizes.space3XL + AppSizes.spaceMD,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 340),
+                          child: _FormContent(
+                            otpKey: _otpKey,
+                            email: widget.email,
+                            code: _code,
+                            verifying: _verifying,
+                            hasError: _hasError,
+                            errMsg: _errMsg,
+                            secs: _secs,
+                            isMobile: false,
+                            entryCtrl: _entryCtrl,
+                            onCodeChanged: (v) => setState(() {
+                              _code = v;
+                              if (_hasError) _hasError = false;
+                            }),
+                            onVerify: _verify,
+                            onResend: _resend,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ),
         ],

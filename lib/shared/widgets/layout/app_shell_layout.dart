@@ -108,6 +108,7 @@ class AppShellLayout extends StatelessWidget {
     this.onSearchChanged,
     this.searchPlaceholder,
     this.contentPadding,
+    this.showThemeToggle = true,
   });
 
   /// النظام الحالي — يحدد ألوان الـ active state وشارة السايدبار.
@@ -145,6 +146,10 @@ class AppShellLayout extends StatelessWidget {
 
   /// padding داخلي للمحتوى. الافتراضي = 22px (مطابق لـ .ct في HTML).
   final EdgeInsetsGeometry? contentPadding;
+
+  /// إظهار زر تبديل الثيم (Light/Dark) في التوب بار. الافتراضي true.
+  /// نمرّر false من الصفحات اللي تصميمها المرجعي ما فيه زر التبديل.
+  final bool showThemeToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -297,8 +302,8 @@ class AppShellLayout extends StatelessWidget {
       notificationCount: notificationCount,
       onMenuTap: isMobile ? onMenuTap : null,
       showMenuButton: isMobile,
-      onThemeToggle: onThemeToggle,
-      currentThemeMode: currentTheme,
+      onThemeToggle: showThemeToggle ? onThemeToggle : null,
+      currentThemeMode: showThemeToggle ? currentTheme : null,
       onNotificationTap: onNotificationTap,
       onProfileTap: onProfileTap,
     );

@@ -24,6 +24,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/auth/auth_models.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -31,6 +33,7 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
+import '../bloc/login_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
 import '../widgets/auth_layout_painters.dart';
 import '../widgets/auth_page_transition.dart';
@@ -60,6 +63,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool _loading  = false;
   bool _obscure  = true;
   String? _error;
+
+  final LoginCubit _cubit = sl<LoginCubit>();
 
   @override
   void initState() {
@@ -98,14 +103,40 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
     setState(() { _error = null; _loading = true; });
 
-    // Mock — يُستبدل بـ AuthBloc عند توفّر الـ Backend
-    await Future<void>.delayed(const Duration(milliseconds: 900));
+    await _cubit.login(email: email, password: pass);
     if (!mounted) return;
+
+    final state = _cubit.state;
     setState(() => _loading = false);
 
-    await _entryCtrl.reverse();
-    if (!mounted) return;
-    context.go(RouteNames.systemSelection);
+    if (state.status == LoginStatus.success) {
+      // 🔍 DEBUG: نطبع المستخدم لنشوف الـ role الفعلي.
+      // ignore: avoid_print
+      print('[DT.Teeth][login] user=${state.user} role=${state.user?.role}');
+
+      await _entryCtrl.reverse();
+      if (!mounted) return;
+      context.go(_dashboardForRole(state.user?.role));
+    } else {
+      setState(() => _error = state.errorMessage ?? (isAr
+          ? 'فشل تسجيل الدخول'
+          : 'Login failed'));
+    }
+  }
+
+  /// يحدّد لوحة التحكم المناسبة حسب دور الموظف.
+  /// إذا unknown/null → Lab Dashboard كـ fallback (المستخدم عندو توكن صالح).
+  String _dashboardForRole(EmployeeRole? role) {
+    switch (role) {
+      case EmployeeRole.labManager:
+        return RouteNames.labDashboard;
+      case EmployeeRole.warehouseManager:
+        return RouteNames.warehouseDashboard;
+      case EmployeeRole.admin:
+        return RouteNames.systemSelection;
+      default:
+        return RouteNames.labDashboard;
+    }
   }
 
   @override
@@ -356,30 +387,37 @@ class _FormSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.space3XL + AppSizes.spaceMD,
-        vertical:   AppSizes.space3XL + AppSizes.spaceMD,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 340),
-            child: _FormContent(
-              emailCtrl: emailCtrl,
-              passCtrl:  passCtrl,
-              obscure:   obscure,
-              loading:   loading,
-              error:     error,
-              isMobile:  false,
-              entryCtrl: entryCtrl,
-              onToggleObscure: onToggleObscure,
-              onSubmit: onSubmit,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.space3XL + AppSizes.spaceMD,
+            vertical: AppSizes.space3XL + AppSizes.spaceMD,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 340),
+                  child: _FormContent(
+                    emailCtrl: emailCtrl,
+                    passCtrl:  passCtrl,
+                    obscure:   obscure,
+                    loading:   loading,
+                    error:     error,
+                    isMobile:  false,
+                    entryCtrl: entryCtrl,
+                    onToggleObscure: onToggleObscure,
+                    onSubmit: onSubmit,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -544,6 +582,7 @@ class _FormContent extends StatelessWidget {
                 icon: Icons.alternate_email_rounded,
                 dark: isMobile,
                 keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.username],
               ),
             ],
           ),
@@ -568,6 +607,7 @@ class _FormContent extends StatelessWidget {
                 dark: isMobile,
                 obscureText: obscure,
                 onSubmitted: (_) => onSubmit(),
+                autofillHints: const [AutofillHints.password],
                 suffix: GestureDetector(
                   onTap: onToggleObscure,
                   child: Padding(
@@ -652,6 +692,7 @@ class _InputField extends StatelessWidget {
     this.keyboardType,
     this.onSubmitted,
     this.suffix,
+    this.autofillHints,
   });
 
   final TextEditingController controller;
@@ -662,6 +703,7 @@ class _InputField extends StatelessWidget {
   final TextInputType? keyboardType;
   final ValueChanged<String>? onSubmitted;
   final Widget? suffix;
+  final Iterable<String>? autofillHints;
 
   @override
   Widget build(BuildContext context) {
@@ -696,6 +738,9 @@ class _InputField extends StatelessWidget {
               keyboardType: keyboardType,
               textDirection: TextDirection.ltr,
               onSubmitted: onSubmitted,
+              autofillHints: autofillHints,
+              autocorrect: false,
+              enableSuggestions: false,
               style: AppTextStyles.authFieldInput.copyWith(
                 color: dark
                     ? AppColors.authFormTextMobile()

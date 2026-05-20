@@ -117,6 +117,7 @@ class AppDataTable<T> extends StatefulWidget {
     this.emptyIcon = Icons.inbox_outlined,
     this.onRowTap,
     this.rowHeight,
+    this.headerBackground,
   });
 
   final List<T> data;
@@ -126,6 +127,10 @@ class AppDataTable<T> extends StatefulWidget {
   final IconData emptyIcon;
   final ValueChanged<T>? onRowTap;
   final double? rowHeight;
+
+  /// لون خلفية صف الـ header. الافتراضي = cyan خفيف جداً.
+  /// تمرير لون مخصص يسمح بمطابقة التصاميم اللي تستخدم header ملوّن واضح.
+  final Color? headerBackground;
 
   @override
   State<AppDataTable<T>> createState() => _AppDataTableState<T>();
@@ -209,7 +214,8 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0x0F9EFBEC), // rgba(158,251,236,0.06)
+        color: widget.headerBackground ??
+            const Color(0x0F9EFBEC), // rgba(158,251,236,0.06) default
         border: Border(
           bottom: BorderSide(
             color: isLight ? AppColors.lightBorder : AppColors.darkBorder,

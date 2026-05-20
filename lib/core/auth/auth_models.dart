@@ -1,214 +1,135 @@
 // ════════════════════════════════════════════════════════════════════════════
 // auth_models.dart
 //
-// النماذج المستخدمة في Auth flow (Phase 3).
-// مستقلة عن الـ BLoC — يمكن استخدامها في repositories + state + UI.
+// نماذج Auth الفعلية المطابقة لـ response باك Laravel
+// (App\Http\Controllers\Auth\EmployeeAuthController).
 //
-// الـ Models:
-//   - UserRole    → دور المستخدم (lab/warehouse)
-//   - AuthUser    → بيانات المستخدم بعد تسجيل الدخول
-//   - AuthSession → الـ tokens + معلومات الجلسة
-//
-// ملاحظة: هذه models بسيطة (بدون Freezed حالياً).
-// لو تعقّدت البنية لاحقاً، نحوّلها إلى Freezed classes للـ immutability.
-//
-// المرجع:
-//   - القرار 5 (الأدوار) في الملف التقني
-//   - API Contract في API_CONTRACT_AUTH.md
+// شكل response الـ login:
+// {
+//   "message": "Login successful.",
+//   "user": {
+//     "id": 1,
+//     "name": "Sara Warehouse",
+//     "email": "sara.warehouse@clinic.com",
+//     "role": "Warehouse Manager",   // label من PHP enum
+//     "is_active": true,
+//     "token": "7|abc...",
+//     "token_type": "Bearer"
+//   }
+// }
 // ════════════════════════════════════════════════════════════════════════════
 
-import '../../shared/widgets/core/app_system_type.dart';
+import '../../shared/bloc/mock_system_cubit.dart';
 
-/// أدوار المستخدمين المدعومة في التطبيق.
-///
-/// الدور يُحدّد من الباك-اند بناءً على الإيميل الذي سجّله المدير.
-/// لا يمكن تغييره من الفرونت — هو صلاحية ثابتة.
-enum UserRole {
-  /// مدير المخبر — وصول كامل لنظام المخبر.
-  labManager('lab_manager'),
+// ══════════════════════════════════════════════════════════════════════════
+//                            EMPLOYEE ROLE
+// ══════════════════════════════════════════════════════════════════════════
 
-  /// مدير المستودع — وصول كامل لنظام المستودع.
-  warehouseManager('warehouse_manager'),
+/// أدوار الموظفين المعروفة (مطابقة لـ labels من PHP enum في الباك).
+enum EmployeeRole {
+  labManager,
+  warehouseManager,
+  admin,
+  secretary,
+  dentist,
+  unknown;
 
-  /// المدير العام — وصول للنظامين + لوحة إدارة.
-  admin('admin'),
-
-  /// طبيب أسنان — ينشئ طلبات مخبر.
-  dentist('dentist'),
-
-  /// السكرتيرة — تدير المواعيد.
-  secretary('secretary');
-
-  const UserRole(this.apiValue);
-
-  /// القيمة كما ترسلها الـ API (snake_case).
-  final String apiValue;
-
-  /// تحويل من string (response الـ API) إلى enum.
+  /// تحويل قيمة `role` من response الباك إلى enum.
   ///
-  /// إذا كان الدور غير معروف، يرمي [StateError] بدل null
-  /// (لأن دور غير معروف = خطأ برمجي يجب أن يُكتشف فوراً).
-  static UserRole fromApi(String value) {
-    return UserRole.values.firstWhere(
-      (r) => r.apiValue == value,
-      orElse: () => throw StateError('Unknown UserRole from API: $value'),
-    );
-  }
-}
-
-/// Extension يوفّر خصائص مفيدة لكل دور.
-extension UserRoleX on UserRole {
-  /// هل هذا الدور في نظام المخبر؟
-  bool get isLab => this == UserRole.labManager;
-
-  /// هل هذا الدور في نظام المستودع؟
-  bool get isWarehouse => this == UserRole.warehouseManager;
-
-  /// تحويل الدور إلى النظام الفرعي المرتبط به.
-  ///
-  /// يستخدم في routing: بعد تسجيل الدخول، نحدد dashboard الصحيح.
-  /// لو الدور admin، نرجع lab كافتراضي (يمكن للمستخدم التبديل بعدين).
-  AppSystemType toSystemType() {
-    switch (this) {
-      case UserRole.warehouseManager:
-        return AppSystemType.warehouse;
-      case UserRole.labManager:
-      case UserRole.admin:
-      case UserRole.dentist:
-      case UserRole.secretary:
-        return AppSystemType.lab;
-    }
+  /// الباك بيرجع label() من PHP enum بالعربية افتراضياً:
+  ///   "مدير المخبر" / "مدير المستودع" / "مدير النظام" / "سكرتيرة" / "طبيب أسنان"
+  /// وممكن يرجع labelEn() بالإنجليزية:
+  ///   "Lab Manager" / "Warehouse Manager" / "Administrator" / ...
+  /// كمان نتعامل مع snake_case (LAB_MANAGER) احتياطاً.
+  static EmployeeRole fromApiLabel(String? label) {
+    if (label == null) return EmployeeRole.unknown;
+    final normalized =
+        label.trim().toLowerCase().replaceAll(RegExp(r'[\s_-]+'), '');
+    return switch (normalized) {
+      // English labels
+      'labmanager' => EmployeeRole.labManager,
+      'warehousemanager' => EmployeeRole.warehouseManager,
+      'admin' || 'administrator' => EmployeeRole.admin,
+      'secretary' => EmployeeRole.secretary,
+      'dentist' || 'doctor' => EmployeeRole.dentist,
+      // Arabic labels (من PHP enum label())
+      'مديرالمخبر' => EmployeeRole.labManager,
+      'مديرالمستودع' => EmployeeRole.warehouseManager,
+      'مديرالنظام' => EmployeeRole.admin,
+      'سكرتيرة' || 'سكرتير' => EmployeeRole.secretary,
+      'طبيبأسنان' || 'طبيب' => EmployeeRole.dentist,
+      _ => EmployeeRole.unknown,
+    };
   }
 
-  /// هل يحق لهذا الدور الدخول للنظام الفرعي المحدّد؟
-  bool canAccess(AppSystemType system) {
-    if (this == UserRole.admin) return true; // admin له كل الصلاحيات
-    return toSystemType() == system;
-  }
+  /// النظام الفرعي المرتبط بالدور (للتوجيه بعد login).
+  SystemRole toSystemRole() => switch (this) {
+        EmployeeRole.labManager => SystemRole.lab,
+        EmployeeRole.warehouseManager => SystemRole.warehouse,
+        EmployeeRole.admin => SystemRole.lab, // افتراضي للأدمن
+        _ => SystemRole.none,
+      };
+
+  /// هل هذا الدور مسموح له بدخول التطبيق؟
+  /// حالياً Lab + Warehouse + Admin فقط.
+  bool get isAuthorized =>
+      this == EmployeeRole.labManager ||
+      this == EmployeeRole.warehouseManager ||
+      this == EmployeeRole.admin;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//                            AUTH USER
+//                            EMPLOYEE USER
 // ══════════════════════════════════════════════════════════════════════════
 
-/// معلومات المستخدم المسجّل.
-///
-/// يُنشأ من استجابة `/auth/set-password` أو `/auth/login`.
-/// يُحفظ في SecureStorage مع الـ tokens.
-class AuthUser {
-  const AuthUser({
+/// بيانات الموظف المسجّل + التوكن.
+class EmployeeUser {
+  const EmployeeUser({
     required this.id,
+    required this.name,
     required this.email,
-    required this.fullName,
     required this.role,
-    this.avatarUrl,
+    required this.isActive,
+    required this.token,
+    this.tokenType = 'Bearer',
   });
 
-  /// معرّف فريد من الـ DB.
-  final String id;
-
-  /// البريد الإلكتروني (ثابت).
+  final int id;
+  final String name;
   final String email;
+  final EmployeeRole role;
+  final bool isActive;
+  final String token;
+  final String tokenType;
 
-  /// الاسم الكامل المعروض في السايدبار.
-  final String fullName;
+  /// بناء من JSON. ياخد إما الـ root response أو الـ`user` فقط.
+  factory EmployeeUser.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> u = json['user'] is Map<String, dynamic>
+        ? json['user'] as Map<String, dynamic>
+        : json;
 
-  /// دور المستخدم — يحدّد الصلاحيات والواجهة.
-  final UserRole role;
-
-  /// رابط صورة الأفاتار (اختياري).
-  final String? avatarUrl;
-
-  /// بناء من JSON (response الـ API).
-  factory AuthUser.fromJson(Map<String, dynamic> json) {
-    return AuthUser(
-      id: json['id'] as String,
-      email: json['email'] as String,
-      fullName: json['full_name'] as String,
-      role: UserRole.fromApi(json['role'] as String),
-      avatarUrl: json['avatar_url'] as String?,
+    return EmployeeUser(
+      id: (u['id'] as num).toInt(),
+      name: (u['name'] ?? '') as String,
+      email: (u['email'] ?? '') as String,
+      role: EmployeeRole.fromApiLabel(u['role'] as String?),
+      isActive: (u['is_active'] ?? true) as bool,
+      token: (u['token'] ?? '') as String,
+      tokenType: (u['token_type'] ?? 'Bearer') as String,
     );
   }
 
-  /// تحويل لـ JSON للتخزين المحلي.
   Map<String, dynamic> toJson() => {
         'id': id,
+        'name': name,
         'email': email,
-        'full_name': fullName,
-        'role': role.apiValue,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
+        'role': role.name,
+        'is_active': isActive,
+        'token': token,
+        'token_type': tokenType,
       };
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is AuthUser &&
-          other.id == id &&
-          other.email == email &&
-          other.fullName == fullName &&
-          other.role == role);
-
-  @override
-  int get hashCode => Object.hash(id, email, fullName, role);
-
-  @override
-  String toString() => 'AuthUser(id: $id, email: $email, role: $role)';
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//                          AUTH SESSION
-// ══════════════════════════════════════════════════════════════════════════
-
-/// الجلسة الكاملة = tokens + معلومات المستخدم.
-///
-/// الـ tokens تُحفظ في `FlutterSecureStorage` (مشفّرة).
-/// تُستخدم في:
-/// - Interceptor لإضافة `Authorization: Bearer <token>` لكل request.
-/// - Refresh logic عند انتهاء الـ access token.
-class AuthSession {
-  const AuthSession({
-    required this.accessToken,
-    required this.refreshToken,
-    required this.user,
-    required this.expiresAt,
-  });
-
-  /// JWT access token (قصير العمر — ~15 دقيقة).
-  final String accessToken;
-
-  /// JWT refresh token (طويل العمر — ~30 يوم).
-  final String refreshToken;
-
-  /// المستخدم الحالي.
-  final AuthUser user;
-
-  /// متى ينتهي الـ access token (UTC).
-  final DateTime expiresAt;
-
-  /// هل الـ token ما زال صالحاً؟
-  bool get isValid => DateTime.now().toUtc().isBefore(expiresAt);
-
-  /// هل يجب تجديده قريباً (أقل من دقيقة على الانتهاء)؟
-  bool get needsRefresh {
-    final remaining = expiresAt.difference(DateTime.now().toUtc());
-    return remaining.inSeconds < 60;
-  }
-
-  /// بناء من JSON (response `/auth/set-password` أو `/auth/login`).
-  factory AuthSession.fromJson(Map<String, dynamic> json) {
-    return AuthSession(
-      accessToken: json['access_token'] as String,
-      refreshToken: json['refresh_token'] as String,
-      user: AuthUser.fromJson(json['user'] as Map<String, dynamic>),
-      expiresAt: DateTime.parse(json['expires_at'] as String).toUtc(),
-    );
-  }
-
-  /// تحويل لـ JSON للتخزين في SecureStorage.
-  Map<String, dynamic> toJson() => {
-        'access_token': accessToken,
-        'refresh_token': refreshToken,
-        'user': user.toJson(),
-        'expires_at': expiresAt.toIso8601String(),
-      };
+  String toString() =>
+      'EmployeeUser(id: $id, email: $email, role: $role, active: $isActive)';
 }

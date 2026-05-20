@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -28,7 +29,7 @@ class EmailEntryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => EmailEntryCubit(),
+      create: (_) => sl<EmailEntryCubit>(),
       child: const _View(),
     );
   }
@@ -77,7 +78,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
     await _entryCtrl.reverse();
     if (!mounted) return;
     // ✅ FIX 2: استخدم context مباشرة من State (مضمون صالح ما دام mounted)
-    context.go(RouteNames.authVerifyCode, extra: email);
+    context.go(RouteNames.authVerifyCode, extra: email.trim());
   }
 
   void _submit() {
@@ -287,26 +288,33 @@ class _DesktopForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSizes.space3XL + AppSizes.spaceMD,
-        vertical: AppSizes.space3XL + AppSizes.spaceMD,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 340),
-            child: _FormContent(
-              emailCtrl: emailCtrl,
-              entryCtrl: entryCtrl,
-              isMobile: false,
-              onSubmit: onSubmit,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.space3XL + AppSizes.spaceMD,
+            vertical: AppSizes.space3XL + AppSizes.spaceMD,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 340),
+                  child: _FormContent(
+                    emailCtrl: emailCtrl,
+                    entryCtrl: entryCtrl,
+                    isMobile: false,
+                    onSubmit: onSubmit,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

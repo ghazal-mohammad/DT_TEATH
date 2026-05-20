@@ -272,10 +272,10 @@ class AppSidebar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── الدائرة الكبيرة ───────────────────────────────────────────
+        // ── الدائرة الكحلية + اللوغو الكامل (أيقونة + DT_Teeth) بداخلها ─
         Container(
-          width: 80,
-          height: 80,
+          width: 92,
+          height: 92,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
@@ -285,46 +285,30 @@ class AppSidebar extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.22),
+                color: AppColors.primary.withValues(alpha: 0.22),
                 blurRadius: 18,
                 offset: const Offset(0, 4),
               ),
             ],
             border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.30),
+              color: AppColors.primary.withValues(alpha: 0.30),
               width: 1.5,
             ),
           ),
           child: const Padding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(12),
             child: Center(
               child: AppLogo(
-                size: 52,
+                size: 68,
                 variant: AppLogoVariant.darkTheme,
-                showText: false,
+                showText: true,
                 semanticLabel: 'DT.Teeth',
               ),
             ),
           ),
         ),
-        const SizedBox(height: 10),
-        // ── اسم التطبيق تحت الدائرة ──────────────────────────────────
-        Text(
-          appName,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 15,
-            fontWeight: FontWeight.w900,
-            height: 1.1,
-            letterSpacing: 0.5,
-            color: isLight ? AppColors.primary : AppColors.darkText1,
-          ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 4),
-        // اسم النظام كـ subtitle رمادي تحت اسم التطبيق
+        const SizedBox(height: 8),
+        // اسم النظام كـ subtitle رمادي تحت اللوغو
         Text(
           system.shortLabel,
           style: TextStyle(
