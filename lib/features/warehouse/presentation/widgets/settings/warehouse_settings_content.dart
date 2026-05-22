@@ -13,7 +13,10 @@
 // المرجع: DT_Teeth_Warehouse_v6_Enhanced.html — pg-set
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
@@ -133,6 +136,27 @@ class _ProfileTabState extends State<_ProfileTab> {
   final _firstName = TextEditingController(text: 'أحمد');
   final _lastName = TextEditingController(text: 'محمود');
   final _email = TextEditingController(text: 'admin@dtteeth.com');
+  File? _avatarImage;
+
+  Future<void> _pickAvatarImage() async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+      if (!mounted) return;
+      setState(() => _avatarImage = File(picked.path));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذّر اختيار الصورة: $e')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -167,30 +191,71 @@ class _ProfileTabState extends State<_ProfileTab> {
       isLight: widget.isLight,
       child: Row(
         children: [
-          // Avatar
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.warehouseSystem, AppColors.primary],
-              ),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.warehouseSystem.withValues(alpha: 0.3),
-                width: 2,
-              ),
-            ),
-            child: const Center(
-              child: Text(
-                'أ',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+          // Avatar (tap to pick image)
+          GestureDetector(
+            onTap: _pickAvatarImage,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    gradient: _avatarImage == null
+                        ? const LinearGradient(
+                            colors: [AppColors.warehouseSystem, AppColors.primary],
+                          )
+                        : null,
+                    image: _avatarImage != null
+                        ? DecorationImage(
+                            image: FileImage(_avatarImage!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.warehouseSystem.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: _avatarImage == null
+                      ? const Center(
+                          child: Text(
+                            'أ',
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
-              ),
+                Positioned(
+                  bottom: -2,
+                  right: -2,
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: widget.isLight
+                            ? AppColors.baseComponent
+                            : AppColors.darkSurface,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt_rounded,
+                      size: 13,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 18),
@@ -239,7 +304,7 @@ class _ProfileTabState extends State<_ProfileTab> {
           // زر تغيير الصورة
           AppButton(
             label: 'تغيير الصورة',
-            onPressed: () {},
+            onPressed: _pickAvatarImage,
             variant: AppButtonVariant.secondary,
             size: AppButtonSize.small,
           ),

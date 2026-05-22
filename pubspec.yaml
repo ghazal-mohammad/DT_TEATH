@@ -51,6 +51,10 @@ dependencies:
   # --- التخزين المحلي (للغة + الثيم + إعدادات المستخدم) ---
   shared_preferences: ^2.3.5
 
+  # --- اختيار الصور (للملف الشخصي / صور الموظفين) ---
+  # يعمل على Web + Android + iOS بدون تكوين إضافي.
+  image_picker: ^1.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

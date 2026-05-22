@@ -472,14 +472,21 @@ class _TeamTable extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header row (title + add)
+          // Header row: عنوان (يمين بـ RTL) + زر إضافة (يسار بـ RTL)
           Padding(
-            padding: const EdgeInsets.fromLTRB(
+            padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSizes.spaceLG, AppSizes.spaceLG, AppSizes.spaceLG, 12),
             child: Row(
               children: [
-                _AddBtn(onTap: onAdd),
-                const Spacer(),
+                // المجموعة الأولى → start side (RIGHT in RTL) — مطابق للمحاكاة
+                const Icon(Icons.groups_outlined,
+                    size: 20, color: AppColors.primary),
+                const SizedBox(width: 8),
+                Text(
+                  'فريق المخبر',
+                  style: AppTextStyles.headlineSmall,
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -497,14 +504,9 @@ class _TeamTable extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  'فريق المخبر',
-                  style: AppTextStyles.headlineSmall,
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.groups_outlined,
-                    size: 20, color: AppColors.primary),
+                const Spacer(),
+                // الزر آخر → end side (LEFT in RTL)
+                _AddBtn(onTap: onAdd),
               ],
             ),
           ),

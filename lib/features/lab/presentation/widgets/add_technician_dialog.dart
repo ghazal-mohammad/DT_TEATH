@@ -253,26 +253,12 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
         color: const Color(0xFFE9ECFB),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 16, 22, 16),
+      padding: const EdgeInsetsDirectional.fromSTEB(22, 16, 16, 16),
       child: Row(
         children: [
-          InkWell(
-            onTap: () => Navigator.of(context).pop(),
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              width: 32,
-              height: 32,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(Icons.close_rounded, size: 18),
-            ),
-          ),
-          const Spacer(),
+          // العنوان أولاً → يظهر على اليمين بـ RTL
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'إضافة مخبري جديد',
@@ -294,6 +280,22 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                 ),
               ),
             ],
+          ),
+          const Spacer(),
+          // زر الإغلاق آخر → يظهر على اليسار بـ RTL
+          InkWell(
+            onTap: () => Navigator.of(context).pop(),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              width: 32,
+              height: 32,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(Icons.close_rounded, size: 18),
+            ),
           ),
         ],
       ),

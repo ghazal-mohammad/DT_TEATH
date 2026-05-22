@@ -11,7 +11,10 @@
 // المرجع: DT_Teeth_Lab_v12_Enhanced.html
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -51,8 +54,35 @@ class LabProfilePage extends StatelessWidget {
 //  BODY
 // ══════════════════════════════════════════════════════════════════════════
 
-class _LabProfileBody extends StatelessWidget {
+class _LabProfileBody extends StatefulWidget {
   const _LabProfileBody();
+
+  @override
+  State<_LabProfileBody> createState() => _LabProfileBodyState();
+}
+
+class _LabProfileBodyState extends State<_LabProfileBody> {
+  File? _avatarImage;
+
+  Future<void> _pickAvatarImage() async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+      if (!mounted) return;
+      setState(() => _avatarImage = File(picked.path));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذّر اختيار الصورة: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +97,11 @@ class _LabProfileBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // ── Profile Card ──────────────────────────────────────
-              _ProfileCard(isLight: isLight),
+              _ProfileCard(
+                isLight: isLight,
+                avatarImage: _avatarImage,
+                onPickAvatar: _pickAvatarImage,
+              ),
               const SizedBox(height: AppSizes.spaceLG),
 
               // ── Stats Row ─────────────────────────────────────────
@@ -89,8 +123,14 @@ class _LabProfileBody extends StatelessWidget {
 // ══════════════════════════════════════════════════════════════════════════
 
 class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({required this.isLight});
+  const _ProfileCard({
+    required this.isLight,
+    required this.avatarImage,
+    required this.onPickAvatar,
+  });
   final bool isLight;
+  final File? avatarImage;
+  final VoidCallback onPickAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -105,38 +145,85 @@ class _ProfileCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Avatar
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.secondary.withValues(alpha: 0.8),
-                  AppColors.primary,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.secondary.withValues(alpha: 0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
+          // Avatar (tap to pick image)
+          GestureDetector(
+            onTap: onPickAvatar,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 96,
+                  height: 96,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: avatarImage == null
+                        ? LinearGradient(
+                            colors: [
+                              AppColors.secondary.withValues(alpha: 0.8),
+                              AppColors.primary,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : null,
+                    image: avatarImage != null
+                        ? DecorationImage(
+                            image: FileImage(avatarImage!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.secondary.withValues(alpha: 0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: avatarImage == null
+                      ? const Center(
+                          child: Text(
+                            'ر',
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
+                // Camera badge
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
-            ),
-            child: const Center(
-              child: Text(
-                'أ',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                ),
-              ),
             ),
           ),
           const SizedBox(height: AppSizes.spaceLG),

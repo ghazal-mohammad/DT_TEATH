@@ -580,17 +580,16 @@ class _NotificationCardState extends State<_NotificationCard> {
                     // body content (وسط)
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // العنوان أولاً (يمين بـ RTL) ثم الـ Pill على يساره
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              _Pill(label: s.label, color: s.fg, bg: s.bg),
-                              const SizedBox(width: 8),
                               Flexible(
                                 child: Text(
                                   n.title,
-                                  textAlign: TextAlign.end,
+                                  textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: AppTextStyles.fontFamily,
                                     fontSize: 14,
@@ -599,12 +598,14 @@ class _NotificationCardState extends State<_NotificationCard> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(width: 8),
+                              _Pill(label: s.label, color: s.fg, bg: s.bg),
                             ],
                           ),
                           const SizedBox(height: 6),
                           Text(
                             n.description,
-                            textAlign: TextAlign.end,
+                            textAlign: TextAlign.start,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
                               fontSize: 13,
@@ -615,14 +616,14 @@ class _NotificationCardState extends State<_NotificationCard> {
                           ),
                           const SizedBox(height: 8),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                n.timeLabel,
+                                n.category,
                                 style: TextStyle(
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                   color: AppColors.lightText3,
                                 ),
                               ),
@@ -633,11 +634,11 @@ class _NotificationCardState extends State<_NotificationCard> {
                                   )),
                               const SizedBox(width: 6),
                               Text(
-                                n.category,
+                                n.timeLabel,
                                 style: TextStyle(
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.lightText3,
                                 ),
                               ),

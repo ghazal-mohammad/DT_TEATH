@@ -1,21 +1,16 @@
 // ════════════════════════════════════════════════════════════════════════════
-// lab_settings_page.dart  — Phase 5.6 ✅
+// lab_settings_page.dart  — Phase 6 ✅
 //
-// شاشة الإعدادات — مطابقة 100% لـ HTML المرجعي (pg-ls).
+// شاشة الإعدادات — مطابقة للتصميم الجديد (3 تبويبات):
+//   1) 🔒 الأمان: تغيير كلمة المرور + المصادقة الثنائية + تسجيل خروج
+//   2) 🔔 الإشعارات: تفضيلات الإشعارات + قنوات الإشعار
+//   3) ⚙️ التفضيلات: السمة + اللغة + العرض والأداء
 //
-// الهيكل:
-//   - set-layout: sidebar تبويبات (الملف / الإشعارات / عن التطبيق) + محتوى
-//   - lp1 (الملف الشخصي): Avatar دائري بـ gradient + حقلا الاسم والبريد + زر حفظ
-//   - lp2 (الإشعارات): 3 Toggles (طلبات جديدة / تنبيه عاجل / إشعار الطبيب)
-//   - lp3 (عن التطبيق): أيقونة 🧪 + اسم النظام + الإصدار
-//
-// المرجع: DT_Teeth_Lab_v12_Enhanced.html — pg-ls
+// كل الـ paddings و alignments بتستخدم Directional → آمنة بـ RTL/LTR.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/l10n/build_context_l10n.dart';
-import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -23,14 +18,12 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
-import '../../../../shared/widgets/primitives/app_button.dart';
 import '../navigation/lab_sidebar_sections.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //  PAGE
 // ══════════════════════════════════════════════════════════════════════════
 
-/// صفحة الإعدادات — نظام المخبر.
 class LabSettingsPage extends StatefulWidget {
   const LabSettingsPage({super.key});
 
@@ -39,20 +32,18 @@ class LabSettingsPage extends StatefulWidget {
 }
 
 class _LabSettingsPageState extends State<LabSettingsPage> {
-  int _selectedTab = 0; // 0=الملف 1=الإشعارات 2=عن التطبيق
+  int _selectedTab = 0; // 0=الأمان 1=الإشعارات 2=التفضيلات
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     return AppShellLayout(
       system: AppSystemType.lab,
       currentRoute: RouteNames.labSettings,
       sections: LabSidebarSections.build(context),
-      pageTitle: l10n.settings,
-      pageSubtitle: l10n.labTopbarSubtitle,
+      pageTitle: 'الإعدادات',
+      pageSubtitle: null,
       userName: MockUserData.labUserName,
-      userRole: l10n.roleLabManager,
+      userRole: 'رئيس المخبر',
       body: _LabSettingsBody(
         selectedTab: _selectedTab,
         onTabChanged: (i) => setState(() => _selectedTab = i),
@@ -76,33 +67,31 @@ class _LabSettingsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final isLight = Theme.of(context).brightness == Brightness.light;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSizes.spaceLG),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 600;
+          final isWide = constraints.maxWidth > 720;
 
           if (isWide) {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Sidebar تبويبات
+                // المحتوى — يساراً (يطلع يميناً بـ RTL تلقائياً)
+                Expanded(
+                  child: _buildContent(context, isLight),
+                ),
+                const SizedBox(width: AppSizes.spaceLG),
+                // Sidebar تبويبات — يميناً (يطلع يساراً بـ RTL = للأعلى يميناً بالـ Stack)
                 SizedBox(
-                  width: 160,
+                  width: 220,
                   child: _TabNav(
                     selectedIndex: selectedTab,
                     onTap: onTabChanged,
                     isLight: isLight,
-                    l10n: l10n,
                   ),
-                ),
-                const SizedBox(width: AppSizes.spaceLG),
-                // المحتوى
-                Expanded(
-                  child: _buildContent(context, isLight, l10n),
                 ),
               ],
             );
@@ -115,11 +104,10 @@ class _LabSettingsBody extends StatelessWidget {
                 selectedIndex: selectedTab,
                 onTap: onTabChanged,
                 isLight: isLight,
-                l10n: l10n,
                 horizontal: true,
               ),
               const SizedBox(height: AppSizes.spaceLG),
-              _buildContent(context, isLight, l10n),
+              _buildContent(context, isLight),
             ],
           );
         },
@@ -127,14 +115,14 @@ class _LabSettingsBody extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isLight, AppLocalizations l10n) {
+  Widget _buildContent(BuildContext context, bool isLight) {
     switch (selectedTab) {
       case 1:
-        return _NotificationsTab(isLight: isLight, l10n: l10n);
+        return _NotificationsTab(isLight: isLight);
       case 2:
-        return _AboutTab(isLight: isLight, l10n: l10n);
+        return _PreferencesTab(isLight: isLight);
       default:
-        return _ProfileTab(isLight: isLight, l10n: l10n);
+        return _SecurityTab(isLight: isLight);
     }
   }
 }
@@ -148,61 +136,77 @@ class _TabNav extends StatelessWidget {
     required this.selectedIndex,
     required this.onTap,
     required this.isLight,
-    required this.l10n,
     this.horizontal = false,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onTap;
   final bool isLight;
-  final AppLocalizations l10n;
   final bool horizontal;
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      ('👤', l10n.labSettingsTabProfile),
-      ('🔔', l10n.labSettingsTabNotifications),
-      ('ℹ️', l10n.labSettingsTabAbout),
+    final items = const [
+      (Icons.lock_outline, 'الأمان'),
+      (Icons.notifications_none, 'الإشعارات'),
+      (Icons.tune, 'التفضيلات'),
     ];
 
-    Widget buildItem(int i, String icon, String label) {
+    Widget buildItem(int i, IconData icon, String label) {
       final isSelected = selectedIndex == i;
-      return GestureDetector(
-        onTap: () => onTap(i),
-        child: Container(
-          margin: horizontal
-              ? const EdgeInsets.only(left: AppSizes.spaceSM)
-              : const EdgeInsets.only(bottom: AppSizes.spaceSM),
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.spaceMD, vertical: AppSizes.spaceSM),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.secondary.withValues(alpha: 0.12)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-            border: isSelected
-                ? Border.all(
-                    color: AppColors.secondary.withValues(alpha: 0.3),
-                  )
-                : null,
-          ),
-          child: Row(
-            mainAxisSize: horizontal ? MainAxisSize.min : MainAxisSize.max,
-            children: [
-              Text(icon, style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: AppSizes.spaceSM),
-              Text(
-                label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => onTap(i),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            margin: horizontal
+                ? const EdgeInsetsDirectional.only(end: AppSizes.spaceSM)
+                : const EdgeInsetsDirectional.only(bottom: AppSizes.spaceSM),
+            padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 14, 12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.primary
+                  : (isLight
+                      ? AppColors.lightSurface
+                      : AppColors.darkSurface),
+              borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+              border: isSelected
+                  ? null
+                  : Border.all(
+                      color: isLight
+                          ? AppColors.lightBorder
+                          : AppColors.darkBorder,
+                    ),
+            ),
+            child: Row(
+              mainAxisSize: horizontal ? MainAxisSize.min : MainAxisSize.max,
+              children: [
+                Icon(
+                  icon,
+                  size: 18,
                   color: isSelected
-                      ? AppColors.secondary
-                      : (isLight ? AppColors.lightText2 : AppColors.darkText2),
+                      ? Colors.white
+                      : (isLight
+                          ? AppColors.lightText2
+                          : AppColors.darkText2),
                 ),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isSelected
+                        ? Colors.white
+                        : (isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -220,231 +224,481 @@ class _TabNav extends StatelessWidget {
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.spaceSM),
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
-      ),
-      child: Column(
-        children: [
-          for (int i = 0; i < items.length; i++)
-            buildItem(i, items[i].$1, items[i].$2),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (int i = 0; i < items.length; i++)
+          buildItem(i, items[i].$1, items[i].$2),
+      ],
     );
   }
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  PROFILE TAB
+//  SECURITY TAB — الأمان
 // ══════════════════════════════════════════════════════════════════════════
 
-class _ProfileTab extends StatelessWidget {
-  const _ProfileTab({required this.isLight, required this.l10n});
+class _SecurityTab extends StatefulWidget {
+  const _SecurityTab({required this.isLight});
   final bool isLight;
-  final AppLocalizations l10n;
+
+  @override
+  State<_SecurityTab> createState() => _SecurityTabState();
+}
+
+class _SecurityTabState extends State<_SecurityTab> {
+  final TextEditingController _currentPwd = TextEditingController();
+  final TextEditingController _newPwd = TextEditingController();
+  final TextEditingController _confirmPwd = TextEditingController();
+  bool _twoFA = true;
+
+  @override
+  void dispose() {
+    _currentPwd.dispose();
+    _newPwd.dispose();
+    _confirmPwd.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.spaceLG),
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'الملف الشخصي',
-            style: AppTextStyles.headlineSmall,
-          ),
-          const SizedBox(height: AppSizes.spaceLG),
-
-          // Avatar + info card
-          Container(
-            padding: const EdgeInsets.all(AppSizes.spaceLG),
-            decoration: BoxDecoration(
-              color: AppColors.secondary.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-              border: Border.all(
-                color: AppColors.secondary.withValues(alpha: 0.2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // ── 1) تغيير كلمة المرور ─────────────────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'تغيير كلمة المرور',
+          subtitle: 'يفضّل تغيير كلمة المرور كل 90 يوماً لزيادة الأمان',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _PasswordField(
+                label: 'كلمة المرور الحالية',
+                controller: _currentPwd,
+                isLight: widget.isLight,
               ),
-            ),
-            child: Row(
-              children: [
-                // Avatar دائري بـ gradient
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.dashViolet,
-                        AppColors.secondary,
-                      ],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'ر',
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 23,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppSizes.spaceMD),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'رامي الصالح',
-                      style: AppTextStyles.headlineSmall.copyWith(
-                        fontSize: 18,
-                        color: isLight
-                            ? AppColors.lightText1
-                            : AppColors.darkText1,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'رئيس المخبر · LAB-001',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: isLight
-                            ? AppColors.lightText3
-                            : AppColors.darkText3,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: AppSizes.spaceLG),
-
-          // Form fields (2 columns)
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 500;
-              final nameField = _SettingsTextField(
-                label: 'الاسم',
-                value: 'رامي الصالح',
-                isLight: isLight,
-              );
-              final emailField = _SettingsTextField(
-                label: 'البريد',
-                value: 'lab@dtteeth.com',
-                isLight: isLight,
-              );
-
-              if (isWide) {
-                return Row(
-                  children: [
-                    Expanded(child: nameField),
-                    const SizedBox(width: AppSizes.spaceLG),
-                    Expanded(child: emailField),
-                  ],
+              const SizedBox(height: AppSizes.spaceLG),
+              LayoutBuilder(builder: (ctx, c) {
+                final wide = c.maxWidth > 520;
+                final f1 = _PasswordField(
+                  label: 'كلمة المرور الجديدة',
+                  controller: _newPwd,
+                  isLight: widget.isLight,
                 );
-              }
-              return Column(
-                children: [
-                  nameField,
+                final f2 = _PasswordField(
+                  label: 'تأكيد كلمة المرور',
+                  controller: _confirmPwd,
+                  isLight: widget.isLight,
+                );
+                if (wide) {
+                  return Row(children: [
+                    Expanded(child: f1),
+                    const SizedBox(width: AppSizes.spaceLG),
+                    Expanded(child: f2),
+                  ]);
+                }
+                return Column(children: [
+                  f1,
                   const SizedBox(height: AppSizes.spaceLG),
-                  emailField,
+                  f2,
+                ]);
+              }),
+              const SizedBox(height: AppSizes.spaceLG),
+              Row(
+                children: [
+                  _PrimaryButton(
+                    label: 'تحديث كلمة المرور',
+                    icon: Icons.check_rounded,
+                    onTap: () {},
+                  ),
+                  const SizedBox(width: AppSizes.spaceSM),
+                  _SecondaryButton(
+                    label: 'إلغاء',
+                    isLight: widget.isLight,
+                    onTap: () {
+                      _currentPwd.clear();
+                      _newPwd.clear();
+                      _confirmPwd.clear();
+                    },
+                  ),
                 ],
-              );
-            },
+              ),
+            ],
           ),
+        ),
 
-          const SizedBox(height: AppSizes.spaceLG),
+        const SizedBox(height: AppSizes.spaceLG),
 
-          AppButton.primary(
-            label: l10n.save,
-            onPressed: () {},
-            size: AppButtonSize.small,
+        // ── 2) المصادقة الثنائية ─────────────────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'المصادقة الثنائية',
+          subtitle: 'حماية إضافية لحسابك عبر رمز OTP',
+          child: Column(
+            children: [
+              _ToggleRow(
+                title: 'طلب رمز OTP عند تسجيل الدخول',
+                subtitle: 'يصلك رمز عبر البريد الإلكتروني في كل مرة تدخل من جهاز جديد',
+                value: _twoFA,
+                onChanged: (v) => setState(() => _twoFA = v),
+                isLight: widget.isLight,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+
+        const SizedBox(height: AppSizes.spaceLG),
+
+        // ── 3) تسجيل الخروج من كل الأجهزة ───────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          tint: const Color(0xFFFEF2F2),
+          tintBorder: const Color(0xFFFCA5A5),
+          title: 'تسجيل الخروج من كل الأجهزة',
+          subtitle: 'إنهاء جميع الجلسات النشطة على الأجهزة الأخرى',
+          trailing: _SecondaryButton(
+            label: 'تسجيل الخروج',
+            isLight: widget.isLight,
+            danger: true,
+            onTap: () {},
+          ),
+        ),
+      ],
     );
   }
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  NOTIFICATIONS TAB
+//  NOTIFICATIONS TAB — الإشعارات
 // ══════════════════════════════════════════════════════════════════════════
 
 class _NotificationsTab extends StatefulWidget {
-  const _NotificationsTab({required this.isLight, required this.l10n});
+  const _NotificationsTab({required this.isLight});
   final bool isLight;
-  final AppLocalizations l10n;
 
   @override
   State<_NotificationsTab> createState() => _NotificationsTabState();
 }
 
 class _NotificationsTabState extends State<_NotificationsTab> {
-  bool _newOrders = true;
   bool _urgent = true;
-  bool _doctorReady = true;
+  bool _newOrders = true;
+  bool _lowStock = true;
+  bool _warehouse = true;
+  bool _team = false;
+  bool _emailSummary = true;
+  bool _sounds = false;
 
   @override
   Widget build(BuildContext context) {
+    final divider = Divider(
+      height: 1,
+      color: widget.isLight ? AppColors.lightBorder : AppColors.darkBorder,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'تفضيلات الإشعارات',
+          subtitle: 'حدد أنواع الإشعارات التي تريد استقبالها',
+          child: Column(children: [
+            _ToggleRow(
+              title: 'الطلبات العاجلة',
+              subtitle: 'الطلبات اللي يجب إنهاؤها اليوم',
+              value: _urgent,
+              onChanged: (v) => setState(() => _urgent = v),
+              isLight: widget.isLight,
+            ),
+            divider,
+            _ToggleRow(
+              title: 'طلبيات جديدة من الأطباء',
+              subtitle: 'عند وصول طلبية جديدة',
+              value: _newOrders,
+              onChanged: (v) => setState(() => _newOrders = v),
+              isLight: widget.isLight,
+            ),
+            divider,
+            _ToggleRow(
+              title: 'نقص المواد',
+              subtitle: 'عند وصول مادة للحد الأدنى',
+              value: _lowStock,
+              onChanged: (v) => setState(() => _lowStock = v),
+              isLight: widget.isLight,
+            ),
+            divider,
+            _ToggleRow(
+              title: 'تحديثات المستودع',
+              subtitle: 'حالة طلبات التوريد المرسلة',
+              value: _warehouse,
+              onChanged: (v) => setState(() => _warehouse = v),
+              isLight: widget.isLight,
+            ),
+            divider,
+            _ToggleRow(
+              title: 'تحديثات الفريق',
+              subtitle: 'إضافة أو تغيير دوام مخبري',
+              value: _team,
+              onChanged: (v) => setState(() => _team = v),
+              isLight: widget.isLight,
+            ),
+          ]),
+        ),
+
+        const SizedBox(height: AppSizes.spaceLG),
+
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'قنوات الإشعار',
+          subtitle: 'اختر أين تصلك التنبيهات',
+          child: Column(children: [
+            _ToggleRow(
+              title: 'ملخص يومي عبر البريد الإلكتروني',
+              subtitle: 'يصلك في الساعة 8:00 صباحاً كل يوم',
+              value: _emailSummary,
+              onChanged: (v) => setState(() => _emailSummary = v),
+              isLight: widget.isLight,
+            ),
+            divider,
+            _ToggleRow(
+              title: 'صوت الإشعارات داخل النظام',
+              subtitle: 'تشغيل نغمة عند وصول إشعار جديد',
+              value: _sounds,
+              onChanged: (v) => setState(() => _sounds = v),
+              isLight: widget.isLight,
+            ),
+          ]),
+        ),
+      ],
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  PREFERENCES TAB — التفضيلات
+// ══════════════════════════════════════════════════════════════════════════
+
+class _PreferencesTab extends StatefulWidget {
+  const _PreferencesTab({required this.isLight});
+  final bool isLight;
+
+  @override
+  State<_PreferencesTab> createState() => _PreferencesTabState();
+}
+
+class _PreferencesTabState extends State<_PreferencesTab> {
+  int _themeIndex = 0; // 0=auto 1=dark 2=light
+  int _langIndex = 1;  // 0=English 1=العربية
+  bool _compact = false;
+  bool _autosave = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final divider = Divider(
+      height: 1,
+      color: widget.isLight ? AppColors.lightBorder : AppColors.darkBorder,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // ── السمة ──────────────────────────────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'السمة',
+          subtitle: 'اختر مظهر النظام',
+          child: LayoutBuilder(builder: (ctx, c) {
+            final wide = c.maxWidth > 520;
+            final options = [
+              _ThemePreviewData(label: 'تلقائي', mode: _ThemeMode.auto),
+              _ThemePreviewData(label: 'داكن', mode: _ThemeMode.dark),
+              _ThemePreviewData(label: 'فاتح', mode: _ThemeMode.light),
+            ];
+            final widgets = [
+              for (int i = 0; i < options.length; i++)
+                _ThemeOption(
+                  data: options[i],
+                  selected: _themeIndex == i,
+                  onTap: () => setState(() => _themeIndex = i),
+                ),
+            ];
+            if (wide) {
+              return Row(children: [
+                for (int i = 0; i < widgets.length; i++) ...[
+                  if (i > 0) const SizedBox(width: AppSizes.spaceMD),
+                  Expanded(child: widgets[i]),
+                ],
+              ]);
+            }
+            return Column(children: [
+              for (int i = 0; i < widgets.length; i++) ...[
+                if (i > 0) const SizedBox(height: AppSizes.spaceMD),
+                widgets[i],
+              ],
+            ]);
+          }),
+        ),
+
+        const SizedBox(height: AppSizes.spaceLG),
+
+        // ── اللغة ──────────────────────────────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'اللغة',
+          subtitle: 'لغة عرض النظام',
+          child: LayoutBuilder(builder: (ctx, c) {
+            final wide = c.maxWidth > 520;
+            final widgets = [
+              _LanguageOption(
+                title: 'English',
+                badge: 'EN',
+                hint: 'LTR',
+                selected: _langIndex == 0,
+                onTap: () => setState(() => _langIndex = 0),
+                isLight: widget.isLight,
+              ),
+              _LanguageOption(
+                title: 'العربية',
+                badge: 'ع',
+                hint: 'RTL · الافتراضي',
+                selected: _langIndex == 1,
+                onTap: () => setState(() => _langIndex = 1),
+                isLight: widget.isLight,
+              ),
+            ];
+            if (wide) {
+              return Row(children: [
+                Expanded(child: widgets[0]),
+                const SizedBox(width: AppSizes.spaceMD),
+                Expanded(child: widgets[1]),
+              ]);
+            }
+            return Column(children: [
+              widgets[0],
+              const SizedBox(height: AppSizes.spaceMD),
+              widgets[1],
+            ]);
+          }),
+        ),
+
+        const SizedBox(height: AppSizes.spaceLG),
+
+        // ── العرض والأداء ──────────────────────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          title: 'العرض والأداء',
+          subtitle: null,
+          child: Column(children: [
+            _ToggleRow(
+              title: 'العرض المضغوط',
+              subtitle: 'إظهار مزيد من البيانات في الشاشة الواحدة',
+              value: _compact,
+              onChanged: (v) => setState(() => _compact = v),
+              isLight: widget.isLight,
+            ),
+            divider,
+            _ToggleRow(
+              title: 'الحفظ التلقائي',
+              subtitle: 'حفظ التعديلات تلقائياً كل دقيقة',
+              value: _autosave,
+              onChanged: (v) => setState(() => _autosave = v),
+              isLight: widget.isLight,
+            ),
+          ]),
+        ),
+      ],
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  REUSABLE — SETTING CARD
+// ══════════════════════════════════════════════════════════════════════════
+
+class _SettingCard extends StatelessWidget {
+  const _SettingCard({
+    required this.isLight,
+    required this.title,
+    this.subtitle,
+    this.child,
+    this.trailing,
+    this.tint,
+    this.tintBorder,
+  });
+
+  final bool isLight;
+  final String title;
+  final String? subtitle;
+  final Widget? child;
+  final Widget? trailing;
+  final Color? tint;
+  final Color? tintBorder;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = tint ??
+        (isLight ? AppColors.lightSurface : AppColors.darkSurface);
+    final border = tintBorder ??
+        (isLight ? AppColors.lightBorder : AppColors.darkBorder);
+
     return Container(
       padding: const EdgeInsets.all(AppSizes.spaceLG),
       decoration: BoxDecoration(
-        color: widget.isLight ? AppColors.lightSurface : AppColors.darkSurface,
+        color: bg,
         borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(
-          color: widget.isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
+        border: Border.all(color: border),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.l10n.labSettingsTabNotifications,
-            style: AppTextStyles.headlineSmall,
+          // Header: title + subtitle ← يمين (start) | trailing ← يسار (end)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle!,
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: isLight
+                              ? AppColors.lightText3
+                              : AppColors.darkText3,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (trailing != null) ...[
+                const SizedBox(width: AppSizes.spaceMD),
+                trailing!,
+              ],
+            ],
           ),
-          const SizedBox(height: AppSizes.spaceLG),
-
-          _ToggleRow(
-            title: widget.l10n.labSettingsNotifNewOrders,
-            subtitle: widget.l10n.labSettingsNotifNewOrdersDesc,
-            value: _newOrders,
-            onChanged: (v) => setState(() => _newOrders = v),
-            isLight: widget.isLight,
-          ),
-          const Divider(height: 1),
-          _ToggleRow(
-            title: widget.l10n.labSettingsNotifUrgent,
-            subtitle: widget.l10n.labSettingsNotifUrgentDesc,
-            value: _urgent,
-            onChanged: (v) => setState(() => _urgent = v),
-            isLight: widget.isLight,
-          ),
-          const Divider(height: 1),
-          _ToggleRow(
-            title: widget.l10n.labSettingsNotifDoctorReady,
-            subtitle: widget.l10n.labSettingsNotifDoctorReadyDesc,
-            value: _doctorReady,
-            onChanged: (v) => setState(() => _doctorReady = v),
-            isLight: widget.isLight,
-          ),
+          if (child != null) ...[
+            const SizedBox(height: AppSizes.spaceLG),
+            child!,
+          ],
         ],
       ),
     );
@@ -452,53 +706,7 @@ class _NotificationsTabState extends State<_NotificationsTab> {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  ABOUT TAB
-// ══════════════════════════════════════════════════════════════════════════
-
-class _AboutTab extends StatelessWidget {
-  const _AboutTab({required this.isLight, required this.l10n});
-  final bool isLight;
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          vertical: AppSizes.spaceXL, horizontal: AppSizes.spaceLG),
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
-      ),
-      child: Column(
-        children: [
-          const Text('🧪', style: TextStyle(fontSize: 34)),
-          const SizedBox(height: AppSizes.spaceMD),
-          Text(
-            l10n.labSettingsAboutTitle,
-            style: AppTextStyles.headlineSmall.copyWith(
-              fontSize: 17,
-              fontWeight: FontWeight.w900,
-              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.labSettingsAboutVersion,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//  HELPERS
+//  REUSABLE — TOGGLE ROW
 // ══════════════════════════════════════════════════════════════════════════
 
 class _ToggleRow extends StatelessWidget {
@@ -521,35 +729,46 @@ class _ToggleRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSizes.spaceMD),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color:
-                      isLight ? AppColors.lightText1 : AppColors.darkText1,
+          // النص ← start (يمين بـ RTL)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isLight
+                        ? AppColors.lightText1
+                        : AppColors.darkText1,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: isLight
-                      ? AppColors.lightText4
-                      : AppColors.darkText3,
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: isLight
+                        ? AppColors.lightText4
+                        : AppColors.darkText3,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(width: AppSizes.spaceMD),
+          // الـ Switch ← end (يسار بـ RTL)
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: AppColors.secondary,
-            activeTrackColor: AppColors.secondary.withValues(alpha: 0.3),
+            activeThumbColor: AppColors.primary,
+            activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -557,16 +776,27 @@ class _ToggleRow extends StatelessWidget {
   }
 }
 
-class _SettingsTextField extends StatelessWidget {
-  const _SettingsTextField({
+// ══════════════════════════════════════════════════════════════════════════
+//  REUSABLE — PASSWORD FIELD
+// ══════════════════════════════════════════════════════════════════════════
+
+class _PasswordField extends StatefulWidget {
+  const _PasswordField({
     required this.label,
-    required this.value,
+    required this.controller,
     required this.isLight,
   });
 
   final String label;
-  final String value;
+  final TextEditingController controller;
   final bool isLight;
+
+  @override
+  State<_PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<_PasswordField> {
+  bool _obscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -574,36 +804,408 @@ class _SettingsTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-            fontWeight: FontWeight.w600,
+          widget.label,
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: widget.isLight
+                ? AppColors.lightText2
+                : AppColors.darkText2,
           ),
         ),
         const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
-            color: isLight
-                ? AppColors.lightGlass2
-                : AppColors.darkGlass2,
+            color: widget.isLight ? Colors.white : AppColors.darkGlass2,
             borderRadius: BorderRadius.circular(AppSizes.radiusMD),
             border: Border.all(
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+              color: widget.isLight
+                  ? AppColors.lightBorder
+                  : AppColors.darkBorder,
             ),
           ),
           child: TextField(
-            controller: TextEditingController(text: value),
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+            controller: widget.controller,
+            obscureText: _obscure,
+            autofillHints: const [AutofillHints.password],
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: widget.isLight
+                  ? AppColors.lightText1
+                  : AppColors.darkText1,
             ),
-            decoration: const InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: InputDecoration(
+              hintText: '••••••••',
+              contentPadding: const EdgeInsetsDirectional.fromSTEB(
+                14, 12, 8, 12,
+              ),
               border: InputBorder.none,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscure
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  size: 18,
+                  color: widget.isLight
+                      ? AppColors.lightText3
+                      : AppColors.darkText3,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              ),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  REUSABLE — THEME OPTION
+// ══════════════════════════════════════════════════════════════════════════
+
+enum _ThemeMode { auto, dark, light }
+
+class _ThemePreviewData {
+  const _ThemePreviewData({required this.label, required this.mode});
+  final String label;
+  final _ThemeMode mode;
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.data,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final _ThemePreviewData data;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.all(AppSizes.spaceSM),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary.withValues(alpha: 0.08)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+            border: Border.all(
+              color: selected
+                  ? AppColors.primary
+                  : AppColors.lightBorder,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              // Preview swatch
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                    child: SizedBox(
+                      height: 60,
+                      width: double.infinity,
+                      child: _buildPreview(data.mode),
+                    ),
+                  ),
+                  if (selected)
+                    PositionedDirectional(
+                      top: 6,
+                      end: 6,
+                      child: Container(
+                        width: 16,
+                        height: 16,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.check_rounded,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                data.label,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.lightText1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreview(_ThemeMode mode) {
+    switch (mode) {
+      case _ThemeMode.auto:
+        // نصف فاتح / نصف داكن
+        return Row(
+          children: [
+            Expanded(
+              child: Container(color: const Color(0xFFE9ECFB)),
+            ),
+            Expanded(
+              child: Container(color: AppColors.primary),
+            ),
+            Expanded(
+              child: Container(color: const Color(0xFFE9ECFB)),
+            ),
+          ],
+        );
+      case _ThemeMode.dark:
+        return Row(
+          children: [
+            Expanded(child: Container(color: AppColors.primary)),
+            Expanded(child: Container(color: const Color(0xFF2A2D6E))),
+          ],
+        );
+      case _ThemeMode.light:
+        return Row(
+          children: [
+            Expanded(child: Container(color: const Color(0xFFE9ECFB))),
+            Expanded(child: Container(color: const Color(0xFFF8F9FF))),
+          ],
+        );
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  REUSABLE — LANGUAGE OPTION
+// ══════════════════════════════════════════════════════════════════════════
+
+class _LanguageOption extends StatelessWidget {
+  const _LanguageOption({
+    required this.title,
+    required this.badge,
+    required this.hint,
+    required this.selected,
+    required this.onTap,
+    required this.isLight,
+  });
+
+  final String title;
+  final String badge;
+  final String hint;
+  final bool selected;
+  final VoidCallback onTap;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.all(AppSizes.spaceMD),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary.withValues(alpha: 0.08)
+                : (isLight ? Colors.white : AppColors.darkSurface),
+            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+            border: Border.all(
+              color: selected ? AppColors.primary : AppColors.lightBorder,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              // Radio circle (يسار بـ RTL = end)
+              Container(
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: selected
+                        ? AppColors.primary
+                        : AppColors.lightBorder,
+                    width: 2,
+                  ),
+                  color: selected ? AppColors.primary : Colors.transparent,
+                ),
+                child: selected
+                    ? const Icon(Icons.circle, size: 6, color: Colors.white)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              // Title + hint
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      hint,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: isLight
+                            ? AppColors.lightText3
+                            : AppColors.darkText3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Badge (end)
+              Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE9ECFB),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  badge,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  REUSABLE — BUTTONS
+// ══════════════════════════════════════════════════════════════════════════
+
+class _PrimaryButton extends StatelessWidget {
+  const _PrimaryButton({
+    required this.label,
+    required this.onTap,
+    this.icon,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 11, 16, 11),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 16, color: Colors.white),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                label,
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SecondaryButton extends StatelessWidget {
+  const _SecondaryButton({
+    required this.label,
+    required this.onTap,
+    required this.isLight,
+    this.danger = false,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final bool isLight;
+  final bool danger;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = danger
+        ? const Color(0xFFDC2626)
+        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
+    final border = danger
+        ? const Color(0xFFFCA5A5)
+        : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 11, 16, 11),
+          decoration: BoxDecoration(
+            color: danger ? const Color(0xFFFEF2F2) : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+            border: Border.all(color: border),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: fg,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
