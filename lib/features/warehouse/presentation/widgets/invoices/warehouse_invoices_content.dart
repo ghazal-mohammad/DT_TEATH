@@ -1,36 +1,52 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_invoices_content.dart
 //
-// المحتوى الكامل لصفحة الفواتير — Phase 4.5 مكتملة.
+// محتوى صفحة فواتير المستودع — مطابق لـ mockup التصميم.
 //
-// 🎯 الهدف:
-//   - 3 filter chips (الكل / شراء / استخدام)
-//   - Layout بعمودين: قائمة الفواتير + ملخص الأسبوع
-//   - قائمة: تاريخ + نوع + مادة + كمية + إجمالي
-//   - ملخص الأسبوع: 3 أرقام (شراء / استخدام / خسارة)
-//   - Modal: إضافة فاتورة جديدة
+// 🎯 البنية:
+//   1. صف 4 بطاقات إحصائية (إجمالي / مدفوع / معلق / المشتريات الكلية)
+//   2. شريط تابات الحالة (الكل / مدفوعة / بانتظار) + عدّاد
+//   3. قسم الجدول: عنوان "فواتير الشراء" + زر إضافة فاتورة
+//   4. الجدول: رقم الفاتورة | المورد | التاريخ | عدد المواد | الإجمالي | الحالة
 //
-// المرجع: DT_Teeth_Warehouse_v6_Enhanced.html — pg-inv
+// ملاحظة: حالة الدفع تُحسب محلياً (heuristic) حتى يصير في backend.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import 'package:flutter/services.dart';
 
-import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
+import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
-import '../../../../../shared/widgets/forms/app_form_field.dart';
-import '../../../../../shared/widgets/forms/app_form_select.dart' show AppFormSelect, AppSelectOption;
-import '../../../../../shared/widgets/layout/app_page_action_bar.dart';
-import '../../../../../shared/widgets/primitives/app_badge.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
-import '../../../../../shared/widgets/primitives/app_filter_chip.dart';
-import '../../../../warehouse/data/mock/warehouse_pages_mock_data.dart';
+import '../../../data/mock/warehouse_pages_mock_data.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
-//                          MAIN CONTENT
+//                              FILTERS
+// ══════════════════════════════════════════════════════════════════════════
+
+enum _PaymentStatus { paid, pending }
+
+enum _InvoiceFilter { all, paid, pending }
+
+extension on _InvoiceFilter {
+  String get label => switch (this) {
+        _InvoiceFilter.all => 'الكل',
+        _InvoiceFilter.paid => 'مدفوعة',
+        _InvoiceFilter.pending => 'بانتظار',
+      };
+
+  bool matches(_PaymentStatus s) {
+    return switch (this) {
+      _InvoiceFilter.all => true,
+      _InvoiceFilter.paid => s == _PaymentStatus.paid,
+      _InvoiceFilter.pending => s == _PaymentStatus.pending,
+    };
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//                              MAIN CONTENT
 // ══════════════════════════════════════════════════════════════════════════
 
 class WarehouseInvoicesContent extends StatefulWidget {
@@ -42,614 +58,351 @@ class WarehouseInvoicesContent extends StatefulWidget {
 }
 
 class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
-  // 0=الكل، 1=شراء، 2=استخدام
-  int _filterIndex = 0;
+  _InvoiceFilter _filter = _InvoiceFilter.all;
 
-  List<WarehouseInvoiceItem> get _filtered {
-    switch (_filterIndex) {
-      case 1:
-        return WarehouseInvoicesMockData.invoices
-            .where((i) => i.type == InvoiceType.purchase)
-            .toList();
-      case 2:
-        return WarehouseInvoicesMockData.invoices
-            .where((i) => i.type == InvoiceType.usage)
-            .toList();
-      default:
-        return WarehouseInvoicesMockData.invoices;
-    }
+  /// نأخذ فواتير الشراء فقط (المُطابقة للـ mockup).
+  late final List<WarehouseInvoiceItem> _all = WarehouseInvoicesMockData
+      .invoices
+      .where((i) => i.type == InvoiceType.purchase)
+      .toList();
+
+  /// تحديد حالة الدفع محلياً — heuristic: الفواتير الأقدم مدفوعة، الأحدث معلّقة.
+  _PaymentStatus _statusOf(WarehouseInvoiceItem i) {
+    final idx = _all.indexOf(i);
+    return idx < 5 ? _PaymentStatus.paid : _PaymentStatus.pending;
   }
+
+  List<WarehouseInvoiceItem> get _filtered =>
+      _all.where((i) => _filter.matches(_statusOf(i))).toList();
+
+  int _countStatus(_PaymentStatus s) =>
+      _all.where((i) => _statusOf(i) == s).length;
+
+  double _sumWhere(bool Function(WarehouseInvoiceItem) test) =>
+      _all.where(test).fold<double>(0, (acc, i) => acc + i.total);
 
   @override
   Widget build(BuildContext context) {
-    const double sideWidth = 260;
-    final bool isWide = MediaQuery.sizeOf(context).width >= 1000;
-
+    final isLight = Theme.of(context).brightness == Brightness.light;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Toolbar ─────────────────────────────────────────────────
-        AppPageActionBar(
-          filter: _buildFilterChips(context),
-          actions: [
-            AppButton(
-              label: '+ ${context.l10n.whInvoiceAdd}',
-              onPressed: () => _showAddInvoiceDialog(context),
-              variant: AppButtonVariant.primary,
-              size: AppButtonSize.small,
-            ),
-          ],
+        _StatsRow(
+          isLight: isLight,
+          totalCount: _all.length,
+          paidSum: _sumWhere((i) => _statusOf(i) == _PaymentStatus.paid),
+          pendingSum: _sumWhere((i) => _statusOf(i) == _PaymentStatus.pending),
+          purchasesSum: _all.fold<double>(0, (acc, i) => acc + i.total),
         ),
-
-        // ── Main Layout ──────────────────────────────────────────────
-        if (isWide)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: _buildInvoicesList(context)),
-              const SizedBox(width: 16),
-              SizedBox(
-                width: sideWidth,
-                child: _buildWeeklySummary(context),
-              ),
-            ],
-          )
-        else
-          Column(
-            children: [
-              _buildInvoicesList(context),
-              const SizedBox(height: 16),
-              _buildWeeklySummary(context),
-            ],
-          ),
+        const SizedBox(height: 14),
+        _buildTabsRow(isLight),
+        const SizedBox(height: 14),
+        _buildTableSection(isLight),
       ],
     );
   }
 
-  // ────────────────────────────────────────────────────────────────────────
-  //                          FILTER CHIPS
-  // ────────────────────────────────────────────────────────────────────────
-
-  Widget _buildFilterChips(BuildContext context) {
-    final labels = [
-      context.l10n.whFilterAll,
-      context.l10n.whInvoiceFilterPurchase,
-      context.l10n.whInvoiceFilterUsage,
-    ];
-
-    return AppFilterChipRow(
-      options: labels,
-      selectedIndex: _filterIndex,
-      onChanged: (i) => setState(() => _filterIndex = i),
+  Widget _buildTabsRow(bool isLight) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: _InvoiceFilter.values.map((f) {
+              final n = switch (f) {
+                _InvoiceFilter.all => _all.length,
+                _InvoiceFilter.paid => _countStatus(_PaymentStatus.paid),
+                _InvoiceFilter.pending => _countStatus(_PaymentStatus.pending),
+              };
+              return _PillChip(
+                label: '${f.label}  $n',
+                selected: f == _filter,
+                onTap: () => setState(() => _filter = f),
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          '${_filtered.length} فاتورة من أصل ${_all.length}',
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 12,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+          ),
+        ),
+      ],
     );
   }
 
-  // ────────────────────────────────────────────────────────────────────────
-  //                          INVOICES LIST
-  // ────────────────────────────────────────────────────────────────────────
-
-  Widget _buildInvoicesList(BuildContext context) {
-    final invoices = _filtered;
-    final isLight = Theme.of(context).brightness == Brightness.light;
-
-    if (invoices.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48),
-        child: AppEmptyState(
-          icon: Icons.receipt_long_outlined,
-          title: context.l10n.emptyNoInvoicesTitle,
-          message: context.l10n.emptyNoInvoicesMessage,
-          actionLabel: context.l10n.whInvoiceAdd,
-          onActionTap: () => _showAddInvoiceDialog(context),
-        ),
-      );
-    }
-
+  Widget _buildTableSection(bool isLight) {
     return Container(
       decoration: BoxDecoration(
         color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(
           color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildTableHeader(context, isLight),
-          ...invoices.map((inv) => _buildInvoiceRow(context, inv, isLight)),
+          _buildHeader(isLight),
+          Divider(
+            height: 1,
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+          ),
+          if (_filtered.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 36),
+              child: AppEmptyState(
+                icon: Icons.receipt_long_outlined,
+                title: 'لا توجد فواتير',
+                message: 'لا يوجد فواتير تطابق الفلتر الحالي',
+              ),
+            )
+          else
+            _buildTable(isLight),
         ],
       ),
     );
   }
 
-  Widget _buildTableHeader(BuildContext context, bool isLight) {
-    final style = TextStyle(
-      fontFamily: AppTextStyles.fontFamily,
-      fontSize: 11.5,
-      fontWeight: FontWeight.w700,
-      color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-      letterSpacing: 0.8,
-    );
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isLight ? const Color(0x1ABED8FA) : const Color(0x0F9EFBEC),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppSizes.radiusMD),
-          topRight: Radius.circular(AppSizes.radiusMD),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-        child: Row(
-          children: [
-            Expanded(flex: 2, child: Text('التاريخ', style: style)),
-            Expanded(flex: 1, child: Text('النوع', style: style)),
-            Expanded(flex: 3, child: Text(context.l10n.whMaterialName, style: style)),
-            Expanded(flex: 1, child: Text(context.l10n.whMaterialQuantity, style: style)),
-            Expanded(flex: 2, child: Text('الإجمالي', style: style, textAlign: TextAlign.left)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInvoiceRow(
-      BuildContext context, WarehouseInvoiceItem inv, bool isLight) {
-    final borderColor =
-        isLight ? AppColors.lightBorder : AppColors.darkBorder;
-    final textStyle = TextStyle(
-      fontFamily: AppTextStyles.fontFamily,
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-    );
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: borderColor, width: 0.5)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+  Widget _buildHeader(bool isLight) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
       child: Row(
         children: [
-          // التاريخ
-          Expanded(
-            flex: 2,
-            child: Text(
-              inv.date,
-              style: textStyle.copyWith(
-                fontSize: 13,
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-              ),
-            ),
-          ),
-
-          // النوع
-          Expanded(
-            flex: 1,
-            child: AppBadge(
-              text: inv.type == InvoiceType.purchase
-                  ? context.l10n.whInvoiceFilterPurchase
-                  : context.l10n.whInvoiceFilterUsage,
-              variant: inv.type == InvoiceType.purchase
-                  ? AppBadgeVariant.cyan
-                  : AppBadgeVariant.violet,
-            ),
-          ),
-
-          // المادة
-          Expanded(
-            flex: 3,
-            child: Text(inv.materialName, style: textStyle),
-          ),
-
-          // الكمية
-          Expanded(
-            flex: 1,
-            child: Text(
-              '${inv.quantity} ${inv.unit}',
-              style: textStyle.copyWith(fontSize: 13),
-            ),
-          ),
-
-          // الإجمالي
-          Expanded(
-            flex: 2,
-            child: Text(
-              '${_formatNumber(inv.total)} ل.ل.',
-              style: textStyle.copyWith(
-                fontWeight: FontWeight.w800,
-                color: inv.type == InvoiceType.purchase
-                    ? AppColors.dashCyan
-                    : AppColors.dashGreen,
-              ),
-              textAlign: TextAlign.left,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ────────────────────────────────────────────────────────────────────────
-  //                          WEEKLY SUMMARY
-  // ────────────────────────────────────────────────────────────────────────
-
-  Widget _buildWeeklySummary(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
-      ),
-      padding: const EdgeInsets.all(AppSizes.spaceLG),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // عنوان
+          const Icon(Icons.receipt_long_outlined,
+              size: 18, color: AppColors.primary),
+          const SizedBox(width: 6),
           Text(
-            context.l10n.whInvoiceWeekSummary,
+            'فواتير الشراء',
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
               color: isLight ? AppColors.lightText1 : AppColors.darkText1,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            context.l10n.whInvoiceWeekly,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12,
-              color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // إجمالي شراء
-          _summaryRow(
-            context,
-            label: context.l10n.whInvoiceTotalPurchase,
-            value: _formatNumber(WarehouseInvoicesMockData.weeklyPurchaseTotal),
-            color: AppColors.dashCyan,
-            icon: Icons.shopping_cart_outlined,
-            isLight: isLight,
-          ),
-          const SizedBox(height: 16),
-
-          // إجمالي استخدام
-          _summaryRow(
-            context,
-            label: context.l10n.whInvoiceTotalUsage,
-            value: _formatNumber(WarehouseInvoicesMockData.weeklyUsageTotal),
-            color: AppColors.dashGreen,
-            icon: Icons.medical_services_outlined,
-            isLight: isLight,
-          ),
-          const SizedBox(height: 16),
-
-          // خسارة
-          _summaryRow(
-            context,
-            label: context.l10n.whInvoiceTotalLoss,
-            value: _formatNumber(WarehouseInvoicesMockData.weeklyLossTotal),
-            color: AppColors.dashPink,
-            icon: Icons.warning_amber_outlined,
-            isLight: isLight,
-          ),
-
-          const SizedBox(height: 20),
-
-          // زر تصدير PDF
+          const SizedBox(width: 8),
+          _CountBadge(count: _all.length),
+          const Spacer(),
           AppButton(
-            label: context.l10n.whInvoiceExportPdf,
+            label: '+ إضافة فاتورة',
             onPressed: () {},
-            variant: AppButtonVariant.secondary,
-            icon: Icons.picture_as_pdf_outlined,
-            expanded: true,
+            variant: AppButtonVariant.primary,
+            size: AppButtonSize.small,
           ),
         ],
       ),
     );
   }
 
-  Widget _summaryRow(
-    BuildContext context, {
-    required String label,
-    required String value,
-    required Color color,
-    required IconData icon,
-    required bool isLight,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: color, size: 18),
+  Widget _buildTable(bool isLight) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: MediaQuery.sizeOf(context).width - 80,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _TableHeader(isLight: isLight),
+            for (var i = 0; i < _filtered.length; i++)
+              _InvoiceDataRow(
+                invoice: _filtered[i],
+                status: _statusOf(_filtered[i]),
+                isLight: isLight,
+                isLast: i == _filtered.length - 1,
               ),
-              Text(
-                '$value ل.ل.',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
-      ],
+      ),
     );
-  }
-
-  // ────────────────────────────────────────────────────────────────────────
-  //                          ADD INVOICE DIALOG
-  // ────────────────────────────────────────────────────────────────────────
-
-  Future<void> _showAddInvoiceDialog(BuildContext context) async {
-    await showDialog<void>(
-      context: context,
-      barrierColor: Colors.black54,
-      builder: (ctx) => const _AddInvoiceDialog(),
-    );
-  }
-
-  String _formatNumber(double n) {
-    final int v = n.toInt();
-    final str = v.toString();
-    final buf = StringBuffer();
-    for (var i = 0; i < str.length; i++) {
-      if (i > 0 && (str.length - i) % 3 == 0) buf.write(',');
-      buf.write(str[i]);
-    }
-    return buf.toString();
   }
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-//  ADD INVOICE DIALOG
-// ════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
+//                          STATS ROW
+// ══════════════════════════════════════════════════════════════════════════
 
-class _AddInvoiceDialog extends StatefulWidget {
-  const _AddInvoiceDialog();
+class _StatsRow extends StatelessWidget {
+  const _StatsRow({
+    required this.isLight,
+    required this.totalCount,
+    required this.paidSum,
+    required this.pendingSum,
+    required this.purchasesSum,
+  });
 
-  @override
-  State<_AddInvoiceDialog> createState() => _AddInvoiceDialogState();
-}
-
-class _AddInvoiceDialogState extends State<_AddInvoiceDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _materialCtrl = TextEditingController();
-  final _quantityCtrl = TextEditingController();
-  final _priceCtrl = TextEditingController();
-  final _supplierCtrl = TextEditingController();
-  final _notesCtrl = TextEditingController();
-  InvoiceType _type = InvoiceType.purchase;
-  DateTime _date = DateTime.now();
-
-  @override
-  void dispose() {
-    _materialCtrl.dispose();
-    _quantityCtrl.dispose();
-    _priceCtrl.dispose();
-    _supplierCtrl.dispose();
-    _notesCtrl.dispose();
-    super.dispose();
-  }
+  final bool isLight;
+  final int totalCount;
+  final double paidSum;
+  final double pendingSum;
+  final double purchasesSum;
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
+    return LayoutBuilder(builder: (context, c) {
+      final cols = c.maxWidth >= 1080
+          ? 4
+          : c.maxWidth >= 620
+              ? 2
+              : 1;
+      return GridView.count(
+        crossAxisCount: cols,
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 14,
+        childAspectRatio: switch (cols) { 4 => 1.8, 2 => 2.4, _ => 3.2 },
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          _StatBox(
+            isLight: isLight,
+            badge: 'إجمالي',
+            badgeColor: const Color(0xFF2C7FDB),
+            valueLine: '$totalCount',
+            label: 'فاتورة هذا الشهر',
+            icon: Icons.receipt_long_outlined,
+            accent: const Color(0xFF2C7FDB),
+          ),
+          _StatBox(
+            isLight: isLight,
+            badge: 'مدفوع',
+            badgeColor: const Color(0xFF1F9B6E),
+            valueLine: _fmtMoney(paidSum),
+            label: 'إجمالي المدفوع',
+            icon: Icons.check_circle_outline_rounded,
+            accent: const Color(0xFF1F9B6E),
+          ),
+          _StatBox(
+            isLight: isLight,
+            badge: 'معلق',
+            badgeColor: const Color(0xFF7A4FCF),
+            valueLine: _fmtMoney(pendingSum),
+            label: 'بانتظار الدفع',
+            icon: Icons.access_time_rounded,
+            accent: const Color(0xFF7A4FCF),
+          ),
+          _StatBox(
+            isLight: isLight,
+            badge: '+12%',
+            badgeColor: const Color(0xFFE17B2C),
+            valueLine: _fmtMoney(purchasesSum),
+            label: 'المشتريات الكلية',
+            icon: Icons.trending_up_rounded,
+            accent: const Color(0xFFE17B2C),
+          ),
+        ],
+      );
+    });
+  }
+}
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        width: 520,
-        constraints: const BoxConstraints(maxWidth: 520, maxHeight: 650),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isLight
-                ? [AppColors.baseComponent, const Color(0xFFF5F8FF)]
-                : [AppColors.modalDarkStart, AppColors.modalDarkEnd],
-          ),
-          borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-          border: Border.all(
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 30,
-              offset: const Offset(0, 10),
-            ),
-          ],
+class _StatBox extends StatelessWidget {
+  const _StatBox({
+    required this.isLight,
+    required this.badge,
+    required this.badgeColor,
+    required this.valueLine,
+    required this.label,
+    required this.icon,
+    required this.accent,
+  });
+
+  final bool isLight;
+  final String badge;
+  final Color badgeColor;
+  final String valueLine;
+  final String label;
+  final IconData icon;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        border: Border.all(
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: IntrinsicHeight(
+        child: Row(
           children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(AppSizes.spaceLG),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'فاتورة شراء جديدة',
+            Container(width: 4, color: accent),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: badgeColor.withValues(alpha: 0.12),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusFull),
+                          ),
+                          child: Text(
+                            badge,
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w800,
+                              color: badgeColor,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          width: 32,
+                          height: 32,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(icon, size: 17, color: accent),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      valueLine,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        height: 1.05,
                         color: isLight
                             ? AppColors.lightText1
                             : AppColors.darkText1,
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color:
-                          isLight ? AppColors.lightText3 : AppColors.darkText3,
+                    const SizedBox(height: 4),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isLight
+                            ? AppColors.lightText3
+                            : AppColors.darkText3,
+                      ),
                     ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-
-            Divider(
-              height: 1,
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-            ),
-
-            // Form
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSizes.spaceLG),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      // النوع
-                      AppFormSelect<InvoiceType>(
-                        label: 'نوع الفاتورة',
-                        value: _type,
-                        options: const [
-                          AppSelectOption(
-                              value: InvoiceType.purchase, label: 'شراء'),
-                          AppSelectOption(
-                              value: InvoiceType.usage, label: 'استخدام'),
-                        ],
-                        onChanged: (v) {
-                          if (v != null) setState(() => _type = v);
-                        },
-                      ),
-                      const SizedBox(height: 14),
-
-                      // تاريخ التسليم
-                      _buildDatePicker(context, isLight),
-                      const SizedBox(height: 14),
-
-                      // المادة
-                      AppFormField(
-                        label: context.l10n.whMaterialName,
-                        hint: 'اسم المادة',
-                        controller: _materialCtrl,
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'مطلوب' : null,
-                      ),
-                      const SizedBox(height: 14),
-
-                      // الكمية والسعر
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AppFormField(
-                              label: context.l10n.whMaterialQuantity,
-                              hint: '0',
-                              controller: _quantityCtrl,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              validator: (v) =>
-                                  (v == null || v.isEmpty) ? 'مطلوب' : null,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: AppFormField(
-                              label: 'السعر (ل.ل.)',
-                              hint: '0',
-                              controller: _priceCtrl,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-
-                      // المورد (للشراء فقط)
-                      if (_type == InvoiceType.purchase) ...[
-                        AppFormField(
-                          label: context.l10n.whMaterialSupplier,
-                          hint: 'اسم المورد',
-                          controller: _supplierCtrl,
-                        ),
-                        const SizedBox(height: 14),
-                      ],
-
-                      // ملاحظات
-                      AppFormField(
-                        label: context.l10n.whMaterialNotes,
-                        hint: 'ملاحظات إضافية (اختياري)',
-                        controller: _notesCtrl,
-                        maxLines: 2,
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-              ),
-            ),
-
-            Divider(
-              height: 1,
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-            ),
-
-            // Footer
-            Padding(
-              padding: const EdgeInsets.all(AppSizes.spaceLG),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: AppButton(
-                      label: context.l10n.cancel,
-                      onPressed: () => Navigator.pop(context),
-                      variant: AppButtonVariant.secondary,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: AppButton(
-                      label: context.l10n.save,
-                      onPressed: _onSave,
-                      variant: AppButtonVariant.primary,
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
@@ -657,79 +410,314 @@ class _AddInvoiceDialogState extends State<_AddInvoiceDialog> {
       ),
     );
   }
+}
 
-  Widget _buildDatePicker(BuildContext context, bool isLight) {
-    final labelColor =
-        isLight ? AppColors.lightText3 : AppColors.darkText3;
-    final textColor =
-        isLight ? AppColors.lightText1 : AppColors.darkText1;
-    final borderColor =
-        isLight ? AppColors.lightBorder : AppColors.darkBorder;
-    final bgColor = isLight
-        ? const Color(0x0A1A1C4E)
-        : const Color(0x0AFFFFFF);
+// ══════════════════════════════════════════════════════════════════════════
+//                              TABLE
+// ══════════════════════════════════════════════════════════════════════════
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 6),
-          child: Text(
-            'تاريخ التسليم',
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: labelColor,
-            ),
+class _TableHeader extends StatelessWidget {
+  const _TableHeader({required this.isLight});
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: isLight ? const Color(0xFFF4F1FB) : AppColors.darkSurface,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      child: const Row(
+        children: [
+          Expanded(flex: 3, child: _HCell('رقم الفاتورة')),
+          Expanded(flex: 3, child: _HCell('المورد')),
+          Expanded(flex: 2, child: _HCell('التاريخ')),
+          Expanded(flex: 2, child: _HCell('عدد المواد')),
+          Expanded(flex: 3, child: _HCell('الإجمالي (ل.س)')),
+          Expanded(flex: 2, child: _HCell('الحالة')),
+        ],
+      ),
+    );
+  }
+}
+
+class _HCell extends StatelessWidget {
+  const _HCell(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        color: AppColors.lightText3,
+      ),
+    );
+  }
+}
+
+class _InvoiceDataRow extends StatelessWidget {
+  const _InvoiceDataRow({
+    required this.invoice,
+    required this.status,
+    required this.isLight,
+    required this.isLast,
+  });
+
+  final WarehouseInvoiceItem invoice;
+  final _PaymentStatus status;
+  final bool isLight;
+  final bool isLast;
+
+  String get _supplierInitial {
+    final s = invoice.supplier?.trim() ?? '';
+    if (s.isEmpty) return '?';
+    return s.characters.firstOrNull ?? '?';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final txt1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
+    final txt3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: isLast
+                ? Colors.transparent
+                : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
           ),
         ),
-        InkWell(
-          onTap: () => _pickDate(context),
-          borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-              border: Border.all(color: borderColor),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              invoice.invoiceNumber,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w800,
+                color: txt1,
+              ),
             ),
+          ),
+          Expanded(
+            flex: 3,
             child: Row(
               children: [
-                Icon(Icons.calendar_today_outlined,
-                    size: 16, color: labelColor),
+                Container(
+                  width: 26,
+                  height: 26,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Text(
+                    _supplierInitial,
+                    style: const TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
+                Flexible(
+                  child: Text(
+                    invoice.supplier ?? '—',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: txt1,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              invoice.date,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12.5,
+                color: txt3,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              invoice.quantity,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: txt1,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              _fmtMoney(invoice.total),
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: txt1,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: _PaymentPill(status: status),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PaymentPill extends StatelessWidget {
+  const _PaymentPill({required this.status});
+  final _PaymentStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final isPaid = status == _PaymentStatus.paid;
+    final color = isPaid ? const Color(0xFF1F9B6E) : const Color(0xFF7A4FCF);
+    final label = isPaid ? 'مدفوعة' : 'بانتظار الدفع';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//                              SMALL PIECES
+// ══════════════════════════════════════════════════════════════════════════
+
+class _PillChip extends StatelessWidget {
+  const _PillChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final bg = selected
+        ? AppColors.primary
+        : (isLight ? AppColors.baseComponent : AppColors.darkSurface);
+    final fg = selected
+        ? Colors.white
+        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
+    final border = selected
+        ? AppColors.primary
+        : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+          border: Border.all(color: border),
         ),
-      ],
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: fg,
+          ),
+        ),
+      ),
     );
   }
+}
 
-  Future<void> _pickDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+class _CountBadge extends StatelessWidget {
+  const _CountBadge({required this.count});
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEFE3FA),
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      ),
+      child: Text(
+        '$count',
+        style: const TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: Color(0xFF7A4FCF),
+        ),
+      ),
     );
-    if (picked != null) setState(() => _date = picked);
   }
+}
 
-  void _onSave() {
-    if (_formKey.currentState?.validate() ?? false) {
-      Navigator.pop(context);
-    }
+// ══════════════════════════════════════════════════════════════════════════
+//                              HELPERS
+// ══════════════════════════════════════════════════════════════════════════
+
+/// تنسيق رقم بفواصل الآلاف (e.g., 6110000 → "6,110,000").
+String _fmtMoney(double value) {
+  final asInt = value.round();
+  final s = asInt.toString();
+  final buffer = StringBuffer();
+  for (var i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+    buffer.write(s[i]);
   }
+  return buffer.toString();
 }

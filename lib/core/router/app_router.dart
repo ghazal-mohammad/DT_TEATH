@@ -11,6 +11,7 @@ import '../../features/auth/presentation/pages/set_password_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pages/system_selection_page.dart';
 import '../../features/auth/presentation/pages/verify_code_page.dart';
+import '../../features/auth/presentation/widgets/auth_flow_transition.dart';
 import '../../features/lab/presentation/pages/lab_pages.dart';
 import '../../features/warehouse/presentation/pages/warehouse_pages.dart';
 import '../constants/app_strings.dart';
@@ -144,7 +145,7 @@ class AppRouter {
         pageBuilder: (context, state) {
           // ✅ FIX: تحقق من نوع extra بأمان
           final email = (state.extra is String) ? state.extra as String : '';
-          return _authSlide(
+          return authFlowPage(
             key: state.pageKey,
             direction: 1,
             child: VerifyCodePage(email: email),
@@ -165,7 +166,7 @@ class AppRouter {
           } else if (extra is String) {
             email = extra; // توافق رجعي
           }
-          return _authSlide(
+          return authFlowPage(
             key: state.pageKey,
             direction: 1,
             child: SetPasswordPage(email: email, verificationCode: code),
@@ -186,7 +187,7 @@ class AppRouter {
       GoRoute(
         path: RouteNames.login,
         name: 'login',
-        pageBuilder: (context, state) => _authSlide(
+        pageBuilder: (context, state) => authFlowPage(
           key: state.pageKey,
           child: const LoginPage(),
           direction: -1,
