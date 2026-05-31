@@ -20,6 +20,7 @@ import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
 import '../../../data/mock/warehouse_pages_mock_data.dart';
+import 'warehouse_invoice_form_dialog.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //                              FILTERS
@@ -103,28 +104,21 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
   }
 
   Widget _buildTabsRow(bool isLight) {
+    final counts = <_InvoiceFilter, int>{
+      _InvoiceFilter.all: _all.length,
+      _InvoiceFilter.paid: _countStatus(_PaymentStatus.paid),
+      _InvoiceFilter.pending: _countStatus(_PaymentStatus.pending),
+    };
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: _InvoiceFilter.values.map((f) {
-              final n = switch (f) {
-                _InvoiceFilter.all => _all.length,
-                _InvoiceFilter.paid => _countStatus(_PaymentStatus.paid),
-                _InvoiceFilter.pending => _countStatus(_PaymentStatus.pending),
-              };
-              return _PillChip(
-                label: '${f.label}  $n',
-                selected: f == _filter,
-                onTap: () => setState(() => _filter = f),
-              );
-            }).toList(),
-          ),
+        _InvoiceSegmentedTabs(
+          values: _InvoiceFilter.values,
+          counts: counts,
+          selected: _filter,
+          onChanged: (v) => setState(() => _filter = v),
         ),
-        const SizedBox(width: 10),
+        const Spacer(),
         Text(
           '${_filtered.length} فاتورة من أصل ${_all.length}',
           style: TextStyle(
@@ -191,7 +185,13 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
           const Spacer(),
           AppButton(
             label: '+ إضافة فاتورة',
-            onPressed: () {},
+            onPressed: () async {
+              final added =
+                  await WarehouseInvoiceFormDialog.show(context);
+              if (added != null && mounted) {
+                setState(() => _all.insert(0, added));
+              }
+            },
             variant: AppButtonVariant.primary,
             size: AppButtonSize.small,
           ),
@@ -201,26 +201,18 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
   }
 
   Widget _buildTable(bool isLight) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: MediaQuery.sizeOf(context).width - 80,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _TableHeader(isLight: isLight),
-            for (var i = 0; i < _filtered.length; i++)
-              _InvoiceDataRow(
-                invoice: _filtered[i],
-                status: _statusOf(_filtered[i]),
-                isLight: isLight,
-                isLast: i == _filtered.length - 1,
-              ),
-          ],
-        ),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _TableHeader(isLight: isLight),
+        for (var i = 0; i < _filtered.length; i++)
+          _InvoiceDataRow(
+            invoice: _filtered[i],
+            status: _statusOf(_filtered[i]),
+            isLight: isLight,
+            isLast: i == _filtered.length - 1,
+          ),
+      ],
     );
   }
 }
@@ -333,9 +325,9 @@ class _StatBox extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
+        // RTL: أوّل child=يمين، آخر=يسار. لتثبيت stripe يسار → آخر child.
         child: Row(
           children: [
-            Container(width: 4, color: accent),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(14),
@@ -343,8 +335,20 @@ class _StatBox extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // RTL: لتثبيت icon يمين و badge يسار → [icon, Spacer, badge].
                     Row(
                       children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(icon, size: 17, color: accent),
+                        ),
+                        const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
@@ -362,17 +366,6 @@ class _StatBox extends StatelessWidget {
                               color: badgeColor,
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: accent.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(icon, size: 17, color: accent),
                         ),
                       ],
                     ),
@@ -405,6 +398,7 @@ class _StatBox extends StatelessWidget {
                 ),
               ),
             ),
+            Container(width: 4, color: accent),
           ],
         ),
       ),
@@ -423,7 +417,7 @@ class _TableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isLight ? const Color(0xFFF4F1FB) : AppColors.darkSurface,
+      color: isLight ? AppColors.tableHeader : AppColors.darkSurface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       child: const Row(
         children: [
@@ -508,8 +502,22 @@ class _InvoiceDataRow extends StatelessWidget {
           ),
           Expanded(
             flex: 3,
+            // RTL: اسم المورد يمين، avatar يسار → [Flexible(text), SizedBox, avatar].
             child: Row(
               children: [
+                Flexible(
+                  child: Text(
+                    invoice.supplier ?? '—',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: txt1,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   width: 26,
                   height: 26,
@@ -525,19 +533,6 @@ class _InvoiceDataRow extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                       color: AppColors.primary,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    invoice.supplier ?? '—',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: txt1,
                     ),
                   ),
                 ),
@@ -607,15 +602,10 @@ class _PaymentPill extends StatelessWidget {
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
+      // RTL: النص يمين، dot يسار → [Text, SizedBox, dot].
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
@@ -624,6 +614,12 @@ class _PaymentPill extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: color,
             ),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
         ],
       ),
@@ -635,48 +631,86 @@ class _PaymentPill extends StatelessWidget {
 //                              SMALL PIECES
 // ══════════════════════════════════════════════════════════════════════════
 
-class _PillChip extends StatelessWidget {
-  const _PillChip({
-    required this.label,
+// ── Filter pills (النشط dark navy + count badge داخل الكبسولة) ─────────
+class _InvoiceSegmentedTabs extends StatelessWidget {
+  const _InvoiceSegmentedTabs({
+    required this.values,
+    required this.counts,
     required this.selected,
-    required this.onTap,
+    required this.onChanged,
   });
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
+
+  final List<_InvoiceFilter> values;
+  final Map<_InvoiceFilter, int> counts;
+  final _InvoiceFilter selected;
+  final ValueChanged<_InvoiceFilter> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = selected
-        ? AppColors.primary
-        : (isLight ? AppColors.baseComponent : AppColors.darkSurface);
-    final fg = selected
-        ? Colors.white
-        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-    final border = selected
-        ? AppColors.primary
-        : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: bg,
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: values.map((v) {
+        final isActive = v == selected;
+        final bg = isActive
+            ? AppColors.primary
+            : (isLight ? const Color(0xFFF1EDE6) : AppColors.darkBg2);
+        final labelColor = isActive
+            ? Colors.white
+            : (isLight ? AppColors.lightText1 : AppColors.darkText1);
+        final countBg = isActive
+            ? Colors.white.withValues(alpha: 0.18)
+            : (isLight ? Colors.white : AppColors.darkBg1);
+        final countColor = isActive
+            ? Colors.white
+            : (isLight ? AppColors.lightText3 : AppColors.darkText3);
+        return InkWell(
+          onTap: () => onChanged(v),
           borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          border: Border.all(color: border),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w700,
-            color: fg,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.fromLTRB(6, 4, 12, 4),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: countBg,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                  ),
+                  child: Text(
+                    '${counts[v] ?? 0}',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
+                      color: countColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 7),
+                Text(
+                  v.label,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: labelColor,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }).toList(),
     );
   }
 }

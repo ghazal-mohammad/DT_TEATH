@@ -99,6 +99,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get authVerifyCodeError =>
+      'Invalid or expired code. Please try again.';
+
+  @override
   String get authResendCode => 'Resend Code';
 
   @override

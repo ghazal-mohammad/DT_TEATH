@@ -79,6 +79,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     _glowCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
+
     )..repeat();
 
     _entryCtrl = AnimationController(

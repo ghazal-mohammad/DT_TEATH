@@ -99,6 +99,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get authVerifyCodeError =>
+      'الكود غير صحيح أو منتهي الصلاحية. حاول مرة أخرى.';
+
+  @override
   String get authResendCode => 'إعادة إرسال الكود';
 
   @override
@@ -358,7 +362,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'آخر تحديث: اليوم — جميع الأنظمة تعمل بشكل طبيعي';
 
   @override
-  String get roleLabManager => 'رئيس المخبر';
+  String get roleLabManager => 'مدير المخبر';
 
   @override
   String get roleWarehouseManager => 'مدير المستودع';

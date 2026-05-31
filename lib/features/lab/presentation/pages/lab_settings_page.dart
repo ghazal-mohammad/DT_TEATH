@@ -11,6 +11,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -42,8 +43,10 @@ class _LabSettingsPageState extends State<LabSettingsPage> {
       sections: LabSidebarSections.build(context),
       pageTitle: 'الإعدادات',
       pageSubtitle: null,
+      searchPlaceholder: 'بحث في هذه الصفحة...',
       userName: MockUserData.labUserName,
-      userRole: 'رئيس المخبر',
+      userRole: context.l10n.roleLabManager,
+      notificationCount: 2,
       body: _LabSettingsBody(
         selectedTab: _selectedTab,
         onTabChanged: (i) => setState(() => _selectedTab = i),
@@ -76,15 +79,11 @@ class _LabSettingsBody extends StatelessWidget {
           final isWide = constraints.maxWidth > 720;
 
           if (isWide) {
+            // التصميم: TabNav على اليمين (بين السايدبار الرئيسي والفورم)،
+            // الفورم على اليسار. في RTL: أوّل child = يمين، فالـ TabNav أوّلاً.
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // المحتوى — يساراً (يطلع يميناً بـ RTL تلقائياً)
-                Expanded(
-                  child: _buildContent(context, isLight),
-                ),
-                const SizedBox(width: AppSizes.spaceLG),
-                // Sidebar تبويبات — يميناً (يطلع يساراً بـ RTL = للأعلى يميناً بالـ Stack)
                 SizedBox(
                   width: 220,
                   child: _TabNav(
@@ -92,6 +91,10 @@ class _LabSettingsBody extends StatelessWidget {
                     onTap: onTabChanged,
                     isLight: isLight,
                   ),
+                ),
+                const SizedBox(width: AppSizes.spaceLG),
+                Expanded(
+                  child: _buildContent(context, isLight),
                 ),
               ],
             );
@@ -305,14 +308,12 @@ class _SecurityTabState extends State<_SecurityTab> {
                 ]);
               }),
               const SizedBox(height: AppSizes.spaceLG),
+              // RTL convention: primary (تحديث) في الأقصى يسار، secondary (إلغاء) يمينه.
+              // → في الكود: primary ثم secondary بحيث Row first child = يمين بصرياً.
+              // المطلوب: primary يسار، فالـ Row يبدأ بـ primary أوّلاً يخلّيه يمين — غلط.
+              // الصحيح: secondary أوّل (يصير يمين)، primary آخر (يصير يسار).
               Row(
                 children: [
-                  _PrimaryButton(
-                    label: 'تحديث كلمة المرور',
-                    icon: Icons.check_rounded,
-                    onTap: () {},
-                  ),
-                  const SizedBox(width: AppSizes.spaceSM),
                   _SecondaryButton(
                     label: 'إلغاء',
                     isLight: widget.isLight,
@@ -321,6 +322,12 @@ class _SecurityTabState extends State<_SecurityTab> {
                       _newPwd.clear();
                       _confirmPwd.clear();
                     },
+                  ),
+                  const SizedBox(width: AppSizes.spaceSM),
+                  _PrimaryButton(
+                    label: 'تحديث كلمة المرور',
+                    icon: Icons.check_rounded,
+                    onTap: () {},
                   ),
                 ],
               ),

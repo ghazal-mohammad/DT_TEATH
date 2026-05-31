@@ -28,6 +28,21 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> verifyCode({
+    required String email,
+    required String verificationCode,
+  }) async {
+    try {
+      await _remote.verifyCode(
+        email: email,
+        verificationCode: verificationCode,
+      );
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Future<EmployeeUser> setPassword({
     required String email,
     required String verificationCode,

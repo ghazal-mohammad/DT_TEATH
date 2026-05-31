@@ -109,6 +109,7 @@ class AppShellLayout extends StatelessWidget {
     this.searchPlaceholder,
     this.contentPadding,
     this.showThemeToggle = true,
+    this.showTopbarActions = true,
   });
 
   /// النظام الحالي — يحدد ألوان الـ active state وشارة السايدبار.
@@ -150,6 +151,10 @@ class AppShellLayout extends StatelessWidget {
   /// إظهار زر تبديل الثيم (Light/Dark) في التوب بار. الافتراضي true.
   /// نمرّر false من الصفحات اللي تصميمها المرجعي ما فيه زر التبديل.
   final bool showThemeToggle;
+
+  /// إظهار أزرار الإجراءات (ثيم/إشعارات/بروفايل) بجانب حقل البحث في التوب بار.
+  /// نمرّر false في صفحة الملف الشخصي ليبقى حقل البحث وحده بلا أيقونات.
+  final bool showTopbarActions;
 
   @override
   Widget build(BuildContext context) {
@@ -302,10 +307,12 @@ class AppShellLayout extends StatelessWidget {
       notificationCount: notificationCount,
       onMenuTap: isMobile ? onMenuTap : null,
       showMenuButton: isMobile,
-      onThemeToggle: showThemeToggle ? onThemeToggle : null,
-      currentThemeMode: showThemeToggle ? currentTheme : null,
-      onNotificationTap: onNotificationTap,
-      onProfileTap: onProfileTap,
+      onThemeToggle:
+          (showTopbarActions && showThemeToggle) ? onThemeToggle : null,
+      currentThemeMode:
+          (showTopbarActions && showThemeToggle) ? currentTheme : null,
+      onNotificationTap: showTopbarActions ? onNotificationTap : null,
+      onProfileTap: showTopbarActions ? onProfileTap : null,
     );
   }
 

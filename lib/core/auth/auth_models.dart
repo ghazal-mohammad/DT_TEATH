@@ -11,7 +11,7 @@
 //     "id": 1,
 //     "name": "Sara Warehouse",
 //     "email": "sara.warehouse@clinic.com",
-//     "role": "Warehouse Manager",   // label من PHP enum
+//     "role": 6,                     // role ID رقمي (6 = مدير المستودع)
 //     "is_active": true,
 //     "token": "7|abc...",
 //     "token_type": "Bearer"
@@ -60,6 +60,32 @@ enum EmployeeRole {
       'طبيبأسنان' || 'طبيب' => EmployeeRole.dentist,
       _ => EmployeeRole.unknown,
     };
+  }
+
+  /// تحويل `role` من response الباك إلى enum عندما يرجع كـ**رقم** (role ID).
+  ///
+  /// الخريطة الرسمية من GET /api/roles:
+  ///   1=مدير النظام  2=طبيب أسنان  3=سكرتيرة  4=مريض
+  ///   5=مدير المخبر  6=مدير المستودع  7=فني  8=مساعد
+  ///
+  /// نهتم فقط بـ labManager(5) + warehouseManager(6) + admin(1) — الباقي unknown.
+  static EmployeeRole fromApiId(int id) => switch (id) {
+        1 => EmployeeRole.admin,
+        5 => EmployeeRole.labManager,
+        6 => EmployeeRole.warehouseManager,
+        _ => EmployeeRole.unknown,
+      };
+
+  /// مُحلّل آمن: الباك بيرجع `role` كرقم (مثل 5)، بس نتعامل احتياطاً مع
+  /// النص (label) ومع رقم على شكل نص ("5").
+  static EmployeeRole fromApi(Object? raw) {
+    if (raw is num) return fromApiId(raw.toInt());
+    if (raw is String) {
+      final asInt = int.tryParse(raw.trim());
+      if (asInt != null) return fromApiId(asInt);
+      return fromApiLabel(raw);
+    }
+    return EmployeeRole.unknown;
   }
 
   /// النظام الفرعي المرتبط بالدور (للتوجيه بعد login).
@@ -112,7 +138,7 @@ class EmployeeUser {
       id: (u['id'] as num).toInt(),
       name: (u['name'] ?? '') as String,
       email: (u['email'] ?? '') as String,
-      role: EmployeeRole.fromApiLabel(u['role'] as String?),
+      role: EmployeeRole.fromApi(u['role']),
       isActive: (u['is_active'] ?? true) as bool,
       token: (u['token'] ?? '') as String,
       tokenType: (u['token_type'] ?? 'Bearer') as String,

@@ -71,7 +71,10 @@ class AppFormSelect<T> extends StatelessWidget {
     final Color text1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
     final Color text2 = isLight ? AppColors.lightText2 : AppColors.darkText2;
     final Color text4 = isLight ? AppColors.lightText4 : AppColors.darkText4;
-    final Color bg2 = isLight ? AppColors.lightBg2 : AppColors.darkBg2;
+    // خلفية الـ select — رمادي فاتح نظيف.
+    final Color bg2 = isLight
+        ? const Color(0xFFF8F9FC)
+        : AppColors.darkBg2;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 11),
@@ -106,6 +109,14 @@ class AppFormSelect<T> extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 5),
+          // Theme محلي لتقوية ألوان الـ hover/focus داخل قائمة الـ dropdown.
+          Theme(
+            data: Theme.of(context).copyWith(
+              hoverColor: AppColors.tableHeader.withValues(alpha: 0.55),
+              focusColor: AppColors.tableHeader,
+              highlightColor: AppColors.tableHeader.withValues(alpha: 0.45),
+            ),
+            child:
           DropdownButtonFormField<T>(
             initialValue: value,
             onChanged: enabled ? onChanged : null,
@@ -127,7 +138,7 @@ class AppFormSelect<T> extends StatelessWidget {
               fontSize: 15,
               color: text1,
             ),
-            dropdownColor: isLight ? AppColors.lightBg1 : AppColors.darkBg1,
+            dropdownColor: isLight ? Colors.white : AppColors.darkBg1,
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
             items: options.map((opt) {
               return DropdownMenuItem<T>(
@@ -151,9 +162,9 @@ class AppFormSelect<T> extends StatelessWidget {
                 horizontal: 11, // .fs padding
                 vertical: 8,
               ),
-              border: _border(const Color(0x2E9EFBEC)), // 0.18
-              enabledBorder: _border(const Color(0x2E9EFBEC)),
-              focusedBorder: _border(AppColors.accent, width: 2),
+              border: _border(AppColors.lightBorder),
+              enabledBorder: _border(AppColors.lightBorder),
+              focusedBorder: _border(AppColors.primary, width: 1.6),
               errorBorder: _border(const Color(0xFFEF4444)),
               focusedErrorBorder: _border(
                 const Color(0xFFEF4444),
@@ -166,6 +177,7 @@ class AppFormSelect<T> extends StatelessWidget {
                 color: Color(0xFFEF4444),
               ),
             ),
+          ),
           ),
         ],
       ),

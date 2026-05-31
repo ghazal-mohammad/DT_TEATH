@@ -32,6 +32,7 @@
   "authContinue": "متابعة",
   "authVerifyCodeTitle": "تحقّق من هويتك",
   "authVerifyCodeSubtitle": "أرسلنا كوداً من 6 أرقام إلى {email}",
+  "authVerifyCodeError": "الكود غير صحيح أو منتهي الصلاحية. حاول مرة أخرى.",
   "authResendCode": "إعادة إرسال الكود",
   "authResendCodeIn": "إعادة الإرسال خلال {seconds} ثانية",
   "authCodeExpired": "انتهت صلاحية الكود. الرجاء طلب كود جديد.",
@@ -130,7 +131,7 @@
   "welcomeLab": "مرحباً بك في نظام المخبر 🧪",
   "systemStatusOk": "آخر تحديث: اليوم — جميع الأنظمة تعمل بشكل طبيعي",
 
-  "roleLabManager": "رئيس المخبر",
+  "roleLabManager": "مدير المخبر",
   "roleWarehouseManager": "مدير المستودع",
   "roleDentist": "طبيب أسنان",
   "roleSecretary": "السكرتيرة",

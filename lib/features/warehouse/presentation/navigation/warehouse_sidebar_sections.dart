@@ -6,12 +6,13 @@
 //
 // التبويبات بالترتيب:
 //   1. الصفحة الرئيسية   (warehouseDashboard)
-//   2. المواد            (warehouseMaterials)
-//   3. الطلبيات          (warehouseOrders)
-//   4. الفواتير          (warehouseInvoices)
-//   5. التقارير          (warehouseReports)
-//   6. الإشعارات         (warehouseNotifications)
-//   7. الإعدادات         (warehouseSettings)
+//   2. الملف الشخصي      (warehouseProfile)
+//   3. المواد            (warehouseMaterials)
+//   4. الطلبيات          (warehouseOrders)
+//   5. الفواتير          (warehouseInvoices)
+//   6. التقارير          (warehouseReports)
+//   7. الإشعارات         (warehouseNotifications)
+//   8. الإعدادات         (warehouseSettings)
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/widgets.dart';
@@ -43,6 +44,11 @@ class WarehouseSidebarSections {
             icon: AppIcons.dashboard,
             label: context.l10n.dashboard,
             route: RouteNames.warehouseDashboard,
+          ),
+          const SidebarItemData(
+            icon: AppIcons.profile,
+            label: 'الملف الشخصي',
+            route: RouteNames.warehouseProfile,
           ),
           SidebarItemData(
             icon: AppIcons.materials,

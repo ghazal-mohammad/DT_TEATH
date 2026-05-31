@@ -26,8 +26,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
+import '../../../../core/network/failure.dart';
 import '../../../../core/router/route_names.dart';
+import '../../domain/repositories/auth_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -59,6 +62,8 @@ class _VerifyCodePageState extends State<VerifyCodePage>
 
   late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
+
+  final AuthRepository _repo = sl<AuthRepository>();
 
   String _code = '';
   bool _verifying = false, _hasError = false;
@@ -109,9 +114,34 @@ class _VerifyCodePageState extends State<VerifyCodePage>
       _hasError  = false;
       _errMsg    = null;
     });
-    // الباك ما عندو endpoint منفصل للتحقق من الكود — التحقق بيصير ضمن setPassword.
-    // فبس نمرّر الكود للشاشة التالية.
-    await Future<void>.delayed(const Duration(milliseconds: 300));
+
+    // التحقق الفعلي من الكود عبر الباك — لازم يصير قبل setPassword وإلا
+    // الباك بيرفض تعيين كلمة المرور بـ"you have not verified your email yet".
+    try {
+      await _repo.verifyCode(
+        email: widget.email,
+        verificationCode: _code,
+      );
+    } on Failure catch (f) {
+      if (!mounted) return;
+      setState(() {
+        _verifying = false;
+        _hasError  = true;
+        _errMsg    = f.message;
+      });
+      _otpKey.currentState?.clear();
+      return;
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _verifying = false;
+        _hasError  = true;
+        _errMsg    = context.l10n.authVerifyCodeError;
+      });
+      _otpKey.currentState?.clear();
+      return;
+    }
+
     if (!mounted) return;
     setState(() => _verifying = false);
 

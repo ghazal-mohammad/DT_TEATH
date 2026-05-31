@@ -11,6 +11,13 @@ abstract class AuthRepository {
   /// إرسال كود التحقق لإيميل الموظف (للتسجيل لأول مرة).
   Future<void> sendVerification({required String email});
 
+  /// التحقق من كود البريد وتعليم الإيميل كـ"مؤكَّد".
+  /// لازم تُستدعى قبل setPassword، وإلا الباك بيرفض بـ"email not verified".
+  Future<void> verifyCode({
+    required String email,
+    required String verificationCode,
+  });
+
   /// تعيين كلمة المرور بعد التحقق من الكود.
   /// عند النجاح: يحفظ التوكن داخلياً في SecureStorage ويرجّع EmployeeUser
   /// (الباك بيرجع توكن جاهز فما في داعي يعيد المستخدم تسجيل دخول).

@@ -46,6 +46,7 @@ class RouteNames {
   // ── نظام المستودع (Warehouse) ───────────────────────────────────────────
   static const String warehouseRoot = '/warehouse';
   static const String warehouseDashboard = '/warehouse/dashboard';
+  static const String warehouseProfile = '/warehouse/profile';
   static const String warehouseMaterials = '/warehouse/materials';
   static const String warehouseOrders = '/warehouse/orders';
   static const String warehouseInvoices = '/warehouse/invoices';

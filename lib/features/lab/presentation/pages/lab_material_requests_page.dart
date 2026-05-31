@@ -309,8 +309,9 @@ class _MatRequestCardState extends State<_MatRequestCard> {
         decoration: BoxDecoration(
           color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
           borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+          // الشريط الملوّن على الحافة اليسرى البصرية (مطابق لباقي بطاقات النظام).
           border: Border(
-            right: BorderSide(color: _accentColor, width: 3),
+            left: BorderSide(color: _accentColor, width: 3),
             top: BorderSide(
               color: _hovered
                   ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
@@ -321,7 +322,7 @@ class _MatRequestCardState extends State<_MatRequestCard> {
                   ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
                   : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
             ),
-            left: BorderSide(
+            right: BorderSide(
               color: _hovered
                   ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
                   : (isLight ? AppColors.lightBorder : AppColors.darkBorder),

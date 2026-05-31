@@ -46,17 +46,25 @@ class WarehouseOrdersPage extends StatelessWidget {
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
       body: LayoutBuilder(
-        builder: (ctx, constraints) => SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(22.0),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minWidth: constraints.maxWidth,
-              maxWidth: constraints.maxWidth,
+        builder: (ctx, constraints) {
+          final controller = ScrollController();
+          return Scrollbar(
+            controller: controller,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: controller,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(22.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth,
+                  maxWidth: constraints.maxWidth,
+                ),
+                child: const WarehouseOrdersContent(),
+              ),
             ),
-            child: const WarehouseOrdersContent(),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

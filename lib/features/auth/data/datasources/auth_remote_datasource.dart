@@ -23,6 +23,21 @@ class AuthRemoteDataSource {
     return _asMap(response.data);
   }
 
+  /// POST /api/employee/verifyCode
+  Future<Map<String, dynamic>> verifyCode({
+    required String email,
+    required String verificationCode,
+  }) async {
+    final response = await _dio.post(
+      ApiEndpoints.employeeVerifyCode,
+      data: FormData.fromMap({
+        'email': email,
+        'verification_code': verificationCode,
+      }),
+    );
+    return _asMap(response.data);
+  }
+
   /// POST /api/employee/setPassword
   Future<Map<String, dynamic>> setPassword({
     required String email,

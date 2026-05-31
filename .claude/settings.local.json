@@ -13,7 +13,16 @@
       "Bash(git commit -m 'ربط Auth API + إصلاحات واجهات المخبر *)",
       "Bash(git config *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(xargs grep -l \"OrderDetails\\\\|order_details\\\\|طلبية التوريد\")",
+      "Bash(cd \"/c/Users/Asus/StudioProjects/DT_Teeth_Fixed_v5 \\(1\\)/dt_teeth_clean\" && grep -n \"LinearGradient\\\\|Color\\(0xFF\" lib/features/warehouse/presentation/widgets/dashboard/warehouse_dashboard_hero.dart | head -10)",
+      "Bash(curl -s http://localhost:8000/api/roles -H \"Accept: application/json\" -H \"Authorization: Bearer 1|KIJ277TMQtuO5n3k6mGJQ11JbTGX9XAFl2CmB2Ey781e89e5\" -w \"\\\\n[HTTP %{http_code}]\\\\n\")",
+      "Bash(flutter run *)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(echo \"exit:$?\")",
+      "Bash(mysql -h127.0.0.1 -P3306 -uroot dental_clinic -e \"SELECT u.id,u.email,u.role,u.is_active,\\(u.password IS NOT NULL\\) AS has_pw FROM users u WHERE u.role IN \\(5,6\\); SELECT '--- verification_codes ---' AS x; SELECT email,code,attempts,expires_at FROM verification_codes;\")",
+      "Bash(php artisan *)",
+      "Bash(curl -s -X POST http://localhost:8000/api/employee/sendVerification -H 'Accept: application/json' -F email=__TRACKED_VAR__ --max-time 10 -w '\\\\nHTTP:%{http_code}\\\\n')"
     ]
   }
 }

@@ -472,11 +472,10 @@ class _OrderCardState extends State<_OrderCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // ── Header: نوع + رقم ────────────────────────────
+                    // ── Header: رقم (يمين) + نوع (يسار) ─────────────
+                    // RTL: أوّل child = يمين، فالـ ID يمين والنوع يسار.
                     Row(
                       children: [
-                        _TypePill(label: o.type),
-                        const Spacer(),
                         Text(
                           o.id,
                           style: TextStyle(
@@ -486,33 +485,20 @@ class _OrderCardState extends State<_OrderCard> {
                             color: AppColors.primary,
                           ),
                         ),
+                        const Spacer(),
+                        _TypePill(label: o.type),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    // ── الطبيب + (شارة عاجل) ────────────────────────
+                    // ── الطبيب (avatar+اسم يمين) + شارة عاجل (يسار) ─
                     Row(
                       children: [
-                        if (o.isUrgent)
-                          const _UrgentPill()
-                        else
-                          const SizedBox.shrink(),
-                        const Spacer(),
-                        Text(
-                          o.doctor,
-                          style: TextStyle(
-                            fontFamily: AppTextStyles.fontFamily,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.lightText1,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
                         Container(
                           width: 28,
                           height: 28,
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE2EDFF),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE2EDFF),
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -525,20 +511,33 @@ class _OrderCardState extends State<_OrderCard> {
                             ),
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        Text(
+                          o.doctor,
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.lightText1,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (o.isUrgent) const _UrgentPill(),
                       ],
                     ),
                     const SizedBox(height: 14),
                     // ── صندوق المعلومات (المادة/السن/الموعد) ────────
                     _InfoBox(material: o.material, tooth: o.tooth, date: o.date),
                     const SizedBox(height: 14),
-                    // ── Footer: actions + status badge ──────────────
+                    // ── Footer: حالة (يمين) + عرض/معالجة (يسار) ─────
+                    // RTL convention: status badge يمين، الزر الأساسي (معالجة) يسار.
                     Row(
                       children: [
-                        _ProcessButton(onTap: widget.onProcess),
-                        const SizedBox(width: 6),
-                        _ViewButton(onTap: widget.onView),
-                        const Spacer(),
                         _StatusBadge(variant: o.statusVariant),
+                        const Spacer(),
+                        _ViewButton(onTap: widget.onView),
+                        const SizedBox(width: 6),
+                        _ProcessButton(onTap: widget.onProcess),
                       ],
                     ),
                   ],
@@ -633,13 +632,15 @@ class _InfoBox extends StatelessWidget {
         color: const Color(0xFFF8F9FC),
         borderRadius: BorderRadius.circular(12),
       ),
+      // RTL: أوّل child = يمين. الترتيب المطلوب (يمين→يسار):
+      //   [المادة] | [السن] | [الموعد]
       child: Row(
         children: [
-          Expanded(child: _cell('الموعد', date)),
+          Expanded(child: _cell('المادة', material)),
           _divider(),
           Expanded(child: _cell('السن', tooth)),
           _divider(),
-          Expanded(child: _cell('المادة', material)),
+          Expanded(child: _cell('الموعد', date)),
         ],
       ),
     );
@@ -693,15 +694,10 @@ class _StatusBadge extends StatelessWidget {
         color: c.bg,
         borderRadius: BorderRadius.circular(20),
       ),
+      // RTL: نص يمين، dot يسار → [Text, SizedBox, dot].
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: c.fg, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 6),
           Text(
             c.label,
             style: TextStyle(
@@ -710,6 +706,12 @@ class _StatusBadge extends StatelessWidget {
               fontWeight: FontWeight.w800,
               color: c.fg,
             ),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: c.fg, shape: BoxShape.circle),
           ),
         ],
       ),

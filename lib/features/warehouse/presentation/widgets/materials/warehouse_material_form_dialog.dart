@@ -31,6 +31,7 @@ import 'package:flutter/services.dart';
 import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
+import '../../../../../shared/widgets/forms/app_date_picker.dart';
 import '../../../../../shared/widgets/forms/app_form_field.dart';
 import '../../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
@@ -83,6 +84,45 @@ class _WarehouseMaterialFormDialogState
 
   MaterialCategory _category = MaterialCategory.consumables;
   DateTime? _expiryDate;
+
+  // اقتراحات أسماء المواد الشائعة — قابلة للبحث عبر Autocomplete.
+  static const _materialNameSuggestions = <String>[
+    'سيراميك زيركون',
+    'PFM Alloy',
+    'E-max Press',
+    'قفازات لاتكس',
+    'حقن بنج موضعي',
+    'أكواب بلاستيكية',
+    'مادة تشكيل',
+    'سيليكون طبع',
+    'كمامات جراحية',
+    'شاش طبي',
+    'كحول طبي',
+    'محلول معقم',
+    'إبر تخدير',
+    'خيوط جراحية',
+    'مرايا فحص',
+    'مساحيق تلميع',
+    'راتنج مركّب',
+    'أكريليك',
+    'جبس طبي',
+    'برك حشو',
+  ];
+
+  // وحدات شائعة للقائمة المنسدلة.
+  static const _unitOptions = <String>[
+    'قطعة',
+    'علبة',
+    'صندوق',
+    'كيلو',
+    'جرام',
+    'لتر',
+    'مللي',
+    'حقنة',
+    'كيس',
+    'زجاجة',
+    'لفّة',
+  ];
 
   bool get _isEditing => widget.initialMaterial != null;
 
@@ -146,16 +186,18 @@ class _WarehouseMaterialFormDialogState
 
   Future<void> _pickExpiryDate() async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: _expiryDate ?? now.add(const Duration(days: 30)),
       firstDate: now.subtract(const Duration(days: 365 * 2)),
       lastDate: now.add(const Duration(days: 365 * 10)),
+      helpText: 'تاريخ انتهاء الصلاحية',
     );
     if (picked != null && mounted) {
       setState(() => _expiryDate = picked);
     }
   }
+
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
@@ -322,11 +364,7 @@ class _WarehouseMaterialFormDialogState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppFormField(
-              label: context.l10n.whMaterialName,
-              controller: _nameCtrl,
-              validator: (v) => _requiredValidator(context, v),
-            ),
+            _buildNameAutocomplete(context, isLight),
             AppFormSelect<MaterialCategory>(
               label: context.l10n.whMaterialCategory,
               value: _category,
@@ -353,10 +391,19 @@ class _WarehouseMaterialFormDialogState
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: AppFormField(
+                  child: AppFormSelect<String>(
                     label: context.l10n.whMaterialUnit,
-                    controller: _unitCtrl,
-                    validator: (v) => _requiredValidator(context, v),
+                    value: _unitCtrl.text.isEmpty ? null : _unitCtrl.text,
+                    hint: 'اختر الوحدة',
+                    options: _unitOptions
+                        .map((u) =>
+                            AppSelectOption<String>(value: u, label: u))
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) setState(() => _unitCtrl.text = v);
+                    },
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? context.l10n.errorRequired : null,
                   ),
                 ),
               ],
@@ -399,6 +446,123 @@ class _WarehouseMaterialFormDialogState
           ],
         ),
       ),
+    );
+  }
+
+  /// حقل اسم المادة — Autocomplete بحث مع قائمة اقتراحات.
+  Widget _buildNameAutocomplete(BuildContext context, bool isLight) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          context.l10n.whMaterialName,
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 13.5,
+            fontWeight: FontWeight.w700,
+            height: 1.2,
+            color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Autocomplete<String>(
+          initialValue: TextEditingValue(text: _nameCtrl.text),
+          optionsBuilder: (TextEditingValue tev) {
+            final q = tev.text.trim();
+            if (q.isEmpty) return _materialNameSuggestions;
+            return _materialNameSuggestions
+                .where((s) => s.contains(q));
+          },
+          onSelected: (String selection) {
+            _nameCtrl.text = selection;
+          },
+          fieldViewBuilder:
+              (context, controller, focusNode, onFieldSubmitted) {
+            // مزامنة محتوى الـ controller الداخلي مع _nameCtrl.
+            controller.addListener(() {
+              if (_nameCtrl.text != controller.text) {
+                _nameCtrl.text = controller.text;
+              }
+            });
+            return TextFormField(
+              controller: controller,
+              focusNode: focusNode,
+              validator: (v) => _requiredValidator(context, v),
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 15,
+                color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                height: 1.3,
+              ),
+              decoration: InputDecoration(
+                hintText: 'اكتب أو اختر من القائمة...',
+                hintStyle: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 15,
+                  color: isLight ? AppColors.lightText4 : AppColors.darkText4,
+                ),
+                filled: true,
+                fillColor: const Color(0xFFF8F9FC),
+                suffixIcon: Icon(Icons.search,
+                    size: 18, color: AppColors.lightText3),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                  borderSide: const BorderSide(color: AppColors.lightBorder),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                  borderSide: const BorderSide(color: AppColors.lightBorder),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                  borderSide:
+                      const BorderSide(color: AppColors.primary, width: 1.6),
+                ),
+              ),
+            );
+          },
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 240, maxWidth: 420),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: options.length,
+                    itemBuilder: (context, i) {
+                      final opt = options.elementAt(i);
+                      return InkWell(
+                        onTap: () => onSelected(opt),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
+                          color: Colors.white,
+                          child: Text(
+                            opt,
+                            style: const TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 14,
+                              color: AppColors.lightText1,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 

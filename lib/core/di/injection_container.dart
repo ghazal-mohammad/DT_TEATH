@@ -21,6 +21,12 @@ import '../../features/auth/presentation/bloc/email_entry_cubit.dart';
 import '../../features/auth/presentation/bloc/login_cubit.dart';
 import '../../features/auth/presentation/bloc/set_password_cubit.dart';
 
+// ── Profile feature (مشترك: مخبر + مستودع) ─────────────────────────────────
+import '../../features/profile/data/datasources/profile_remote_datasource.dart';
+import '../../features/profile/data/repositories/profile_repository_impl.dart';
+import '../../features/profile/domain/repositories/profile_repository.dart';
+import '../../features/profile/presentation/bloc/profile_cubit.dart';
+
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
 
@@ -51,6 +57,19 @@ Future<void> initDependencies() async {
   );
   sl.registerFactory<SetPasswordCubit>(
     () => SetPasswordCubit(sl<AuthRepository>()),
+  );
+
+  // ── Profile: Data + Domain ─────────────────────────────────────────────
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(sl<ProfileRemoteDataSource>()),
+  );
+
+  // ── Profile: Cubit — Factory (instance لكل صفحة بروفايل) ───────────────
+  sl.registerFactory<ProfileCubit>(
+    () => ProfileCubit(sl<ProfileRepository>()),
   );
 }
 

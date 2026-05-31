@@ -80,7 +80,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-045',
       patientName: '—',
-      doctorName: 'د. سارة س',
+      doctorName: 'د. سارة',
       type: 'تلبيسة',
       material: 'PFM',
       tooth: '#14',
@@ -92,7 +92,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-044',
       patientName: '—',
-      doctorName: 'د. خالد خ',
+      doctorName: 'د. خالد',
       type: 'جسر',
       material: 'Zirconia',
       tooth: '#14-12',
@@ -104,7 +104,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-043',
       patientName: '—',
-      doctorName: 'د. أحمد أ',
+      doctorName: 'د. أحمد',
       type: 'تلبيسة',
       material: 'Metal',
       tooth: '#36',
@@ -116,7 +116,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-042',
       patientName: '—',
-      doctorName: 'د. سارة س',
+      doctorName: 'د. سارة',
       type: 'وجه',
       material: 'E-max',
       tooth: '#21',
@@ -128,7 +128,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-041',
       patientName: '—',
-      doctorName: 'د. ليلى ل',
+      doctorName: 'د. ليلى',
       type: 'طقم',
       material: 'Acrylic',
       tooth: '#كامل',
@@ -140,7 +140,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-040',
       patientName: '—',
-      doctorName: 'د. خالد خ',
+      doctorName: 'د. خالد',
       type: 'تلبيسة',
       material: 'Zirconia',
       tooth: '#26',
@@ -152,7 +152,7 @@ class LabDashboardMockData {
     LabOrderItem(
       orderId: 'LAB-039',
       patientName: '—',
-      doctorName: 'د. أحمد أ',
+      doctorName: 'د. أحمد',
       type: 'جسر',
       material: 'PFM',
       tooth: '#34-36',

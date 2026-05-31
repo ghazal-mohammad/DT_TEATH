@@ -62,21 +62,24 @@ class _AppFilterChipState extends State<AppFilterChip> {
     final Color textColor;
 
     if (widget.isSelected) {
-      // .fc.on: rgba(158,251,236,0.18) bg, rgba(158,251,236,0.40) border, cyan-b
-      backgroundColor = const Color(0x2E9EFBEC); // 0.18
-      borderColor = const Color(0x669EFBEC); // 0.40
-      textColor = isLight ? const Color(0xFF1A1C4E) : AppColors.accent;
-    } else if (_isHovered) {
-      // :hover:not(.on): border:cyan-b, color:t1
+      // light: أزرق فاتح مطابق للـ Design Guide (Table Header BED8FA).
+      // dark: cyan كما كان.
       backgroundColor = isLight
-          ? const Color(0x051A1C4E)
+          ? AppColors.tableHeader
+          : const Color(0x2E9EFBEC);
+      borderColor = isLight
+          ? AppColors.tableHeader
+          : const Color(0x669EFBEC);
+      textColor = isLight ? AppColors.lightText1 : AppColors.accent;
+    } else if (_isHovered) {
+      backgroundColor = isLight
+          ? const Color(0x081A1C4E)
           : const Color(0x05FFFFFF);
-      borderColor = AppColors.accent;
+      borderColor = isLight ? AppColors.lightBorder : AppColors.accent;
       textColor = isLight ? AppColors.lightText1 : AppColors.darkText1;
     } else {
-      // .fc: rgba(255,255,255,0.02), cyan-brd, t3
       backgroundColor = isLight
-          ? const Color(0x051A1C4E)
+          ? Colors.white
           : const Color(0x05FFFFFF);
       borderColor = isLight ? AppColors.lightBorder : AppColors.darkBorder;
       textColor = isLight ? AppColors.lightText3 : AppColors.darkText3;

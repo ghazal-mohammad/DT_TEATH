@@ -57,10 +57,20 @@ class WarehouseMaterialsPage extends StatelessWidget {
         userName: MockUserData.defaultUserName,
         userRole: context.l10n.roleWarehouseManager,
         notificationCount: 5,
-        body: const SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          padding: EdgeInsets.all(22.0),
-          child: WarehouseMaterialsContent(),
+        body: Builder(
+          builder: (context) {
+            final controller = ScrollController();
+            return Scrollbar(
+              controller: controller,
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                controller: controller,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(22.0),
+                child: const WarehouseMaterialsContent(),
+              ),
+            );
+          },
         ),
       ),
     );

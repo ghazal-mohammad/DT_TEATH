@@ -253,6 +253,11 @@ class AppRouter {
         builder: (context, state) => const WarehouseDashboardPage(),
       ),
       GoRoute(
+        path: RouteNames.warehouseProfile,
+        name: 'warehouseProfile',
+        builder: (context, state) => const WarehouseProfilePage(),
+      ),
+      GoRoute(
         path: RouteNames.warehouseMaterials,
         name: 'warehouseMaterials',
         builder: (context, state) => const WarehouseMaterialsPage(),

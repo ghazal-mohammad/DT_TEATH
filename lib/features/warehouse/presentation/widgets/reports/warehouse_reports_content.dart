@@ -91,7 +91,455 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
           daysInMonth: _daysInMonth,
           highlighted: _highlightedDays,
         ),
+        const SizedBox(height: 14),
+        _PerformanceRow(isLight: isLight),
       ],
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//             5) PERFORMANCE ROW (Suppliers + Top Materials)
+// ══════════════════════════════════════════════════════════════════════════
+
+class _PerformanceRow extends StatelessWidget {
+  const _PerformanceRow({required this.isLight});
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final suppliers = _SuppliersCard(isLight: isLight);
+    final materials = _TopMaterialsCard(isLight: isLight);
+    return LayoutBuilder(builder: (context, c) {
+      if (c.maxWidth < 920) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [materials, const SizedBox(height: 14), suppliers],
+        );
+      }
+      // RTL: أوّل=يمين. المطلوب: أكثر المواد يمين، أداء الموردين يسار.
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: materials),
+          const SizedBox(width: 14),
+          Expanded(child: suppliers),
+        ],
+      );
+    });
+  }
+}
+
+// ── Suppliers performance card ──────────────────────────────────────────
+
+class _SupplierData {
+  const _SupplierData({
+    required this.rank,
+    required this.name,
+    required this.invoices,
+    required this.avgDays,
+    required this.totalLabel,
+    required this.barFraction,
+  });
+  final int rank;
+  final String name;
+  final int invoices;
+  final double avgDays;
+  final String totalLabel; // e.g. "1.25M"
+  final double barFraction; // 0..1
+}
+
+class _SuppliersCard extends StatelessWidget {
+  const _SuppliersCard({required this.isLight});
+  final bool isLight;
+
+  static const _data = <_SupplierData>[
+    _SupplierData(
+      rank: 1,
+      name: 'دنتسبلاي',
+      invoices: 8,
+      avgDays: 2.1,
+      totalLabel: '1.25M',
+      barFraction: 0.58,
+    ),
+    _SupplierData(
+      rank: 2,
+      name: 'إيفوكلار',
+      invoices: 6,
+      avgDays: 1.8,
+      totalLabel: '2.15M',
+      barFraction: 1.00,
+    ),
+    _SupplierData(
+      rank: 3,
+      name: 'ميديكال+',
+      invoices: 5,
+      avgDays: 1.2,
+      totalLabel: '0.45M',
+      barFraction: 0.21,
+    ),
+    _SupplierData(
+      rank: 4,
+      name: '3M ESPE',
+      invoices: 4,
+      avgDays: 2.5,
+      totalLabel: '0.89M',
+      barFraction: 0.41,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      isLight: isLight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // RTL: الأيقونة يمين، النص يساره → [Icon, SizedBox, Text].
+          Row(
+            children: [
+              const Icon(Icons.assessment_outlined,
+                  size: 18, color: AppColors.primary),
+              const SizedBox(width: 6),
+              Text(
+                'أداء الموردين',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ..._data.map((s) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: _SupplierRow(isLight: isLight, data: s),
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+class _SupplierRow extends StatelessWidget {
+  const _SupplierRow({required this.isLight, required this.data});
+  final bool isLight;
+  final _SupplierData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final text1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
+    final text3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
+    // RTL: rank يمين، اسم+sub وسط، total+bar يسار.
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // ── دائرة الترتيب (rank) ──
+        Container(
+          width: 28,
+          height: 28,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: AppColors.primary,
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            '${data.rank}',
+            style: const TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        // ── اسم + subtitle ──
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                data.name,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w800,
+                  color: text1,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${data.invoices} فاتورة · متوسط ${data.avgDays} يوم',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 11,
+                  color: text3,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        // ── bar + المبلغ ──
+        Expanded(
+          flex: 4,
+          // RTL: المبلغ يمين، الـ bar يسار → [Text(amount), SizedBox, Bar].
+          child: Row(
+            children: [
+              Text(
+                data.totalLabel,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w800,
+                  color: text1,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _HBar(
+                  fraction: data.barFraction,
+                  color: AppColors.primary,
+                  isLight: isLight,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Top Consumed Materials card ─────────────────────────────────────────
+
+class _MaterialUsage {
+  const _MaterialUsage({
+    required this.name,
+    required this.category,
+    required this.count,
+    required this.barFraction,
+  });
+  final String name;
+  final String category;
+  final int count;
+  final double barFraction;
+}
+
+class _TopMaterialsCard extends StatelessWidget {
+  const _TopMaterialsCard({required this.isLight});
+  final bool isLight;
+
+  static const _data = <_MaterialUsage>[
+    _MaterialUsage(
+      name: 'قفازات لاتكس M',
+      category: 'مستهلكات',
+      count: 34,
+      barFraction: 1.00,
+    ),
+    _MaterialUsage(
+      name: 'حقن بنج موضعي',
+      category: 'أدوية',
+      count: 28,
+      barFraction: 0.82,
+    ),
+    _MaterialUsage(
+      name: 'سيراميك زيركون',
+      category: 'مواد طبية',
+      count: 22,
+      barFraction: 0.65,
+    ),
+    _MaterialUsage(
+      name: 'PFM Alloy',
+      category: 'معادن',
+      count: 19,
+      barFraction: 0.56,
+    ),
+    _MaterialUsage(
+      name: 'سيليكون طبع',
+      category: 'مستهلكات',
+      count: 15,
+      barFraction: 0.44,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      isLight: isLight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // الترويسة: نجمة + عنوان + badge عدد على اليمين، التقرير الكامل على اليسار.
+          Row(
+            children: [
+              const Icon(Icons.star_border_rounded,
+                  size: 18, color: Color(0xFFE17B2C)),
+              const SizedBox(width: 6),
+              Text(
+                'أكثر المواد استهلاكاً',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEFE3FA),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                ),
+                child: const Text(
+                  '5',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF7A4FCF),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              InkWell(
+                onTap: () {},
+                child: Text(
+                  'التقرير الكامل',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ..._data.map((m) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: _MaterialRow(isLight: isLight, data: m),
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+class _MaterialRow extends StatelessWidget {
+  const _MaterialRow({required this.isLight, required this.data});
+  final bool isLight;
+  final _MaterialUsage data;
+
+  @override
+  Widget build(BuildContext context) {
+    final text1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
+    final text3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
+    // RTL: اسم+فئة يمين، bar وسط، count يسار.
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                data.name,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w800,
+                  color: text1,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                data.category,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 11,
+                  color: text3,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          flex: 4,
+          // RTL: count يسار، bar يمتد إلى يمين الـ count.
+          // → ترتيب children: [Bar, SizedBox, Text(count)] فيُصبح count على اليسار.
+          child: Row(
+            children: [
+              Expanded(
+                child: _HBar(
+                  fraction: data.barFraction,
+                  color: AppColors.primary,
+                  isLight: isLight,
+                ),
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 28,
+                child: Text(
+                  '${data.count}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: text1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Horizontal bar (used by both performance cards) ─────────────────────
+class _HBar extends StatelessWidget {
+  const _HBar({
+    required this.fraction,
+    required this.color,
+    required this.isLight,
+  });
+  final double fraction;
+  final Color color;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final f = fraction.clamp(0.0, 1.0);
+    return Container(
+      height: 8,
+      decoration: BoxDecoration(
+        color: isLight ? const Color(0xFFEFF2FB) : AppColors.darkBg2,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: FractionallySizedBox(
+        // في RTL، FractionallySizedBox مع alignment.centerEnd يبدأ من يمين الـ track.
+        alignment: AlignmentDirectional.centerStart,
+        widthFactor: f,
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -112,65 +560,108 @@ class _Toolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        AppButton(
-          label: 'تصدير PDF',
-          onPressed: () {},
-          variant: AppButtonVariant.primary,
-          size: AppButtonSize.small,
+    // RTL: أوّل=يمين، آخر=يسار.
+    // المطلوب فيزيائياً (RTL):
+    //   [pills المدى يمين] ............. [تصدير PDF + Excel + مارس 2026 يسار]
+    // → ترتيب children: [pills, Spacer, exportItems].
+    //
+    // ⚠️ ملاحظة مهمة: AppButton بدون icon بيلفّ النص بـ Center، يلي
+    // بياخد كل المساحة المتاحة لما يكون داخل Flexible/Expanded. لازم
+    // كل button بـ IntrinsicWidth حتى ياخد حجمه الطبيعي.
+    final pdfBtn = IntrinsicWidth(
+      child: AppButton(
+        label: 'تصدير PDF',
+        onPressed: () {},
+        variant: AppButtonVariant.primary,
+        size: AppButtonSize.small,
+      ),
+    );
+    final excelBtn = IntrinsicWidth(
+      child: AppButton(
+        label: 'تصدير Excel',
+        onPressed: () {},
+        variant: AppButtonVariant.secondary,
+        size: AppButtonSize.small,
+      ),
+    );
+    final dateBadge = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+        border: Border.all(
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
         ),
-        AppButton(
-          label: 'تصدير Excel',
-          onPressed: () {},
-          variant: AppButtonVariant.secondary,
-          size: AppButtonSize.small,
-        ),
-        const SizedBox(width: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
-            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            border: Border.all(
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+      ),
+      // RTL داخل الكبسولة: النص يمين، الأيقونة يسار → [Text, SizedBox, Icon].
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'مارس 2026',
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.access_time_rounded,
-                  size: 14,
-                  color:
-                      isLight ? AppColors.lightText3 : AppColors.darkText3),
-              const SizedBox(width: 6),
-              Text(
-                'مارس 2026',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color:
-                      isLight ? AppColors.lightText1 : AppColors.darkText1,
-                ),
-              ),
-            ],
+          const SizedBox(width: 6),
+          Icon(Icons.access_time_rounded,
+              size: 14,
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3),
+        ],
+      ),
+    );
+
+    // RTL: pills tabs — أوّل=يمين، آخر=يسار.
+    // المطلوب: يومي يمين، أسبوعي، شهري(نشط)، سنوي يسار.
+    // → ترتيب children بـ Row.values = [daily, weekly, monthly, yearly] ✓.
+    final rangePills = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < _ReportRange.values.length; i++) ...[
+          if (i > 0) const SizedBox(width: 6),
+          _PillChip(
+            label: _ReportRange.values[i].label,
+            selected: _ReportRange.values[i] == range,
+            onTap: () => onRangeChange(_ReportRange.values[i]),
           ),
-        ),
-        const Spacer(),
-        ..._ReportRange.values.map((r) => Padding(
-              padding: const EdgeInsetsDirectional.only(start: 6),
-              child: _PillChip(
-                label: r.label,
-                selected: r == range,
-                onTap: () => onRangeChange(r),
-              ),
-            )),
+        ],
       ],
     );
+
+    return LayoutBuilder(builder: (context, c) {
+      // على شاشة ضيقة جداً، خلّيهن stacked
+      if (c.maxWidth < 720) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            rangePills,
+            const SizedBox(height: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [pdfBtn, const SizedBox(width: 8), excelBtn,
+                  const SizedBox(width: 8), dateBadge],
+            ),
+          ],
+        );
+      }
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // اليمين (start في RTL): الـ pills
+          rangePills,
+          const Spacer(),
+          // اليسار (end في RTL): التصدير + الفترة
+          pdfBtn,
+          const SizedBox(width: 8),
+          excelBtn,
+          const SizedBox(width: 8),
+          dateBadge,
+        ],
+      );
+    });
   }
 }
 
@@ -316,10 +807,9 @@ class _StatBox extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            Container(width: 4, color: accent),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -715,8 +1205,66 @@ class _CalendarCard extends StatelessWidget {
             daysInMonth: daysInMonth,
             highlighted: highlighted,
           ),
+          const SizedBox(height: 10),
+          _HeatmapLegend(isLight: isLight),
         ],
       ),
+    );
+  }
+}
+
+/// مفتاح ألوان heatmap التقويم: أقل ▢▢▢▣ أكثر.
+/// RTL: "أقل" يمين، "أكثر" يسار، المربعات بينهن من فاتح إلى navy.
+class _HeatmapLegend extends StatelessWidget {
+  const _HeatmapLegend({required this.isLight});
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = [
+      isLight ? const Color(0xFFEFF2FB) : AppColors.darkBg2,
+      isLight ? const Color(0xFFE9ECFB) : AppColors.darkBg2,
+      isLight ? const Color(0xFFC8D2F2) : AppColors.darkSurface,
+      AppColors.primary,
+    ];
+    return Row(
+      // start في RTL = اليمين. الكلسسر يمتد لجهة اليمين تحت الكاليندر.
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          'أقل',
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 11,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+          ),
+        ),
+        const SizedBox(width: 6),
+        for (final c in colors) ...[
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: c,
+              borderRadius: BorderRadius.circular(3),
+              border: Border.all(
+                color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+                width: 0.5,
+              ),
+            ),
+          ),
+          const SizedBox(width: 3),
+        ],
+        const SizedBox(width: 3),
+        Text(
+          'أكثر',
+          style: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 11,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -803,18 +1351,29 @@ class _DayCell extends StatelessWidget {
   final bool highlighted;
   final bool isLight;
 
+  // 4 شدّات لـ heatmap: 0=أبيض/شفاف، 1=فاتح جداً، 2=متوسط، 3=navy.
+  int get _level {
+    if (highlighted) return 3;
+    if (count == 0) return 0;
+    if (count <= 5) return 1;
+    if (count <= 10) return 2;
+    return 3;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hasActivity = count > 0;
-    final bg = highlighted
-        ? AppColors.primary
-        : hasActivity
-            ? (isLight ? const Color(0xFFE9ECFB) : AppColors.darkSurface)
-            : Colors.transparent;
-    final fgPrimary = highlighted
+    final lvl = _level;
+    final bg = switch (lvl) {
+      3 => AppColors.primary,
+      2 => isLight ? const Color(0xFFC8D2F2) : AppColors.darkSurface,
+      1 => isLight ? const Color(0xFFE9ECFB) : AppColors.darkBg2,
+      _ => Colors.transparent,
+    };
+    final isDark = lvl == 3;
+    final fgPrimary = isDark
         ? Colors.white
         : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-    final fgSecondary = highlighted
+    final fgSecondary = isDark
         ? Colors.white.withValues(alpha: 0.8)
         : (isLight ? AppColors.lightText3 : AppColors.darkText3);
 
@@ -842,7 +1401,7 @@ class _DayCell extends StatelessWidget {
             ),
           ),
           Text(
-            hasActivity ? '$count' : '0',
+            count > 0 ? '$count' : '0',
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,

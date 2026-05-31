@@ -65,20 +65,13 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                   children: [
                     _summary(order),
                     const SizedBox(height: 18),
+                    // RTL: start = اليمين. السكشن header يبدأ من اليمين
+                    // مع شريط عمودي يساره (يطلع يمين النص بصرياً في RTL).
                     Align(
-                      alignment: AlignmentDirectional.centerEnd,
+                      alignment: AlignmentDirectional.centerStart,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            width: 3,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
                           Text(
                             'تحديث الحالة',
                             style: TextStyle(
@@ -86,6 +79,15 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                               fontSize: 14,
                               fontWeight: FontWeight.w800,
                               color: AppColors.lightText1,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 3,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
                         ],
@@ -129,16 +131,19 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
               const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.fromLTRB(22, 14, 22, 16),
+                // RTL: end = اليسار بصرياً. الأزرار تصطفّ على اليسار.
+                // الترتيب: حفظ (primary) ثم إلغاء — في RTL: حفظ يسار، إلغاء يمينه.
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _PrimaryButton(
-                      label: 'حفظ',
-                      onTap: () => Navigator.of(context).pop(_choice),
-                    ),
-                    const SizedBox(width: 10),
                     _OutlineButton(
                       label: 'إلغاء',
                       onTap: () => Navigator.of(context).pop(),
+                    ),
+                    const SizedBox(width: 10),
+                    _PrimaryButton(
+                      label: 'حفظ',
+                      onTap: () => Navigator.of(context).pop(_choice),
                     ),
                   ],
                 ),
@@ -209,19 +214,24 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
         color: const Color(0xFFE9ECFB),
         borderRadius: BorderRadius.circular(14),
       ),
+      // RTL: أوّل child = يمين. الترتيب المطلوب:
+      //   صف 1: [رقم الطلب يمين | الطبيب يسار]
+      //   صف 2: [المادة يمين | الموعد يسار]
       child: Column(
         children: [
           Row(
             children: [
-              Expanded(child: _summaryCell('الموعد', o.date)),
               Expanded(child: _summaryCell('رقم الطلب', o.id)),
+              Expanded(child: _summaryCell('الطبيب', o.doctor)),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _summaryCell('المادة', '${o.material} · ${o.tooth}')),
-              Expanded(child: _summaryCell('الطبيب', o.doctor)),
+              Expanded(
+                child: _summaryCell('المادة', '${o.material} · ${o.tooth}'),
+              ),
+              Expanded(child: _summaryCell('الموعد', o.date)),
             ],
           ),
         ],
@@ -230,8 +240,9 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
   }
 
   Widget _summaryCell(String label, String value) {
+    // RTL: النص يبدأ من اليمين داخل خليّته → start = يمين.
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
@@ -251,6 +262,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             fontWeight: FontWeight.w800,
             color: AppColors.lightText1,
           ),
+          textAlign: TextAlign.start,
         ),
       ],
     );
@@ -297,69 +309,75 @@ class _ChoiceCard extends StatelessWidget {
               width: selected ? 2 : 1,
             ),
           ),
-          child: Row(
+          // التصميم المطلوب (مطابق للمحاكاة):
+          //   - أيقونة بمربع ملوّن في الزاوية العلوية اليمنى (start في RTL)
+          //   - دائرة الـ radio في الزاوية العلوية اليسرى (end في RTL)
+          //   - العنوان والوصف تحت بمحاذاة start (يمين في RTL)
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Radio circle
-              Container(
-                width: 18,
-                height: 18,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selected ? AppColors.primary : AppColors.lightText4,
-                    width: 2,
+              Row(
+                children: [
+                  // أيقونة على اليمين (start)
+                  Container(
+                    width: 32,
+                    height: 32,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: iconBg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(icon, size: 20, color: iconColor),
                   ),
-                ),
-                child: selected
-                    ? Center(
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      )
-                    : null,
-              ),
-              const Spacer(),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.lightText1,
+                  const Spacer(),
+                  // دائرة الـ radio على اليسار (end)
+                  Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color:
+                            selected ? AppColors.primary : AppColors.lightText4,
+                        width: 2,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.lightText3,
-                      ),
-                      textAlign: TextAlign.end,
-                    ),
-                  ],
-                ),
+                    child: selected
+                        ? Center(
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          )
+                        : null,
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.lightText1,
                 ),
-                child: Icon(icon, size: 20, color: iconColor),
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.lightText3,
+                ),
+                textAlign: TextAlign.start,
               ),
             ],
           ),

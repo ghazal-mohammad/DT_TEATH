@@ -272,6 +272,12 @@ abstract class AppLocalizations {
   /// **'We sent a 6-digit code to {email}'**
   String authVerifyCodeSubtitle(String email);
 
+  /// No description provided for @authVerifyCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code. Please try again.'**
+  String get authVerifyCodeError;
+
   /// No description provided for @authResendCode.
   ///
   /// In en, this message translates to:

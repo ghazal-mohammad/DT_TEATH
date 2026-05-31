@@ -45,10 +45,26 @@ class WarehouseNotificationsPage extends StatelessWidget {
       userName: MockUserData.defaultUserName,
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
-      body: const SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        padding: EdgeInsets.all(22.0),
-        child: WarehouseNotificationsContent(),
+      body: LayoutBuilder(
+        builder: (ctx, constraints) {
+          final controller = ScrollController();
+          return Scrollbar(
+            controller: controller,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: controller,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(22.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth,
+                  maxWidth: constraints.maxWidth,
+                ),
+                child: const WarehouseNotificationsContent(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

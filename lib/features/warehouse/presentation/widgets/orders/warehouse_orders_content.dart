@@ -21,6 +21,7 @@ import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
 import '../../../data/mock/warehouse_pages_mock_data.dart';
+import 'warehouse_order_details_dialog.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //                              FILTERS
@@ -93,6 +94,24 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
   List<WarehouseOrderItem> get _filtered =>
       _all.where((o) => _filter.matches(o, urgent: _isUrgent(o))).toList();
 
+  void _onSupplyTap(BuildContext context, WarehouseOrderItem o) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          'تم تأكيد توريد ${o.materialName} للطلبية ${o.orderNumber}',
+          style: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
@@ -122,20 +141,15 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: _OrderFilter.values
-                .map((f) => _PillChip(
-                      label: '${f.label} ${_count(f)}',
-                      selected: f == _filter,
-                      onTap: () => setState(() => _filter = f),
-                    ))
-                .toList(),
-          ),
+        _OrdersSegmentedTabs(
+          values: _OrderFilter.values,
+          counts: {
+            for (final f in _OrderFilter.values) f: _count(f),
+          },
+          selected: _filter,
+          onChanged: (f) => setState(() => _filter = f),
         ),
-        const SizedBox(width: 10),
+        const Spacer(),
         Text(
           '${_filtered.length} طلبية من أصل ${_all.length}',
           style: TextStyle(
@@ -159,7 +173,8 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
         crossAxisCount: cols,
         mainAxisSpacing: 14,
         crossAxisSpacing: 14,
-        childAspectRatio: switch (cols) { 3 => 1.15, 2 => 1.4, _ => 1.7 },
+        // بطاقات أعرض من ارتفاعها — مطابقة لـ mockup (مدمجة بدون فراغ).
+        childAspectRatio: switch (cols) { 3 => 1.55, 2 => 1.85, _ => 2.2 },
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: orders
@@ -167,6 +182,12 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
                   order: o,
                   urgent: _isUrgent(o),
                   isLight: isLight,
+                  onView: () => WarehouseOrderDetailsDialog.show(
+                    context,
+                    order: o,
+                    urgent: _isUrgent(o),
+                  ),
+                  onSupply: () => _onSupplyTap(context, o),
                 ))
             .toList(),
       );
@@ -183,10 +204,14 @@ class _OrderCard extends StatelessWidget {
     required this.order,
     required this.urgent,
     required this.isLight,
+    required this.onView,
+    required this.onSupply,
   });
   final WarehouseOrderItem order;
   final bool urgent;
   final bool isLight;
+  final VoidCallback onView;
+  final VoidCallback onSupply;
 
   // ── Status helpers ────────────────────────────────────────────────────
   String get _statusLabel => switch (order.status) {
@@ -218,7 +243,10 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // فرض RTL لضمان: المادة يمين، REQ يسار، شارة الحالة يمين، الأزرار يسار.
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
       decoration: BoxDecoration(
         color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
@@ -228,86 +256,87 @@ class _OrderCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
+        // RTL: أوّل child=يمين، آخر=يسار.
+        // المطلوب: content يمين، stripe يسار → [content أوّل, stripe آخر].
         child: Row(
           children: [
-            Container(width: 4, color: _accentColor),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTopRow(),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     _buildRequesterRow(),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     _buildStatsRow(),
                     const Spacer(),
-                    const SizedBox(height: 10),
                     _buildBottomRow(),
                   ],
                 ),
               ),
             ),
+            Container(width: 4, color: _accentColor),
           ],
         ),
+      ),
       ),
     );
   }
 
   Widget _buildTopRow() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Flexible(
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEFE3FA),
-              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            ),
-            child: Text(
-              order.materialName,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF7A4FCF),
-              ),
-            ),
-          ),
+    // RTL: أوّل=يمين، آخر=يسار.
+    // المطلوب فيزيائياً (مطابق mockup):
+    //   [REQ يمين]  ............  [Column: المادة فوق، عاجل تحت — يسار]
+    // → ترتيب children: [Text(REQ), Spacer, Column(material + urgent)].
+    final materialBadge = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEFE3FA),
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      ),
+      child: Text(
+        order.materialName,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: const TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 11.5,
+          fontWeight: FontWeight.w800,
+          color: Color(0xFF7A4FCF),
         ),
-        const SizedBox(width: 6),
-        if (urgent) ...[
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: const Color(0xFFD9434E).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.priority_high_rounded,
-                    size: 12, color: Color(0xFFD9434E)),
-                SizedBox(width: 2),
-                Text(
-                  'عاجل',
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFFD9434E),
-                  ),
-                ),
-              ],
+      ),
+    );
+    final urgentBadge = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEE9D9),
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      ),
+      // RTL داخل الـ pill: الأيقونة يمين، النص يسار → [icon, SizedBox, text]
+      // لكن للنغمة الأقرب لـ "!عاجل"، نضع النص أوّل (=يمين) ثم الأيقونة بعده.
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'عاجل',
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFFE17B2C),
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 3),
+          Icon(Icons.priority_high_rounded,
+              size: 12, color: Color(0xFFE17B2C)),
         ],
-        const Spacer(),
+      ),
+    );
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         Text(
           _requestNumber,
           style: TextStyle(
@@ -317,13 +346,42 @@ class _OrderCard extends StatelessWidget {
             color: isLight ? AppColors.lightText3 : AppColors.darkText3,
           ),
         ),
+        const Spacer(),
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              materialBadge,
+              if (urgent) ...[
+                const SizedBox(height: 4),
+                urgentBadge,
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildRequesterRow() {
+    // RTL: أوّل=يمين، آخر=يسار.
+    // المطلوب: اسم الطالب يمين، avatar يسار → [Flexible(name), SizedBox, avatar].
     return Row(
       children: [
+        Flexible(
+          child: Text(
+            order.requester,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
         Container(
           width: 30,
           height: 30,
@@ -342,19 +400,6 @@ class _OrderCard extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 10),
-        Flexible(
-          child: Text(
-            order.requester,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -366,39 +411,55 @@ class _OrderCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: _MiniStat(label: 'الكمية', value: '${order.quantity} ${order.unit}', txt1: txt1, txt3: txt3),
+          child: _MiniStat(
+              label: 'الكمية',
+              value: '${order.quantity} ${order.unit}',
+              txt1: txt1,
+              txt3: txt3),
         ),
+        const SizedBox(width: 6),
         Expanded(
-          child: _MiniStat(label: 'الطالب', value: order.requester, txt1: txt1, txt3: txt3),
+          child: _MiniStat(
+              label: 'الطالب',
+              value: order.requester,
+              txt1: txt1,
+              txt3: txt3),
         ),
+        const SizedBox(width: 6),
         Expanded(
-          child: _MiniStat(label: 'التاريخ', value: order.date, txt1: txt1, txt3: txt3),
+          child: _MiniStat(
+              label: 'التاريخ',
+              value: order.date,
+              txt1: txt1,
+              txt3: txt3),
         ),
       ],
     );
   }
 
   Widget _buildBottomRow() {
+    // RTL: أوّل=يمين، آخر=يسار.
+    // المطلوب فيزيائياً: [Status يمين] ... [عرض وسط] [توريد يسار].
+    // → ترتيب children: [Status, Spacer, View, Supply].
     return Row(
       children: [
         _StatusPill(label: _statusLabel, color: _statusColor),
         const Spacer(),
-        if (order.status != WarehouseOrderStatus.fulfilled)
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 6),
-            child: AppButton(
-              label: '✓ توريد',
-              onPressed: () {},
-              variant: AppButtonVariant.primary,
-              size: AppButtonSize.small,
-            ),
-          ),
         AppButton(
           label: 'عرض',
-          onPressed: () {},
+          onPressed: onView,
           variant: AppButtonVariant.secondary,
           size: AppButtonSize.small,
         ),
+        if (order.status != WarehouseOrderStatus.fulfilled) ...[
+          const SizedBox(width: 6),
+          AppButton(
+            label: '✓ توريد',
+            onPressed: onSupply,
+            variant: AppButtonVariant.primary,
+            size: AppButtonSize.small,
+          ),
+        ],
       ],
     );
   }
@@ -464,15 +525,11 @@ class _StatusPill extends StatelessWidget {
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
+      // RTL: أوّل=يمين، آخر=يسار.
+      // المطلوب: النص يمين، الـ dot يسار → [Text, SizedBox, dot].
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
@@ -482,54 +539,99 @@ class _StatusPill extends StatelessWidget {
               color: color,
             ),
           ),
+          const SizedBox(width: 6),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
         ],
       ),
     );
   }
 }
 
-class _PillChip extends StatelessWidget {
-  const _PillChip({
-    required this.label,
+// ── Filter pills (النشط dark navy + count badge داخل الكبسولة) ─────────
+class _OrdersSegmentedTabs extends StatelessWidget {
+  const _OrdersSegmentedTabs({
+    required this.values,
+    required this.counts,
     required this.selected,
-    required this.onTap,
+    required this.onChanged,
   });
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
+
+  final List<_OrderFilter> values;
+  final Map<_OrderFilter, int> counts;
+  final _OrderFilter selected;
+  final ValueChanged<_OrderFilter> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = selected
-        ? AppColors.primary
-        : (isLight ? AppColors.baseComponent : AppColors.darkSurface);
-    final fg = selected
-        ? Colors.white
-        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-    final border = selected
-        ? AppColors.primary
-        : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: bg,
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: values.map((v) {
+        final isActive = v == selected;
+        final bg = isActive
+            ? AppColors.primary
+            : (isLight ? const Color(0xFFF1EDE6) : AppColors.darkBg2);
+        final labelColor = isActive
+            ? Colors.white
+            : (isLight ? AppColors.lightText1 : AppColors.darkText1);
+        final countBg = isActive
+            ? Colors.white.withValues(alpha: 0.18)
+            : (isLight ? Colors.white : AppColors.darkBg1);
+        final countColor = isActive
+            ? Colors.white
+            : (isLight ? AppColors.lightText3 : AppColors.darkText3);
+        return InkWell(
+          onTap: () => onChanged(v),
           borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          border: Border.all(color: border),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w700,
-            color: fg,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.fromLTRB(6, 4, 12, 4),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: countBg,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                  ),
+                  child: Text(
+                    '${counts[v] ?? 0}',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
+                      color: countColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 7),
+                Text(
+                  v.label,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: labelColor,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }).toList(),
     );
   }
 }
+

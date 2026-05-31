@@ -267,10 +267,9 @@ class _StatBox extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            Container(width: 4, color: accent),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -296,23 +295,23 @@ class _StatBox extends StatelessWidget {
                         ),
                         const Spacer(),
                         Container(
-                          width: 32,
-                          height: 32,
+                          width: 28,
+                          height: 28,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: accent.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(icon, size: 17, color: accent),
+                          child: Icon(icon, size: 15, color: accent),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
                       value,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 28,
+                        fontSize: 22,
                         fontWeight: FontWeight.w800,
                         height: 1.0,
                         color: isLight
@@ -323,9 +322,11 @@ class _StatBox extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12,
+                        fontSize: 11.5,
                         fontWeight: FontWeight.w600,
                         color: isLight
                             ? AppColors.lightText3
@@ -336,6 +337,7 @@ class _StatBox extends StatelessWidget {
                 ),
               ),
             ),
+            Container(width: 4, color: accent),
           ],
         ),
       ),
@@ -529,16 +531,13 @@ class _TableSection extends StatelessWidget {
           ],
         );
 
-        final tabs = Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: _StatusFilter.values
-              .map((s) => _PillChip(
-                    label: '${s.label} ${_statusCount(s)}',
-                    selected: s == status,
-                    onTap: () => onStatusChange(s),
-                  ))
-              .toList(),
+        final tabs = _StatusSegmentedTabs(
+          values: _StatusFilter.values,
+          counts: {
+            for (final s in _StatusFilter.values) s: _statusCount(s),
+          },
+          selected: status,
+          onChanged: onStatusChange,
         );
 
         final addBtn = AppButton(
@@ -562,6 +561,80 @@ class _TableSection extends StatelessWidget {
           children: [title, const Spacer(), tabs, const SizedBox(width: 10), addBtn],
         );
       }),
+    );
+  }
+}
+
+// ── Segmented tabs (شريط أزرق فاتح + النشط أبيض داخله) ─────────────────
+class _StatusSegmentedTabs extends StatelessWidget {
+  const _StatusSegmentedTabs({
+    required this.values,
+    required this.counts,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final List<_StatusFilter> values;
+  final Map<_StatusFilter, int> counts;
+  final _StatusFilter selected;
+  final ValueChanged<_StatusFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: const Color(0xFFDCE5F4),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: values.map((v) {
+          final isActive = v == selected;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 1),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(9),
+              onTap: () => onChanged(v),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 5),
+                decoration: BoxDecoration(
+                  color: isActive ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      v.label,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12.5,
+                        fontWeight:
+                            isActive ? FontWeight.w800 : FontWeight.w600,
+                        color: AppColors.lightText1,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '${counts[v]}',
+                      style: const TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.lightText3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }
@@ -607,26 +680,21 @@ class _MaterialsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: MediaQuery.sizeOf(context).width - 80,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _TableHeader(isLight: isLight),
-            for (var i = 0; i < rows.length; i++)
-              _TableDataRow(
-                material: rows[i],
-                isLight: isLight,
-                isLast: i == rows.length - 1,
-                onTap: () => onRowTap(rows[i]),
-              ),
-          ],
-        ),
-      ),
+    // إزالة الـ horizontal SingleChildScrollView + ConstrainedBox السابقة —
+    // كانت تعطي عرض غير محدود للـ Column → Expanded children تطلع بـ 0 عرض
+    // فيختفي الجدول. هلق الـ Column يأخذ عرض الأب الطبيعي مباشرة.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _TableHeader(isLight: isLight),
+        for (var i = 0; i < rows.length; i++)
+          _TableDataRow(
+            material: rows[i],
+            isLight: isLight,
+            isLast: i == rows.length - 1,
+            onTap: () => onRowTap(rows[i]),
+          ),
+      ],
     );
   }
 }
@@ -638,7 +706,7 @@ class _TableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isLight ? const Color(0xFFF4F1FB) : AppColors.darkSurface,
+      color: isLight ? AppColors.tableHeader : AppColors.darkSurface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       child: const Row(
         children: [

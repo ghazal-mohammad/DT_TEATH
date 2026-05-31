@@ -53,13 +53,14 @@ class _WelcomeHero extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
       decoration: BoxDecoration(
+        // تدرّج بنفسجي/لافندر فقط — بدون اللون الوردي.
         gradient: const LinearGradient(
-          colors: [Color(0xFFEFE5FB), Color(0xFFFFE5F0)],
+          colors: [Color(0xFFF3E9FB), Color(0xFFE7DBF5)],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: const Color(0xFFE3D7F4)),
+        border: Border.all(color: const Color(0xFFE0D2F0)),
       ),
       child: LayoutBuilder(
         builder: (context, c) {
@@ -331,24 +332,16 @@ class _StatCardsRow extends StatelessWidget {
   const _StatCardsRow({required this.isLight});
   final bool isLight;
 
+  // الترتيب من اليمين لليسار (RTL): إجمالي → الحد الأدنى → الطلبات → المشتريات.
   static const _items = <_StatData>[
     _StatData(
-      variant: _StatVariant.green,
-      badge: 'هذا الشهر',
-      value: '2.8M',
-      label: 'مشتريات الشهر (ل.س)',
-      trend: '+12% من الشهر الماضي',
+      variant: _StatVariant.blue,
+      badge: '4+',
+      value: '247',
+      label: 'إجمالي المواد',
+      trend: '4+ هذا الأسبوع',
       trendUp: true,
-      icon: Icons.assignment_outlined,
-    ),
-    _StatData(
-      variant: _StatVariant.purple,
-      badge: 'جديد',
-      value: '9',
-      label: 'طلبات بانتظار التوريد',
-      trend: '3+ اليوم',
-      trendUp: true,
-      icon: Icons.assignment_outlined,
+      icon: Icons.inventory_2_outlined,
     ),
     _StatData(
       variant: _StatVariant.orange,
@@ -360,13 +353,22 @@ class _StatCardsRow extends StatelessWidget {
       icon: Icons.error_outline,
     ),
     _StatData(
-      variant: _StatVariant.blue,
-      badge: '4+',
-      value: '247',
-      label: 'إجمالي المواد',
-      trend: '4+ هذا الأسبوع',
+      variant: _StatVariant.purple,
+      badge: 'جديد',
+      value: '9',
+      label: 'طلبات بانتظار التوريد',
+      trend: '3+ اليوم',
       trendUp: true,
-      icon: Icons.inventory_2_outlined,
+      icon: Icons.assignment_outlined,
+    ),
+    _StatData(
+      variant: _StatVariant.green,
+      badge: 'هذا الشهر',
+      value: '2.8M',
+      label: 'مشتريات الشهر (ل.س)',
+      trend: '+12% من الشهر الماضي',
+      trendUp: true,
+      icon: Icons.assignment_outlined,
     ),
   ];
 
@@ -378,18 +380,50 @@ class _StatCardsRow extends StatelessWidget {
           : c.maxWidth >= 720
               ? 2
               : 1;
-      return GridView.count(
-        crossAxisCount: cols,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: switch (cols) { 4 => 1.55, 2 => 2.2, _ => 3.2 },
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: _items
-            .map((d) => _StatCard(isLight: isLight, data: d))
-            .toList(growable: false),
+      // فرض RTL على الصف لضمان: أول عنصر بالقائمة = يمين الشاشة بصرياً.
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: _buildRows(cols),
       );
     });
+  }
+
+  Widget _buildRows(int cols) {
+    final cards = _items
+        .map((d) => _StatCard(isLight: isLight, data: d))
+        .toList(growable: false);
+
+    if (cols == 1) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < cards.length; i++) ...[
+            if (i > 0) const SizedBox(height: 12),
+            cards[i],
+          ],
+        ],
+      );
+    }
+
+    // عدد الصفوف المطلوب لتغطية كل العناصر.
+    final rows = <Widget>[];
+    for (var i = 0; i < cards.length; i += cols) {
+      if (i > 0) rows.add(const SizedBox(height: 12));
+      final rowChildren = <Widget>[];
+      for (var j = 0; j < cols; j++) {
+        if (j > 0) rowChildren.add(const SizedBox(width: 12));
+        if (i + j < cards.length) {
+          rowChildren.add(Expanded(child: cards[i + j]));
+        } else {
+          rowChildren.add(const Expanded(child: SizedBox.shrink()));
+        }
+      }
+      rows.add(IntrinsicHeight(child: Row(children: rowChildren)));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: rows,
+    );
   }
 }
 
@@ -435,11 +469,9 @@ class _StatCard extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            // الشريط الجانبي الملوّن (يسار البطاقة بصرياً في RTL = end)
-            Container(width: 4, color: accent),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -450,23 +482,23 @@ class _StatCard extends StatelessWidget {
                         _StatBadge(text: data.badge, accent: accent, tint: tint),
                         const Spacer(),
                         Container(
-                          width: 34,
-                          height: 34,
+                          width: 28,
+                          height: 28,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: tint,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(data.icon, size: 18, color: accent),
+                          child: Icon(data.icon, size: 15, color: accent),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
                       data.value,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 30,
+                        fontSize: 22,
                         fontWeight: FontWeight.w800,
                         height: 1.0,
                         color: isLight
@@ -474,29 +506,31 @@ class _StatCard extends StatelessWidget {
                             : AppColors.darkText1,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       data.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
+                        fontSize: 11.5,
                         fontWeight: FontWeight.w600,
                         color: isLight
                             ? AppColors.lightText3
                             : AppColors.darkText3,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         Icon(
                           data.trendUp
                               ? Icons.arrow_upward_rounded
                               : Icons.arrow_downward_rounded,
-                          size: 12,
+                          size: 11,
                           color: accent,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Flexible(
                           child: Text(
                             data.trend,
@@ -504,7 +538,7 @@ class _StatCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 11.5,
+                              fontSize: 10.5,
                               fontWeight: FontWeight.w700,
                               color: accent,
                             ),
@@ -516,6 +550,8 @@ class _StatCard extends StatelessWidget {
                 ),
               ),
             ),
+            // الشريط الجانبي على يسار البطاقة بصرياً (آخر child في RTL Row).
+            Container(width: 4, color: accent),
           ],
         ),
       ),
@@ -919,7 +955,6 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildHeader(context),
-          _buildTabsRow(),
           const _SectionDivider(),
           _buildTable(),
         ],
@@ -928,9 +963,11 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    // كل شي على سطر واحد: العنوان + الـ badge (يمين) + الـ chips + "عرض الكل" (يسار).
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.assignment_outlined,
               size: 18, color: AppColors.primary),
@@ -964,6 +1001,15 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
             ),
           ),
           const Spacer(),
+          _OrdersSegmentedTabs(
+            tabs: _OrderTab.values,
+            counts: {
+              for (final t in _OrderTab.values) t: _countOrders(t),
+            },
+            selected: _tab,
+            onChanged: (t) => setState(() => _tab = t),
+          ),
+          const SizedBox(width: 10),
           TextButton(
             onPressed: () => context.go(RouteNames.warehouseOrders),
             style: TextButton.styleFrom(
@@ -982,19 +1028,6 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTabsRow() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: AppFilterChipRow(
-        options: _OrderTab.values
-            .map((t) => '${t.label} ${_countOrders(t)}')
-            .toList(),
-        selectedIndex: _tab.index,
-        onChanged: (i) => setState(() => _tab = _OrderTab.values[i]),
       ),
     );
   }
@@ -1030,6 +1063,82 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
   }
 }
 
+// ── Segmented tabs container (مطابق للـ mockup) ─────────────────────────
+class _OrdersSegmentedTabs extends StatelessWidget {
+  const _OrdersSegmentedTabs({
+    required this.tabs,
+    required this.counts,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final List<_OrderTab> tabs;
+  final Map<_OrderTab, int> counts;
+  final _OrderTab selected;
+  final ValueChanged<_OrderTab> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        // أزرق فاتح أهدأ — أقرب للون الخلفية الأرضية.
+        color: const Color(0xFFDCE5F4),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: tabs.map((t) {
+          final isActive = t == selected;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 1),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(9),
+              onTap: () => onChanged(t),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 5),
+                decoration: BoxDecoration(
+                  // النشط: أبيض هادئ داخل الشريط الأزرق.
+                  color: isActive ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      t.label,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12.5,
+                        fontWeight:
+                            isActive ? FontWeight.w800 : FontWeight.w600,
+                        color: AppColors.lightText1,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '${counts[t]}',
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.lightText3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
 class _SectionDivider extends StatelessWidget {
   const _SectionDivider();
   @override
@@ -1051,9 +1160,8 @@ class _OrdersTableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isLight
-        ? const Color(0xFFF4F1FB)
-        : AppColors.darkSurface;
+    // رأس الجدول باللون الأزرق المعتمد بـ Design Guide (BED8FA).
+    final bg = isLight ? AppColors.tableHeader : AppColors.darkSurface;
     return Container(
       color: bg,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),

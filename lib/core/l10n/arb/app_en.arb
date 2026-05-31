@@ -61,6 +61,7 @@
       }
     }
   },
+  "authVerifyCodeError": "Invalid or expired code. Please try again.",
   "authResendCode": "Resend Code",
   "authResendCodeIn": "Resend in {seconds}s",
   "@authResendCodeIn": {

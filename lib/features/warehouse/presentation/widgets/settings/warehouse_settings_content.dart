@@ -86,12 +86,12 @@ class _WarehouseSettingsContentState extends State<WarehouseSettingsContent> {
   }
 
   // ── Wide layout: sidebar + content ───────────────────────────────────
+  // RTL: أوّل child=يمين، آخر=يسار.
+  // المطلوب: Sidebar يمين، Content يسار → [Sidebar, Gap, Content].
   Widget _buildWideLayout(bool isLight) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _buildTabContent(isLight)),
-        const SizedBox(width: _kSidebarGap),
         SizedBox(
           width: _kSidebarWidth,
           child: _Sidebar(
@@ -100,6 +100,8 @@ class _WarehouseSettingsContentState extends State<WarehouseSettingsContent> {
             onSelect: (t) => setState(() => _activeTab = t),
           ),
         ),
+        const SizedBox(width: _kSidebarGap),
+        Expanded(child: _buildTabContent(isLight)),
       ],
     );
   }
@@ -346,15 +348,10 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
                 },
               ),
               const SizedBox(height: 20),
+              // RTL: للنسخة المطلوبة (الأساسي أقصى يسار، الثانوي يمينه)
+              // نضع الأساسي آخر child والثانوي قبله.
               Row(
                 children: [
-                  AppButton(
-                    label: 'تحديث كلمة المرور',
-                    onPressed: () {},
-                    variant: AppButtonVariant.primary,
-                    size: AppButtonSize.small,
-                  ),
-                  const SizedBox(width: 10),
                   AppButton(
                     label: 'إلغاء',
                     onPressed: () {
@@ -363,6 +360,13 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
                       _confirmPass.clear();
                     },
                     variant: AppButtonVariant.secondary,
+                    size: AppButtonSize.small,
+                  ),
+                  const SizedBox(width: 10),
+                  AppButton(
+                    label: 'تحديث كلمة المرور',
+                    onPressed: () {},
+                    variant: AppButtonVariant.primary,
                     size: AppButtonSize.small,
                   ),
                 ],
@@ -402,6 +406,7 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
         // ── بطاقة 3: تسجيل الخروج من كل الأجهزة ─────────────────────────
         _DangerCard(
           isLight: widget.isLight,
+          // RTL: text أوّل=يمين، الزر آخر=يسار.
           child: Row(
             children: [
               Expanded(

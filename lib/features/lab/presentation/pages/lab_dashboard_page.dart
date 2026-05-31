@@ -36,7 +36,8 @@ class LabDashboardPage extends StatelessWidget {
         newOrdersCount: LabDashboardMockData.newOrdersCount,
         unreadNotifsCount: 2,
       ),
-      pageTitle: l10n.labDashboardTitle,
+      // العنوان "الصفحة الرئيسية" (مطابق للسايدبار وحسب الاتفاق).
+      pageTitle: l10n.dashboard,
       pageSubtitle: null,
       searchPlaceholder: 'فلترة طلبات هذه الصفحة... (رقم، طبيب، مادة)',
       showThemeToggle: false,
@@ -362,85 +363,117 @@ class _EndingTodayAlert extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(color: accent.withValues(alpha: 0.25)),
       ),
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 12,
-        runSpacing: 8,
-        children: [
-          // أيقونة دائرية
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.local_fire_department_rounded,
-              size: 20,
-              color: accent,
-            ),
-          ),
-          // العنوان + الرسالة
-          Column(
+      child: LayoutBuilder(
+        builder: (context, c) {
+          // أيقونة + عنوان (المجموعة اليمنى في RTL)
+          final titleGroup = Row(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.local_fire_department_rounded,
+                  size: 20,
+                  color: accent,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'ينتهي اليوم',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: accent,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Container(
-                    width: 20,
-                    height: 20,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEF4444),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Text(
-                      '2',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        height: 1.0,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'ينتهي اليوم',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: accent,
+                        ),
                       ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 20,
+                        height: 20,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFEF4444),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Text(
+                          '2',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'يجب إنهاء هذه الطلبات قبل المساء',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.lightText3,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 2),
-              Text(
-                'يجب إنهاء هذه الطلبات قبل المساء',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.lightText3,
-                ),
-              ),
             ],
-          ),
-          // pills للطلبيات
-          ..._buildOrderPills(),
-        ],
+          );
+
+          // عند العرض الواسع: العنوان يمين، والـ pills مدفوعة لأقصى اليسار
+          // (WrapAlignment.end = اليسار في RTL).
+          if (c.maxWidth > 640) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                titleGroup,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Wrap(
+                    alignment: WrapAlignment.end,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: _buildOrderPills(),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          // عند العرض الضيّق: تدفّق طبيعي (Wrap) لتفادي أي overflow.
+          return Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 8,
+            children: [titleGroup, ..._buildOrderPills()],
+          );
+        },
       ),
     );
   }
 
   List<Widget> _buildOrderPills() {
+    // ترتيب التصميم المرجعي (RTL يمين→يسار):
+    //   [16:00 جسر 3 وحدات — د. خالد] → [14:00 تلبيسة PFM — د. سارة]
+    // الأقرب لـ deadline (14:00) في الأقصى يسار، والأبعد (16:00) أقرب للترويسة.
     const items = [
-      _PillData(time: '14:00', body: 'تلبيسة PFM — د. سارة'),
       _PillData(time: '16:00', body: 'جسر 3 وحدات — د. خالد'),
+      _PillData(time: '14:00', body: 'تلبيسة PFM — د. سارة'),
     ];
     return items
         .map(
@@ -627,7 +660,7 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Text(
-                      '← عرض الكل',
+                      'عرض الكل ←',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 13,
@@ -717,6 +750,8 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
     final String initial =
         lastSegment.isNotEmpty ? lastSegment.characters.first : '';
 
+    // التصميم المرجعي: الـ avatar يمين (نقطة بداية القراءة بالـ RTL)
+    // ثم اسم الطبيب يسار → [avatar, SizedBox, Text].
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -819,18 +854,10 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
         color: data.bg,
         borderRadius: BorderRadius.circular(20),
       ),
+      // RTL: نص يمين، dot يسار.
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: data.text,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 6),
           Text(
             data.label,
             style: TextStyle(
@@ -838,6 +865,15 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: data.text,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: data.text,
+              shape: BoxShape.circle,
             ),
           ),
         ],
@@ -922,7 +958,18 @@ class _DashboardGreeting extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // gradient subtle: أزرق فاتح → لافندر، مع لمسة وردي خفيفة في النهاية
+        // (أقل اشباعاً من النسخة السابقة لتطابق روح التصميم المرجعي).
+        gradient: const LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Color(0xFFEEF1FB), // أزرق-أبيض شفّاف
+            Color(0xFFF1EAFA), // لافندر ناعم جداً
+            Color(0xFFFAF0F7), // وردي مغبّر ناعم
+          ],
+          stops: [0.0, 0.6, 1.0],
+        ),
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(color: AppColors.lightBorder),
         boxShadow: [
@@ -941,8 +988,10 @@ class _DashboardGreeting extends StatelessWidget {
           if (wide) {
             return Row(
               children: [
-                // RTL start (right visual)
-                Flexible(child: greetingPart),
+                // الترحيب يمين ويملأ المساحة المتبقّية، فتُدفع الإحصاءات
+                // المصغّرة إلى أقصى اليسار (Expanded بدل Flexible حتى لا
+                // تتكدّس بجانب الترحيب على اليمين).
+                Expanded(child: greetingPart),
                 const SizedBox(width: 24),
                 statsPart,
               ],
@@ -998,33 +1047,14 @@ class _GreetingText extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
+              // ترتيب التصميم المرجعي (RTL يمين→يسار):
+              // [● جميع الأنظمة] · [الاثنين، 18 مايو] · [آخر تحديث: منذ 3 دقيقة]
+              // في Wrap RTL: أوّل child = يمين، فالـ status pill أوّلاً.
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text(
-                    'الاثنين، 18 مايو',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.lightText3,
-                    ),
-                  ),
-                  Text(
-                    '·',
-                    style: TextStyle(color: AppColors.lightText4),
-                  ),
-                  Text(
-                    'آخر تحديث: منذ 3 دقيقة',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.lightText3,
-                    ),
-                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 9, vertical: 3),
@@ -1056,6 +1086,32 @@ class _GreetingText extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Text(
+                    '·',
+                    style: TextStyle(color: AppColors.lightText4),
+                  ),
+                  Text(
+                    'الاثنين، 18 مايو',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.lightText3,
+                    ),
+                  ),
+                  Text(
+                    '·',
+                    style: TextStyle(color: AppColors.lightText4),
+                  ),
+                  Text(
+                    'آخر تحديث: منذ 3 دقيقة',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.lightText3,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -1071,14 +1127,17 @@ class _MiniStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ترتيب التصميم المرجعي (RTL يمين→يسار):
+    //   [96% نسبة الإنجاز] → [5 قيد التنفيذ] → [12 طلب اليوم]
+    // في Row RTL: أوّل child = يمين، فالـ نسبة الإنجاز أوّلاً.
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: const [
         _MiniStat(
-          value: '12',
-          label: 'طلب اليوم',
-          icon: Icons.assignment_outlined,
-          color: Color(0xFF1A1C4E),
+          value: '96%',
+          label: 'نسبة الإنجاز',
+          icon: Icons.check_circle_outline_rounded,
+          color: Color(0xFF10B981),
         ),
         SizedBox(width: 10),
         _MiniStat(
@@ -1089,10 +1148,10 @@ class _MiniStatsRow extends StatelessWidget {
         ),
         SizedBox(width: 10),
         _MiniStat(
-          value: '96%',
-          label: 'نسبة الإنجاز',
-          icon: Icons.check_circle_outline_rounded,
-          color: Color(0xFF10B981),
+          value: '12',
+          label: 'طلب اليوم',
+          icon: Icons.assignment_outlined,
+          color: Color(0xFF1A1C4E),
         ),
       ],
     );

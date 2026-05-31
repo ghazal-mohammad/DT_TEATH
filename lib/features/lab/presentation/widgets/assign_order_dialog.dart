@@ -92,19 +92,22 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
               const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.fromLTRB(22, 14, 22, 16),
+                // RTL: end = اليسار. الأزرار تتراصّ يسار.
+                // الترتيب: إلغاء (يمين) → توكيل primary (يسار).
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    _OutlineBtn(
+                      label: 'إلغاء',
+                      onTap: () => Navigator.of(context).pop(),
+                    ),
+                    const SizedBox(width: 10),
                     _PrimaryBtn(
                       label: 'توكيل',
                       icon: Icons.check_rounded,
                       onTap: _selectedId == null
                           ? null
                           : () => Navigator.of(context).pop(_selectedId),
-                    ),
-                    const SizedBox(width: 10),
-                    _OutlineBtn(
-                      label: 'إلغاء',
-                      onTap: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),
@@ -201,42 +204,12 @@ class _OrderRow extends StatelessWidget {
               width: selected ? 2 : 1,
             ),
           ),
+          // RTL convention: order info (id + meta) على اليمين، status badge على اليسار.
+          // ⇒ في الـ Row: Column أوّل (يمين) ثم Spacer ثم StatusBadge (يسار).
           child: Row(
             children: [
-              // status badge (left visual = end in RTL)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  color: colors.bg,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: colors.fg,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      colors.label,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: colors.fg,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '${order.id} — ${order.type}',
@@ -259,6 +232,38 @@ class _OrderRow extends StatelessWidget {
                     ],
                   ),
                 ],
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                  color: colors.bg,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                // RTL: نص يمين، dot يسار.
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      colors.label,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: colors.fg,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: colors.fg,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

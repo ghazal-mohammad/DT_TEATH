@@ -331,8 +331,9 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
             ),
           ),
           const Spacer(),
+          // RTL: start = يمين. النص العربي يحاذي يمين العمود.
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 hasName ? _nameCtrl.text.trim() : 'بدون اسم بعد',

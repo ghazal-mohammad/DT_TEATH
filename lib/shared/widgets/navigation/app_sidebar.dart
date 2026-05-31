@@ -169,7 +169,7 @@ class AppSidebar extends StatelessWidget {
                   AppColors.sidebarGradientBottom,
                 ],
               ),
-        color: isLight ? AppColors.bgGeneral : null,
+        color: isLight ? Colors.white : null,
         border: BorderDirectional(
           start: BorderSide(
             color: isLight ? AppColors.lightBorder : AppColors.darkBorder,

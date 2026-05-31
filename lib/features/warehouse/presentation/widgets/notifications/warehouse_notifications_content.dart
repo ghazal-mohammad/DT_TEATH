@@ -16,9 +16,6 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
-import '../../../../../shared/widgets/layout/app_page_action_bar.dart';
-import '../../../../../shared/widgets/primitives/app_button.dart';
-import '../../../../../shared/widgets/primitives/app_filter_chip.dart';
 import '../../../../warehouse/data/mock/warehouse_pages_mock_data.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -77,18 +74,37 @@ class _WarehouseNotificationsContentState
     extends State<WarehouseNotificationsContent> {
   _NotifFilter _filter = _NotifFilter.all;
   late List<WarehouseNotification> _notifications;
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _query = '';
 
   @override
   void initState() {
     super.initState();
     _notifications = List.from(WarehouseNotificationsMockData.notifications);
+    _searchCtrl.addListener(() {
+      setState(() => _query = _searchCtrl.text.trim());
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
   }
 
   int _count(_NotifFilter f) =>
       _notifications.where(f.matches).length;
 
-  List<WarehouseNotification> get _filtered =>
-      _notifications.where(_filter.matches).toList();
+  bool _matchesQuery(WarehouseNotification n) {
+    if (_query.isEmpty) return true;
+    final q = _query.toLowerCase();
+    return n.title.toLowerCase().contains(q) ||
+        n.body.toLowerCase().contains(q);
+  }
+
+  List<WarehouseNotification> get _filtered => _notifications
+      .where((n) => _filter.matches(n) && _matchesQuery(n))
+      .toList();
 
   int get _unreadCount => _notifications.where((n) => !n.isRead).length;
 
@@ -127,19 +143,23 @@ class _WarehouseNotificationsContentState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // ── شريط البحث + أيقونات ───────────────────────────────────────
+        _SearchRow(
+          controller: _searchCtrl,
+          isLight: isLight,
+        ),
+        const SizedBox(height: 14),
+
         // ── شريط الفلاتر + زر تحديد الكل كمقروء ─────────────────────────
-        AppPageActionBar(
-          filter: _buildFilterChips(),
-          actions: _unreadCount > 0
-              ? [
-                  AppButton(
-                    label: 'تحديد الكل كمقروء',
-                    onPressed: _markAllRead,
-                    variant: AppButtonVariant.secondary,
-                    size: AppButtonSize.small,
-                  ),
-                ]
-              : [],
+        _FilterAndActionRow(
+          filter: _filter,
+          counts: {
+            for (final f in _NotifFilter.values) f: _count(f),
+          },
+          onChanged: (f) => setState(() => _filter = f),
+          showMarkAll: _unreadCount > 0,
+          onMarkAll: _markAllRead,
+          isLight: isLight,
         ),
 
         const SizedBox(height: 14),
@@ -157,17 +177,6 @@ class _WarehouseNotificationsContentState
         else
           _buildGroups(grouped, isLight),
       ],
-    );
-  }
-
-  Widget _buildFilterChips() {
-    return AppFilterChipRow(
-      options: _NotifFilter.values
-          .map((f) => '${f.label} ${_count(f)}')
-          .toList(),
-      selectedIndex: _filter.index,
-      onChanged: (i) =>
-          setState(() => _filter = _NotifFilter.values[i]),
     );
   }
 
@@ -315,6 +324,10 @@ class _NotificationCard extends StatelessWidget {
         ? _accentColor.withValues(alpha: 0.04)
         : _accentColor.withValues(alpha: 0.08);
 
+    // RTL Row: أوّل child = يمين، آخر child = يسار.
+    // ترتيب المطلوب فيزيائياً: [stripe-يسار][icon][content-وسط/يمين]
+    //                          [actionBtn-يسار-تحت]
+    // لذلك بالـ Row: [content-أول=يمين, icon, actionBtn, stripe-آخر=يسار]
     return Container(
       decoration: BoxDecoration(
         color: isUnread ? unreadTint : cardBg,
@@ -326,37 +339,48 @@ class _NotificationCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // شريط جانبي ملوّن (يسار البطاقة بصرياً في RTL = end)
+            // ── المحتوى (يمين) ────────────────────────────────────
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: _buildContent(isUnread),
+              ),
+            ),
+            // ── العمود الأيسر: أيقونة فوق + زر الإجراء تحت ──────
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: _accentColor.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(_icon, color: _accentColor, size: 20),
+                  ),
+                  if (notification.actionLabel != null) ...[
+                    const SizedBox(height: 10),
+                    _ActionPill(
+                      label: notification.actionLabel!,
+                      color: _accentColor,
+                      onTap: () {
+                        if (isUnread) onMarkRead();
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            // ── شريط جانبي ملوّن (يسار البطاقة فيزيائياً) ───────
             Container(width: 4, color: _accentColor),
-            Expanded(child: _buildBody(isUnread)),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBody(bool isUnread) {
-    return Padding(
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // أيقونة الفئة
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: _accentColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(_icon, color: _accentColor, size: 20),
-          ),
-          const SizedBox(width: 12),
-
-          // محتوى
-          Expanded(child: _buildContent(isUnread)),
-        ],
       ),
     );
   }
@@ -365,7 +389,7 @@ class _NotificationCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // عنوان + badge + (نقطة غير مقروء)
+        // عنوان + badge
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -384,16 +408,6 @@ class _NotificationCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             _CategoryBadge(text: _badgeText, color: _accentColor),
-            const Spacer(),
-            if (isUnread)
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.alertRed,
-                  shape: BoxShape.circle,
-                ),
-              ),
           ],
         ),
         const SizedBox(height: 6),
@@ -412,9 +426,26 @@ class _NotificationCard extends StatelessWidget {
 
         const SizedBox(height: 10),
 
-        // الصف السفلي: الوقت + الإجراءات
+        // الصف السفلي: تصنيف · الوقت  (محاذاة يمين في RTL)
         Row(
           children: [
+            Text(
+              _badgeText,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+              ),
+            ),
+            Text(
+              '  ·  ',
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 11.5,
+                color: isLight ? AppColors.lightText4 : AppColors.darkText4,
+              ),
+            ),
             Text(
               notification.time,
               style: TextStyle(
@@ -424,22 +455,6 @@ class _NotificationCard extends StatelessWidget {
                     isLight ? AppColors.lightText4 : AppColors.darkText4,
               ),
             ),
-            const Spacer(),
-            if (notification.actionLabel != null)
-              _ActionPill(
-                label: notification.actionLabel!,
-                color: _accentColor,
-                onTap: () {
-                  if (isUnread) onMarkRead();
-                },
-              ),
-            if (isUnread) ...[
-              const SizedBox(width: 6),
-              _MarkReadButton(
-                isLight: isLight,
-                onTap: onMarkRead,
-              ),
-            ],
           ],
         ),
       ],
@@ -514,27 +529,283 @@ class _ActionPill extends StatelessWidget {
   }
 }
 
-class _MarkReadButton extends StatelessWidget {
-  const _MarkReadButton({required this.isLight, required this.onTap});
+// ══════════════════════════════════════════════════════════════════════════
+//                        SEARCH ROW (settings + bell + search)
+// ══════════════════════════════════════════════════════════════════════════
+
+class _SearchRow extends StatelessWidget {
+  const _SearchRow({required this.controller, required this.isLight});
+
+  final TextEditingController controller;
   final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color iconBg = isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2;
+    final Color border = isLight ? AppColors.lightBorder : AppColors.darkBorder;
+    final Color text2 = isLight ? AppColors.lightText2 : AppColors.darkText2;
+    final Color text4 = isLight ? AppColors.lightText4 : AppColors.darkText4;
+    return Row(
+      children: [
+        _IconBox(
+          icon: Icons.settings_outlined,
+          bg: iconBg,
+          border: border,
+          color: text2,
+          onTap: () {},
+        ),
+        const SizedBox(width: 8),
+        _IconBox(
+          icon: Icons.notifications_none_outlined,
+          bg: iconBg,
+          border: border,
+          color: text2,
+          onTap: () {},
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Container(
+            height: 38,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+              border: Border.all(color: border),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 13.5,
+                      color: isLight
+                          ? AppColors.lightText1
+                          : AppColors.darkText1,
+                    ),
+                    decoration: InputDecoration(
+                      isCollapsed: true,
+                      border: InputBorder.none,
+                      hintText: 'بحث في الإشعارات…',
+                      hintStyle: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 13.5,
+                        color: text4,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(Icons.search, size: 18, color: text2),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _IconBox extends StatelessWidget {
+  const _IconBox({
+    required this.icon,
+    required this.bg,
+    required this.border,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color bg;
+  final Color border;
+  final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onTap,
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+          border: Border.all(color: border),
+        ),
+        child: Icon(icon, size: 18, color: color),
       ),
-      child: Text(
-        'تحديد كمقروء',
-        style: TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//                  FILTER PILLS + MARK-ALL-READ BUTTON ROW
+// ══════════════════════════════════════════════════════════════════════════
+
+class _FilterAndActionRow extends StatelessWidget {
+  const _FilterAndActionRow({
+    required this.filter,
+    required this.counts,
+    required this.onChanged,
+    required this.showMarkAll,
+    required this.onMarkAll,
+    required this.isLight,
+  });
+
+  final _NotifFilter filter;
+  final Map<_NotifFilter, int> counts;
+  final ValueChanged<_NotifFilter> onChanged;
+  final bool showMarkAll;
+  final VoidCallback onMarkAll;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final pills = Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: _NotifFilter.values.map((f) {
+        return _NotifPill(
+          label: f.label,
+          count: counts[f] ?? 0,
+          isActive: f == filter,
+          onTap: () => onChanged(f),
+          isLight: isLight,
+        );
+      }).toList(),
+    );
+
+    final markBtn = showMarkAll
+        ? InkWell(
+            onTap: onMarkAll,
+            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2,
+                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                border: Border.all(
+                  color:
+                      isLight ? AppColors.lightBorder : AppColors.darkBorder,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_rounded,
+                      size: 16,
+                      color: isLight
+                          ? AppColors.lightText2
+                          : AppColors.darkText2),
+                  const SizedBox(width: 6),
+                  Text(
+                    'تحديد الكل كمقروء',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: isLight
+                          ? AppColors.lightText2
+                          : AppColors.darkText2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
+
+    // في RTL: أوّل child = يمين. لتثبيت pills يمين و markBtn يسار:
+    // [pills, Spacer, markBtn].
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Flexible(child: pills),
+        const SizedBox(width: 10),
+        const Spacer(),
+        markBtn,
+      ],
+    );
+  }
+}
+
+// ── Pill chip للفلتر: label + count داخل كبسولة، النشط dark navy ─────────
+class _NotifPill extends StatelessWidget {
+  const _NotifPill({
+    required this.label,
+    required this.count,
+    required this.isActive,
+    required this.onTap,
+    required this.isLight,
+  });
+
+  final String label;
+  final int count;
+  final bool isActive;
+  final VoidCallback onTap;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = isActive
+        ? AppColors.primary
+        : (isLight ? const Color(0xFFF1EDE6) : AppColors.darkBg2);
+    final labelColor = isActive
+        ? Colors.white
+        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
+    final countBg = isActive
+        ? Colors.white.withValues(alpha: 0.18)
+        : (isLight ? Colors.white : AppColors.darkBg1);
+    final countColor = isActive
+        ? Colors.white
+        : (isLight ? AppColors.lightText3 : AppColors.darkText3);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.fromLTRB(6, 4, 12, 4),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: countBg,
+                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  color: countColor,
+                ),
+              ),
+            ),
+            const SizedBox(width: 7),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: labelColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

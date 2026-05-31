@@ -47,15 +47,22 @@ class WarehouseReportsPage extends StatelessWidget {
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
       body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Padding(
-            padding: const EdgeInsets.all(22.0),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: constraints.maxWidth,
-                maxWidth: constraints.maxWidth - 44,
+        builder: (ctx, constraints) {
+          final controller = ScrollController();
+          return Scrollbar(
+            controller: controller,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: controller,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(22.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth,
+                  maxWidth: constraints.maxWidth,
+                ),
+                child: const WarehouseReportsContent(),
               ),
-              child: const WarehouseReportsContent(),
             ),
           );
         },

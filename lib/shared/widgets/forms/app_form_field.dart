@@ -219,19 +219,17 @@ class _AppFormFieldState extends State<AppFormField> {
           fontWeight: FontWeight.w400,
         ),
         filled: true,
-        fillColor: _isFocused
-            ? const Color(0x1A9EFBEC) // 0.10 on focus
-            : const Color(0x0F9EFBEC), // 0.06 default
+        // ستايل نظيف: خلفية رمادية فاتحة جداً + حواف رمادية + فوكس كحلي.
+        fillColor: const Color(0xFFF8F9FC),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
-        // padding:11px 14px من CSS
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
           vertical: 11,
         ),
-        border: _outlineBorder(const Color(0x2E9EFBEC)), // 0.18
-        enabledBorder: _outlineBorder(const Color(0x2E9EFBEC)),
-        focusedBorder: _outlineBorder(AppColors.accent, width: 2),
+        border: _outlineBorder(AppColors.lightBorder),
+        enabledBorder: _outlineBorder(AppColors.lightBorder),
+        focusedBorder: _outlineBorder(AppColors.primary, width: 1.6),
         errorBorder: _outlineBorder(const Color(0xFFEF4444)),
         focusedErrorBorder: _outlineBorder(const Color(0xFFEF4444), width: 2),
         disabledBorder: _outlineBorder(

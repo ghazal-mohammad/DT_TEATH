@@ -762,15 +762,10 @@ class _StatusPill extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(20),
         ),
+        // RTL: نص يمين، dot يسار.
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
@@ -779,6 +774,12 @@ class _StatusPill extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 color: fg,
               ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
             ),
           ],
         ),
