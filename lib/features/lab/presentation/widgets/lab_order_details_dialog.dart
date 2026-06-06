@@ -13,6 +13,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -64,7 +65,7 @@ class LabOrderDetailsDialog extends StatelessWidget {
                     children: [
                       _StatusBanner(order: order),
                       const SizedBox(height: 18),
-                      _SectionHeader(label: 'معلومات الطلبية'),
+                      _SectionHeader(label: context.l10n.orderDetailsInfoSection),
                       const SizedBox(height: 10),
                       LayoutBuilder(builder: (ctx, c) {
                         final isNarrow = c.maxWidth < 540;
@@ -90,12 +91,12 @@ class LabOrderDetailsDialog extends StatelessWidget {
                         );
                       }),
                       const SizedBox(height: 18),
-                      _SectionHeader(label: 'تقدم العمل'),
+                      _SectionHeader(label: context.l10n.orderDetailsProgress),
                       const SizedBox(height: 14),
                       _ProgressTimeline(variant: order.statusVariant),
                       if (order.notes.isNotEmpty) ...[
                         const SizedBox(height: 18),
-                        _SectionHeader(label: 'ملاحظات'),
+                        _SectionHeader(label: context.l10n.orderDetailsNotes),
                         const SizedBox(height: 10),
                         _NotesBox(notes: order.notes),
                       ],
@@ -157,7 +158,7 @@ class _Header extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   children: [
                     Text(
-                      'تفاصيل الطلبية',
+                      context.l10n.orderDetailsHeading,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 18,
@@ -179,7 +180,7 @@ class _Header extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'تفاصيل الطلبية المرسلة من الطبيب إلى المختبر',
+                  context.l10n.orderDetailsSubtitleLab,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12.5,
@@ -238,7 +239,7 @@ class _StatusBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'حالة الطلبية',
+                  context.l10n.orderDetailsStatusLabel,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
@@ -252,7 +253,7 @@ class _StatusBanner extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      c.label,
+                      labStatusLabel(context, order.statusVariant),
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 13,
@@ -280,7 +281,7 @@ class _StatusBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'تاريخ التسليم المتوقع',
+                  context.l10n.orderDetailsExpectedDelivery,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
@@ -358,11 +359,11 @@ class _OrderInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _InfoCard(
-      title: 'بيانات الطلبية',
+      title: context.l10n.orderDetailsOrderData,
       rows: [
-        (label: 'النوع', value: order.type, pillColor: null),
-        (label: 'المادة', value: order.material, pillColor: null),
-        (label: 'السن', value: order.tooth, pillColor: null),
+        (label: context.l10n.colType, value: order.type, pillColor: null),
+        (label: context.l10n.colMaterial, value: order.material, pillColor: null),
+        (label: context.l10n.colTooth, value: order.tooth, pillColor: null),
       ],
     );
   }
@@ -375,17 +376,19 @@ class _DoctorInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _InfoCard(
-      title: 'بيانات الطبيب',
+      title: context.l10n.orderDetailsDoctorData,
       rows: [
-        (label: 'الطبيب المُرسل', value: order.doctor, pillColor: null),
+        (label: context.l10n.orderDetailsSenderDoctor, value: order.doctor, pillColor: null),
         (
-          label: 'الأولوية',
-          value: order.isUrgent ? 'عاجل' : 'عادية',
+          label: context.l10n.orderDetailsPriority,
+          value: order.isUrgent
+              ? context.l10n.priorityUrgent
+              : context.l10n.priorityNormal,
           pillColor: order.isUrgent
               ? const Color(0xFFEF4444)
               : AppColors.lightText3,
         ),
-        (label: 'المختبر المستلم', value: 'مختبر الشام', pillColor: null),
+        (label: context.l10n.orderDetailsReceivingLab, value: 'مختبر الشام', pillColor: null),
       ],
     );
   }
@@ -540,10 +543,10 @@ class _ProgressTimeline extends StatelessWidget {
     // الخطوات: index 0 → "تم الاستلام" (يمين في RTL = أوّل خطوة)
     //           index 1 → "قيد التصنيع"
     //           index 2 → "جاهز للتسليم" (يسار = آخر خطوة)
-    const steps = [
-      'تم الاستلام',
-      'قيد التصنيع',
-      'جاهز للتسليم',
+    final steps = [
+      context.l10n.orderTimelineReceived,
+      context.l10n.statusManufacturing,
+      context.l10n.orderDetailsReadyForDelivery,
     ];
     final dates = <int, String>{0: '20-04-2026'};
 
@@ -699,7 +702,7 @@ class _CloseButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
           ),
           child: Text(
-            'إغلاق',
+            context.l10n.close,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,

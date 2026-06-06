@@ -49,8 +49,7 @@ class AppSidebarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // السايدبار الموحّد دائماً فاتح.
-    const bool isLight = true;
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
 
     // قسم بدون عنوان → نضع فقط فاصل علوي خفيف للفصل البصري
     if (title.isEmpty) {

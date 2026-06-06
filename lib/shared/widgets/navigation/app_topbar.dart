@@ -185,7 +185,8 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        AppColors.accent.withValues(alpha: 0.3),
+                        (isLight ? AppColors.primary : AppColors.brand)
+                            .withValues(alpha: 0.15),
                         Colors.transparent,
                       ],
                     ),
@@ -250,34 +251,16 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 7), // gap:7px في .tb-r
         ],
 
-        // زر الثيم
-        if (onThemeToggle != null) ...[
+        // زر الثيم (اختصار سريع — مش صفحة بالسايدبار)
+        if (onThemeToggle != null)
           AppTopbarAction(
             icon: isLight ? AppIcons.darkMode : AppIcons.lightMode,
             onPressed: onThemeToggle,
             tooltip: isLight ? AppStrings.darkMode : AppStrings.lightMode,
           ),
-          const SizedBox(width: 7),
-        ],
 
-        // زر الإشعارات
-        if (onNotificationTap != null) ...[
-          AppTopbarAction(
-            icon: AppIcons.bell,
-            onPressed: onNotificationTap,
-            hasDot: notificationCount > 0,
-            tooltip: AppStrings.notifications,
-          ),
-          const SizedBox(width: 7),
-        ],
-
-        // زر البروفايل
-        if (onProfileTap != null)
-          AppTopbarAction(
-            icon: AppIcons.profile,
-            onPressed: onProfileTap,
-            tooltip: AppStrings.settings,
-          ),
+        // ملاحظة: أزرار الإشعارات والبروفايل انحذفت من التوب-بار عمداً —
+        // الاثنين موجودين كصفحات بالسايدبار، فما منكرّر الوصول لنفس الفيتشر.
       ],
     );
   }

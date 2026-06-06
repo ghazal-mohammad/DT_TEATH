@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 
 /// نموذج كامل لطلب المخبر — يستخدم بصفحة الطلبات والمودالات.
@@ -36,30 +37,25 @@ class LabOrderFull {
 
 /// ألوان الـ status badge (نقطة + نص) — مطابقة لتصميم الجدول بالـ Dashboard.
 class LabStatusColors {
-  const LabStatusColors._(this.bg, this.fg, this.label);
+  const LabStatusColors._(this.bg, this.fg);
   final Color bg;
   final Color fg;
-  final String label;
 
   static const newOrder = LabStatusColors._(
     Color(0xFFE2EDFF),
     Color(0xFF3B82F6),
-    'جديد',
   );
   static const manufacturing = LabStatusColors._(
     Color(0xFFF1DAFE),
     Color(0xFF8B5CF6),
-    'قيد التصنيع',
   );
   static const ready = LabStatusColors._(
     Color(0xFFD0FBD7),
     Color(0xFF10B981),
-    'جاهز',
   );
   static const urgent = LabStatusColors._(
     Color(0xFFFEE2E2),
     Color(0xFFEF4444),
-    'عاجل',
   );
 
   static LabStatusColors of(LabOrderBadgeVariant variant) {
@@ -73,6 +69,21 @@ class LabStatusColors {
       case LabOrderBadgeVariant.urgent:
         return urgent;
     }
+  }
+}
+
+/// نص حالة الطلبية المترجم (يُحلّ من context.l10n بدل تخزينه ثابتاً).
+String labStatusLabel(BuildContext context, LabOrderBadgeVariant variant) {
+  final l10n = context.l10n;
+  switch (variant) {
+    case LabOrderBadgeVariant.newOrder:
+      return l10n.statusNew;
+    case LabOrderBadgeVariant.manufacturing:
+      return l10n.statusManufacturing;
+    case LabOrderBadgeVariant.ready:
+      return l10n.statusReady;
+    case LabOrderBadgeVariant.urgent:
+      return l10n.priorityUrgent;
   }
 }
 

@@ -147,8 +147,8 @@ class AppSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // السايدبار يعرض دائماً بالنمط الفاتح (خلفية بيضاء) — حسب التصميم الموحّد.
-    const bool isLight = true;
+    // الفاتح: خلفية بيضاء (التصميم الموحّد). الغامق: سطح slate مطابق للثيم.
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     final double width = collapsed
         ? AppSizes.sidebarCollapsed
         : AppSizes.sidebarWidth;
@@ -159,17 +159,7 @@ class AppSidebar extends StatelessWidget {
       width: width,
       height: double.infinity,
       decoration: BoxDecoration(
-        gradient: isLight
-            ? null
-            : const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.primary,
-                  AppColors.sidebarGradientBottom,
-                ],
-              ),
-        color: isLight ? Colors.white : null,
+        color: isLight ? Colors.white : AppColors.darkBg1,
         border: BorderDirectional(
           start: BorderSide(
             color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
@@ -192,7 +182,7 @@ class AppSidebar extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          AppColors.accent.withValues(alpha: 0.08),
+                          AppColors.brand.withValues(alpha: 0.10),
                           Colors.transparent,
                         ],
                         stops: const [0.0, 0.7],

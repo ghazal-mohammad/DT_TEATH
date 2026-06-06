@@ -14,6 +14,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -26,11 +28,11 @@ import '../../../../../shared/widgets/primitives/app_button.dart';
 enum _ReportRange { daily, weekly, monthly, yearly }
 
 extension on _ReportRange {
-  String get label => switch (this) {
-        _ReportRange.daily => 'يومي',
-        _ReportRange.weekly => 'أسبوعي',
-        _ReportRange.monthly => 'شهري',
-        _ReportRange.yearly => 'سنوي',
+  String label(AppLocalizations l10n) => switch (this) {
+        _ReportRange.daily => l10n.reportRangeDaily,
+        _ReportRange.weekly => l10n.reportRangeWeekly,
+        _ReportRange.monthly => l10n.reportRangeMonthly,
+        _ReportRange.yearly => l10n.reportRangeYearly,
       };
 }
 
@@ -202,7 +204,7 @@ class _SuppliersCard extends StatelessWidget {
                   size: 18, color: AppColors.primary),
               const SizedBox(width: 6),
               Text(
-                'أداء الموردين',
+                context.l10n.reportSuppliersPerf,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
@@ -274,7 +276,7 @@ class _SupplierRow extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '${data.invoices} فاتورة · متوسط ${data.avgDays} يوم',
+                context.l10n.reportSupplierSubtitle(data.invoices, data.avgDays),
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 11,
@@ -382,7 +384,7 @@ class _TopMaterialsCard extends StatelessWidget {
                   size: 18, color: Color(0xFFE17B2C)),
               const SizedBox(width: 6),
               Text(
-                'أكثر المواد استهلاكاً',
+                context.l10n.reportTopMaterials,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
@@ -411,7 +413,7 @@ class _TopMaterialsCard extends StatelessWidget {
               InkWell(
                 onTap: () {},
                 child: Text(
-                  'التقرير الكامل',
+                  context.l10n.reportFullReport,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
@@ -570,7 +572,7 @@ class _Toolbar extends StatelessWidget {
     // كل button بـ IntrinsicWidth حتى ياخد حجمه الطبيعي.
     final pdfBtn = IntrinsicWidth(
       child: AppButton(
-        label: 'تصدير PDF',
+        label: context.l10n.reportExportPdf,
         onPressed: () {},
         variant: AppButtonVariant.primary,
         size: AppButtonSize.small,
@@ -578,7 +580,7 @@ class _Toolbar extends StatelessWidget {
     );
     final excelBtn = IntrinsicWidth(
       child: AppButton(
-        label: 'تصدير Excel',
+        label: context.l10n.reportExportExcel,
         onPressed: () {},
         variant: AppButtonVariant.secondary,
         size: AppButtonSize.small,
@@ -623,7 +625,7 @@ class _Toolbar extends StatelessWidget {
         for (var i = 0; i < _ReportRange.values.length; i++) ...[
           if (i > 0) const SizedBox(width: 6),
           _PillChip(
-            label: _ReportRange.values[i].label,
+            label: _ReportRange.values[i].label(context.l10n),
             selected: _ReportRange.values[i] == range,
             onTap: () => onRangeChange(_ReportRange.values[i]),
           ),
@@ -687,7 +689,7 @@ class _ReportHeader extends StatelessWidget {
             size: 18, color: AppColors.primary),
         const SizedBox(width: 6),
         Text(
-          '$period — التقرير الشهري',
+          context.l10n.reportMonthlyTitle(period),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 15,
@@ -697,7 +699,7 @@ class _ReportHeader extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          'تم إنشاء التقرير $generatedAt',
+          context.l10n.reportGeneratedAt(generatedAt),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 12,
@@ -732,40 +734,40 @@ class _StatsRow extends StatelessWidget {
         childAspectRatio: switch (cols) { 4 => 1.85, 2 => 2.4, _ => 3.0 },
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
+        children: [
           _StatBox(
-            badge: '-0.4 يوم',
-            badgeColor: Color(0xFFE17B2C),
+            badge: '-0.4 ${context.l10n.reportUnitDay}',
+            badgeColor: const Color(0xFFE17B2C),
             value: '1.8',
-            valueSuffix: 'يوم',
-            label: 'متوسط مدة التوريد',
+            valueSuffix: context.l10n.reportUnitDay,
+            label: context.l10n.reportStatAvgSupplyTime,
             icon: Icons.access_time_rounded,
-            accent: Color(0xFFE17B2C),
+            accent: const Color(0xFFE17B2C),
           ),
           _StatBox(
             badge: '+2%',
-            badgeColor: Color(0xFF1F9B6E),
+            badgeColor: const Color(0xFF1F9B6E),
             value: '94',
             valueSuffix: '%',
-            label: 'نسبة التوريد',
+            label: context.l10n.reportStatSupplyRate,
             icon: Icons.check_rounded,
-            accent: Color(0xFF1F9B6E),
+            accent: const Color(0xFF1F9B6E),
           ),
           _StatBox(
-            badge: 'هذا الشهر',
-            badgeColor: Color(0xFF7A4FCF),
+            badge: context.l10n.profileBadgeThisMonth,
+            badgeColor: const Color(0xFF7A4FCF),
             value: '156',
-            label: 'مادة استُهلكت',
+            label: context.l10n.reportStatConsumed,
             icon: Icons.trending_up_rounded,
-            accent: Color(0xFF7A4FCF),
+            accent: const Color(0xFF7A4FCF),
           ),
           _StatBox(
             badge: '4+',
-            badgeColor: Color(0xFF2C7FDB),
+            badgeColor: const Color(0xFF2C7FDB),
             value: '247',
-            label: 'إجمالي المواد',
+            label: context.l10n.reportStatTotalMaterials,
             icon: Icons.inventory_2_outlined,
-            accent: Color(0xFF2C7FDB),
+            accent: const Color(0xFF2C7FDB),
           ),
         ],
       );
@@ -978,7 +980,7 @@ class _DonutCard extends StatelessWidget {
                   size: 18, color: AppColors.primary),
               const SizedBox(width: 6),
               Text(
-                'توزّع الاستهلاك حسب الفئة',
+                context.l10n.reportConsumptionByCategory,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
@@ -1009,7 +1011,7 @@ class _DonutCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'من الاستهلاك',
+                      context.l10n.reportOfConsumption,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 11,
@@ -1123,18 +1125,18 @@ class _CalendarCard extends StatelessWidget {
   final int daysInMonth;
   final Set<int> highlighted;
 
-  static const _weekdayLabels = [
-    'أحد',
-    'إثنين',
-    'ثلاثاء',
-    'أربعاء',
-    'خميس',
-    'جمعة',
-    'سبت',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final weekdayLabels = [
+      l10n.reportWeekdaySun,
+      l10n.reportWeekdayMon,
+      l10n.reportWeekdayTue,
+      l10n.reportWeekdayWed,
+      l10n.reportWeekdayThu,
+      l10n.reportWeekdayFri,
+      l10n.reportWeekdaySat,
+    ];
     return _Card(
       isLight: isLight,
       child: Column(
@@ -1147,7 +1149,7 @@ class _CalendarCard extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'توزع طلبات التوريد على أيام الشهر',
+                  l10n.reportSupplyByDays,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 14,
@@ -1165,7 +1167,7 @@ class _CalendarCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                 ),
                 child: Text(
-                  '$daysInMonth يوم',
+                  l10n.reportDaysCount(daysInMonth),
                   style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 11,
@@ -1179,7 +1181,7 @@ class _CalendarCard extends StatelessWidget {
           const SizedBox(height: 14),
           // أيام الأسبوع
           Row(
-            children: _weekdayLabels
+            children: weekdayLabels
                 .map((d) => Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1232,7 +1234,7 @@ class _HeatmapLegend extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          'أقل',
+          context.l10n.reportLess,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 11,
@@ -1257,7 +1259,7 @@ class _HeatmapLegend extends StatelessWidget {
         ],
         const SizedBox(width: 3),
         Text(
-          'أكثر',
+          context.l10n.reportMore,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 11,

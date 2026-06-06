@@ -117,24 +117,26 @@ class _AppSidebarItemState extends State<AppSidebarItem> {
 
   @override
   Widget build(BuildContext context) {
-    // التصميم الموحّد دائماً فاتح: خلفية بيضاء + active كحلي مع نص أبيض.
+    // theme-aware: النشط مملوء بـ colorScheme.primary (كحلي بالفاتح، إندِغو بالغامق)
+    // مع نص onPrimary. الفاتح يبقى مطابقاً تماماً للتصميم المرجعي.
+    final ColorScheme cs = Theme.of(context).colorScheme;
 
     // ── تحديد الألوان حسب الحالة ────────────────────────────────────────
     final Color textColor = widget.isActive
-        ? Colors.white
+        ? cs.onPrimary
         : _isHovered
-            ? AppColors.primary
-            : AppColors.lightText1;
+            ? cs.primary
+            : cs.onSurface;
 
-    // خلفية العنصر — النشط مملوء بالكحلي (مطابق للتصميم المرجعي)
+    // خلفية العنصر — النشط مملوء بـ primary (مطابق للتصميم المرجعي)
     final Decoration decoration = widget.isActive
         ? BoxDecoration(
-            color: AppColors.primary,
+            color: cs.primary,
             borderRadius: BorderRadius.circular(AppSizes.radiusMD),
           )
         : _isHovered
             ? BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.06),
+                color: cs.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(AppSizes.radiusMD),
               )
             : const BoxDecoration();

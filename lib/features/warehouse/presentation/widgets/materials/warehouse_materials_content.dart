@@ -17,6 +17,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -36,12 +38,12 @@ import 'warehouse_material_form_dialog.dart';
 enum _CategoryFilter { all, medical, consumables, medicines, metals }
 
 extension on _CategoryFilter {
-  String get label => switch (this) {
-        _CategoryFilter.all => 'الكل',
-        _CategoryFilter.medical => 'مواد طبية',
-        _CategoryFilter.consumables => 'مستهلكات',
-        _CategoryFilter.medicines => 'أدوية',
-        _CategoryFilter.metals => 'معادن',
+  String label(AppLocalizations l10n) => switch (this) {
+        _CategoryFilter.all => l10n.whFilterAll,
+        _CategoryFilter.medical => l10n.whCategoryMedical,
+        _CategoryFilter.consumables => l10n.whCategoryConsumables,
+        _CategoryFilter.medicines => l10n.whCategoryMedicines,
+        _CategoryFilter.metals => l10n.whCategoryEquipment,
       };
 
   bool matches(WarehouseMaterial m) {
@@ -63,11 +65,11 @@ extension on _CategoryFilter {
 enum _StatusFilter { all, low, out, available }
 
 extension on _StatusFilter {
-  String get label => switch (this) {
-        _StatusFilter.all => 'الكل',
-        _StatusFilter.low => 'ينفد',
-        _StatusFilter.out => 'نفد',
-        _StatusFilter.available => 'متوفر',
+  String label(AppLocalizations l10n) => switch (this) {
+        _StatusFilter.all => l10n.whFilterAll,
+        _StatusFilter.low => l10n.whStatusLow,
+        _StatusFilter.out => l10n.whStatusOut,
+        _StatusFilter.available => l10n.whStatusAvailable,
       };
 
   bool matches(WarehouseMaterial m) {
@@ -195,37 +197,37 @@ class _StatsRow extends StatelessWidget {
         children: [
           _StatBox(
             isLight: isLight,
-            badge: 'تنبيه',
+            badge: context.l10n.profileBadgeAlert,
             badgeColor: const Color(0xFF7A4FCF),
             value: '$outCount',
-            label: 'مواد نفدت',
+            label: context.l10n.whStatOutMaterials,
             icon: Icons.access_time_rounded,
             accent: const Color(0xFF7A4FCF),
           ),
           _StatBox(
             isLight: isLight,
-            badge: 'تنبيه',
+            badge: context.l10n.profileBadgeAlert,
             badgeColor: const Color(0xFFE17B2C),
             value: '$lowCount',
-            label: 'مواد ينفد رصيدها',
+            label: context.l10n.whStatLowMaterials,
             icon: Icons.warning_amber_rounded,
             accent: const Color(0xFFE17B2C),
           ),
           _StatBox(
             isLight: isLight,
-            badge: 'متوفر',
+            badge: context.l10n.whStatusAvailable,
             badgeColor: const Color(0xFF1F9B6E),
             value: '$availCount',
-            label: 'مواد متوفرة',
+            label: context.l10n.whStatAvailMaterials,
             icon: Icons.check_rounded,
             accent: const Color(0xFF1F9B6E),
           ),
           _StatBox(
             isLight: isLight,
-            badge: 'إجمالي',
+            badge: context.l10n.whBadgeTotal,
             badgeColor: const Color(0xFF2C7FDB),
             value: '$total',
-            label: 'مادة في المستودع',
+            label: context.l10n.whStatTotalMaterials,
             icon: Icons.inventory_2_outlined,
             accent: const Color(0xFF2C7FDB),
           ),
@@ -375,7 +377,7 @@ class _CategoryFilterBar extends StatelessWidget {
             runSpacing: 6,
             children: _CategoryFilter.values
                 .map((f) => _PillChip(
-                      label: f.label,
+                      label: f.label(context.l10n),
                       selected: f == active,
                       onTap: () => onChange(f),
                     ))
@@ -384,7 +386,7 @@ class _CategoryFilterBar extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Text(
-          '$afterFilter مادة من أصل $total',
+          context.l10n.whMaterialsCount(afterFilter, total),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 12,
@@ -488,12 +490,12 @@ class _TableSection extends StatelessWidget {
             color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
           ),
           if (filtered.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 36),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 36),
               child: AppEmptyState(
                 icon: Icons.inventory_2_outlined,
-                title: 'لا يوجد مواد',
-                message: 'لا يوجد مواد تطابق الفلاتر الحالية',
+                title: context.l10n.whMaterialsEmptyTitle,
+                message: context.l10n.whMaterialsEmptyMessage,
               ),
             )
           else
@@ -518,7 +520,7 @@ class _TableSection extends StatelessWidget {
                 size: 18, color: AppColors.primary),
             const SizedBox(width: 6),
             Text(
-              'مواد المستودع',
+              context.l10n.whMaterialsTitle,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 15,
@@ -541,7 +543,7 @@ class _TableSection extends StatelessWidget {
         );
 
         final addBtn = AppButton(
-          label: '+ إضافة مادة',
+          label: '+ ${context.l10n.whMaterialsAdd}',
           onPressed: onAddTap,
           variant: AppButtonVariant.primary,
           size: AppButtonSize.small,
@@ -609,7 +611,7 @@ class _StatusSegmentedTabs extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      v.label,
+                      v.label(context.l10n),
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 12.5,
@@ -708,16 +710,16 @@ class _TableHeader extends StatelessWidget {
     return Container(
       color: isLight ? AppColors.tableHeader : AppColors.darkSurface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-      child: const Row(
+      child: Row(
         children: [
-          Expanded(flex: 2, child: _HCell('الكود')),
-          Expanded(flex: 3, child: _HCell('اسم المادة')),
-          Expanded(flex: 2, child: _HCell('الفئة')),
-          Expanded(flex: 2, child: _HCell('المخزون')),
-          Expanded(flex: 2, child: _HCell('الحد الأدنى')),
-          Expanded(flex: 2, child: _HCell('الصلاحية')),
-          Expanded(flex: 2, child: _HCell('المورد')),
-          Expanded(flex: 2, child: _HCell('الحالة')),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColCode)),
+          Expanded(flex: 3, child: _HCell(context.l10n.whColName)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColCategory)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColStock)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColMinStock)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColExpiry)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColSupplier)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColStatus)),
         ],
       ),
     );
@@ -869,13 +871,6 @@ class _CategoryDot extends StatelessWidget {
   const _CategoryDot({required this.category});
   final MaterialCategory category;
 
-  String get _label => switch (category) {
-        MaterialCategory.medical => 'مواد طبية',
-        MaterialCategory.consumables => 'مستهلكات',
-        MaterialCategory.medicines => 'أدوية',
-        MaterialCategory.equipment => 'معادن',
-      };
-
   Color get _color => switch (category) {
         MaterialCategory.medical => const Color(0xFF7A4FCF),
         MaterialCategory.consumables => const Color(0xFF2C7FDB),
@@ -896,7 +891,7 @@ class _CategoryDot extends StatelessWidget {
         const SizedBox(width: 6),
         Flexible(
           child: Text(
-            _label,
+            category.label(context),
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
@@ -955,14 +950,6 @@ class _StatusPill extends StatelessWidget {
   const _StatusPill({required this.status});
   final MaterialStatus status;
 
-  String get _label => switch (status) {
-        MaterialStatus.available => 'متوفر',
-        MaterialStatus.low => 'ينفد',
-        MaterialStatus.outOfStock => 'نفد',
-        MaterialStatus.expired => 'منتهي',
-        MaterialStatus.expiringSoon => 'صلاحية قريبة',
-      };
-
   @override
   Widget build(BuildContext context) {
     final c = status.accentColor;
@@ -982,7 +969,7 @@ class _StatusPill extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            _label,
+            status.label(context),
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 11.5,

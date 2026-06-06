@@ -12,6 +12,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -25,13 +27,13 @@ import '../../../../warehouse/data/mock/warehouse_pages_mock_data.dart';
 enum _NotifFilter { all, unread, urgent, orders, materials, system }
 
 extension on _NotifFilter {
-  String get label => switch (this) {
-        _NotifFilter.all => 'الكل',
-        _NotifFilter.unread => 'غير مقروءة',
-        _NotifFilter.urgent => 'عاجل',
-        _NotifFilter.orders => 'طلبيات',
-        _NotifFilter.materials => 'مواد',
-        _NotifFilter.system => 'نظام',
+  String label(AppLocalizations l10n) => switch (this) {
+        _NotifFilter.all => l10n.ordersFilterAll,
+        _NotifFilter.unread => l10n.notifFilterUnread,
+        _NotifFilter.urgent => l10n.ordersUrgent,
+        _NotifFilter.orders => l10n.notifFilterOrders,
+        _NotifFilter.materials => l10n.notifFilterMaterials,
+        _NotifFilter.system => l10n.notifFilterSystem,
       };
 
   bool matches(WarehouseNotification n) {
@@ -137,8 +139,9 @@ class _WarehouseNotificationsContentState
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
+    final l10n = context.l10n;
     final filtered = _filtered;
-    final grouped = _groupByDay(filtered);
+    final grouped = _groupByDay(filtered, l10n);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -166,12 +169,12 @@ class _WarehouseNotificationsContentState
 
         // ── المحتوى ────────────────────────────────────────────────────
         if (filtered.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 48),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 48),
             child: AppEmptyState(
               icon: Icons.notifications_none_outlined,
-              title: 'لا توجد إشعارات',
-              message: 'لا يوجد إشعارات لعرضها في هذا الفلتر',
+              title: l10n.notifEmptyTitle,
+              message: l10n.notifEmptyMessage,
             ),
           )
         else
@@ -211,7 +214,7 @@ class _WarehouseNotificationsContentState
 /// يصنّف الإشعارات حسب اليوم اعتماداً على نص الـ time.
 /// "منذ ..." → اليوم   |   "أمس" → أمس   |   باقي → أقدم.
 Map<String, List<WarehouseNotification>> _groupByDay(
-    List<WarehouseNotification> items) {
+    List<WarehouseNotification> items, AppLocalizations l10n) {
   final today = <WarehouseNotification>[];
   final yesterday = <WarehouseNotification>[];
   final older = <WarehouseNotification>[];
@@ -227,9 +230,9 @@ Map<String, List<WarehouseNotification>> _groupByDay(
   }
 
   return {
-    if (today.isNotEmpty) 'اليوم': today,
-    if (yesterday.isNotEmpty) 'أمس': yesterday,
-    if (older.isNotEmpty) 'أقدم': older,
+    if (today.isNotEmpty) l10n.notifGroupToday: today,
+    if (yesterday.isNotEmpty) l10n.notifGroupYesterday: yesterday,
+    if (older.isNotEmpty) l10n.notifGroupOlder: older,
   };
 }
 
@@ -303,21 +306,22 @@ class _NotificationCard extends StatelessWidget {
     }
   }
 
-  String get _badgeText {
-    if (_isUrgent) return 'عاجل';
+  String _badgeText(AppLocalizations l10n) {
+    if (_isUrgent) return l10n.ordersUrgent;
     switch (notification.category) {
       case NotificationCategory.low:
       case NotificationCategory.expiry:
-        return 'مواد';
+        return l10n.notifFilterMaterials;
       case NotificationCategory.order:
-        return 'طلبية';
+        return l10n.notifBadgeOrder;
       case NotificationCategory.general:
-        return 'إنجاز';
+        return l10n.notifBadgeDone;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final bool isUnread = !notification.isRead;
     final cardBg = isLight ? AppColors.baseComponent : AppColors.darkSurface;
     final unreadTint = isLight
@@ -345,7 +349,7 @@ class _NotificationCard extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(14),
-                child: _buildContent(isUnread),
+                child: _buildContent(isUnread, l10n),
               ),
             ),
             // ── العمود الأيسر: أيقونة فوق + زر الإجراء تحت ──────
@@ -385,7 +389,7 @@ class _NotificationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(bool isUnread) {
+  Widget _buildContent(bool isUnread, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -407,7 +411,7 @@ class _NotificationCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            _CategoryBadge(text: _badgeText, color: _accentColor),
+            _CategoryBadge(text: _badgeText(l10n), color: _accentColor),
           ],
         ),
         const SizedBox(height: 6),
@@ -430,7 +434,7 @@ class _NotificationCard extends StatelessWidget {
         Row(
           children: [
             Text(
-              _badgeText,
+              _badgeText(l10n),
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 11.5,
@@ -588,7 +592,7 @@ class _SearchRow extends StatelessWidget {
                     decoration: InputDecoration(
                       isCollapsed: true,
                       border: InputBorder.none,
-                      hintText: 'بحث في الإشعارات…',
+                      hintText: context.l10n.notifSearchHint,
                       hintStyle: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 13.5,
@@ -670,7 +674,7 @@ class _FilterAndActionRow extends StatelessWidget {
       runSpacing: 6,
       children: _NotifFilter.values.map((f) {
         return _NotifPill(
-          label: f.label,
+          label: f.label(context.l10n),
           count: counts[f] ?? 0,
           isActive: f == filter,
           onTap: () => onChanged(f),
@@ -704,7 +708,7 @@ class _FilterAndActionRow extends StatelessWidget {
                           : AppColors.darkText2),
                   const SizedBox(width: 6),
                   Text(
-                    'تحديد الكل كمقروء',
+                    context.l10n.notifMarkAllRead,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12.5,

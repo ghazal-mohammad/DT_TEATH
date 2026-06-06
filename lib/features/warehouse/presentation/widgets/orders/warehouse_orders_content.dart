@@ -15,6 +15,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -30,12 +32,12 @@ import 'warehouse_order_details_dialog.dart';
 enum _OrderFilter { all, urgent, isNew, partial, fulfilled }
 
 extension on _OrderFilter {
-  String get label => switch (this) {
-        _OrderFilter.all => 'الكل',
-        _OrderFilter.urgent => 'عاجل',
-        _OrderFilter.isNew => 'جديد',
-        _OrderFilter.partial => 'جزئي',
-        _OrderFilter.fulfilled => 'تم التوريد',
+  String label(AppLocalizations l10n) => switch (this) {
+        _OrderFilter.all => l10n.ordersFilterAll,
+        _OrderFilter.urgent => l10n.ordersUrgent,
+        _OrderFilter.isNew => l10n.ordersStatusNew,
+        _OrderFilter.partial => l10n.ordersStatusPartial,
+        _OrderFilter.fulfilled => l10n.ordersStatusFulfilled,
       };
 
   bool matches(WarehouseOrderItem o, {required bool urgent}) {
@@ -100,7 +102,7 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
         content: Text(
-          'تم تأكيد توريد ${o.materialName} للطلبية ${o.orderNumber}',
+          context.l10n.ordersSupplyConfirmed(o.materialName, o.orderNumber),
           style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 13,
@@ -120,15 +122,15 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildToolbar(isLight),
+        _buildToolbar(context, isLight),
         const SizedBox(height: 16),
         if (list.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 48),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 48),
             child: AppEmptyState(
               icon: Icons.assignment_outlined,
-              title: 'لا توجد طلبيات',
-              message: 'لا يوجد طلبيات تطابق الفلتر الحالي',
+              title: context.l10n.ordersEmptyTitle,
+              message: context.l10n.ordersEmptyMessage,
             ),
           )
         else
@@ -137,7 +139,7 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
     );
   }
 
-  Widget _buildToolbar(bool isLight) {
+  Widget _buildToolbar(BuildContext context, bool isLight) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -151,7 +153,7 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
         ),
         const Spacer(),
         Text(
-          '${_filtered.length} طلبية من أصل ${_all.length}',
+          context.l10n.ordersCountSummary(_filtered.length, _all.length),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 12,
@@ -214,10 +216,10 @@ class _OrderCard extends StatelessWidget {
   final VoidCallback onSupply;
 
   // ── Status helpers ────────────────────────────────────────────────────
-  String get _statusLabel => switch (order.status) {
-        WarehouseOrderStatus.newOrder => 'جديد',
-        WarehouseOrderStatus.fulfilled => 'تم التوريد',
-        WarehouseOrderStatus.missing => 'جزئي',
+  String _statusLabel(AppLocalizations l10n) => switch (order.status) {
+        WarehouseOrderStatus.newOrder => l10n.ordersStatusNew,
+        WarehouseOrderStatus.fulfilled => l10n.ordersStatusFulfilled,
+        WarehouseOrderStatus.missing => l10n.ordersStatusPartial,
       };
 
   Color get _statusColor => switch (order.status) {
@@ -243,6 +245,7 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     // فرض RTL لضمان: المادة يمين، REQ يسار، شارة الحالة يمين، الأزرار يسار.
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -266,13 +269,13 @@ class _OrderCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTopRow(),
+                    _buildTopRow(l10n),
                     const SizedBox(height: 8),
                     _buildRequesterRow(),
                     const SizedBox(height: 10),
-                    _buildStatsRow(),
+                    _buildStatsRow(l10n),
                     const Spacer(),
-                    _buildBottomRow(),
+                    _buildBottomRow(l10n),
                   ],
                 ),
               ),
@@ -285,7 +288,7 @@ class _OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopRow() {
+  Widget _buildTopRow(AppLocalizations l10n) {
     // RTL: أوّل=يمين، آخر=يسار.
     // المطلوب فيزيائياً (مطابق mockup):
     //   [REQ يمين]  ............  [Column: المادة فوق، عاجل تحت — يسار]
@@ -316,20 +319,20 @@ class _OrderCard extends StatelessWidget {
       ),
       // RTL داخل الـ pill: الأيقونة يمين، النص يسار → [icon, SizedBox, text]
       // لكن للنغمة الأقرب لـ "!عاجل"، نضع النص أوّل (=يمين) ثم الأيقونة بعده.
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'عاجل',
-            style: TextStyle(
+            l10n.ordersUrgent,
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 10.5,
               fontWeight: FontWeight.w800,
               color: Color(0xFFE17B2C),
             ),
           ),
-          SizedBox(width: 3),
-          Icon(Icons.priority_high_rounded,
+          const SizedBox(width: 3),
+          const Icon(Icons.priority_high_rounded,
               size: 12, color: Color(0xFFE17B2C)),
         ],
       ),
@@ -404,7 +407,7 @@ class _OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(AppLocalizations l10n) {
     final txt1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
     final txt3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
     return Row(
@@ -412,7 +415,7 @@ class _OrderCard extends StatelessWidget {
       children: [
         Expanded(
           child: _MiniStat(
-              label: 'الكمية',
+              label: l10n.ordersQuantity,
               value: '${order.quantity} ${order.unit}',
               txt1: txt1,
               txt3: txt3),
@@ -420,7 +423,7 @@ class _OrderCard extends StatelessWidget {
         const SizedBox(width: 6),
         Expanded(
           child: _MiniStat(
-              label: 'الطالب',
+              label: l10n.ordersRequester,
               value: order.requester,
               txt1: txt1,
               txt3: txt3),
@@ -428,7 +431,7 @@ class _OrderCard extends StatelessWidget {
         const SizedBox(width: 6),
         Expanded(
           child: _MiniStat(
-              label: 'التاريخ',
+              label: l10n.ordersDate,
               value: order.date,
               txt1: txt1,
               txt3: txt3),
@@ -437,16 +440,16 @@ class _OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomRow() {
+  Widget _buildBottomRow(AppLocalizations l10n) {
     // RTL: أوّل=يمين، آخر=يسار.
     // المطلوب فيزيائياً: [Status يمين] ... [عرض وسط] [توريد يسار].
     // → ترتيب children: [Status, Spacer, View, Supply].
     return Row(
       children: [
-        _StatusPill(label: _statusLabel, color: _statusColor),
+        _StatusPill(label: _statusLabel(l10n), color: _statusColor),
         const Spacer(),
         AppButton(
-          label: 'عرض',
+          label: l10n.ordersView,
           onPressed: onView,
           variant: AppButtonVariant.secondary,
           size: AppButtonSize.small,
@@ -454,7 +457,7 @@ class _OrderCard extends StatelessWidget {
         if (order.status != WarehouseOrderStatus.fulfilled) ...[
           const SizedBox(width: 6),
           AppButton(
-            label: '✓ توريد',
+            label: '✓ ${l10n.ordersSupply}',
             onPressed: onSupply,
             variant: AppButtonVariant.primary,
             size: AppButtonSize.small,
@@ -618,7 +621,7 @@ class _OrdersSegmentedTabs extends StatelessWidget {
                 ),
                 const SizedBox(width: 7),
                 Text(
-                  v.label,
+                  v.label(context.l10n),
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12.5,

@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -98,12 +99,12 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _OutlineBtn(
-                      label: 'إلغاء',
+                      label: context.l10n.cancel,
                       onTap: () => Navigator.of(context).pop(),
                     ),
                     const SizedBox(width: 10),
                     _PrimaryBtn(
-                      label: 'توكيل',
+                      label: context.l10n.labTeamAssign,
                       icon: Icons.check_rounded,
                       onTap: _selectedId == null
                           ? null
@@ -133,7 +134,7 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'توكيل طلبية',
+                context.l10n.labAssignTitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
@@ -143,7 +144,7 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
               ),
               const SizedBox(height: 2),
               Text(
-                'اختر الطلبية لـ ${widget.technicianName}',
+                context.l10n.labAssignSubtitle(widget.technicianName),
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
@@ -245,7 +246,7 @@ class _OrderRow extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      colors.label,
+                      labStatusLabel(context, order.statusVariant),
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 12,

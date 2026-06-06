@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -73,7 +74,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'تحديث الحالة',
+                            context.l10n.labProcessUpdateStatus,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
                               fontSize: 14,
@@ -101,8 +102,8 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                             icon: Icons.check_rounded,
                             iconColor: const Color(0xFF10B981),
                             iconBg: const Color(0xFFD0FBD7),
-                            title: 'تم التسليم',
-                            subtitle: 'المادة متوفرة وتم التسليم للطبيب',
+                            title: context.l10n.statusDelivered,
+                            subtitle: context.l10n.labProcessDeliveredDesc,
                             selected: _choice == LabProcessChoice.delivered,
                             onTap: () => setState(
                               () => _choice = LabProcessChoice.delivered,
@@ -115,8 +116,8 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                             icon: Icons.close_rounded,
                             iconColor: const Color(0xFFEF4444),
                             iconBg: const Color(0xFFFEE2E2),
-                            title: 'غير موجود',
-                            subtitle: 'المادة غير متوفرة في المخبر',
+                            title: context.l10n.whOrderFilterMissing,
+                            subtitle: context.l10n.labProcessMissingDesc,
                             selected: _choice == LabProcessChoice.notAvailable,
                             onTap: () => setState(
                               () => _choice = LabProcessChoice.notAvailable,
@@ -137,12 +138,12 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _OutlineButton(
-                      label: 'إلغاء',
+                      label: context.l10n.cancel,
                       onTap: () => Navigator.of(context).pop(),
                     ),
                     const SizedBox(width: 10),
                     _PrimaryButton(
-                      label: 'حفظ',
+                      label: context.l10n.save,
                       onTap: () => Navigator.of(context).pop(_choice),
                     ),
                   ],
@@ -166,7 +167,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'معالجة الطلبية',
+                context.l10n.labProcessTitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
@@ -221,17 +222,18 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
         children: [
           Row(
             children: [
-              Expanded(child: _summaryCell('رقم الطلب', o.id)),
-              Expanded(child: _summaryCell('الطبيب', o.doctor)),
+              Expanded(child: _summaryCell(context.l10n.colOrderNumber, o.id)),
+              Expanded(child: _summaryCell(context.l10n.colDoctor, o.doctor)),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: _summaryCell('المادة', '${o.material} · ${o.tooth}'),
+                child: _summaryCell(
+                    context.l10n.colMaterial, '${o.material} · ${o.tooth}'),
               ),
-              Expanded(child: _summaryCell('الموعد', o.date)),
+              Expanded(child: _summaryCell(context.l10n.colDate, o.date)),
             ],
           ),
         ],

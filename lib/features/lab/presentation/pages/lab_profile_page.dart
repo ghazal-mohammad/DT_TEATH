@@ -26,12 +26,13 @@ class LabProfilePage extends StatelessWidget {
       currentRoute: RouteNames.labProfile,
       sections: LabSidebarSections.build(context),
       pageTitle: context.l10n.labProfile,
-      pageSubtitle: 'بيانات الموظف ومعلومات الوظيفة',
+      pageSubtitle: context.l10n.profilePageSubtitle,
       userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
       // صفحة الملف الشخصي: حقل البحث وحده في التوب بار بلا أيقونات جانبية.
       showTopbarActions: false,
+      searchPlaceholder: context.l10n.settingsSearchHint,
       // المحتوى يدير السكرول داخلياً ليتمكّن العمود الجانبي من البقاء ثابتاً (sticky).
       body: const LabProfileContent(),
     );

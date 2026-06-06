@@ -54,22 +54,44 @@ class NotificationItem {
 }
 
 class _Style {
-  const _Style(this.bg, this.fg, this.label);
+  const _Style(this.bg, this.fg);
   final Color bg;
   final Color fg;
-  final String label;
 }
 
-_Style _styleOf(NotificationKind k) {
+_Style _styleOf(NotificationKind k, bool isLight) {
   switch (k) {
     case NotificationKind.urgent:
-      return const _Style(Color(0xFFFFEDD5), Color(0xFFEA580C), 'عاجل');
+      return isLight
+          ? const _Style(Color(0xFFFFEDD5), Color(0xFFEA580C))
+          : _Style(AppColors.darkChipOrangeBg, AppColors.darkChipOrangeText);
     case NotificationKind.order:
-      return const _Style(Color(0xFFE2EDFF), Color(0xFF3B82F6), 'طلبية');
+      return isLight
+          ? const _Style(Color(0xFFE2EDFF), Color(0xFF3B82F6))
+          : _Style(AppColors.darkChipBlueBg, AppColors.darkChipBlueText);
     case NotificationKind.material:
-      return const _Style(Color(0xFFF1DAFE), Color(0xFF8B5CF6), 'مواد');
+      return isLight
+          ? const _Style(Color(0xFFF1DAFE), Color(0xFF8B5CF6))
+          : _Style(AppColors.darkChipVioletBg, AppColors.darkChipVioletText);
     case NotificationKind.system:
-      return const _Style(Color(0xFFD0FBD7), Color(0xFF10B981), 'نظام');
+      return isLight
+          ? const _Style(Color(0xFFD0FBD7), Color(0xFF10B981))
+          : _Style(AppColors.darkChipGreenBg, AppColors.darkChipGreenText);
+  }
+}
+
+/// نص شارة نوع الإشعار المترجم.
+String _kindLabel(BuildContext context, NotificationKind k) {
+  final l10n = context.l10n;
+  switch (k) {
+    case NotificationKind.urgent:
+      return l10n.priorityUrgent;
+    case NotificationKind.order:
+      return l10n.notifBadgeOrder;
+    case NotificationKind.material:
+      return l10n.notifFilterMaterials;
+    case NotificationKind.system:
+      return l10n.notifFilterSystem;
   }
 }
 
@@ -221,6 +243,7 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     final filtered = _filtered;
     final today = filtered.where((n) => n.day == NotificationDay.today).toList();
     final yesterday =
@@ -236,7 +259,7 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
       ),
       pageTitle: context.l10n.notifications,
       pageSubtitle: null,
-      searchPlaceholder: 'بحث في الإشعارات...',
+      searchPlaceholder: context.l10n.notifSearchHint,
       showThemeToggle: false,
       userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
@@ -260,7 +283,7 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
             ),
             const SizedBox(height: AppSizes.spaceLG),
             if (today.isNotEmpty) ...[
-              _SectionHeading(label: 'اليوم'),
+              _SectionHeading(label: context.l10n.sectionToday),
               const SizedBox(height: 10),
               for (final n in today) ...[
                 _NotificationCard(item: n),
@@ -269,7 +292,7 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
               const SizedBox(height: AppSizes.spaceMD),
             ],
             if (yesterday.isNotEmpty) ...[
-              _SectionHeading(label: 'أمس'),
+              _SectionHeading(label: context.l10n.sectionYesterday),
               const SizedBox(height: 10),
               for (final n in yesterday) ...[
                 _NotificationCard(item: n),
@@ -286,9 +309,10 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
                           size: 48, color: Color(0xFFB0B6C3)),
                       const SizedBox(height: AppSizes.spaceMD),
                       Text(
-                        'لا توجد إشعارات في هذه الفئة',
+                        context.l10n.notifEmptyInCategory,
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.lightText3,
+                          color:
+                              isLight ? AppColors.lightText3 : AppColors.darkText3,
                         ),
                       ),
                     ],
@@ -331,6 +355,7 @@ class _FilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Row(
       children: [
         // tabs (RTL start = right visual)
@@ -340,38 +365,38 @@ class _FilterRow extends StatelessWidget {
             runSpacing: 6,
             children: [
               _Tab(
-                label: 'الكل',
+                label: context.l10n.notifFilterAll,
                 count: total,
                 active: current == 'all',
                 onTap: () => onChange('all'),
               ),
               _Tab(
-                label: 'غير مقروءة',
+                label: context.l10n.notifFilterUnread,
                 count: unread,
                 active: current == 'unread',
                 onTap: () => onChange('unread'),
               ),
               _Tab(
-                label: 'عاجل',
+                label: context.l10n.priorityUrgent,
                 count: urgent,
                 active: current == 'urgent',
                 accent: const Color(0xFFEA580C),
                 onTap: () => onChange('urgent'),
               ),
               _Tab(
-                label: 'طلبات',
+                label: context.l10n.notifFilterOrders,
                 count: orders,
                 active: current == 'order',
                 onTap: () => onChange('order'),
               ),
               _Tab(
-                label: 'مواد',
+                label: context.l10n.notifFilterMaterials,
                 count: materials,
                 active: current == 'material',
                 onTap: () => onChange('material'),
               ),
               _Tab(
-                label: 'نظام',
+                label: context.l10n.notifFilterSystem,
                 count: systemCount,
                 active: current == 'system',
                 onTap: () => onChange('system'),
@@ -388,23 +413,25 @@ class _FilterRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: AppColors.lightBorder),
+                color: isLight ? Colors.white : AppColors.darkBg1,
+                border: Border.all(
+                    color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
                 borderRadius: BorderRadius.circular(AppSizes.radiusSM),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.done_all_rounded,
-                      size: 14, color: AppColors.primary),
+                      size: 14,
+                      color: isLight ? AppColors.primary : AppColors.brand),
                   const SizedBox(width: 5),
                   Text(
-                    'تحديد الكل كمقروء',
+                    context.l10n.notifMarkAllRead,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.lightText1,
+                      color: isLight ? AppColors.lightText1 : AppColors.darkText1,
                     ),
                   ),
                 ],
@@ -434,8 +461,11 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color activeBg = accent ?? AppColors.primary;
-    final Color idleText = accent ?? AppColors.lightText2;
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final Color activeBg =
+        accent ?? (isLight ? AppColors.primary : AppColors.brand);
+    final Color idleText =
+        accent ?? (isLight ? AppColors.lightText2 : AppColors.darkText2);
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -465,7 +495,9 @@ class _Tab extends StatelessWidget {
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: active ? Colors.white : AppColors.lightText3,
+                  color: active
+                      ? Colors.white
+                      : (isLight ? AppColors.lightText3 : AppColors.darkText3),
                 ),
               ),
             ],
@@ -486,12 +518,13 @@ class _SectionHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Row(
       children: [
         Expanded(
           child: Container(
             height: 1,
-            color: AppColors.lightBorder,
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
           ),
         ),
         const SizedBox(width: 12),
@@ -501,7 +534,7 @@ class _SectionHeading extends StatelessWidget {
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: AppColors.lightText3,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
             letterSpacing: 1.2,
           ),
         ),
@@ -528,7 +561,8 @@ class _NotificationCardState extends State<_NotificationCard> {
   @override
   Widget build(BuildContext context) {
     final n = widget.item;
-    final s = _styleOf(n.kind);
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final s = _styleOf(n.kind, isLight);
     final radius = BorderRadius.circular(14);
 
     return MouseRegion(
@@ -538,9 +572,12 @@ class _NotificationCardState extends State<_NotificationCard> {
         duration: const Duration(milliseconds: 160),
         transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
         decoration: BoxDecoration(
-          color: n.isRead ? const Color(0xFFFCFCFD) : Colors.white,
+          color: isLight
+              ? (n.isRead ? const Color(0xFFFCFCFD) : Colors.white)
+              : (n.isRead ? AppColors.darkBg2 : AppColors.darkBg1),
           borderRadius: radius,
-          border: Border.all(color: AppColors.lightBorder),
+          border: Border.all(
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: _hover ? 0.05 : 0.02),
@@ -594,12 +631,14 @@ class _NotificationCardState extends State<_NotificationCard> {
                                     fontFamily: AppTextStyles.fontFamily,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.lightText1,
+                                    color: isLight
+                                        ? AppColors.lightText1
+                                        : AppColors.darkText1,
                                   ),
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              _Pill(label: s.label, color: s.fg, bg: s.bg),
+                              _Pill(label: _kindLabel(context, n.kind), color: s.fg, bg: s.bg),
                             ],
                           ),
                           const SizedBox(height: 6),
@@ -610,7 +649,9 @@ class _NotificationCardState extends State<_NotificationCard> {
                               fontFamily: AppTextStyles.fontFamily,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.lightText2,
+                              color: isLight
+                                  ? AppColors.lightText2
+                                  : AppColors.darkText2,
                               height: 1.5,
                             ),
                           ),
@@ -624,13 +665,17 @@ class _NotificationCardState extends State<_NotificationCard> {
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.lightText3,
+                                  color: isLight
+                                      ? AppColors.lightText3
+                                      : AppColors.darkText3,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text('·',
                                   style: TextStyle(
-                                    color: AppColors.lightText4,
+                                    color: isLight
+                                        ? AppColors.lightText4
+                                        : AppColors.darkText4,
                                   )),
                               const SizedBox(width: 6),
                               Text(
@@ -639,7 +684,9 @@ class _NotificationCardState extends State<_NotificationCard> {
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
-                                  color: AppColors.lightText3,
+                                  color: isLight
+                                      ? AppColors.lightText3
+                                      : AppColors.darkText3,
                                 ),
                               ),
                             ],
@@ -700,6 +747,7 @@ class _ActionBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -707,7 +755,7 @@ class _ActionBtn extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isLight ? Colors.white : AppColors.darkBg1,
             border: Border.all(color: color.withValues(alpha: 0.4)),
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
           ),

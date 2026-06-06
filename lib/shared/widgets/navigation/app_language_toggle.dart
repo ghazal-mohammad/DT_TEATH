@@ -122,16 +122,17 @@ class _AppLanguageToggleState extends State<AppLanguageToggle> {
     final String label = isArabic ? 'EN' : 'AR'; // يعرض اللغة التي سيتبدّل إليها
     // يعرض اللغة "القادمة" ليفهم المستخدم إنه الضغط سيحولها.
 
+    final Color hot = isLight ? AppColors.primary : AppColors.brand;
     final Color bgColor = _isHovered
-        ? AppColors.accent.withValues(alpha: 0.14)
-        : AppColors.accent.withValues(alpha: isLight ? 0.12 : 0.06);
+        ? hot.withValues(alpha: 0.14)
+        : hot.withValues(alpha: isLight ? 0.12 : 0.06);
 
     final Color borderColor = _isHovered
-        ? AppColors.accent
+        ? hot
         : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
 
     final Color textColor = _isHovered
-        ? (isLight ? AppColors.primary : AppColors.accent)
+        ? (isLight ? AppColors.primary : hot)
         : (isLight ? AppColors.lightText2 : AppColors.darkText2);
 
     return Tooltip(
@@ -226,16 +227,17 @@ class _AppLanguageToggleState extends State<AppLanguageToggle> {
   /// Icon: زر دائري مع أيقونة globe فقط.
   Widget _buildIcon(BuildContext context, bool isArabic) {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final Color hot = isLight ? AppColors.primary : AppColors.brand;
     final Color bgColor = _isHovered
-        ? AppColors.accent.withValues(alpha: 0.14)
-        : AppColors.accent.withValues(alpha: isLight ? 0.12 : 0.06);
+        ? hot.withValues(alpha: 0.14)
+        : hot.withValues(alpha: isLight ? 0.12 : 0.06);
 
     final Color borderColor = _isHovered
-        ? AppColors.accent
+        ? hot
         : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
 
     final Color iconColor = _isHovered
-        ? (isLight ? AppColors.primary : AppColors.accent)
+        ? (isLight ? AppColors.primary : hot)
         : (isLight ? AppColors.lightText2 : AppColors.darkText2);
 
     return Tooltip(

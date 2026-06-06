@@ -25,18 +25,18 @@ class AppTheme {
   // ══════════════════════════════════════════════════════════════════════
   static ThemeData get darkTheme {
     const colorScheme = ColorScheme.dark(
-      primary: AppColors.accent, // السماوي هو اللون الأساسي التفاعلي
-      onPrimary: AppColors.darkBg,
+      primary: AppColors.brand, // إندِغو — اللون التفاعلي/المملوء بالغامق
+      onPrimary: Colors.white,
       secondary: AppColors.secondary, // الوردي
       onSecondary: AppColors.darkText1,
       tertiary: AppColors.success,
       onTertiary: AppColors.darkText1,
       error: AppColors.error,
       onError: AppColors.darkText1,
-      surface: AppColors.darkBg1,
-      onSurface: AppColors.darkText1,
-      surfaceContainerHighest: AppColors.darkSurface,
-      outline: AppColors.darkBorder,
+      surface: AppColors.darkBg1, // #262838 — سطح الكروت
+      onSurface: AppColors.darkText1, // #E6E7F0 — نص أساسي
+      surfaceContainerHighest: AppColors.darkBg2, // #20222F — تعبئة خفيفة
+      outline: AppColors.darkBorder, // #3A3D52
     );
 
     return ThemeData(
@@ -83,7 +83,7 @@ class AppTheme {
       // ── Scrollbar ──────────────────────────────────────────────────────
       scrollbarTheme: ScrollbarThemeData(
         thumbColor:
-            WidgetStateProperty.all(AppColors.accent.withValues(alpha: 0.4)),
+            WidgetStateProperty.all(AppColors.brand.withValues(alpha: 0.4)),
         trackColor: WidgetStateProperty.all(Colors.transparent),
         radius: const Radius.circular(8),
         thickness: WidgetStateProperty.all(6),
@@ -238,8 +238,9 @@ class AppTheme {
   static ElevatedButtonThemeData _elevatedButtonTheme({required bool isDark}) {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: isDark ? AppColors.accent : AppColors.primary,
-        foregroundColor: isDark ? AppColors.darkBg : AppColors.darkText1,
+        backgroundColor: isDark ? AppColors.brand : AppColors.primary,
+        // أبيض فوق الأزرار المملوءة في الوضعين (baseComponent = #FFFFFF).
+        foregroundColor: isDark ? Colors.white : AppColors.baseComponent,
         textStyle: AppTextStyles.buttonText,
         elevation: 0,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
@@ -278,7 +279,7 @@ class AppTheme {
   static TextButtonThemeData _textButtonTheme({required bool isDark}) {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: isDark ? AppColors.accent : AppColors.primary,
+        foregroundColor: isDark ? AppColors.brand : AppColors.primary,
         textStyle: AppTextStyles.buttonText,
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.spaceMD,
@@ -294,8 +295,8 @@ class AppTheme {
     final fillColor = isDark ? AppColors.darkSurface : AppColors.baseComponent;
     final hintColor =
         isDark ? AppColors.darkText4 : AppColors.guideSecondaryText;
-    // التركيز: accent للـ dark، primary للـ light (مطابق للعقد).
-    final focusColor = isDark ? AppColors.accent : AppColors.primary;
+    // التركيز: brand (إندِغو) للـ dark، primary (كحلي) للـ light.
+    final focusColor = isDark ? AppColors.brand : AppColors.primary;
     // الخطأ: error للـ dark (وردي)، alertRed للـ light (#EF4444).
     final errorColor = isDark ? AppColors.error : AppColors.alertRed;
 

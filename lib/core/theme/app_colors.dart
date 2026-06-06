@@ -32,9 +32,15 @@ class AppColors {
   AppColors._();
 
   // ── الألوان الأساسية (ثابتة بين الوضعين) ────────────────────────────────
-  static const Color primary = Color(0xFF1A1C4E); // --primary
+  static const Color primary = Color(0xFF1A1C4E); // --navy (لون الفاتح الأساسي)
   static const Color secondary = Color(0xFFED8BFA); // --secondary (الوردي)
-  static const Color accent = Color(0xFF9EFBEC); // --accent (السماوي)
+  static const Color accent = Color(0xFF9EFBEC); // --accent (السماوي — زخرفي)
+
+  // اللون البراند للوضع الغامق — إندِغو (--brand في theme.css).
+  // هو اللون المملوء للأزرار/السايدبار النشط/الأفاتار في الغامق.
+  // في الفاتح يبقى الكحلي (primary) هو البراند.
+  static const Color brand = Color(0xFF7C7FF2); // --brand
+  static const Color brandHover = Color(0xFF6E71EC); // brand:hover
 
   // ── ألوان الحالة (Semantic) ────────────────────────────────────────────
   static const Color success = Color(0xFF0DBD7F); // --clr-green
@@ -48,24 +54,39 @@ class AppColors {
   static const Color warehouseSystem = Color(0xFF9EFBEC); // المستودع = سماوي
   static const Color clinicSystem = Color(0xFF7DD3FC); // العيادة/الطبيب = أزرق فاتح
 
-  // ── الوضع الداكن (Dark Mode — الافتراضي) ────────────────────────────────
-  static const Color darkBg = Color(0xFF1A1C4E); // --bg
-  static const Color darkBg1 = Color(0xF51A1C4E); // --bg1 (0.96)
-  static const Color darkBg2 = Color(0xEB1A1C4E); // --bg2 (0.92)
-  static const Color darkBg3 = Color(0xE01A1C4E); // --bg3 (0.88)
-  static const Color darkSurface = Color(0x0FFFFFFF); // --surface (0.06)
-  static const Color darkGlass = Color(0x249EFBEC); // --glass (0.14)
+  // ── الوضع الداكن (Dark Mode — slate + indigo، مطابق theme.css) ──────────
+  // الخلفية رمادي فحمي (مش كحلي) لراحة العين، والبراند إندِغو.
+  static const Color darkBg = Color(0xFF1A1B26); // --bg (خلفية الصفحة)
+  static const Color darkBg1 = Color(0xFF262838); // --white (سطح الكروت)
+  static const Color darkBg2 = Color(0xFF20222F); // --bg-2 (تعبئة خفيفة/حقول)
+  static const Color darkBg3 = Color(0xFF20222F); // --bg-2 (مكافئ)
+  static const Color darkSurface = Color(0xFF262838); // --white (سطح)
+  static const Color darkGlass = Color(0x247C7FF2); // brand @ 0.14 (لمسة)
   static const Color darkGlass2 = Color(0x0AFFFFFF); // --glass2 (0.04)
 
-  // نصوص الوضع الداكن
-  static const Color darkText1 = Color(0xFFFFFFFF); // --t1
-  static const Color darkText2 = Color(0xFFE0F7F5); // --t2
-  static const Color darkText3 = Color(0xFF9EFBEC); // --t3
-  static const Color darkText4 = Color(0xFFC5FDF5); // --t4
+  // نصوص الوضع الداكن — تباين مريح (مش أبيض نقي)
+  static const Color darkText1 = Color(0xFFE6E7F0); // --text
+  static const Color darkText2 = Color(0xFFADB0C4); // --text-2
+  static const Color darkText3 = Color(0xFF7E8198); // --text-3
+  static const Color darkText4 = Color(0xFFADB0C4); // ثانوي (مكافئ text-2)
 
-  // حدود الوضع الداكن
-  static const Color darkBorder = Color(0x479EFBEC); // --cyan-brd (0.28)
-  static const Color darkBorderHover = Color(0x4D9EFBEC); // (0.30)
+  // حدود الوضع الداكن — slate ناعمة وظاهرة
+  static const Color darkBorder = Color(0xFF3A3D52); // --border
+  static const Color darkBorderHover = Color(0xFF2F3144); // --border-soft
+
+  // ── شارات الحالة في الوضع الغامق (من theme.css) ─────────────────────────
+  // خلفيات + نصوص للشرائح (chips/badges). الفاتح يبقى بقيمه الأصلية في الصفحات.
+  // الاستخدام: isLight ? <hex الفاتح الأصلي> : AppColors.darkStatusXxx
+  static const Color darkChipBlueBg = Color(0xFF2C3E66); // --st-new-bg
+  static const Color darkChipBlueText = Color(0xFF8FB6F5); // --st-new
+  static const Color darkChipVioletBg = Color(0xFF4A3A66); // --st-prod-bg
+  static const Color darkChipVioletText = Color(0xFFC2A4EC); // --st-prod
+  static const Color darkChipGreenBg = Color(0xFF234C3C); // --st-ready-bg
+  static const Color darkChipGreenText = Color(0xFF6CD7AA); // --st-ready
+  static const Color darkChipOrangeBg = Color(0xFF5A3E2C); // --st-urgent-bg
+  static const Color darkChipOrangeText = Color(0xFFF0B088); // --st-urgent
+  static const Color darkChipRedBg = Color(0xFF4C2530); // أحمر غامق (عاجل)
+  static const Color darkChipRedText = Color(0xFFF4A6A6);
 
   // ── الوضع الفاتح (Light Mode) ──────────────────────────────────────────
   static const Color lightBg = Color(0xAEE9ECFB); // --bg (0.68)

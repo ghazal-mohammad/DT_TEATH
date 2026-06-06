@@ -259,7 +259,7 @@ class AppDashboardHero extends StatelessWidget {
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 26,
             fontWeight: FontWeight.w900,
-            color: isLight ? const Color(0xFF1A1C4E) : AppColors.accent,
+            color: isLight ? const Color(0xFF1A1C4E) : AppColors.brand,
             height: 1.0,
           ),
         ),

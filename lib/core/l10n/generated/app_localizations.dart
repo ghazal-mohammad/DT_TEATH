@@ -1298,6 +1298,12 @@ abstract class AppLocalizations {
   /// **'Unit'**
   String get whMaterialUnit;
 
+  /// No description provided for @whMaterialUnitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose unit'**
+  String get whMaterialUnitHint;
+
   /// No description provided for @whMaterialMinStock.
   ///
   /// In en, this message translates to:
@@ -1373,7 +1379,7 @@ abstract class AppLocalizations {
   /// No description provided for @whOrderDate.
   ///
   /// In en, this message translates to:
-  /// **'Date'**
+  /// **'Order date'**
   String get whOrderDate;
 
   /// No description provided for @whOrderStatus.
@@ -2167,6 +2173,1884 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage Technicians'**
   String get labManageTechnicians;
+
+  /// No description provided for @labDashboardSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter this page\'s orders... (number, doctor, material)'**
+  String get labDashboardSearchHint;
+
+  /// No description provided for @priorityUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get priorityUrgent;
+
+  /// No description provided for @priorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get priorityMedium;
+
+  /// No description provided for @priorityNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get priorityNormal;
+
+  /// No description provided for @labStatNeedsFollowup.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs follow-up'**
+  String get labStatNeedsFollowup;
+
+  /// No description provided for @labChipThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get labChipThisMonth;
+
+  /// No description provided for @labChipActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get labChipActive;
+
+  /// No description provided for @labStatReadyOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready orders'**
+  String get labStatReadyOrders;
+
+  /// No description provided for @labTrendFromLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} from last month'**
+  String labTrendFromLastMonth(String value);
+
+  /// No description provided for @labTrendFromYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} from yesterday'**
+  String labTrendFromYesterday(String value);
+
+  /// No description provided for @labTodayOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Orders'**
+  String get labTodayOrders;
+
+  /// No description provided for @labOrdersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} orders'**
+  String labOrdersCount(String count);
+
+  /// No description provided for @colOrderNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #'**
+  String get colOrderNumber;
+
+  /// No description provided for @colDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get colDoctor;
+
+  /// No description provided for @colType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get colType;
+
+  /// No description provided for @colMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get colMaterial;
+
+  /// No description provided for @colTooth.
+  ///
+  /// In en, this message translates to:
+  /// **'Tooth'**
+  String get colTooth;
+
+  /// No description provided for @colDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get colDate;
+
+  /// No description provided for @colPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get colPriority;
+
+  /// No description provided for @colStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get colStatus;
+
+  /// No description provided for @labGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name}'**
+  String labGreeting(String name);
+
+  /// No description provided for @systemAllNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'All systems operating normally'**
+  String get systemAllNormal;
+
+  /// No description provided for @labLastUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last update: {time}'**
+  String labLastUpdate(String time);
+
+  /// No description provided for @labOrdersSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter doctor orders... (number, doctor, material, tooth)'**
+  String get labOrdersSearchHint;
+
+  /// No description provided for @labOrdersCountOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown} of {total} orders'**
+  String labOrdersCountOfTotal(String shown, String total);
+
+  /// No description provided for @labOrderProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Process'**
+  String get labOrderProcess;
+
+  /// No description provided for @actionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get actionView;
+
+  /// No description provided for @labNoOrdersInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders in this category'**
+  String get labNoOrdersInCategory;
+
+  /// No description provided for @settingsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search this page...'**
+  String get settingsSearchHint;
+
+  /// No description provided for @settingsTabSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get settingsTabSecurity;
+
+  /// No description provided for @settingsTabPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get settingsTabPreferences;
+
+  /// No description provided for @settingsChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get settingsChangePassword;
+
+  /// No description provided for @settingsChangePasswordDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s recommended to change your password every 90 days for better security'**
+  String get settingsChangePasswordDesc;
+
+  /// No description provided for @settingsCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get settingsCurrentPassword;
+
+  /// No description provided for @settingsNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get settingsNewPassword;
+
+  /// No description provided for @settingsConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get settingsConfirmPassword;
+
+  /// No description provided for @settingsUpdatePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Password'**
+  String get settingsUpdatePassword;
+
+  /// No description provided for @settings2FA.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-Factor Authentication'**
+  String get settings2FA;
+
+  /// No description provided for @settings2FADesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra protection for your account via OTP'**
+  String get settings2FADesc;
+
+  /// No description provided for @settings2FAOtpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Require OTP on login'**
+  String get settings2FAOtpTitle;
+
+  /// No description provided for @settings2FAOtpDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You receive a code by email each time you sign in from a new device'**
+  String get settings2FAOtpDesc;
+
+  /// No description provided for @settingsLogoutAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of all devices'**
+  String get settingsLogoutAll;
+
+  /// No description provided for @settingsLogoutAllDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'End all active sessions on other devices'**
+  String get settingsLogoutAllDesc;
+
+  /// No description provided for @settingsNotifPrefs.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Preferences'**
+  String get settingsNotifPrefs;
+
+  /// No description provided for @settingsNotifPrefsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which notifications you want to receive'**
+  String get settingsNotifPrefsDesc;
+
+  /// No description provided for @labSettingsNotifUrgentOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent Orders'**
+  String get labSettingsNotifUrgentOrders;
+
+  /// No description provided for @labSettingsNotifUrgentOrdersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders that must be completed today'**
+  String get labSettingsNotifUrgentOrdersDesc;
+
+  /// No description provided for @labSettingsNotifNewFromDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'New orders from doctors'**
+  String get labSettingsNotifNewFromDoctors;
+
+  /// No description provided for @labSettingsNotifNewFromDoctorsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When a new order arrives'**
+  String get labSettingsNotifNewFromDoctorsDesc;
+
+  /// No description provided for @settingsNotifLowMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Low materials'**
+  String get settingsNotifLowMaterials;
+
+  /// No description provided for @settingsNotifLowMaterialsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When a material reaches its minimum'**
+  String get settingsNotifLowMaterialsDesc;
+
+  /// No description provided for @labSettingsNotifWarehouseUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse updates'**
+  String get labSettingsNotifWarehouseUpdates;
+
+  /// No description provided for @labSettingsNotifWarehouseUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Status of sent supply requests'**
+  String get labSettingsNotifWarehouseUpdatesDesc;
+
+  /// No description provided for @labSettingsNotifTeamUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Team updates'**
+  String get labSettingsNotifTeamUpdates;
+
+  /// No description provided for @labSettingsNotifTeamUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding or changing a technician\'s shift'**
+  String get labSettingsNotifTeamUpdatesDesc;
+
+  /// No description provided for @settingsNotifChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Channels'**
+  String get settingsNotifChannels;
+
+  /// No description provided for @settingsNotifChannelsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where you receive alerts'**
+  String get settingsNotifChannelsDesc;
+
+  /// No description provided for @settingsNotifDailyEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily summary by email'**
+  String get settingsNotifDailyEmail;
+
+  /// No description provided for @settingsNotifDailyEmailDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered at 8:00 AM every day'**
+  String get settingsNotifDailyEmailDesc;
+
+  /// No description provided for @settingsNotifSound.
+  ///
+  /// In en, this message translates to:
+  /// **'In-app notification sound'**
+  String get settingsNotifSound;
+
+  /// No description provided for @settingsNotifSoundDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a tone when a new notification arrives'**
+  String get settingsNotifSoundDesc;
+
+  /// No description provided for @settingsThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the system appearance'**
+  String get settingsThemeDesc;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsLanguageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'System display language'**
+  String get settingsLanguageDesc;
+
+  /// No description provided for @settingsLangArabicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'RTL · Default'**
+  String get settingsLangArabicHint;
+
+  /// No description provided for @settingsLangEnglishHint.
+  ///
+  /// In en, this message translates to:
+  /// **'LTR'**
+  String get settingsLangEnglishHint;
+
+  /// No description provided for @settingsDisplayPerf.
+  ///
+  /// In en, this message translates to:
+  /// **'Display & Performance'**
+  String get settingsDisplayPerf;
+
+  /// No description provided for @settingsCompactView.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact View'**
+  String get settingsCompactView;
+
+  /// No description provided for @settingsCompactViewDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more data on a single screen'**
+  String get settingsCompactViewDesc;
+
+  /// No description provided for @settingsAutoSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-save'**
+  String get settingsAutoSave;
+
+  /// No description provided for @settingsAutoSaveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically save changes every minute'**
+  String get settingsAutoSaveDesc;
+
+  /// No description provided for @notifSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notifications...'**
+  String get notifSearchHint;
+
+  /// No description provided for @sectionToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get sectionToday;
+
+  /// No description provided for @sectionYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get sectionYesterday;
+
+  /// No description provided for @notifEmptyInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications in this category'**
+  String get notifEmptyInCategory;
+
+  /// No description provided for @notifFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get notifFilterAll;
+
+  /// No description provided for @notifFilterUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get notifFilterUnread;
+
+  /// No description provided for @notifFilterOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get notifFilterOrders;
+
+  /// No description provided for @notifFilterMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials'**
+  String get notifFilterMaterials;
+
+  /// No description provided for @notifFilterSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get notifFilterSystem;
+
+  /// No description provided for @techSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search technicians... (name, role, task)'**
+  String get techSearchHint;
+
+  /// No description provided for @labTeamSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Team'**
+  String get labTeamSectionTitle;
+
+  /// No description provided for @labTeamTotalChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get labTeamTotalChip;
+
+  /// No description provided for @labTeamActiveChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Working now'**
+  String get labTeamActiveChip;
+
+  /// No description provided for @labTeamReadyChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to assign'**
+  String get labTeamReadyChip;
+
+  /// No description provided for @techStatActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Technicians'**
+  String get techStatActiveLabel;
+
+  /// No description provided for @techStatusBreak.
+  ///
+  /// In en, this message translates to:
+  /// **'On Break'**
+  String get techStatusBreak;
+
+  /// No description provided for @labTeamAddTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Technician'**
+  String get labTeamAddTechnician;
+
+  /// No description provided for @notifMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get notifMarkAllRead;
+
+  /// No description provided for @whNotifExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry'**
+  String get whNotifExpiry;
+
+  /// No description provided for @whNotifExpiryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days before expiry'**
+  String get whNotifExpiryDesc;
+
+  /// No description provided for @whNotifNewSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'New supply orders'**
+  String get whNotifNewSupply;
+
+  /// No description provided for @whNotifNewSupplyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When an order arrives from the lab/clinic'**
+  String get whNotifNewSupplyDesc;
+
+  /// No description provided for @whNotifSupplierDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier delays'**
+  String get whNotifSupplierDelay;
+
+  /// No description provided for @whNotifSupplierDelayDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When a supplier misses a delivery date'**
+  String get whNotifSupplierDelayDesc;
+
+  /// No description provided for @whNotifInvoicesDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices pending payment'**
+  String get whNotifInvoicesDue;
+
+  /// No description provided for @whNotifInvoicesDueDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder before the due date'**
+  String get whNotifInvoicesDueDesc;
+
+  /// No description provided for @whOrderPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get whOrderPartial;
+
+  /// No description provided for @whOrderFulfilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfilled'**
+  String get whOrderFulfilled;
+
+  /// No description provided for @whOrdersEmptyFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders match this filter'**
+  String get whOrdersEmptyFilter;
+
+  /// No description provided for @whOrderRequesterParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Requesting party'**
+  String get whOrderRequesterParty;
+
+  /// No description provided for @colQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get colQuantity;
+
+  /// No description provided for @profileGeneralInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'General Info'**
+  String get profileGeneralInfo;
+
+  /// No description provided for @profileHireDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Hire Date'**
+  String get profileHireDate;
+
+  /// No description provided for @profileLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get profileLanguages;
+
+  /// No description provided for @profileAdminNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Notes'**
+  String get profileAdminNotes;
+
+  /// No description provided for @profileCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Completion'**
+  String get profileCompletion;
+
+  /// No description provided for @profileEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get profileEdit;
+
+  /// No description provided for @profileSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get profileSaving;
+
+  /// No description provided for @profileSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get profileSaveChanges;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profilePersonalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get profilePersonalInfo;
+
+  /// No description provided for @profilePersonalInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity and contact details'**
+  String get profilePersonalInfoSubtitle;
+
+  /// No description provided for @profilePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get profilePhone;
+
+  /// No description provided for @profileNationalId.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get profileNationalId;
+
+  /// No description provided for @profileBirthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get profileBirthDate;
+
+  /// No description provided for @profileGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get profileGender;
+
+  /// No description provided for @profileAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get profileAddress;
+
+  /// No description provided for @profileEmployeeId.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee ID'**
+  String get profileEmployeeId;
+
+  /// No description provided for @profileJobInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Job Information'**
+  String get profileJobInfo;
+
+  /// No description provided for @profileJobInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Department, schedule and job title'**
+  String get profileJobInfoSubtitle;
+
+  /// No description provided for @profileDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get profileDepartment;
+
+  /// No description provided for @profileWorkDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Days'**
+  String get profileWorkDays;
+
+  /// No description provided for @profilePosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Job Title'**
+  String get profilePosition;
+
+  /// No description provided for @profileDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Day Off'**
+  String get profileDayOff;
+
+  /// No description provided for @profileWeeklyHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Work Hours'**
+  String get profileWeeklyHours;
+
+  /// No description provided for @profileSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved successfully'**
+  String get profileSavedSuccess;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save changes'**
+  String get profileSaveError;
+
+  /// No description provided for @profilePhotoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updated'**
+  String get profilePhotoUpdated;
+
+  /// No description provided for @profileLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load profile'**
+  String get profileLoadError;
+
+  /// No description provided for @roleEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get roleEmployee;
+
+  /// No description provided for @profileStatCompletedOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed Orders'**
+  String get profileStatCompletedOrders;
+
+  /// No description provided for @profileStatExecTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Execution Time'**
+  String get profileStatExecTime;
+
+  /// No description provided for @profileStatOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On-time Completion'**
+  String get profileStatOnTime;
+
+  /// No description provided for @profileBadgeThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get profileBadgeThisMonth;
+
+  /// No description provided for @profileBadgeAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get profileBadgeAverage;
+
+  /// No description provided for @profileStatMovementsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements This Month'**
+  String get profileStatMovementsThisMonth;
+
+  /// No description provided for @profileStatLowItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock Items'**
+  String get profileStatLowItems;
+
+  /// No description provided for @profileStatStockAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Accuracy'**
+  String get profileStatStockAccuracy;
+
+  /// No description provided for @profileBadgeAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert'**
+  String get profileBadgeAlert;
+
+  /// No description provided for @profilePhotoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image: {error}'**
+  String profilePhotoError(Object error);
+
+  /// No description provided for @ordersFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get ordersFilterAll;
+
+  /// No description provided for @ordersUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get ordersUrgent;
+
+  /// No description provided for @ordersStatusNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get ordersStatusNew;
+
+  /// No description provided for @ordersStatusPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get ordersStatusPartial;
+
+  /// No description provided for @ordersStatusFulfilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfilled'**
+  String get ordersStatusFulfilled;
+
+  /// No description provided for @ordersQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get ordersQuantity;
+
+  /// No description provided for @ordersRequester.
+  ///
+  /// In en, this message translates to:
+  /// **'Requester'**
+  String get ordersRequester;
+
+  /// No description provided for @ordersDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get ordersDate;
+
+  /// No description provided for @ordersView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get ordersView;
+
+  /// No description provided for @ordersSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply'**
+  String get ordersSupply;
+
+  /// No description provided for @ordersEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Orders'**
+  String get ordersEmptyTitle;
+
+  /// No description provided for @ordersEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders match the current filter'**
+  String get ordersEmptyMessage;
+
+  /// No description provided for @ordersSupplyConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply confirmed for {material} (order {order})'**
+  String ordersSupplyConfirmed(Object material, Object order);
+
+  /// No description provided for @ordersCountSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} orders of {total}'**
+  String ordersCountSummary(Object count, Object total);
+
+  /// No description provided for @orderDetailsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details of the materials order sent to the warehouse'**
+  String get orderDetailsSubtitle;
+
+  /// No description provided for @orderDetailsInfoSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Information'**
+  String get orderDetailsInfoSection;
+
+  /// No description provided for @orderDetailsProgressSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply Progress'**
+  String get orderDetailsProgressSection;
+
+  /// No description provided for @orderDetailsNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get orderDetailsNotes;
+
+  /// No description provided for @orderDetailsStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Status'**
+  String get orderDetailsStatusLabel;
+
+  /// No description provided for @orderDetailsOrderDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Date'**
+  String get orderDetailsOrderDate;
+
+  /// No description provided for @orderDetailsRequestData.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Data'**
+  String get orderDetailsRequestData;
+
+  /// No description provided for @orderDetailsMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get orderDetailsMaterial;
+
+  /// No description provided for @orderDetailsPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get orderDetailsPriority;
+
+  /// No description provided for @orderDetailsNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get orderDetailsNormal;
+
+  /// No description provided for @orderDetailsRequesterData.
+  ///
+  /// In en, this message translates to:
+  /// **'Requester Data'**
+  String get orderDetailsRequesterData;
+
+  /// No description provided for @orderDetailsParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get orderDetailsParty;
+
+  /// No description provided for @orderDetailsResponsible.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsible'**
+  String get orderDetailsResponsible;
+
+  /// No description provided for @orderDetailsRequestNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Number'**
+  String get orderDetailsRequestNumber;
+
+  /// No description provided for @orderTimelineReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get orderTimelineReceived;
+
+  /// No description provided for @orderTimelinePartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial Supply'**
+  String get orderTimelinePartial;
+
+  /// No description provided for @orderDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply Order Details {req}'**
+  String orderDetailsTitle(Object req);
+
+  /// No description provided for @notifEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Notifications'**
+  String get notifEmptyTitle;
+
+  /// No description provided for @notifEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications to show in this filter'**
+  String get notifEmptyMessage;
+
+  /// No description provided for @notifGroupToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get notifGroupToday;
+
+  /// No description provided for @notifGroupYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get notifGroupYesterday;
+
+  /// No description provided for @notifGroupOlder.
+  ///
+  /// In en, this message translates to:
+  /// **'Older'**
+  String get notifGroupOlder;
+
+  /// No description provided for @notifBadgeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get notifBadgeOrder;
+
+  /// No description provided for @notifBadgeDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get notifBadgeDone;
+
+  /// No description provided for @reportRangeDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get reportRangeDaily;
+
+  /// No description provided for @reportRangeWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get reportRangeWeekly;
+
+  /// No description provided for @reportRangeMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get reportRangeMonthly;
+
+  /// No description provided for @reportRangeYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get reportRangeYearly;
+
+  /// No description provided for @reportSuppliersPerf.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers Performance'**
+  String get reportSuppliersPerf;
+
+  /// No description provided for @reportTopMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Consumed Materials'**
+  String get reportTopMaterials;
+
+  /// No description provided for @reportFullReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Report'**
+  String get reportFullReport;
+
+  /// No description provided for @reportExportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get reportExportPdf;
+
+  /// No description provided for @reportExportExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel'**
+  String get reportExportExcel;
+
+  /// No description provided for @reportStatAvgSupplyTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Supply Time'**
+  String get reportStatAvgSupplyTime;
+
+  /// No description provided for @reportStatSupplyRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply Rate'**
+  String get reportStatSupplyRate;
+
+  /// No description provided for @reportStatConsumed.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials Consumed'**
+  String get reportStatConsumed;
+
+  /// No description provided for @reportStatTotalMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Materials'**
+  String get reportStatTotalMaterials;
+
+  /// No description provided for @reportUnitDay.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get reportUnitDay;
+
+  /// No description provided for @reportConsumptionByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumption by Category'**
+  String get reportConsumptionByCategory;
+
+  /// No description provided for @reportOfConsumption.
+  ///
+  /// In en, this message translates to:
+  /// **'of consumption'**
+  String get reportOfConsumption;
+
+  /// No description provided for @reportSupplyByDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply orders across the month'**
+  String get reportSupplyByDays;
+
+  /// No description provided for @reportLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get reportLess;
+
+  /// No description provided for @reportMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get reportMore;
+
+  /// No description provided for @reportWeekdaySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get reportWeekdaySun;
+
+  /// No description provided for @reportWeekdayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get reportWeekdayMon;
+
+  /// No description provided for @reportWeekdayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get reportWeekdayTue;
+
+  /// No description provided for @reportWeekdayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get reportWeekdayWed;
+
+  /// No description provided for @reportWeekdayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get reportWeekdayThu;
+
+  /// No description provided for @reportWeekdayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get reportWeekdayFri;
+
+  /// No description provided for @reportWeekdaySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get reportWeekdaySat;
+
+  /// No description provided for @reportMonthlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{period} — Monthly Report'**
+  String reportMonthlyTitle(Object period);
+
+  /// No description provided for @reportGeneratedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Report generated {date}'**
+  String reportGeneratedAt(Object date);
+
+  /// No description provided for @reportDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String reportDaysCount(Object days);
+
+  /// No description provided for @reportSupplierSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{invoices} invoices · avg {avgDays} days'**
+  String reportSupplierSubtitle(Object invoices, Object avgDays);
+
+  /// No description provided for @whBadgeTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get whBadgeTotal;
+
+  /// No description provided for @whStatOutMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Stock'**
+  String get whStatOutMaterials;
+
+  /// No description provided for @whStatLowMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock'**
+  String get whStatLowMaterials;
+
+  /// No description provided for @whStatAvailMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Materials'**
+  String get whStatAvailMaterials;
+
+  /// No description provided for @whStatTotalMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials in Warehouse'**
+  String get whStatTotalMaterials;
+
+  /// No description provided for @whMaterialsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Materials'**
+  String get whMaterialsEmptyTitle;
+
+  /// No description provided for @whMaterialsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials match the current filters'**
+  String get whMaterialsEmptyMessage;
+
+  /// No description provided for @whColCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get whColCode;
+
+  /// No description provided for @whColName.
+  ///
+  /// In en, this message translates to:
+  /// **'Material Name'**
+  String get whColName;
+
+  /// No description provided for @whColCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get whColCategory;
+
+  /// No description provided for @whColStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get whColStock;
+
+  /// No description provided for @whColMinStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Stock'**
+  String get whColMinStock;
+
+  /// No description provided for @whColExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry'**
+  String get whColExpiry;
+
+  /// No description provided for @whColSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get whColSupplier;
+
+  /// No description provided for @whColStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get whColStatus;
+
+  /// No description provided for @whMaterialsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} materials of {total}'**
+  String whMaterialsCount(Object count, Object total);
+
+  /// No description provided for @invStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get invStatusPaid;
+
+  /// No description provided for @invStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get invStatusPending;
+
+  /// No description provided for @invEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Invoices'**
+  String get invEmptyTitle;
+
+  /// No description provided for @invEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices match the current filter'**
+  String get invEmptyMessage;
+
+  /// No description provided for @invPurchaseInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Invoices'**
+  String get invPurchaseInvoices;
+
+  /// No description provided for @invAddInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Invoice'**
+  String get invAddInvoice;
+
+  /// No description provided for @invBadgePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get invBadgePaid;
+
+  /// No description provided for @invBadgePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get invBadgePending;
+
+  /// No description provided for @invBadgeTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invBadgeTotal;
+
+  /// No description provided for @invStatThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'invoices this month'**
+  String get invStatThisMonth;
+
+  /// No description provided for @invStatPaidTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Paid'**
+  String get invStatPaidTotal;
+
+  /// No description provided for @invStatPendingPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting Payment'**
+  String get invStatPendingPay;
+
+  /// No description provided for @invStatTotalPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Purchases'**
+  String get invStatTotalPurchases;
+
+  /// No description provided for @invColNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Number'**
+  String get invColNumber;
+
+  /// No description provided for @invColItemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Count'**
+  String get invColItemCount;
+
+  /// No description provided for @invColTotalSyp.
+  ///
+  /// In en, this message translates to:
+  /// **'Total (SYP)'**
+  String get invColTotalSyp;
+
+  /// No description provided for @invCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} invoices of {total}'**
+  String invCount(Object count, Object total);
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get fieldRequired;
+
+  /// No description provided for @fieldOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get fieldOptional;
+
+  /// No description provided for @fieldInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid number'**
+  String get fieldInvalidNumber;
+
+  /// No description provided for @fieldInvalidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid amount'**
+  String get fieldInvalidAmount;
+
+  /// No description provided for @fieldWriteOrPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Type or pick from the list...'**
+  String get fieldWriteOrPick;
+
+  /// No description provided for @invFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Purchase Invoice'**
+  String get invFormTitle;
+
+  /// No description provided for @invFormSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the new invoice details'**
+  String get invFormSubtitle;
+
+  /// No description provided for @invFormSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get invFormSupplier;
+
+  /// No description provided for @invFormSupplierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Medical Supplies Co.'**
+  String get invFormSupplierHint;
+
+  /// No description provided for @invFormDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get invFormDate;
+
+  /// No description provided for @invFormNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get invFormNotes;
+
+  /// No description provided for @invFormSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Invoice'**
+  String get invFormSave;
+
+  /// No description provided for @whGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String whGreeting(String name);
+
+  /// No description provided for @whSystemsNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'All systems operating normally'**
+  String get whSystemsNormal;
+
+  /// No description provided for @whLastUpdateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last update: '**
+  String get whLastUpdateLabel;
+
+  /// No description provided for @whTotalMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Total materials'**
+  String get whTotalMaterials;
+
+  /// No description provided for @whMiniOrdersToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s orders'**
+  String get whMiniOrdersToday;
+
+  /// No description provided for @whSupplyRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply rate'**
+  String get whSupplyRate;
+
+  /// No description provided for @whStatLowStockShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-stock materials'**
+  String get whStatLowStockShort;
+
+  /// No description provided for @whStatPendingSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders awaiting supply'**
+  String get whStatPendingSupply;
+
+  /// No description provided for @whStatMonthPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Month purchases (SYP)'**
+  String get whStatMonthPurchases;
+
+  /// No description provided for @whBadgeAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert'**
+  String get whBadgeAlert;
+
+  /// No description provided for @whBadgeNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get whBadgeNew;
+
+  /// No description provided for @whBadgeThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get whBadgeThisMonth;
+
+  /// No description provided for @whNeedsSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs supply'**
+  String get whNeedsSupply;
+
+  /// No description provided for @whTrendThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} this week'**
+  String whTrendThisWeek(String count);
+
+  /// No description provided for @whTrendToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} today'**
+  String whTrendToday(String count);
+
+  /// No description provided for @whTrendVsLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} from last month'**
+  String whTrendVsLastMonth(String value);
+
+  /// No description provided for @whExpiringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials expiring soon'**
+  String get whExpiringTitle;
+
+  /// No description provided for @whExpiringSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'These materials must be handled before they expire'**
+  String get whExpiringSubtitle;
+
+  /// No description provided for @whTodayOrdersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} orders'**
+  String whTodayOrdersCount(Object count);
+
+  /// No description provided for @labNotifActionOpenOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open order'**
+  String get labNotifActionOpenOrder;
+
+  /// No description provided for @labNotifActionReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get labNotifActionReview;
+
+  /// No description provided for @labActionTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Track'**
+  String get labActionTrack;
+
+  /// No description provided for @labReqStatusUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get labReqStatusUnavailable;
+
+  /// No description provided for @labReqRequestedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by'**
+  String get labReqRequestedBy;
+
+  /// No description provided for @labReqLabOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab order'**
+  String get labReqLabOrder;
+
+  /// No description provided for @labReqEmptyCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No material requests in this category'**
+  String get labReqEmptyCategory;
+
+  /// No description provided for @labReqNewRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'New material request'**
+  String get labReqNewRequest;
+
+  /// No description provided for @labReqComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'The material request form will be added here in the next version.'**
+  String get labReqComingSoon;
+
+  /// No description provided for @labTechPendingAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting assignment'**
+  String get labTechPendingAssign;
+
+  /// No description provided for @techAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add technician'**
+  String get techAddButton;
+
+  /// No description provided for @techAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new technician'**
+  String get techAddTitle;
+
+  /// No description provided for @techAddSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the technician\'s details to join the lab team'**
+  String get techAddSubtitle;
+
+  /// No description provided for @techSectionBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic information'**
+  String get techSectionBasic;
+
+  /// No description provided for @techFieldFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get techFieldFullName;
+
+  /// No description provided for @techFieldFullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Mohammad Ali'**
+  String get techFieldFullNameHint;
+
+  /// No description provided for @techFieldRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role / Specialty'**
+  String get techFieldRole;
+
+  /// No description provided for @techFieldPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (optional)'**
+  String get techFieldPhone;
+
+  /// No description provided for @techFieldShiftStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift start'**
+  String get techFieldShiftStart;
+
+  /// No description provided for @techFieldShiftEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift end'**
+  String get techFieldShiftEnd;
+
+  /// No description provided for @techSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills'**
+  String get techSkills;
+
+  /// No description provided for @techNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional notes about the technician...'**
+  String get techNotesHint;
+
+  /// No description provided for @techNoNameYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No name yet'**
+  String get techNoNameYet;
+
+  /// No description provided for @orderDetailsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Work progress'**
+  String get orderDetailsProgress;
+
+  /// No description provided for @orderDetailsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Order details'**
+  String get orderDetailsHeading;
+
+  /// No description provided for @orderDetailsSubtitleLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Order details sent from the doctor to the lab'**
+  String get orderDetailsSubtitleLab;
+
+  /// No description provided for @orderDetailsExpectedDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected delivery date'**
+  String get orderDetailsExpectedDelivery;
+
+  /// No description provided for @orderDetailsOrderData.
+  ///
+  /// In en, this message translates to:
+  /// **'Order data'**
+  String get orderDetailsOrderData;
+
+  /// No description provided for @orderDetailsDoctorData.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor data'**
+  String get orderDetailsDoctorData;
+
+  /// No description provided for @orderDetailsSenderDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending doctor'**
+  String get orderDetailsSenderDoctor;
+
+  /// No description provided for @orderDetailsReceivingLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiving lab'**
+  String get orderDetailsReceivingLab;
+
+  /// No description provided for @orderDetailsReadyForDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready for delivery'**
+  String get orderDetailsReadyForDelivery;
+
+  /// No description provided for @labProcessUpdateStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Update status'**
+  String get labProcessUpdateStatus;
+
+  /// No description provided for @labProcessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process order'**
+  String get labProcessTitle;
+
+  /// No description provided for @labProcessDeliveredDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Material available and delivered to the doctor'**
+  String get labProcessDeliveredDesc;
+
+  /// No description provided for @labProcessMissingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Material not available in the lab'**
+  String get labProcessMissingDesc;
+
+  /// No description provided for @labAssignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign order'**
+  String get labAssignTitle;
+
+  /// No description provided for @labAssignSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the order for {name}'**
+  String labAssignSubtitle(String name);
+
+  /// No description provided for @profilePageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee data and job information'**
+  String get profilePageSubtitle;
 }
 
 class _AppLocalizationsDelegate

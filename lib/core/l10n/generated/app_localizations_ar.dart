@@ -625,6 +625,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whMaterialUnit => 'الوحدة';
 
   @override
+  String get whMaterialUnitHint => 'اختر الوحدة';
+
+  @override
   String get whMaterialMinStock => 'الحد الأدنى';
 
   @override
@@ -661,7 +664,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whOrderRequester => 'الطالب';
 
   @override
-  String get whOrderDate => 'التاريخ';
+  String get whOrderDate => 'تاريخ الطلب';
 
   @override
   String get whOrderStatus => 'الحالة';
@@ -1059,4 +1062,999 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get labManageTechnicians => 'إدارة المخبريين';
+
+  @override
+  String get labDashboardSearchHint =>
+      'فلترة طلبات هذه الصفحة... (رقم، طبيب، مادة)';
+
+  @override
+  String get priorityUrgent => 'عاجل';
+
+  @override
+  String get priorityMedium => 'متوسطة';
+
+  @override
+  String get priorityNormal => 'عادية';
+
+  @override
+  String get labStatNeedsFollowup => 'يحتاج متابعة';
+
+  @override
+  String get labChipThisMonth => 'هذا الشهر';
+
+  @override
+  String get labChipActive => 'نشط';
+
+  @override
+  String get labStatReadyOrders => 'طلبات جاهزة';
+
+  @override
+  String labTrendFromLastMonth(String value) {
+    return '$value من الشهر الماضي';
+  }
+
+  @override
+  String labTrendFromYesterday(String value) {
+    return '$value من أمس';
+  }
+
+  @override
+  String get labTodayOrders => 'طلبات اليوم';
+
+  @override
+  String labOrdersCount(String count) {
+    return '$count طلب';
+  }
+
+  @override
+  String get colOrderNumber => 'رقم الطلب';
+
+  @override
+  String get colDoctor => 'الطبيب';
+
+  @override
+  String get colType => 'النوع';
+
+  @override
+  String get colMaterial => 'المادة';
+
+  @override
+  String get colTooth => 'السن';
+
+  @override
+  String get colDate => 'الموعد';
+
+  @override
+  String get colPriority => 'الأولوية';
+
+  @override
+  String get colStatus => 'الحالة';
+
+  @override
+  String labGreeting(String name) {
+    return 'مرحباً، $name';
+  }
+
+  @override
+  String get systemAllNormal => 'جميع الأنظمة تعمل بشكل طبيعي';
+
+  @override
+  String labLastUpdate(String time) {
+    return 'آخر تحديث: $time';
+  }
+
+  @override
+  String get labOrdersSearchHint =>
+      'فلترة طلبات الأطباء... (رقم، طبيب، مادة، سن)';
+
+  @override
+  String labOrdersCountOfTotal(String shown, String total) {
+    return '$shown طلب من أصل $total';
+  }
+
+  @override
+  String get labOrderProcess => 'معالجة';
+
+  @override
+  String get actionView => 'عرض';
+
+  @override
+  String get labNoOrdersInCategory => 'لا توجد طلبيات في هذه الفئة';
+
+  @override
+  String get settingsSearchHint => 'بحث في هذه الصفحة...';
+
+  @override
+  String get settingsTabSecurity => 'الأمان';
+
+  @override
+  String get settingsTabPreferences => 'التفضيلات';
+
+  @override
+  String get settingsChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get settingsChangePasswordDesc =>
+      'يفضّل تغيير كلمة المرور كل 90 يوماً لزيادة الأمان';
+
+  @override
+  String get settingsCurrentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get settingsNewPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get settingsConfirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get settingsUpdatePassword => 'تحديث كلمة المرور';
+
+  @override
+  String get settings2FA => 'المصادقة الثنائية';
+
+  @override
+  String get settings2FADesc => 'حماية إضافية لحسابك عبر رمز OTP';
+
+  @override
+  String get settings2FAOtpTitle => 'طلب رمز OTP عند تسجيل الدخول';
+
+  @override
+  String get settings2FAOtpDesc =>
+      'يصلك رمز عبر البريد الإلكتروني في كل مرة تدخل من جهاز جديد';
+
+  @override
+  String get settingsLogoutAll => 'تسجيل الخروج من كل الأجهزة';
+
+  @override
+  String get settingsLogoutAllDesc =>
+      'إنهاء جميع الجلسات النشطة على الأجهزة الأخرى';
+
+  @override
+  String get settingsNotifPrefs => 'تفضيلات الإشعارات';
+
+  @override
+  String get settingsNotifPrefsDesc =>
+      'حدد أنواع الإشعارات التي تريد استقبالها';
+
+  @override
+  String get labSettingsNotifUrgentOrders => 'الطلبات العاجلة';
+
+  @override
+  String get labSettingsNotifUrgentOrdersDesc =>
+      'الطلبات اللي يجب إنهاؤها اليوم';
+
+  @override
+  String get labSettingsNotifNewFromDoctors => 'طلبيات جديدة من الأطباء';
+
+  @override
+  String get labSettingsNotifNewFromDoctorsDesc => 'عند وصول طلبية جديدة';
+
+  @override
+  String get settingsNotifLowMaterials => 'نقص المواد';
+
+  @override
+  String get settingsNotifLowMaterialsDesc => 'عند وصول مادة للحد الأدنى';
+
+  @override
+  String get labSettingsNotifWarehouseUpdates => 'تحديثات المستودع';
+
+  @override
+  String get labSettingsNotifWarehouseUpdatesDesc =>
+      'حالة طلبات التوريد المرسلة';
+
+  @override
+  String get labSettingsNotifTeamUpdates => 'تحديثات الفريق';
+
+  @override
+  String get labSettingsNotifTeamUpdatesDesc => 'إضافة أو تغيير دوام مخبري';
+
+  @override
+  String get settingsNotifChannels => 'قنوات الإشعار';
+
+  @override
+  String get settingsNotifChannelsDesc => 'اختر أين تصلك التنبيهات';
+
+  @override
+  String get settingsNotifDailyEmail => 'ملخص يومي عبر البريد الإلكتروني';
+
+  @override
+  String get settingsNotifDailyEmailDesc => 'يصلك في الساعة 8:00 صباحاً كل يوم';
+
+  @override
+  String get settingsNotifSound => 'صوت الإشعارات داخل النظام';
+
+  @override
+  String get settingsNotifSoundDesc => 'تشغيل نغمة عند وصول إشعار جديد';
+
+  @override
+  String get settingsThemeDesc => 'اختر مظهر النظام';
+
+  @override
+  String get settingsThemeDark => 'داكن';
+
+  @override
+  String get settingsThemeLight => 'فاتح';
+
+  @override
+  String get settingsLanguageDesc => 'لغة عرض النظام';
+
+  @override
+  String get settingsLangArabicHint => 'RTL · الافتراضي';
+
+  @override
+  String get settingsLangEnglishHint => 'LTR';
+
+  @override
+  String get settingsDisplayPerf => 'العرض والأداء';
+
+  @override
+  String get settingsCompactView => 'العرض المضغوط';
+
+  @override
+  String get settingsCompactViewDesc =>
+      'إظهار مزيد من البيانات في الشاشة الواحدة';
+
+  @override
+  String get settingsAutoSave => 'الحفظ التلقائي';
+
+  @override
+  String get settingsAutoSaveDesc => 'حفظ التعديلات تلقائياً كل دقيقة';
+
+  @override
+  String get notifSearchHint => 'بحث في الإشعارات...';
+
+  @override
+  String get sectionToday => 'اليوم';
+
+  @override
+  String get sectionYesterday => 'أمس';
+
+  @override
+  String get notifEmptyInCategory => 'لا توجد إشعارات في هذه الفئة';
+
+  @override
+  String get notifFilterAll => 'الكل';
+
+  @override
+  String get notifFilterUnread => 'غير مقروءة';
+
+  @override
+  String get notifFilterOrders => 'طلبات';
+
+  @override
+  String get notifFilterMaterials => 'مواد';
+
+  @override
+  String get notifFilterSystem => 'نظام';
+
+  @override
+  String get techSearchHint => 'بحث عن مخبري... (اسم، دور، مهمة)';
+
+  @override
+  String get labTeamSectionTitle => 'فريق المخبر';
+
+  @override
+  String get labTeamTotalChip => 'الإجمالي';
+
+  @override
+  String get labTeamActiveChip => 'يعمل الآن';
+
+  @override
+  String get labTeamReadyChip => 'جاهز للتوكيل';
+
+  @override
+  String get techStatActiveLabel => 'مخبريون نشطون';
+
+  @override
+  String get techStatusBreak => 'استراحة';
+
+  @override
+  String get labTeamAddTechnician => 'إضافة مخبري';
+
+  @override
+  String get notifMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get whNotifExpiry => 'انتهاء الصلاحية';
+
+  @override
+  String get whNotifExpiryDesc => 'قبل انتهاء الصلاحية بـ 30 يوم';
+
+  @override
+  String get whNotifNewSupply => 'طلبيات توريد جديدة';
+
+  @override
+  String get whNotifNewSupplyDesc => 'عند وصول طلبية من المخبر/العيادة';
+
+  @override
+  String get whNotifSupplierDelay => 'تأخر الموردين';
+
+  @override
+  String get whNotifSupplierDelayDesc => 'عند تأخر مورد عن موعد التسليم';
+
+  @override
+  String get whNotifInvoicesDue => 'فواتير بانتظار الدفع';
+
+  @override
+  String get whNotifInvoicesDueDesc => 'تذكير قبل تاريخ الاستحقاق';
+
+  @override
+  String get whOrderPartial => 'جزئي';
+
+  @override
+  String get whOrderFulfilled => 'تم التوريد';
+
+  @override
+  String get whOrdersEmptyFilter => 'لا يوجد طلبات بهذا الفلتر';
+
+  @override
+  String get whOrderRequesterParty => 'الجهة الطالبة';
+
+  @override
+  String get colQuantity => 'الكمية';
+
+  @override
+  String get profileGeneralInfo => 'معلومات عامة';
+
+  @override
+  String get profileHireDate => 'تاريخ التوظيف';
+
+  @override
+  String get profileLanguages => 'اللغات';
+
+  @override
+  String get profileAdminNotes => 'ملاحظات إدارية';
+
+  @override
+  String get profileCompletion => 'اكتمال الملف';
+
+  @override
+  String get profileEdit => 'تعديل الملف الشخصي';
+
+  @override
+  String get profileSaving => 'جارٍ الحفظ…';
+
+  @override
+  String get profileSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get profileChangePhoto => 'تغيير الصورة';
+
+  @override
+  String get profilePersonalInfo => 'المعلومات الشخصية';
+
+  @override
+  String get profilePersonalInfoSubtitle =>
+      'البيانات التعريفية ومعلومات الاتصال';
+
+  @override
+  String get profilePhone => 'رقم الهاتف';
+
+  @override
+  String get profileNationalId => 'الرقم الوطني';
+
+  @override
+  String get profileBirthDate => 'تاريخ الميلاد';
+
+  @override
+  String get profileGender => 'الجنس';
+
+  @override
+  String get profileAddress => 'العنوان';
+
+  @override
+  String get profileEmployeeId => 'رقم الموظف';
+
+  @override
+  String get profileJobInfo => 'المعلومات الوظيفية';
+
+  @override
+  String get profileJobInfoSubtitle => 'القسم والدوام والمسمى الوظيفي';
+
+  @override
+  String get profileDepartment => 'القسم';
+
+  @override
+  String get profileWorkDays => 'أيام الدوام';
+
+  @override
+  String get profilePosition => 'المسمى الوظيفي';
+
+  @override
+  String get profileDayOff => 'يوم العطلة الأسبوعية';
+
+  @override
+  String get profileWeeklyHours => 'عدد ساعات العمل الأسبوعية';
+
+  @override
+  String get profileSavedSuccess => 'تم حفظ التعديلات بنجاح';
+
+  @override
+  String get profileSaveError => 'تعذّر حفظ التعديلات';
+
+  @override
+  String get profilePhotoUpdated => 'تم تحديث صورة الملف الشخصي';
+
+  @override
+  String get profileLoadError => 'تعذّر تحميل الملف الشخصي';
+
+  @override
+  String get roleEmployee => 'موظف';
+
+  @override
+  String get profileStatCompletedOrders => 'طلبات منجزة';
+
+  @override
+  String get profileStatExecTime => 'وقت التنفيذ';
+
+  @override
+  String get profileStatOnTime => 'الإنجاز في الوقت';
+
+  @override
+  String get profileBadgeThisMonth => 'هذا الشهر';
+
+  @override
+  String get profileBadgeAverage => 'متوسط';
+
+  @override
+  String get profileStatMovementsThisMonth => 'حركات هذا الشهر';
+
+  @override
+  String get profileStatLowItems => 'أصناف منخفضة';
+
+  @override
+  String get profileStatStockAccuracy => 'دقة المخزون';
+
+  @override
+  String get profileBadgeAlert => 'تنبيه';
+
+  @override
+  String profilePhotoError(Object error) {
+    return 'تعذّر اختيار الصورة: $error';
+  }
+
+  @override
+  String get ordersFilterAll => 'الكل';
+
+  @override
+  String get ordersUrgent => 'عاجل';
+
+  @override
+  String get ordersStatusNew => 'جديد';
+
+  @override
+  String get ordersStatusPartial => 'جزئي';
+
+  @override
+  String get ordersStatusFulfilled => 'تم التوريد';
+
+  @override
+  String get ordersQuantity => 'الكمية';
+
+  @override
+  String get ordersRequester => 'الطالب';
+
+  @override
+  String get ordersDate => 'التاريخ';
+
+  @override
+  String get ordersView => 'عرض';
+
+  @override
+  String get ordersSupply => 'توريد';
+
+  @override
+  String get ordersEmptyTitle => 'لا توجد طلبيات';
+
+  @override
+  String get ordersEmptyMessage => 'لا يوجد طلبيات تطابق الفلتر الحالي';
+
+  @override
+  String ordersSupplyConfirmed(Object material, Object order) {
+    return 'تم تأكيد توريد $material للطلبية $order';
+  }
+
+  @override
+  String ordersCountSummary(Object count, Object total) {
+    return '$count طلبية من أصل $total';
+  }
+
+  @override
+  String get orderDetailsSubtitle => 'تفاصيل طلبية المواد المرسلة إلى المستودع';
+
+  @override
+  String get orderDetailsInfoSection => 'معلومات الطلبية';
+
+  @override
+  String get orderDetailsProgressSection => 'تقدم التوريد';
+
+  @override
+  String get orderDetailsNotes => 'ملاحظات';
+
+  @override
+  String get orderDetailsStatusLabel => 'حالة الطلبية';
+
+  @override
+  String get orderDetailsOrderDate => 'تاريخ الطلب';
+
+  @override
+  String get orderDetailsRequestData => 'بيانات الطلب';
+
+  @override
+  String get orderDetailsMaterial => 'المادة';
+
+  @override
+  String get orderDetailsPriority => 'الأولوية';
+
+  @override
+  String get orderDetailsNormal => 'عادية';
+
+  @override
+  String get orderDetailsRequesterData => 'بيانات الجهة الطالبة';
+
+  @override
+  String get orderDetailsParty => 'الجهة';
+
+  @override
+  String get orderDetailsResponsible => 'المسؤول';
+
+  @override
+  String get orderDetailsRequestNumber => 'رقم الطلب';
+
+  @override
+  String get orderTimelineReceived => 'تم الاستلام';
+
+  @override
+  String get orderTimelinePartial => 'توريد جزئي';
+
+  @override
+  String orderDetailsTitle(Object req) {
+    return 'تفاصيل طلبية التوريد $req';
+  }
+
+  @override
+  String get notifEmptyTitle => 'لا توجد إشعارات';
+
+  @override
+  String get notifEmptyMessage => 'لا يوجد إشعارات لعرضها في هذا الفلتر';
+
+  @override
+  String get notifGroupToday => 'اليوم';
+
+  @override
+  String get notifGroupYesterday => 'أمس';
+
+  @override
+  String get notifGroupOlder => 'أقدم';
+
+  @override
+  String get notifBadgeOrder => 'طلبية';
+
+  @override
+  String get notifBadgeDone => 'إنجاز';
+
+  @override
+  String get reportRangeDaily => 'يومي';
+
+  @override
+  String get reportRangeWeekly => 'أسبوعي';
+
+  @override
+  String get reportRangeMonthly => 'شهري';
+
+  @override
+  String get reportRangeYearly => 'سنوي';
+
+  @override
+  String get reportSuppliersPerf => 'أداء الموردين';
+
+  @override
+  String get reportTopMaterials => 'أكثر المواد استهلاكاً';
+
+  @override
+  String get reportFullReport => 'التقرير الكامل';
+
+  @override
+  String get reportExportPdf => 'تصدير PDF';
+
+  @override
+  String get reportExportExcel => 'تصدير Excel';
+
+  @override
+  String get reportStatAvgSupplyTime => 'متوسط مدة التوريد';
+
+  @override
+  String get reportStatSupplyRate => 'نسبة التوريد';
+
+  @override
+  String get reportStatConsumed => 'مادة استُهلكت';
+
+  @override
+  String get reportStatTotalMaterials => 'إجمالي المواد';
+
+  @override
+  String get reportUnitDay => 'يوم';
+
+  @override
+  String get reportConsumptionByCategory => 'توزّع الاستهلاك حسب الفئة';
+
+  @override
+  String get reportOfConsumption => 'من الاستهلاك';
+
+  @override
+  String get reportSupplyByDays => 'توزع طلبات التوريد على أيام الشهر';
+
+  @override
+  String get reportLess => 'أقل';
+
+  @override
+  String get reportMore => 'أكثر';
+
+  @override
+  String get reportWeekdaySun => 'أحد';
+
+  @override
+  String get reportWeekdayMon => 'إثنين';
+
+  @override
+  String get reportWeekdayTue => 'ثلاثاء';
+
+  @override
+  String get reportWeekdayWed => 'أربعاء';
+
+  @override
+  String get reportWeekdayThu => 'خميس';
+
+  @override
+  String get reportWeekdayFri => 'جمعة';
+
+  @override
+  String get reportWeekdaySat => 'سبت';
+
+  @override
+  String reportMonthlyTitle(Object period) {
+    return '$period — التقرير الشهري';
+  }
+
+  @override
+  String reportGeneratedAt(Object date) {
+    return 'تم إنشاء التقرير $date';
+  }
+
+  @override
+  String reportDaysCount(Object days) {
+    return '$days يوم';
+  }
+
+  @override
+  String reportSupplierSubtitle(Object invoices, Object avgDays) {
+    return '$invoices فاتورة · متوسط $avgDays يوم';
+  }
+
+  @override
+  String get whBadgeTotal => 'إجمالي';
+
+  @override
+  String get whStatOutMaterials => 'مواد نفدت';
+
+  @override
+  String get whStatLowMaterials => 'مواد ينفد رصيدها';
+
+  @override
+  String get whStatAvailMaterials => 'مواد متوفرة';
+
+  @override
+  String get whStatTotalMaterials => 'مادة في المستودع';
+
+  @override
+  String get whMaterialsEmptyTitle => 'لا يوجد مواد';
+
+  @override
+  String get whMaterialsEmptyMessage => 'لا يوجد مواد تطابق الفلاتر الحالية';
+
+  @override
+  String get whColCode => 'الكود';
+
+  @override
+  String get whColName => 'اسم المادة';
+
+  @override
+  String get whColCategory => 'الفئة';
+
+  @override
+  String get whColStock => 'المخزون';
+
+  @override
+  String get whColMinStock => 'الحد الأدنى';
+
+  @override
+  String get whColExpiry => 'الصلاحية';
+
+  @override
+  String get whColSupplier => 'المورد';
+
+  @override
+  String get whColStatus => 'الحالة';
+
+  @override
+  String whMaterialsCount(Object count, Object total) {
+    return '$count مادة من أصل $total';
+  }
+
+  @override
+  String get invStatusPaid => 'مدفوعة';
+
+  @override
+  String get invStatusPending => 'بانتظار';
+
+  @override
+  String get invEmptyTitle => 'لا توجد فواتير';
+
+  @override
+  String get invEmptyMessage => 'لا يوجد فواتير تطابق الفلتر الحالي';
+
+  @override
+  String get invPurchaseInvoices => 'فواتير الشراء';
+
+  @override
+  String get invAddInvoice => 'إضافة فاتورة';
+
+  @override
+  String get invBadgePaid => 'مدفوع';
+
+  @override
+  String get invBadgePending => 'معلق';
+
+  @override
+  String get invBadgeTotal => 'إجمالي';
+
+  @override
+  String get invStatThisMonth => 'فاتورة هذا الشهر';
+
+  @override
+  String get invStatPaidTotal => 'إجمالي المدفوع';
+
+  @override
+  String get invStatPendingPay => 'بانتظار الدفع';
+
+  @override
+  String get invStatTotalPurchases => 'المشتريات الكلية';
+
+  @override
+  String get invColNumber => 'رقم الفاتورة';
+
+  @override
+  String get invColItemCount => 'عدد المواد';
+
+  @override
+  String get invColTotalSyp => 'الإجمالي (ل.س)';
+
+  @override
+  String invCount(Object count, Object total) {
+    return '$count فاتورة من أصل $total';
+  }
+
+  @override
+  String get fieldRequired => 'مطلوب';
+
+  @override
+  String get fieldOptional => 'اختياري';
+
+  @override
+  String get fieldInvalidNumber => 'رقم غير صحيح';
+
+  @override
+  String get fieldInvalidAmount => 'مبلغ غير صحيح';
+
+  @override
+  String get fieldWriteOrPick => 'اكتب أو اختر من القائمة...';
+
+  @override
+  String get invFormTitle => 'إضافة فاتورة شراء';
+
+  @override
+  String get invFormSubtitle => 'املأ بيانات الفاتورة الجديدة';
+
+  @override
+  String get invFormSupplier => 'المورد';
+
+  @override
+  String get invFormSupplierHint => 'مثال: شركة المستلزمات الطبية';
+
+  @override
+  String get invFormDate => 'التاريخ';
+
+  @override
+  String get invFormNotes => 'ملاحظات';
+
+  @override
+  String get invFormSave => 'حفظ الفاتورة';
+
+  @override
+  String whGreeting(String name) {
+    return 'مرحباً، $name';
+  }
+
+  @override
+  String get whSystemsNormal => 'جميع الأنظمة تعمل بشكل طبيعي';
+
+  @override
+  String get whLastUpdateLabel => 'آخر تحديث: ';
+
+  @override
+  String get whTotalMaterials => 'إجمالي المواد';
+
+  @override
+  String get whMiniOrdersToday => 'طلب اليوم';
+
+  @override
+  String get whSupplyRate => 'نسبة التوريد';
+
+  @override
+  String get whStatLowStockShort => 'مواد بالحد الأدنى';
+
+  @override
+  String get whStatPendingSupply => 'طلبات بانتظار التوريد';
+
+  @override
+  String get whStatMonthPurchases => 'مشتريات الشهر (ل.س)';
+
+  @override
+  String get whBadgeAlert => 'تنبيه';
+
+  @override
+  String get whBadgeNew => 'جديد';
+
+  @override
+  String get whBadgeThisMonth => 'هذا الشهر';
+
+  @override
+  String get whNeedsSupply => 'يحتاج توريد';
+
+  @override
+  String whTrendThisWeek(String count) {
+    return '$count هذا الأسبوع';
+  }
+
+  @override
+  String whTrendToday(String count) {
+    return '$count اليوم';
+  }
+
+  @override
+  String whTrendVsLastMonth(String value) {
+    return '$value من الشهر الماضي';
+  }
+
+  @override
+  String get whExpiringTitle => 'مواد ستنتهي صلاحيتها قريباً';
+
+  @override
+  String get whExpiringSubtitle => 'يجب التصرف بهذه المواد قبل انتهاء صلاحيتها';
+
+  @override
+  String whTodayOrdersCount(Object count) {
+    return '$count طلب';
+  }
+
+  @override
+  String get labNotifActionOpenOrder => 'فتح الطلب';
+
+  @override
+  String get labNotifActionReview => 'مراجعة';
+
+  @override
+  String get labActionTrack => 'تتبع';
+
+  @override
+  String get labReqStatusUnavailable => 'غير متوفر';
+
+  @override
+  String get labReqRequestedBy => 'طلب بواسطة';
+
+  @override
+  String get labReqLabOrder => 'طلبية المخبر';
+
+  @override
+  String get labReqEmptyCategory => 'لا توجد طلبيات مواد في هذه الفئة';
+
+  @override
+  String get labReqNewRequest => 'طلب مادة جديدة';
+
+  @override
+  String get labReqComingSoon =>
+      'سيتم إضافة نموذج طلب المواد هنا في الإصدار القادم.';
+
+  @override
+  String get labTechPendingAssign => 'بانتظار التوكيل';
+
+  @override
+  String get techAddButton => 'إضافة المخبري';
+
+  @override
+  String get techAddTitle => 'إضافة مخبري جديد';
+
+  @override
+  String get techAddSubtitle => 'أدخل بيانات المخبري للانضمام إلى فريق المخبر';
+
+  @override
+  String get techSectionBasic => 'البيانات الأساسية';
+
+  @override
+  String get techFieldFullName => 'الاسم الكامل';
+
+  @override
+  String get techFieldFullNameHint => 'مثال: محمد علي';
+
+  @override
+  String get techFieldRole => 'الدور / التخصص';
+
+  @override
+  String get techFieldPhone => 'رقم الهاتف (اختياري)';
+
+  @override
+  String get techFieldShiftStart => 'بداية الدوام';
+
+  @override
+  String get techFieldShiftEnd => 'نهاية الدوام';
+
+  @override
+  String get techSkills => 'المهارات';
+
+  @override
+  String get techNotesHint => 'ملاحظات إضافية عن المخبري...';
+
+  @override
+  String get techNoNameYet => 'بدون اسم بعد';
+
+  @override
+  String get orderDetailsProgress => 'تقدم العمل';
+
+  @override
+  String get orderDetailsHeading => 'تفاصيل الطلبية';
+
+  @override
+  String get orderDetailsSubtitleLab =>
+      'تفاصيل الطلبية المرسلة من الطبيب إلى المختبر';
+
+  @override
+  String get orderDetailsExpectedDelivery => 'تاريخ التسليم المتوقع';
+
+  @override
+  String get orderDetailsOrderData => 'بيانات الطلبية';
+
+  @override
+  String get orderDetailsDoctorData => 'بيانات الطبيب';
+
+  @override
+  String get orderDetailsSenderDoctor => 'الطبيب المُرسل';
+
+  @override
+  String get orderDetailsReceivingLab => 'المختبر المستلم';
+
+  @override
+  String get orderDetailsReadyForDelivery => 'جاهز للتسليم';
+
+  @override
+  String get labProcessUpdateStatus => 'تحديث الحالة';
+
+  @override
+  String get labProcessTitle => 'معالجة الطلبية';
+
+  @override
+  String get labProcessDeliveredDesc => 'المادة متوفرة وتم التسليم للطبيب';
+
+  @override
+  String get labProcessMissingDesc => 'المادة غير متوفرة في المخبر';
+
+  @override
+  String get labAssignTitle => 'توكيل طلبية';
+
+  @override
+  String labAssignSubtitle(String name) {
+    return 'اختر الطلبية لـ $name';
+  }
+
+  @override
+  String get profilePageSubtitle => 'بيانات الموظف ومعلومات الوظيفة';
 }

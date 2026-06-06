@@ -98,16 +98,18 @@ class _AppTopbarActionState extends State<AppTopbarAction>
     final bool isEnabled = widget.onPressed != null;
 
     // ── تحديد الألوان ─────────────────────────────────────────────────
+    // لون اللمسة التفاعلية: كحلي بالفاتح، إندِغو (brand) بالغامق — صفر تركواز.
+    final Color hot = isLight ? AppColors.primary : AppColors.brand;
     final Color bgColor = _isHovered
-        ? AppColors.accent.withValues(alpha: 0.14)
-        : AppColors.accent.withValues(alpha: isLight ? 0.12 : 0.06);
+        ? hot.withValues(alpha: 0.14)
+        : hot.withValues(alpha: isLight ? 0.12 : 0.06);
 
     final Color borderColor = _isHovered
-        ? AppColors.accent
+        ? hot
         : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
 
     final Color iconColor = _isHovered
-        ? (isLight ? AppColors.primary : AppColors.accent)
+        ? (isLight ? AppColors.primary : hot)
         : (isLight ? AppColors.lightText2 : AppColors.darkText2);
 
     Widget button = AnimatedContainer(

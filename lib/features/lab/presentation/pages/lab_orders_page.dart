@@ -145,7 +145,7 @@ class _LabOrdersPageState extends State<LabOrdersPage> {
       ),
       pageTitle: context.l10n.doctorOrders,
       pageSubtitle: null,
-      searchPlaceholder: 'فلترة طلبات الأطباء... (رقم، طبيب، مادة، سن)',
+      searchPlaceholder: context.l10n.labOrdersSearchHint,
       userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
@@ -289,15 +289,16 @@ class _FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Row(
       children: [
         Text(
-          '$shown طلب من أصل $total',
+          context.l10n.labOrdersCountOfTotal('$shown', '$total'),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: AppColors.lightText3,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
           ),
         ),
         const Spacer(),
@@ -306,32 +307,32 @@ class _FilterBar extends StatelessWidget {
           runSpacing: 6,
           children: [
             _Tab(
-              label: 'الكل',
+              label: context.l10n.labOrdersFilterAll,
               count: total,
               active: current == 'all',
               onTap: () => onChange('all'),
             ),
             _Tab(
-              label: 'عاجل',
+              label: context.l10n.priorityUrgent,
               count: urgentCount,
               active: current == 'urgent',
               accent: const Color(0xFFEF4444),
               onTap: () => onChange('urgent'),
             ),
             _Tab(
-              label: 'جديد',
+              label: context.l10n.labOrdersFilterNew,
               count: newCount,
               active: current == 'new',
               onTap: () => onChange('new'),
             ),
             _Tab(
-              label: 'قيد التصنيع',
+              label: context.l10n.labOrdersFilterManufacturing,
               count: mfgCount,
               active: current == 'manufacturing',
               onTap: () => onChange('manufacturing'),
             ),
             _Tab(
-              label: 'جاهز',
+              label: context.l10n.labOrdersFilterReady,
               count: readyCount,
               active: current == 'ready',
               onTap: () => onChange('ready'),
@@ -360,8 +361,11 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color activeBg = accent ?? AppColors.primary;
-    final Color idleText = accent ?? AppColors.lightText2;
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final Color activeBg =
+        accent ?? (isLight ? AppColors.primary : AppColors.brand);
+    final Color idleText =
+        accent ?? (isLight ? AppColors.lightText2 : AppColors.darkText2);
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -370,7 +374,9 @@ class _Tab extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: active ? activeBg : const Color(0xFFF6F7FB),
+            color: active
+                ? activeBg
+                : (isLight ? const Color(0xFFF6F7FB) : AppColors.darkBg2),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -392,7 +398,9 @@ class _Tab extends StatelessWidget {
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: active ? Colors.white : AppColors.lightText3,
+                  color: active
+                      ? Colors.white
+                      : (isLight ? AppColors.lightText3 : AppColors.darkText3),
                 ),
               ),
             ],
@@ -428,6 +436,7 @@ class _OrderCardState extends State<_OrderCard> {
   @override
   Widget build(BuildContext context) {
     final o = widget.order;
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     final accent = labOrderAccentColor(
       statusVariant: o.statusVariant,
       isUrgent: o.isUrgent,
@@ -445,9 +454,10 @@ class _OrderCardState extends State<_OrderCard> {
         curve: Curves.easeOut,
         transform: Matrix4.translationValues(0, _hover ? -3 : 0, 0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isLight ? Colors.white : AppColors.darkBg1,
           borderRadius: radius,
-          border: Border.all(color: AppColors.lightBorder),
+          border: Border.all(
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: _hover ? 0.07 : 0.03),
@@ -482,7 +492,8 @@ class _OrderCardState extends State<_OrderCard> {
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
+                            color:
+                                isLight ? AppColors.primary : AppColors.darkText1,
                           ),
                         ),
                         const Spacer(),
@@ -497,8 +508,10 @@ class _OrderCardState extends State<_OrderCard> {
                           width: 28,
                           height: 28,
                           alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFE2EDFF),
+                          decoration: BoxDecoration(
+                            color: isLight
+                                ? const Color(0xFFE2EDFF)
+                                : AppColors.darkChipBlueBg,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -507,7 +520,9 @@ class _OrderCardState extends State<_OrderCard> {
                               fontFamily: AppTextStyles.fontFamily,
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.primary,
+                              color: isLight
+                                  ? AppColors.primary
+                                  : AppColors.darkChipBlueText,
                             ),
                           ),
                         ),
@@ -518,7 +533,8 @@ class _OrderCardState extends State<_OrderCard> {
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.lightText1,
+                            color:
+                                isLight ? AppColors.lightText1 : AppColors.darkText1,
                           ),
                         ),
                         const Spacer(),
@@ -559,10 +575,11 @@ class _TypePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3F8),
+        color: isLight ? const Color(0xFFF1F3F8) : AppColors.darkBg2,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -571,7 +588,7 @@ class _TypePill extends StatelessWidget {
           fontFamily: AppTextStyles.fontFamily,
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: AppColors.lightText2,
+          color: isLight ? AppColors.lightText2 : AppColors.darkText2,
         ),
       ),
     );
@@ -583,28 +600,30 @@ class _UrgentPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEE2E2),
+        color: isLight ? const Color(0xFFFEE2E2) : AppColors.darkChipRedBg,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           Icon(
             Icons.local_fire_department_rounded,
             size: 13,
-            color: Color(0xFFEF4444),
+            color: isLight ? const Color(0xFFEF4444) : AppColors.darkChipRedText,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
-            'عاجل',
+            context.l10n.priorityUrgent,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 12,
               fontWeight: FontWeight.w800,
-              color: Color(0xFFEF4444),
+              color:
+                  isLight ? const Color(0xFFEF4444) : AppColors.darkChipRedText,
             ),
           ),
         ],
@@ -626,33 +645,34 @@ class _InfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FC),
+        color: isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2,
         borderRadius: BorderRadius.circular(12),
       ),
       // RTL: أوّل child = يمين. الترتيب المطلوب (يمين→يسار):
       //   [المادة] | [السن] | [الموعد]
       child: Row(
         children: [
-          Expanded(child: _cell('المادة', material)),
-          _divider(),
-          Expanded(child: _cell('السن', tooth)),
-          _divider(),
-          Expanded(child: _cell('الموعد', date)),
+          Expanded(child: _cell(context.l10n.colMaterial, material, isLight)),
+          _divider(isLight),
+          Expanded(child: _cell(context.l10n.colTooth, tooth, isLight)),
+          _divider(isLight),
+          Expanded(child: _cell(context.l10n.colDate, date, isLight)),
         ],
       ),
     );
   }
 
-  Widget _divider() => Container(
+  Widget _divider(bool isLight) => Container(
         width: 1,
         height: 28,
-        color: const Color(0xFFE5E7EE),
+        color: isLight ? const Color(0xFFE5E7EE) : AppColors.darkBorder,
       );
 
-  Widget _cell(String label, String value) {
+  Widget _cell(String label, String value, bool isLight) {
     return Column(
       children: [
         Text(
@@ -661,7 +681,7 @@ class _InfoBox extends StatelessWidget {
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 11,
             fontWeight: FontWeight.w500,
-            color: AppColors.lightText3,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
           ),
         ),
         const SizedBox(height: 4),
@@ -671,7 +691,7 @@ class _InfoBox extends StatelessWidget {
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 13,
             fontWeight: FontWeight.w800,
-            color: AppColors.lightText1,
+            color: isLight ? AppColors.lightText1 : AppColors.darkText1,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -699,7 +719,7 @@ class _StatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            c.label,
+            labStatusLabel(context, variant),
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 12,
@@ -725,6 +745,7 @@ class _ProcessButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -732,17 +753,17 @@ class _ProcessButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: isLight ? AppColors.primary : AppColors.brand,
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.check_rounded, size: 14, color: Colors.white),
-              SizedBox(width: 5),
+            children: [
+              const Icon(Icons.check_rounded, size: 14, color: Colors.white),
+              const SizedBox(width: 5),
               Text(
-                'معالجة',
-                style: TextStyle(
+                context.l10n.labOrderProcess,
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -763,6 +784,7 @@ class _ViewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -770,17 +792,18 @@ class _ViewButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: AppColors.lightBorder),
+            color: isLight ? Colors.white : AppColors.darkBg1,
+            border: Border.all(
+                color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
           ),
           child: Text(
-            'عرض',
+            context.l10n.actionView,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: AppColors.lightText1,
+              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
             ),
           ),
         ),
@@ -798,6 +821,7 @@ class _EmptyOrders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 60),
       child: Column(
@@ -809,9 +833,9 @@ class _EmptyOrders extends StatelessWidget {
           ),
           const SizedBox(height: AppSizes.spaceMD),
           Text(
-            'لا توجد طلبيات في هذه الفئة',
+            context.l10n.labNoOrdersInCategory,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.lightText3,
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3,
             ),
           ),
         ],

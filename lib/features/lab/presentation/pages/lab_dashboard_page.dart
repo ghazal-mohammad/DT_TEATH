@@ -39,7 +39,7 @@ class LabDashboardPage extends StatelessWidget {
       // العنوان "الصفحة الرئيسية" (مطابق للسايدبار وحسب الاتفاق).
       pageTitle: l10n.dashboard,
       pageSubtitle: null,
-      searchPlaceholder: 'فلترة طلبات هذه الصفحة... (رقم، طبيب، مادة)',
+      searchPlaceholder: l10n.labDashboardSearchHint,
       showThemeToggle: false,
       userName: MockUserData.labUserName,
       userRole: l10n.roleLabManager,
@@ -102,50 +102,51 @@ class _StatCardsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final cards = <Widget>[
-      const _DashboardStatCard(
-        chipLabel: 'عاجل',
-        chipColor: Color(0xFFEF4444),
-        accentColor: Color(0xFFEF4444),
+      _DashboardStatCard(
+        chipLabel: l10n.priorityUrgent,
+        chipColor: const Color(0xFFEF4444),
+        accentColor: const Color(0xFFEF4444),
         icon: Icons.local_fire_department_rounded,
         value: '2',
-        label: 'تنتهي اليوم',
+        label: l10n.labStatUrgentToday,
         trendIcon: Icons.arrow_downward_rounded,
-        trendText: 'يحتاج متابعة',
-        trendColor: Color(0xFFEF4444),
+        trendText: l10n.labStatNeedsFollowup,
+        trendColor: const Color(0xFFEF4444),
       ),
-      const _DashboardStatCard(
-        chipLabel: 'هذا الشهر',
-        chipColor: Color(0xFF10B981),
-        accentColor: Color(0xFF10B981),
+      _DashboardStatCard(
+        chipLabel: l10n.labChipThisMonth,
+        chipColor: const Color(0xFF10B981),
+        accentColor: const Color(0xFF10B981),
         icon: Icons.check_circle_rounded,
         value: '23',
-        label: 'طلبات جاهزة',
+        label: l10n.labStatReadyOrders,
         trendIcon: Icons.arrow_upward_rounded,
-        trendText: '+18% من الشهر الماضي',
-        trendColor: Color(0xFF10B981),
+        trendText: l10n.labTrendFromLastMonth('+18%'),
+        trendColor: const Color(0xFF10B981),
       ),
-      const _DashboardStatCard(
-        chipLabel: 'نشط',
-        chipColor: Color(0xFF8B5CF6),
-        accentColor: Color(0xFF8B5CF6),
+      _DashboardStatCard(
+        chipLabel: l10n.labChipActive,
+        chipColor: const Color(0xFF8B5CF6),
+        accentColor: const Color(0xFF8B5CF6),
         icon: Icons.adjust_rounded,
         value: '7',
-        label: 'قيد التصنيع',
+        label: l10n.labStatManufacturing,
         trendIcon: Icons.arrow_upward_rounded,
-        trendText: '+1 من أمس',
-        trendColor: Color(0xFF8B5CF6),
+        trendText: l10n.labTrendFromYesterday('+1'),
+        trendColor: const Color(0xFF8B5CF6),
       ),
-      const _DashboardStatCard(
-        chipLabel: 'جديد',
-        chipColor: Color(0xFF3B82F6),
-        accentColor: Color(0xFF3B82F6),
+      _DashboardStatCard(
+        chipLabel: l10n.statusNew,
+        chipColor: const Color(0xFF3B82F6),
+        accentColor: const Color(0xFF3B82F6),
         icon: Icons.add_rounded,
         value: '4',
-        label: 'طلبات جديدة',
+        label: l10n.labStatNewOrders,
         trendIcon: Icons.arrow_upward_rounded,
-        trendText: '+2 من أمس',
-        trendColor: Color(0xFF3B82F6),
+        trendText: l10n.labTrendFromYesterday('+2'),
+        trendColor: const Color(0xFF3B82F6),
       ),
     ];
 
@@ -219,6 +220,7 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppSizes.radiusLG);
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hover = true),
@@ -228,9 +230,10 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
         curve: Curves.easeOut,
         transform: Matrix4.translationValues(0, _hover ? -3 : 0, 0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isLight ? Colors.white : AppColors.darkBg1,
           borderRadius: radius,
-          border: Border.all(color: AppColors.lightBorder),
+          border: Border.all(
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: _hover ? 0.07 : 0.03),
@@ -303,14 +306,14 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
                         height: 1.0,
-                        color: AppColors.lightText1,
+                        color: isLight ? AppColors.lightText1 : AppColors.darkText1,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       widget.label,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.lightText3,
+                        color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -355,11 +358,12 @@ class _EndingTodayAlert extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Color accent = Color(0xFFF59E0B);
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF7ED),
+        color: isLight ? const Color(0xFFFFF7ED) : AppColors.darkChipOrangeBg,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(color: accent.withValues(alpha: 0.25)),
       ),
@@ -391,7 +395,7 @@ class _EndingTodayAlert extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'ينتهي اليوم',
+                        context.l10n.labOrdersDueToday,
                         style: TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
                           fontSize: 14,
@@ -424,9 +428,9 @@ class _EndingTodayAlert extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'يجب إنهاء هذه الطلبات قبل المساء',
+                    context.l10n.labOrdersDueTodaySubtitle,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.lightText3,
+                      color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                     ),
                   ),
                 ],
@@ -448,7 +452,7 @@ class _EndingTodayAlert extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     spacing: 8,
                     runSpacing: 6,
-                    children: _buildOrderPills(),
+                    children: _buildOrderPills(isLight),
                   ),
                 ),
               ],
@@ -460,14 +464,14 @@ class _EndingTodayAlert extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 12,
             runSpacing: 8,
-            children: [titleGroup, ..._buildOrderPills()],
+            children: [titleGroup, ..._buildOrderPills(isLight)],
           );
         },
       ),
     );
   }
 
-  List<Widget> _buildOrderPills() {
+  List<Widget> _buildOrderPills(bool isLight) {
     // ترتيب التصميم المرجعي (RTL يمين→يسار):
     //   [16:00 جسر 3 وحدات — د. خالد] → [14:00 تلبيسة PFM — د. سارة]
     // الأقرب لـ deadline (14:00) في الأقصى يسار، والأبعد (16:00) أقرب للترويسة.
@@ -480,7 +484,7 @@ class _EndingTodayAlert extends StatelessWidget {
           (p) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isLight ? Colors.white : AppColors.darkBg1,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
@@ -495,7 +499,7 @@ class _EndingTodayAlert extends StatelessWidget {
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.lightText1,
+                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -507,7 +511,7 @@ class _EndingTodayAlert extends StatelessWidget {
                 Text(
                   p.body,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.lightText2,
+                    color: isLight ? AppColors.lightText2 : AppColors.darkText2,
                   ),
                 ),
               ],
@@ -574,12 +578,14 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
           .where((o) => o.statusVariant == LabOrderBadgeVariant.ready)
           .length,
     };
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isLight ? Colors.white : AppColors.darkBg1,
         borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -594,15 +600,17 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.assignment_outlined,
                   size: 20,
-                  color: AppColors.primary,
+                  color: isLight ? AppColors.primary : AppColors.darkText1,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'طلبات اليوم',
-                  style: AppTextStyles.headlineSmall,
+                  context.l10n.labTodayOrders,
+                  style: AppTextStyles.headlineSmall.copyWith(
+                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Container(
@@ -611,47 +619,55 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1DAFE),
+                    color: isLight
+                        ? const Color(0xFFF1DAFE)
+                        : AppColors.darkChipVioletBg,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '${all.length} طلب',
+                    context.l10n.labOrdersCount('${all.length}'),
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
+                      color: isLight
+                          ? AppColors.primary
+                          : AppColors.darkChipVioletText,
                     ),
                   ),
                 ),
                 const Spacer(),
                 // tabs
                 _Tab(
-                  label: 'الكل',
+                  label: context.l10n.labOrdersFilterAll,
                   count: all.length,
                   isActive: _activeFilter == 'all',
+                  isLight: isLight,
                   onTap: () => setState(() => _activeFilter = 'all'),
                 ),
                 const SizedBox(width: 6),
                 _Tab(
-                  label: 'جديد',
+                  label: context.l10n.labOrdersFilterNew,
                   count: counts['new']!,
                   isActive: _activeFilter == 'new',
+                  isLight: isLight,
                   onTap: () => setState(() => _activeFilter = 'new'),
                 ),
                 const SizedBox(width: 6),
                 _Tab(
-                  label: 'قيد التصنيع',
+                  label: context.l10n.labOrdersFilterManufacturing,
                   count: counts['manufacturing']!,
                   isActive: _activeFilter == 'manufacturing',
+                  isLight: isLight,
                   onTap: () =>
                       setState(() => _activeFilter = 'manufacturing'),
                 ),
                 const SizedBox(width: 6),
                 _Tab(
-                  label: 'جاهز',
+                  label: context.l10n.labOrdersFilterReady,
                   count: counts['ready']!,
                   isActive: _activeFilter == 'ready',
+                  isLight: isLight,
                   onTap: () => setState(() => _activeFilter = 'ready'),
                 ),
                 const SizedBox(width: 12),
@@ -660,12 +676,12 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Text(
-                      'عرض الكل ←',
+                      '${context.l10n.viewAll} ←',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
+                        color: isLight ? AppColors.primary : AppColors.brand,
                       ),
                     ),
                   ),
@@ -676,10 +692,12 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
           // Table
           AppDataTable<LabOrderItem>(
             data: _filtered,
-            headerBackground: const Color(0xFFE2EDFF),
+            // موحّد مع المستودع: tableHeader (#BED8FA) بالفاتح.
+            headerBackground:
+                isLight ? AppColors.tableHeader : AppColors.darkBg2,
             columns: [
               AppDataColumn<LabOrderItem>(
-                label: 'رقم الطلب',
+                label: context.l10n.colOrderNumber,
                 flex: 2,
                 cellBuilder: (item) => Text(
                   item.orderId,
@@ -687,23 +705,23 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.lightText1,
+                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
                   ),
                 ),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'الطبيب',
+                label: context.l10n.colDoctor,
                 flex: 2,
-                cellBuilder: (item) => _doctorCell(item.doctorName),
+                cellBuilder: (item) => _doctorCell(item.doctorName, isLight),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'النوع',
+                label: context.l10n.colType,
                 flex: 2,
                 cellBuilder: (item) =>
                     Text(item.type, style: AppTextStyles.bodyMedium),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'المادة',
+                label: context.l10n.colMaterial,
                 flex: 2,
                 cellBuilder: (item) => Text(
                   item.material.isEmpty ? '—' : item.material,
@@ -711,7 +729,7 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                 ),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'السن',
+                label: context.l10n.colTooth,
                 flex: 2,
                 cellBuilder: (item) => Text(
                   item.tooth.isEmpty ? '—' : item.tooth,
@@ -719,20 +737,21 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                 ),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'الموعد',
+                label: context.l10n.colDate,
                 flex: 2,
                 cellBuilder: (item) =>
                     Text(item.dueDate, style: AppTextStyles.bodySmall),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'الأولوية',
+                label: context.l10n.colPriority,
                 flex: 2,
-                cellBuilder: (item) => _priorityCell(item.priority),
+                cellBuilder: (item) =>
+                    _priorityCell(context, item.priority, isLight),
               ),
               AppDataColumn<LabOrderItem>(
-                label: 'الحالة',
+                label: context.l10n.colStatus,
                 flex: 2,
-                cellBuilder: _statusBadge,
+                cellBuilder: (item) => _statusBadge(context, item, isLight),
               ),
             ],
           ),
@@ -741,7 +760,7 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
     );
   }
 
-  Widget _doctorCell(String name) {
+  Widget _doctorCell(String name, bool isLight) {
     // name مثل "د. سارة س" → نعرضو كامل، الـ avatar يستخدم آخر جزء (س)
     final parts =
         name.split(' ').where((p) => p.isNotEmpty).toList(growable: false);
@@ -758,8 +777,8 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
         Container(
           width: 24,
           height: 24,
-          decoration: const BoxDecoration(
-            color: Color(0xFFE2EDFF),
+          decoration: BoxDecoration(
+            color: isLight ? const Color(0xFFE2EDFF) : AppColors.darkChipBlueBg,
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
@@ -769,7 +788,7 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+              color: isLight ? AppColors.primary : AppColors.darkChipBlueText,
             ),
           ),
         ),
@@ -785,14 +804,19 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
     );
   }
 
-  Widget _priorityCell(LabOrderPriority priority) {
+  Widget _priorityCell(
+      BuildContext context, LabOrderPriority priority, bool isLight) {
+    final l10n = context.l10n;
     final ({Color color, String label, int bars}) data = switch (priority) {
       LabOrderPriority.urgent =>
-        (color: const Color(0xFFEF4444), label: 'عاجل', bars: 3),
+        (color: const Color(0xFFEF4444), label: l10n.priorityUrgent, bars: 3),
       LabOrderPriority.medium =>
-        (color: const Color(0xFF3B82F6), label: 'متوسطة', bars: 2),
-      LabOrderPriority.normal =>
-        (color: AppColors.lightText4, label: 'عادية', bars: 1),
+        (color: const Color(0xFF3B82F6), label: l10n.priorityMedium, bars: 2),
+      LabOrderPriority.normal => (
+          color: isLight ? AppColors.lightText4 : AppColors.darkText4,
+          label: l10n.priorityNormal,
+          bars: 1,
+        ),
     };
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -824,28 +848,30 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
     );
   }
 
-  Widget _statusBadge(LabOrderItem item) {
+  Widget _statusBadge(BuildContext context, LabOrderItem item, bool isLight) {
+    final l10n = context.l10n;
     final ({Color bg, Color text, String label}) data =
         switch (item.statusVariant) {
       LabOrderBadgeVariant.newOrder => (
-          bg: const Color(0xFFE2EDFF),
-          text: const Color(0xFF3B82F6),
-          label: 'جديد',
+          bg: isLight ? const Color(0xFFE2EDFF) : AppColors.darkChipBlueBg,
+          text: isLight ? const Color(0xFF3B82F6) : AppColors.darkChipBlueText,
+          label: l10n.statusNew,
         ),
       LabOrderBadgeVariant.manufacturing => (
-          bg: const Color(0xFFF1DAFE),
-          text: const Color(0xFF8B5CF6),
-          label: 'قيد التصنيع',
+          bg: isLight ? const Color(0xFFF1DAFE) : AppColors.darkChipVioletBg,
+          text:
+              isLight ? const Color(0xFF8B5CF6) : AppColors.darkChipVioletText,
+          label: l10n.statusManufacturing,
         ),
       LabOrderBadgeVariant.ready => (
-          bg: const Color(0xFFD0FBD7),
-          text: const Color(0xFF10B981),
-          label: 'جاهز',
+          bg: isLight ? const Color(0xFFD0FBD7) : AppColors.darkChipGreenBg,
+          text: isLight ? const Color(0xFF10B981) : AppColors.darkChipGreenText,
+          label: l10n.statusReady,
         ),
       LabOrderBadgeVariant.urgent => (
-          bg: const Color(0xFFFEE2E2),
-          text: const Color(0xFFEF4444),
-          label: 'عاجل',
+          bg: isLight ? const Color(0xFFFEE2E2) : AppColors.darkChipRedBg,
+          text: isLight ? const Color(0xFFEF4444) : AppColors.darkChipRedText,
+          label: l10n.priorityUrgent,
         ),
     };
     return Container(
@@ -891,12 +917,14 @@ class _Tab extends StatelessWidget {
     required this.label,
     required this.count,
     required this.isActive,
+    required this.isLight,
     required this.onTap,
   });
 
   final String label;
   final int count;
   final bool isActive;
+  final bool isLight;
   final VoidCallback onTap;
 
   @override
@@ -908,7 +936,9 @@ class _Tab extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primary : Colors.transparent,
+            color: isActive
+                ? (isLight ? AppColors.primary : AppColors.brand)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -920,7 +950,9 @@ class _Tab extends StatelessWidget {
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: isActive ? Colors.white : AppColors.lightText2,
+                  color: isActive
+                      ? Colors.white
+                      : (isLight ? AppColors.lightText2 : AppColors.darkText2),
                 ),
               ),
               const SizedBox(width: 6),
@@ -932,7 +964,7 @@ class _Tab extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                   color: isActive
                       ? Colors.white
-                      : AppColors.lightText3,
+                      : (isLight ? AppColors.lightText3 : AppColors.darkText3),
                 ),
               ),
             ],
@@ -955,23 +987,36 @@ class _DashboardGreeting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       decoration: BoxDecoration(
-        // gradient subtle: أزرق فاتح → لافندر، مع لمسة وردي خفيفة في النهاية
-        // (أقل اشباعاً من النسخة السابقة لتطابق روح التصميم المرجعي).
-        gradient: const LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            Color(0xFFEEF1FB), // أزرق-أبيض شفّاف
-            Color(0xFFF1EAFA), // لافندر ناعم جداً
-            Color(0xFFFAF0F7), // وردي مغبّر ناعم
-          ],
-          stops: [0.0, 0.6, 1.0],
-        ),
+        // الفاتح: مطابق لـ hero المستودع — أزرق فاتح (tableHeader) → وردي خفيف.
+        // الغامق: navy → بنفسجي (مطابق روح الـ hero بالموكب).
+        gradient: isLight
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.tableHeader.withValues(alpha: 0.08),
+                  AppColors.secondaryComponent.withValues(alpha: 0.05),
+                ],
+              )
+            : const LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Color(0xFF20223A), // navy غامق
+                  Color(0xFF2A2B4A),
+                  Color(0xFF332B57), // لمسة بنفسجية
+                ],
+                stops: [0.0, 0.6, 1.0],
+              ),
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+            color: isLight
+                ? AppColors.tableHeader.withValues(alpha: 0.15)
+                : AppColors.darkBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -1016,6 +1061,8 @@ class _GreetingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final Color accent = isLight ? AppColors.primary : AppColors.darkText1;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -1024,11 +1071,12 @@ class _GreetingText extends StatelessWidget {
           height: 36,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: (isLight ? AppColors.primary : AppColors.brand)
+                .withValues(alpha: isLight ? 0.08 : 0.20),
             shape: BoxShape.circle,
           ),
           child: Icon(Icons.medical_services_outlined,
-              size: 18, color: AppColors.primary),
+              size: 18, color: isLight ? AppColors.primary : AppColors.brand),
         ),
         const SizedBox(width: 10),
         Flexible(
@@ -1037,12 +1085,12 @@ class _GreetingText extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'مرحباً، رامي',
+                context.l10n.labGreeting(MockUserData.labUserName),
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.primary,
+                  color: accent,
                   height: 1.2,
                 ),
               ),
@@ -1059,7 +1107,9 @@ class _GreetingText extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 9, vertical: 3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD0FBD7),
+                      color: isLight
+                          ? const Color(0xFFD0FBD7)
+                          : AppColors.darkChipGreenBg,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -1068,19 +1118,23 @@ class _GreetingText extends StatelessWidget {
                         Container(
                           width: 6,
                           height: 6,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF10B981),
+                          decoration: BoxDecoration(
+                            color: isLight
+                                ? const Color(0xFF10B981)
+                                : AppColors.darkChipGreenText,
                             shape: BoxShape.circle,
                           ),
                         ),
                         const SizedBox(width: 5),
-                        const Text(
-                          'جميع الأنظمة تعمل بشكل طبيعي',
+                        Text(
+                          context.l10n.systemAllNormal,
                           style: TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF10B981),
+                            color: isLight
+                                ? const Color(0xFF10B981)
+                                : AppColors.darkChipGreenText,
                           ),
                         ),
                       ],
@@ -1088,7 +1142,10 @@ class _GreetingText extends StatelessWidget {
                   ),
                   Text(
                     '·',
-                    style: TextStyle(color: AppColors.lightText4),
+                    style: TextStyle(
+                        color: isLight
+                            ? AppColors.lightText4
+                            : AppColors.darkText4),
                   ),
                   Text(
                     'الاثنين، 18 مايو',
@@ -1096,12 +1153,15 @@ class _GreetingText extends StatelessWidget {
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.lightText3,
+                      color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                     ),
                   ),
                   Text(
                     '·',
-                    style: TextStyle(color: AppColors.lightText4),
+                    style: TextStyle(
+                        color: isLight
+                            ? AppColors.lightText4
+                            : AppColors.darkText4),
                   ),
                   Text(
                     'آخر تحديث: منذ 3 دقيقة',
@@ -1109,7 +1169,7 @@ class _GreetingText extends StatelessWidget {
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.lightText3,
+                      color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                     ),
                   ),
                 ],
@@ -1127,31 +1187,34 @@ class _MiniStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     // ترتيب التصميم المرجعي (RTL يمين→يسار):
     //   [96% نسبة الإنجاز] → [5 قيد التنفيذ] → [12 طلب اليوم]
     // في Row RTL: أوّل child = يمين، فالـ نسبة الإنجاز أوّلاً.
+    final l10n = context.l10n;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: const [
+      children: [
         _MiniStat(
           value: '96%',
-          label: 'نسبة الإنجاز',
+          label: l10n.labHeroStatCompletionRate,
           icon: Icons.check_circle_outline_rounded,
-          color: Color(0xFF10B981),
+          color: const Color(0xFF10B981),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         _MiniStat(
           value: '5',
-          label: 'قيد التنفيذ',
+          label: l10n.labHeroStatInProgress,
           icon: Icons.adjust_rounded,
-          color: Color(0xFF8B5CF6),
+          color: const Color(0xFF8B5CF6),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         _MiniStat(
           value: '12',
-          label: 'طلب اليوم',
+          label: l10n.labHeroStatTodayOrders,
           icon: Icons.assignment_outlined,
-          color: Color(0xFF1A1C4E),
+          // navy غير مرئي على الغامق → نستخدم brand بالغامق
+          color: isLight ? const Color(0xFF1A1C4E) : AppColors.brand,
         ),
       ],
     );
@@ -1173,12 +1236,14 @@ class _MiniStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FC),
+        color: isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1204,7 +1269,7 @@ class _MiniStat extends StatelessWidget {
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.lightText1,
+                  color: isLight ? AppColors.lightText1 : AppColors.darkText1,
                   height: 1.1,
                 ),
               ),
@@ -1214,7 +1279,7 @@ class _MiniStat extends StatelessWidget {
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.lightText3,
+                  color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                 ),
               ),
             ],

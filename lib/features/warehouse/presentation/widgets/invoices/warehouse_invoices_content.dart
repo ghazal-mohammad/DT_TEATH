@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -31,10 +33,10 @@ enum _PaymentStatus { paid, pending }
 enum _InvoiceFilter { all, paid, pending }
 
 extension on _InvoiceFilter {
-  String get label => switch (this) {
-        _InvoiceFilter.all => 'الكل',
-        _InvoiceFilter.paid => 'مدفوعة',
-        _InvoiceFilter.pending => 'بانتظار',
+  String label(AppLocalizations l10n) => switch (this) {
+        _InvoiceFilter.all => l10n.whFilterAll,
+        _InvoiceFilter.paid => l10n.invStatusPaid,
+        _InvoiceFilter.pending => l10n.invStatusPending,
       };
 
   bool matches(_PaymentStatus s) {
@@ -96,14 +98,14 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
           purchasesSum: _all.fold<double>(0, (acc, i) => acc + i.total),
         ),
         const SizedBox(height: 14),
-        _buildTabsRow(isLight),
+        _buildTabsRow(context, isLight),
         const SizedBox(height: 14),
         _buildTableSection(isLight),
       ],
     );
   }
 
-  Widget _buildTabsRow(bool isLight) {
+  Widget _buildTabsRow(BuildContext context, bool isLight) {
     final counts = <_InvoiceFilter, int>{
       _InvoiceFilter.all: _all.length,
       _InvoiceFilter.paid: _countStatus(_PaymentStatus.paid),
@@ -120,7 +122,7 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
         ),
         const Spacer(),
         Text(
-          '${_filtered.length} فاتورة من أصل ${_all.length}',
+          context.l10n.invCount(_filtered.length, _all.length),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 12,
@@ -148,12 +150,12 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
             color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
           ),
           if (_filtered.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 36),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 36),
               child: AppEmptyState(
                 icon: Icons.receipt_long_outlined,
-                title: 'لا توجد فواتير',
-                message: 'لا يوجد فواتير تطابق الفلتر الحالي',
+                title: context.l10n.invEmptyTitle,
+                message: context.l10n.invEmptyMessage,
               ),
             )
           else
@@ -172,7 +174,7 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
               size: 18, color: AppColors.primary),
           const SizedBox(width: 6),
           Text(
-            'فواتير الشراء',
+            context.l10n.invPurchaseInvoices,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 15,
@@ -184,7 +186,7 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
           _CountBadge(count: _all.length),
           const Spacer(),
           AppButton(
-            label: '+ إضافة فاتورة',
+            label: '+ ${context.l10n.invAddInvoice}',
             onPressed: () async {
               final added =
                   await WarehouseInvoiceFormDialog.show(context);
@@ -254,28 +256,28 @@ class _StatsRow extends StatelessWidget {
         children: [
           _StatBox(
             isLight: isLight,
-            badge: 'إجمالي',
+            badge: context.l10n.invBadgeTotal,
             badgeColor: const Color(0xFF2C7FDB),
             valueLine: '$totalCount',
-            label: 'فاتورة هذا الشهر',
+            label: context.l10n.invStatThisMonth,
             icon: Icons.receipt_long_outlined,
             accent: const Color(0xFF2C7FDB),
           ),
           _StatBox(
             isLight: isLight,
-            badge: 'مدفوع',
+            badge: context.l10n.invBadgePaid,
             badgeColor: const Color(0xFF1F9B6E),
             valueLine: _fmtMoney(paidSum),
-            label: 'إجمالي المدفوع',
+            label: context.l10n.invStatPaidTotal,
             icon: Icons.check_circle_outline_rounded,
             accent: const Color(0xFF1F9B6E),
           ),
           _StatBox(
             isLight: isLight,
-            badge: 'معلق',
+            badge: context.l10n.invBadgePending,
             badgeColor: const Color(0xFF7A4FCF),
             valueLine: _fmtMoney(pendingSum),
-            label: 'بانتظار الدفع',
+            label: context.l10n.invStatPendingPay,
             icon: Icons.access_time_rounded,
             accent: const Color(0xFF7A4FCF),
           ),
@@ -284,7 +286,7 @@ class _StatsRow extends StatelessWidget {
             badge: '+12%',
             badgeColor: const Color(0xFFE17B2C),
             valueLine: _fmtMoney(purchasesSum),
-            label: 'المشتريات الكلية',
+            label: context.l10n.invStatTotalPurchases,
             icon: Icons.trending_up_rounded,
             accent: const Color(0xFFE17B2C),
           ),
@@ -419,14 +421,14 @@ class _TableHeader extends StatelessWidget {
     return Container(
       color: isLight ? AppColors.tableHeader : AppColors.darkSurface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-      child: const Row(
+      child: Row(
         children: [
-          Expanded(flex: 3, child: _HCell('رقم الفاتورة')),
-          Expanded(flex: 3, child: _HCell('المورد')),
-          Expanded(flex: 2, child: _HCell('التاريخ')),
-          Expanded(flex: 2, child: _HCell('عدد المواد')),
-          Expanded(flex: 3, child: _HCell('الإجمالي (ل.س)')),
-          Expanded(flex: 2, child: _HCell('الحالة')),
+          Expanded(flex: 3, child: _HCell(context.l10n.invColNumber)),
+          Expanded(flex: 3, child: _HCell(context.l10n.invFormSupplier)),
+          Expanded(flex: 2, child: _HCell(context.l10n.invFormDate)),
+          Expanded(flex: 2, child: _HCell(context.l10n.invColItemCount)),
+          Expanded(flex: 3, child: _HCell(context.l10n.invColTotalSyp)),
+          Expanded(flex: 2, child: _HCell(context.l10n.colStatus)),
         ],
       ),
     );
@@ -595,7 +597,8 @@ class _PaymentPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPaid = status == _PaymentStatus.paid;
     final color = isPaid ? const Color(0xFF1F9B6E) : const Color(0xFF7A4FCF);
-    final label = isPaid ? 'مدفوعة' : 'بانتظار الدفع';
+    final label =
+        isPaid ? context.l10n.invStatusPaid : context.l10n.invStatPendingPay;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -698,7 +701,7 @@ class _InvoiceSegmentedTabs extends StatelessWidget {
                 ),
                 const SizedBox(width: 7),
                 Text(
-                  v.label,
+                  v.label(context.l10n),
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12.5,

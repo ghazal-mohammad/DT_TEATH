@@ -22,6 +22,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../../core/auth/auth_models.dart';
 import '../../../../../core/di/injection_container.dart';
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -56,7 +58,7 @@ class _Palette {
 
 class _EmployeeData {
   String fullName;
-  String roleTitle; // شارة الدور (رئيس المخبر)
+  String roleTitle; // شارة الدور (مدير المخبر — مطابق لـ UserRole في الباك)
   String email;
   String phone;
   String nationalId;
@@ -97,7 +99,7 @@ class _EmployeeData {
 
   static _EmployeeData mockData() => _EmployeeData(
         fullName: 'رامي الصالح',
-        roleTitle: 'رئيس المخبر',
+        roleTitle: 'مدير المخبر',
         email: 'rami@dt-teeth.com',
         phone: '0991234567',
         nationalId: '01010101234',
@@ -106,7 +108,7 @@ class _EmployeeData {
         address: 'دمشق - المزة',
         employeeId: 'LAB-2026-007',
         department: 'مخبر التعويضات السنية',
-        position: 'رئيس المخبر',
+        position: 'مدير المخبر',
         workDays: 'السبت - الخميس',
         dayOff: 'الجمعة',
         weeklyHours: '48 ساعة',
@@ -163,6 +165,7 @@ class _LabProfileContentState extends State<LabProfileContent> {
 
   final ScrollController _mainCtrl = ScrollController();
   final ScrollController _narrowCtrl = ScrollController();
+  final ScrollController _sideCtrl = ScrollController();
 
   @override
   void initState() {
@@ -176,6 +179,7 @@ class _LabProfileContentState extends State<LabProfileContent> {
     _cubit.close();
     _mainCtrl.dispose();
     _narrowCtrl.dispose();
+    _sideCtrl.dispose();
     super.dispose();
   }
 
@@ -184,7 +188,7 @@ class _LabProfileContentState extends State<LabProfileContent> {
     if (state.status == ProfileStatus.loaded && state.profile != null) {
       final wasSaving = _savingEdit;
       setState(() {
-        _data = _mergeFromProfile(_data, state.profile!);
+        _data = _mergeFromProfile(context.l10n, _data, state.profile!);
         if (wasSaving) {
           _editing = false;
           _draft = null;
@@ -193,9 +197,9 @@ class _LabProfileContentState extends State<LabProfileContent> {
       });
       if (wasSaving) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حفظ التعديلات بنجاح'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(context.l10n.profileSavedSuccess),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -203,7 +207,7 @@ class _LabProfileContentState extends State<LabProfileContent> {
       _savingEdit = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(state.errorMessage ?? 'تعذّر حفظ التعديلات'),
+          content: Text(state.errorMessage ?? context.l10n.profileSaveError),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -212,22 +216,25 @@ class _LabProfileContentState extends State<LabProfileContent> {
 
   /// دمج بيانات الخادم فوق النموذج الحالي. الحقول التي لا يوفّرها الباك في
   /// showProfile تبقى كما هي (placeholder تصميمي).
-  _EmployeeData _mergeFromProfile(_EmployeeData base, EmployeeProfile p) {
+  _EmployeeData _mergeFromProfile(
+      AppLocalizations l10n, _EmployeeData base, EmployeeProfile p) {
     final c = base.copy();
     if (p.name.isNotEmpty) c.fullName = p.name;
     if (p.email.isNotEmpty) c.email = p.email;
     if (p.phone.isNotEmpty) c.phone = p.phone;
-    c.roleTitle = _rolePosition(p.role);
-    c.position = _rolePosition(p.role);
+    c.roleTitle = _rolePosition(l10n, p.role);
+    c.position = _rolePosition(l10n, p.role);
     if (p.hireDate.isNotEmpty) c.hireDate = p.hireDate;
     return c;
   }
 
-  static String _rolePosition(EmployeeRole r) => switch (r) {
-        EmployeeRole.labManager => 'رئيس المخبر',
-        EmployeeRole.warehouseManager => 'رئيس المستودع',
-        EmployeeRole.admin => 'مدير النظام',
-        _ => 'موظف',
+  // ترجمة دور الموظف للعرض (القيمة المرسلة للباك تبقى عبر enum منفصل).
+  static String _rolePosition(AppLocalizations l10n, EmployeeRole r) =>
+      switch (r) {
+        EmployeeRole.labManager => l10n.roleLabManager,
+        EmployeeRole.warehouseManager => l10n.roleWarehouseManager,
+        EmployeeRole.admin => l10n.roleAdmin,
+        _ => l10n.roleEmployee,
       };
 
   Future<void> _pickAvatar() async {
@@ -252,9 +259,9 @@ class _LabProfileContentState extends State<LabProfileContent> {
         _pickingImage = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم تحديث صورة الملف الشخصي'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(context.l10n.profilePhotoUpdated),
+          duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
@@ -262,7 +269,7 @@ class _LabProfileContentState extends State<LabProfileContent> {
       setState(() => _pickingImage = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تعذّر اختيار الصورة: $e'),
+          content: Text(context.l10n.profilePhotoError(e)),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -311,15 +318,9 @@ class _LabProfileContentState extends State<LabProfileContent> {
       bloc: _cubit,
       listener: _onCubitState,
       builder: (context, state) {
-        if (state.status == ProfileStatus.loading && !state.hasData) {
-          return const _ProfileCenterLoader();
-        }
-        if (state.status == ProfileStatus.error && !state.hasData) {
-          return _ProfileCenterError(
-            message: state.errorMessage,
-            onRetry: () => _cubit.load(),
-          );
-        }
+        // نعرض المحتوى فوراً ببيانات placeholder (_data) ونُحدّثه لمّا يرجع
+        // الباك عبر الـ listener — بدون حجب الصفحة بـ spinner لانهائي لو
+        // تأخّر/فشل طلب showProfile (شائع على الويب بسبب CORS).
         return _buildContent(context);
       },
     );
@@ -348,27 +349,38 @@ class _LabProfileContentState extends State<LabProfileContent> {
 
       if (isWide) {
         // العمود الجانبي ثابت (لا يسكرول)، العمود الرئيسي وحده يسكرول.
-        return Padding(
-          padding: const EdgeInsets.all(22),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(width: 340, child: sidebar),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Scrollbar(
-                  controller: _mainCtrl,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    controller: _mainCtrl,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(left: 4),
-                    child: main,
-                  ),
+        // مهم: ما منلف كلشي بـ Padding خارجي — منخلّي الـ padding جوّا الـ
+        // ScrollView لحتى السكرول‌بار يطلع على حافة الـ viewport (متل الإشعارات).
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // العمود الجانبي ثابت (لا يتحرك مع سكرول المحتوى)، لكن نمنحه
+            // سكرول داخلياً ليتفادى overflow إن زاد ارتفاعه عن الشاشة.
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(22, 22, 20, 22),
+              child: SizedBox(
+                width: 340,
+                child: SingleChildScrollView(
+                  controller: _sideCtrl,
+                  child: sidebar,
                 ),
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: Scrollbar(
+                controller: _mainCtrl,
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  controller: _mainCtrl,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  // الـ padding جوّا → المحتوى منزاح عن السكرول‌بار،
+                  // والسكرول‌بار على حافة الواجهة.
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 22, 22, 22),
+                  child: main,
+                ),
+              ),
+            ),
+          ],
         );
       }
 
@@ -473,25 +485,25 @@ class _ProfileSidebar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          const _SectionLabelDivider(label: 'معلومات عامة'),
+          _SectionLabelDivider(label: context.l10n.profileGeneralInfo),
           const SizedBox(height: 14),
           _SideMetaCard(
             icon: Icons.event_outlined,
-            label: 'تاريخ التوظيف',
+            label: context.l10n.profileHireDate,
             value: data.hireDate,
             tint: const Color(0xFFEFF2FA),
           ),
           const SizedBox(height: 10),
           _SideMetaCard(
             icon: Icons.language_outlined,
-            label: 'اللغات',
+            label: context.l10n.profileLanguages,
             value: data.languages,
             tint: const Color(0xFFF4EEFB),
           ),
           const SizedBox(height: 10),
           _SideMetaCard(
             icon: Icons.description_outlined,
-            label: 'ملاحظات إدارية',
+            label: context.l10n.profileAdminNotes,
             value: data.adminNotes,
             tint: const Color(0xFFEFF2FA),
           ),
@@ -630,9 +642,9 @@ class _CompletionBar extends StatelessWidget {
                 color: AppColors.success,
               ),
             ),
-            const Text(
-              'اكتمال الملف',
-              style: TextStyle(
+            Text(
+              context.l10n.profileCompletion,
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,
@@ -686,7 +698,7 @@ class _SidebarActions extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!editing) {
       return _WideButton(
-        label: 'تعديل الملف الشخصي',
+        label: context.l10n.profileEdit,
         icon: Icons.edit_outlined,
         primary: true,
         onTap: onStartEdit,
@@ -695,14 +707,14 @@ class _SidebarActions extends StatelessWidget {
     return Column(
       children: [
         _WideButton(
-          label: saving ? 'جارٍ الحفظ…' : 'حفظ التغييرات',
+          label: saving ? context.l10n.profileSaving : context.l10n.profileSaveChanges,
           icon: Icons.check_rounded,
           primary: true,
           onTap: saving ? null : onSaveEdit,
         ),
         const SizedBox(height: 8),
         _WideButton(
-          label: 'إلغاء',
+          label: context.l10n.cancel,
           icon: Icons.close_rounded,
           primary: false,
           onTap: saving ? null : onCancelEdit,
@@ -874,14 +886,14 @@ class _Avatar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                   border: Border.all(color: Colors.white, width: 2),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.edit_outlined, size: 13, color: Colors.white),
-                    SizedBox(width: 5),
+                    const Icon(Icons.edit_outlined, size: 13, color: Colors.white),
+                    const SizedBox(width: 5),
                     Text(
-                      'تغيير الصورة',
-                      style: TextStyle(
+                      context.l10n.profileChangePhoto,
+                      style: const TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
@@ -964,43 +976,43 @@ class _MainColumn extends StatelessWidget {
         const SizedBox(height: 18),
         _InfoSection(
           icon: Icons.person_outline_rounded,
-          title: 'المعلومات الشخصية',
-          subtitle: 'البيانات التعريفية ومعلومات الاتصال',
+          title: context.l10n.profilePersonalInfo,
+          subtitle: context.l10n.profilePersonalInfoSubtitle,
           editing: editing,
           fields: [
             _RowSpec(
               icon: Icons.phone_outlined,
-              label: 'رقم الهاتف',
+              label: context.l10n.profilePhone,
               value: data.phone,
               onChanged: (v) => data.phone = v,
             ),
             _RowSpec(
               icon: Icons.badge_outlined,
-              label: 'الرقم الوطني',
+              label: context.l10n.profileNationalId,
               value: data.nationalId,
               onChanged: (v) => data.nationalId = v,
             ),
             _RowSpec(
               icon: Icons.calendar_month_outlined,
-              label: 'تاريخ الميلاد',
+              label: context.l10n.profileBirthDate,
               value: data.birthDate,
               onChanged: (v) => data.birthDate = v,
             ),
             _RowSpec(
               icon: Icons.wc_outlined,
-              label: 'الجنس',
+              label: context.l10n.profileGender,
               value: data.gender,
               onChanged: (v) => data.gender = v,
             ),
             _RowSpec(
               icon: Icons.location_on_outlined,
-              label: 'العنوان',
+              label: context.l10n.profileAddress,
               value: data.address,
               onChanged: (v) => data.address = v,
             ),
             _RowSpec(
               icon: Icons.assignment_ind_outlined,
-              label: 'رقم الموظف',
+              label: context.l10n.profileEmployeeId,
               value: data.employeeId,
               onChanged: (v) => data.employeeId = v,
             ),
@@ -1009,37 +1021,37 @@ class _MainColumn extends StatelessWidget {
         const SizedBox(height: 18),
         _InfoSection(
           icon: Icons.work_outline_rounded,
-          title: 'المعلومات الوظيفية',
-          subtitle: 'القسم والدوام والمسمى الوظيفي',
+          title: context.l10n.profileJobInfo,
+          subtitle: context.l10n.profileJobInfoSubtitle,
           editing: editing,
           fields: [
             _RowSpec(
               icon: Icons.inventory_2_outlined,
-              label: 'القسم',
+              label: context.l10n.profileDepartment,
               value: data.department,
               onChanged: (v) => data.department = v,
             ),
             _RowSpec(
               icon: Icons.calendar_today_outlined,
-              label: 'أيام الدوام',
+              label: context.l10n.profileWorkDays,
               value: data.workDays,
               onChanged: (v) => data.workDays = v,
             ),
             _RowSpec(
               icon: Icons.badge_outlined,
-              label: 'المسمى الوظيفي',
+              label: context.l10n.profilePosition,
               value: data.position,
               onChanged: (v) => data.position = v,
             ),
             _RowSpec(
               icon: Icons.do_not_disturb_on_outlined,
-              label: 'يوم العطلة الأسبوعية',
+              label: context.l10n.profileDayOff,
               value: data.dayOff,
               onChanged: (v) => data.dayOff = v,
             ),
             _RowSpec(
               icon: Icons.access_time_rounded,
-              label: 'عدد ساعات العمل الأسبوعية',
+              label: context.l10n.profileWeeklyHours,
               value: data.weeklyHours,
               onChanged: (v) => data.weeklyHours = v,
             ),
@@ -1059,33 +1071,35 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const stats = [
+    // الترتيب في RTL: أول عنصر = أقصى اليمين. لمطابقة الموك أب
+    // (96% أقصى اليسار، 142 أقصى اليمين) نضع 142 أولاً ثم 2.4 ثم 96.
+    final stats = [
       _StatSpec(
-        value: '96',
-        unit: '%',
-        label: 'الإنجاز في الوقت',
-        badge: '2%+',
-        icon: Icons.star_border_rounded,
-        accent: Color(0xFF2E48B5),
-        bg: Color(0xFFEFF3FD),
+        value: '142',
+        unit: '',
+        label: context.l10n.profileStatCompletedOrders,
+        badge: context.l10n.profileBadgeThisMonth,
+        icon: Icons.check_circle_outline_rounded,
+        accent: const Color(0xFF12A150),
+        bg: const Color(0xFFEAF7EF),
       ),
       _StatSpec(
         value: '2.4',
         unit: 'س',
-        label: 'وقت التنفيذ',
-        badge: 'متوسط',
+        label: context.l10n.profileStatExecTime,
+        badge: context.l10n.profileBadgeAverage,
         icon: Icons.schedule_rounded,
-        accent: Color(0xFF7A4FCF),
-        bg: Color(0xFFF4ECFB),
+        accent: const Color(0xFF7A4FCF),
+        bg: const Color(0xFFF4ECFB),
       ),
       _StatSpec(
-        value: '142',
-        unit: '',
-        label: 'طلبات منجزة',
-        badge: 'هذا الشهر',
-        icon: Icons.check_circle_outline_rounded,
-        accent: Color(0xFF12A150),
-        bg: Color(0xFFEAF7EF),
+        value: '96',
+        unit: '%',
+        label: context.l10n.profileStatOnTime,
+        badge: '2%+',
+        icon: Icons.star_border_rounded,
+        accent: const Color(0xFF2E48B5),
+        bg: const Color(0xFFEFF3FD),
       ),
     ];
 
@@ -1101,14 +1115,19 @@ class _StatsRow extends StatelessWidget {
           ],
         );
       }
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var i = 0; i < stats.length; i++) ...[
-            Expanded(child: _StatCard(spec: stats[i])),
-            if (i < stats.length - 1) const SizedBox(width: 14),
+      // IntrinsicHeight يمنح الصفّ ارتفاعاً محدوداً → stretch آمن لتساوي
+      // ارتفاع البطاقات (بدون IntrinsicHeight يصبح القيد عمودياً غير محدود
+      // داخل سكرول عمودي فيُرمى خطأ "infinite height").
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = 0; i < stats.length; i++) ...[
+              Expanded(child: _StatCard(spec: stats[i])),
+              if (i < stats.length - 1) const SizedBox(width: 14),
+            ],
           ],
-        ],
+        ),
       );
     });
   }
@@ -1140,21 +1159,32 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: spec.bg,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(color: spec.accent.withValues(alpha: 0.14)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      child: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // RTL: أول عنصر = اليمين → أيقونة.
-              Container(
-                width: 38,
+          // خط جانبي ملوّن على الحافة اليسرى (مطابق للتصميم).
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            child: Container(width: 4, color: spec.accent),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // RTL: أول عنصر = اليمين → أيقونة.
+                    Container(
+                      width: 38,
                 height: 38,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -1219,14 +1249,17 @@ class _StatCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 3),
-          Text(
-            spec.label,
-            style: const TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
-              color: _Palette.label,
+                const SizedBox(height: 3),
+                Text(
+                  spec.label,
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: _Palette.label,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1387,6 +1420,9 @@ class _FieldPillState extends State<_FieldPill> {
     final accent = widget.pink ? _Palette.pinkAccent : _Palette.blueAccent;
     final iconBg = widget.pink ? _Palette.pinkIconBg : _Palette.blueIconBg;
 
+    // نستخدم Stack بدلاً من IntrinsicHeight: الشريط اللوني يتمدّد عمودياً عبر
+    // Positioned (top/bottom:0) فيأخذ ارتفاع المحتوى تلقائياً — وهذا يتفادى
+    // رمي IntrinsicHeight لخطأ عند احتواء TextField أثناء التعديل.
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -1394,94 +1430,92 @@ class _FieldPillState extends State<_FieldPill> {
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
         border: Border.all(color: _Palette.cardBorder),
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // المحتوى (يشغل المساحة من اليمين).
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(13, 11, 13, 11),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 38,
-                      height: 38,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: iconBg,
-                        borderRadius: BorderRadius.circular(10),
+      child: Stack(
+        children: [
+          // الشريط اللوني على الطرف الأيسر (يمتد لكامل الارتفاع).
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            child: Container(width: 4, color: accent),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(13, 11, 13, 11),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(widget.spec.icon, size: 18, color: accent),
+                ),
+                const SizedBox(width: 11),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.spec.label,
+                        style: const TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: _Palette.label,
+                        ),
                       ),
-                      child: Icon(widget.spec.icon, size: 18, color: accent),
-                    ),
-                    const SizedBox(width: 11),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            widget.spec.label,
-                            style: const TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: _Palette.label,
+                      const SizedBox(height: 4),
+                      if (widget.editing)
+                        TextField(
+                          controller: _controller,
+                          onChanged: widget.spec.onChanged,
+                          style: const TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.lightText1,
+                          ),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 7),
+                            filled: true,
+                            fillColor: const Color(0xFFF7F9FC),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusSM),
+                              borderSide:
+                                  const BorderSide(color: _Palette.cardBorder),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusSM),
+                              borderSide: BorderSide(color: accent, width: 1.6),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          if (widget.editing)
-                            TextField(
-                              controller: _controller,
-                              onChanged: widget.spec.onChanged,
-                              style: const TextStyle(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.lightText1,
-                              ),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 7),
-                                filled: true,
-                                fillColor: const Color(0xFFF7F9FC),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(AppSizes.radiusSM),
-                                  borderSide:
-                                      const BorderSide(color: _Palette.cardBorder),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(AppSizes.radiusSM),
-                                  borderSide:
-                                      BorderSide(color: accent, width: 1.6),
-                                ),
-                              ),
-                            )
-                          else
-                            Text(
-                              widget.spec.value,
-                              style: const TextStyle(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.lightText1,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                        )
+                      else
+                        Text(
+                          widget.spec.value,
+                          style: const TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.lightText1,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
-            // الشريط اللوني على الطرف الأيسر (آخر عنصر في RTL).
-            Container(width: 4, color: accent),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -1530,7 +1564,7 @@ class _ProfileCenterError extends StatelessWidget {
                 size: 44, color: AppColors.lightText4),
             const SizedBox(height: 12),
             Text(
-              message ?? 'تعذّر تحميل الملف الشخصي',
+              message ?? context.l10n.profileLoadError,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
@@ -1550,14 +1584,14 @@ class _ProfileCenterError extends StatelessWidget {
                   color: _Palette.accent,
                   borderRadius: BorderRadius.circular(AppSizes.radiusSM),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.refresh_rounded, size: 16, color: Colors.white),
-                    SizedBox(width: 6),
+                    const Icon(Icons.refresh_rounded, size: 16, color: Colors.white),
+                    const SizedBox(width: 6),
                     Text(
-                      'إعادة المحاولة',
-                      style: TextStyle(
+                      context.l10n.retry,
+                      style: const TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 13,
                         fontWeight: FontWeight.w800,

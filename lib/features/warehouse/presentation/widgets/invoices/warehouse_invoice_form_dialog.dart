@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -119,23 +120,25 @@ class _WarehouseInvoiceFormDialogState
                 _Header(isLight: isLight, onClose: () => Navigator.pop(context)),
                 const SizedBox(height: 14),
                 AppFormField(
-                  label: 'رقم الفاتورة',
+                  label: context.l10n.invColNumber,
                   controller: _invoiceNumberCtrl,
                   required: true,
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? context.l10n.fieldRequired
+                      : null,
                 ),
                 AppFormField(
-                  label: 'المورد',
+                  label: context.l10n.invFormSupplier,
                   controller: _supplierCtrl,
                   required: true,
-                  hint: 'مثال: شركة المستلزمات الطبية',
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+                  hint: context.l10n.invFormSupplierHint,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? context.l10n.fieldRequired
+                      : null,
                 ),
                 // التاريخ — حقل قراءة فقط يفتح date picker.
                 _DateField(
-                  label: 'التاريخ',
+                  label: context.l10n.invFormDate,
                   isLight: isLight,
                   valueText: _formatDate(_date),
                   onTap: _pickDate,
@@ -144,7 +147,7 @@ class _WarehouseInvoiceFormDialogState
                   children: [
                     Expanded(
                       child: AppFormField(
-                        label: 'عدد المواد',
+                        label: context.l10n.invColItemCount,
                         controller: _itemsCountCtrl,
                         required: true,
                         keyboardType: TextInputType.number,
@@ -152,9 +155,13 @@ class _WarehouseInvoiceFormDialogState
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'مطلوب';
+                          if (v == null || v.trim().isEmpty) {
+                            return context.l10n.fieldRequired;
+                          }
                           final n = int.tryParse(v.trim());
-                          if (n == null || n <= 0) return 'رقم غير صحيح';
+                          if (n == null || n <= 0) {
+                            return context.l10n.fieldInvalidNumber;
+                          }
                           return null;
                         },
                       ),
@@ -162,7 +169,7 @@ class _WarehouseInvoiceFormDialogState
                     const SizedBox(width: 10),
                     Expanded(
                       child: AppFormField(
-                        label: 'الإجمالي (ل.س)',
+                        label: context.l10n.invColTotalSyp,
                         controller: _totalCtrl,
                         required: true,
                         keyboardType: TextInputType.number,
@@ -170,9 +177,13 @@ class _WarehouseInvoiceFormDialogState
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'مطلوب';
+                          if (v == null || v.trim().isEmpty) {
+                            return context.l10n.fieldRequired;
+                          }
                           final n = double.tryParse(v.trim());
-                          if (n == null || n <= 0) return 'مبلغ غير صحيح';
+                          if (n == null || n <= 0) {
+                            return context.l10n.fieldInvalidAmount;
+                          }
                           return null;
                         },
                       ),
@@ -180,9 +191,9 @@ class _WarehouseInvoiceFormDialogState
                   ],
                 ),
                 AppFormField(
-                  label: 'ملاحظات',
+                  label: context.l10n.invFormNotes,
                   controller: _notesCtrl,
-                  hint: 'اختياري',
+                  hint: context.l10n.fieldOptional,
                   maxLines: 2,
                 ),
                 const SizedBox(height: 10),
@@ -191,7 +202,7 @@ class _WarehouseInvoiceFormDialogState
                     // RTL: أوّل child = يمين. الزر الأساسي على اليسار → آخر.
                     Expanded(
                       child: AppButton(
-                        label: 'إلغاء',
+                        label: context.l10n.cancel,
                         onPressed: () => Navigator.pop(context),
                         variant: AppButtonVariant.secondary,
                       ),
@@ -199,7 +210,7 @@ class _WarehouseInvoiceFormDialogState
                     const SizedBox(width: 10),
                     Expanded(
                       child: AppButton(
-                        label: 'حفظ الفاتورة',
+                        label: context.l10n.invFormSave,
                         onPressed: _submit,
                         variant: AppButtonVariant.primary,
                       ),
@@ -231,7 +242,7 @@ class _Header extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'إضافة فاتورة شراء',
+                context.l10n.invFormTitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 17,
@@ -242,7 +253,7 @@ class _Header extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                'املأ بيانات الفاتورة الجديدة',
+                context.l10n.invFormSubtitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,

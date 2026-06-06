@@ -113,15 +113,16 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
   Widget build(BuildContext context) {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
 
-    // ── تحديد الألوان حسب الـ focus ─────────────────────────────────────
-    // idle: background:rgba(158,251,236,0.07), border: cyan-brd
-    // focused: background:rgba(158,251,236,0.12), border: cyan-b, glow
-    final Color bgColor = _isFocused
-        ? AppColors.accent.withValues(alpha: 0.12)
-        : AppColors.accent.withValues(alpha: isLight ? 0.15 : 0.07);
+    // ── الألوان: خلفية رمادية ناعمة + تركيز كحلي/إندِغو (صفر تركواز) ──────
+    // لون التركيز = primary بالفاتح، brand بالغامق.
+    final Color focusAccent = isLight ? AppColors.primary : AppColors.brand;
+
+    final Color bgColor = isLight
+        ? (_isFocused ? Colors.white : AppColors.lightBg1)
+        : (_isFocused ? AppColors.darkBg1 : AppColors.darkBg2);
 
     final Color borderColor = _isFocused
-        ? AppColors.accent
+        ? focusAccent
         : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
 
     return AnimatedContainer(
@@ -137,9 +138,9 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
         borderRadius: BorderRadius.circular(50), // border-radius:50px
         boxShadow: _isFocused
             ? [
-                // من CSS: box-shadow:0 0 0 3px rgba(158,251,236,0.08)
+                // glow خفيف بلون التركيز (كحلي/إندِغو) بدل التركواز
                 BoxShadow(
-                  color: AppColors.accent.withValues(alpha: 0.08),
+                  color: focusAccent.withValues(alpha: 0.12),
                   blurRadius: 0,
                   spreadRadius: 3,
                 ),
@@ -152,7 +153,7 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
             AppIcons.search,
             size: AppSizes.iconSM,
             color: _isFocused
-                ? AppColors.accent
+                ? focusAccent
                 : (isLight ? AppColors.lightText3 : AppColors.darkText3),
           ),
           const SizedBox(width: 6), // gap:6px

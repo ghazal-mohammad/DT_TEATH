@@ -214,8 +214,9 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       decoration: BoxDecoration(
+        // افتراضي موحّد: أزرق المستودع (tableHeader) بالفاتح، slate بالغامق.
         color: widget.headerBackground ??
-            const Color(0x0F9EFBEC), // rgba(158,251,236,0.06) default
+            (isLight ? AppColors.tableHeader : AppColors.darkBg2),
         border: Border(
           bottom: BorderSide(
             color: isLight ? AppColors.lightBorder : AppColors.darkBorder,

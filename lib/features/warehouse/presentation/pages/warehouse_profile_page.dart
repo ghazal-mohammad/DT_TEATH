@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
@@ -30,13 +31,14 @@ class WarehouseProfilePage extends StatelessWidget {
         pendingOrdersCount: 3,
         unreadNotifsCount: 5,
       ),
-      pageTitle: 'الملف الشخصي',
-      pageSubtitle: 'بيانات الموظف ومعلومات الوظيفة',
+      pageTitle: context.l10n.labProfile,
+      pageSubtitle: context.l10n.profilePageSubtitle,
       userName: MockUserData.defaultUserName,
-      userRole: 'رئيس المستودع',
+      userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
       // صفحة الملف الشخصي: حقل البحث وحده في التوب بار بلا أيقونات جانبية.
       showTopbarActions: false,
+      searchPlaceholder: context.l10n.settingsSearchHint,
       // المحتوى يدير السكرول داخلياً ليتمكّن العمود الجانبي من البقاء ثابتاً (sticky).
       body: const WarehouseProfileContent(),
     );

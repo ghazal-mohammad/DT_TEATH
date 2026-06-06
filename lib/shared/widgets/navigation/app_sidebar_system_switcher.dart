@@ -96,20 +96,17 @@ class _AppSidebarSystemSwitcherState extends State<AppSidebarSystemSwitcher> {
 
   @override
   Widget build(BuildContext context) {
-    // التصميم الموحّد فاتح دائماً (يطابق السايدبار الأبيض).
-    const bool isLight = true;
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
 
-    // من CSS:
-    // idle: background:rgba(255,255,255,0.03)
-    // hover: background:rgba(158,251,236,0.06), border-color:cyan-b
+    // idle: لمسة خفيفة. hover: لمسة براند (إندِغو).
     final Color bgColor = _isHovered
-        ? AppColors.accent.withValues(alpha: 0.06)
+        ? AppColors.brand.withValues(alpha: 0.10)
         : (isLight
             ? AppColors.lightText1.withValues(alpha: 0.03)
-            : Colors.white.withValues(alpha: 0.03));
+            : Colors.white.withValues(alpha: 0.04));
 
     final Color borderColor = _isHovered
-        ? AppColors.accent
+        ? AppColors.brand
         : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
 
     final Widget content = AnimatedContainer(

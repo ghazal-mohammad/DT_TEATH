@@ -13,11 +13,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/primitives/app_filter_chip.dart';
 
 class WarehouseDashboardContent extends StatelessWidget {
   const WarehouseDashboardContent({super.key});
@@ -69,18 +69,18 @@ class _WelcomeHero extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildHeader(),
+                _buildHeader(context),
                 const SizedBox(height: 14),
-                _buildMiniStats(),
+                _buildMiniStats(context),
               ],
             );
           }
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(child: _buildHeader()),
+              Expanded(child: _buildHeader(context)),
               const SizedBox(width: 12),
-              _buildMiniStats(),
+              _buildMiniStats(context),
             ],
           );
         },
@@ -88,17 +88,17 @@ class _WelcomeHero extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return const Column(
+  Widget _buildHeader(BuildContext context) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text('📦', style: TextStyle(fontSize: 22)),
-            SizedBox(width: 8),
+            const Text('📦', style: TextStyle(fontSize: 22)),
+            const SizedBox(width: 8),
             Text(
-              'مرحباً، أحمد',
-              style: TextStyle(
+              context.l10n.whGreeting('أحمد'),
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -107,50 +107,50 @@ class _WelcomeHero extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 6,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             _StatusPill(
-              text: 'جميع الأنظمة تعمل بشكل طبيعي',
-              color: Color(0xFF1F9B6E),
+              text: context.l10n.whSystemsNormal,
+              color: const Color(0xFF1F9B6E),
             ),
-            _DotSep(),
-            _MetaText('آخر تحديث: ', faded: true),
-            _MetaText('منذ 5 دقيقة', bold: true),
-            _DotSep(),
-            _MetaText('الجمعة، ٢٢ مايو', faded: true),
+            const _DotSep(),
+            _MetaText(context.l10n.whLastUpdateLabel, faded: true),
+            const _MetaText('منذ 5 دقيقة', bold: true),
+            const _DotSep(),
+            const _MetaText('الجمعة، ٢٢ مايو', faded: true),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildMiniStats() {
-    return const Row(
+  Widget _buildMiniStats(BuildContext context) {
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _MiniStat(
           icon: Icons.inventory_2_outlined,
           value: '247',
-          label: 'إجمالي المواد',
-          accent: Color(0xFF6E59B6),
+          label: context.l10n.whTotalMaterials,
+          accent: const Color(0xFF6E59B6),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         _MiniStat(
           icon: Icons.assignment_outlined,
           value: '9',
-          label: 'طلب اليوم',
-          accent: Color(0xFFB44286),
+          label: context.l10n.whMiniOrdersToday,
+          accent: const Color(0xFFB44286),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         _MiniStat(
           icon: Icons.verified_outlined,
           value: '94%',
-          label: 'نسبة التوريد',
-          accent: Color(0xFF1F9B6E),
+          label: context.l10n.whSupplyRate,
+          accent: const Color(0xFF1F9B6E),
           checkmark: true,
         ),
       ],
@@ -333,40 +333,40 @@ class _StatCardsRow extends StatelessWidget {
   final bool isLight;
 
   // الترتيب من اليمين لليسار (RTL): إجمالي → الحد الأدنى → الطلبات → المشتريات.
-  static const _items = <_StatData>[
+  List<_StatData> _items(BuildContext context) => [
     _StatData(
       variant: _StatVariant.blue,
       badge: '4+',
       value: '247',
-      label: 'إجمالي المواد',
-      trend: '4+ هذا الأسبوع',
+      label: context.l10n.whTotalMaterials,
+      trend: context.l10n.whTrendThisWeek('4+'),
       trendUp: true,
       icon: Icons.inventory_2_outlined,
     ),
     _StatData(
       variant: _StatVariant.orange,
-      badge: 'تنبيه',
+      badge: context.l10n.whBadgeAlert,
       value: '8',
-      label: 'مواد بالحد الأدنى',
-      trend: 'يحتاج توريد',
+      label: context.l10n.whStatLowStockShort,
+      trend: context.l10n.whNeedsSupply,
       trendUp: false,
       icon: Icons.error_outline,
     ),
     _StatData(
       variant: _StatVariant.purple,
-      badge: 'جديد',
+      badge: context.l10n.whBadgeNew,
       value: '9',
-      label: 'طلبات بانتظار التوريد',
-      trend: '3+ اليوم',
+      label: context.l10n.whStatPendingSupply,
+      trend: context.l10n.whTrendToday('3+'),
       trendUp: true,
       icon: Icons.assignment_outlined,
     ),
     _StatData(
       variant: _StatVariant.green,
-      badge: 'هذا الشهر',
+      badge: context.l10n.whBadgeThisMonth,
       value: '2.8M',
-      label: 'مشتريات الشهر (ل.س)',
-      trend: '+12% من الشهر الماضي',
+      label: context.l10n.whStatMonthPurchases,
+      trend: context.l10n.whTrendVsLastMonth('+12%'),
       trendUp: true,
       icon: Icons.assignment_outlined,
     ),
@@ -383,13 +383,13 @@ class _StatCardsRow extends StatelessWidget {
       // فرض RTL على الصف لضمان: أول عنصر بالقائمة = يمين الشاشة بصرياً.
       return Directionality(
         textDirection: TextDirection.rtl,
-        child: _buildRows(cols),
+        child: _buildRows(context, cols),
       );
     });
   }
 
-  Widget _buildRows(int cols) {
-    final cards = _items
+  Widget _buildRows(BuildContext context, int cols) {
+    final cards = _items(context)
         .map((d) => _StatCard(isLight: isLight, data: d))
         .toList(growable: false);
 
@@ -629,29 +629,29 @@ class _ExpiringWarningStrip extends StatelessWidget {
                     size: 18, color: accent),
               ),
               const SizedBox(width: 10),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Text(
-                        'مواد ستنتهي صلاحيتها قريباً',
-                        style: TextStyle(
+                        context.l10n.whExpiringTitle,
+                        style: const TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                           color: AppColors.lightText1,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      _CountBadge(count: 3),
+                      const SizedBox(width: 8),
+                      const _CountBadge(count: 3),
                     ],
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
-                    'يجب التصرف بهذه المواد قبل انتهاء صلاحيتها',
-                    style: TextStyle(
+                    context.l10n.whExpiringSubtitle,
+                    style: const TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 11.5,
                       color: AppColors.lightText3,
@@ -788,21 +788,21 @@ class _ExpiringChipView extends StatelessWidget {
 enum _OrderTab { all, isNew, partial, fulfilled }
 
 extension on _OrderTab {
-  String get label => switch (this) {
-        _OrderTab.all => 'الكل',
-        _OrderTab.isNew => 'جديد',
-        _OrderTab.partial => 'جزئي',
-        _OrderTab.fulfilled => 'تم التوريد',
+  String label(BuildContext context) => switch (this) {
+        _OrderTab.all => context.l10n.notifFilterAll,
+        _OrderTab.isNew => context.l10n.whOrderFilterNew,
+        _OrderTab.partial => context.l10n.whOrderPartial,
+        _OrderTab.fulfilled => context.l10n.whOrderFulfilled,
       };
 }
 
 enum _OrderRowStatus { isNew, partial, fulfilled }
 
 extension on _OrderRowStatus {
-  String get label => switch (this) {
-        _OrderRowStatus.isNew => 'جديد',
-        _OrderRowStatus.partial => 'جزئي',
-        _OrderRowStatus.fulfilled => 'تم التوريد',
+  String label(BuildContext context) => switch (this) {
+        _OrderRowStatus.isNew => context.l10n.whOrderFilterNew,
+        _OrderRowStatus.partial => context.l10n.whOrderPartial,
+        _OrderRowStatus.fulfilled => context.l10n.whOrderFulfilled,
       };
 
   Color get color => switch (this) {
@@ -956,7 +956,7 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
         children: [
           _buildHeader(context),
           const _SectionDivider(),
-          _buildTable(),
+          _buildTable(context),
         ],
       ),
     );
@@ -973,7 +973,7 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
               size: 18, color: AppColors.primary),
           const SizedBox(width: 6),
           Text(
-            'طلبات اليوم',
+            context.l10n.labTodayOrders,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 15,
@@ -990,9 +990,9 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
               color: const Color(0xFFEFE3FA),
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             ),
-            child: const Text(
-              '6 طلب',
-              style: TextStyle(
+            child: Text(
+              context.l10n.whTodayOrdersCount(_todayOrders.length),
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -1017,9 +1017,9 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: const Text(
-              'عرض الكل ←',
-              style: TextStyle(
+            child: Text(
+              '${context.l10n.viewAll} ←',
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -1032,15 +1032,15 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
     );
   }
 
-  Widget _buildTable() {
+  Widget _buildTable(BuildContext context) {
     final rows = _filtered;
     if (rows.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 28),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 28),
         child: Center(
           child: Text(
-            'لا يوجد طلبات بهذا الفلتر',
-            style: TextStyle(
+            context.l10n.whOrdersEmptyFilter,
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               color: AppColors.lightText3,
@@ -1109,7 +1109,7 @@ class _OrdersSegmentedTabs extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      t.label,
+                      t.label(context),
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 12.5,
@@ -1165,14 +1165,14 @@ class _OrdersTableHeader extends StatelessWidget {
     return Container(
       color: bg,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-      child: const Row(
+      child: Row(
         children: [
-          Expanded(flex: 2, child: _Hcell('رقم الطلب')),
-          Expanded(flex: 3, child: _Hcell('الجهة الطالبة')),
-          Expanded(flex: 3, child: _Hcell('المادة')),
-          Expanded(flex: 2, child: _Hcell('الكمية')),
-          Expanded(flex: 3, child: _Hcell('تاريخ الطلب')),
-          Expanded(flex: 2, child: _Hcell('الحالة')),
+          Expanded(flex: 2, child: _Hcell(context.l10n.whOrderNumber)),
+          Expanded(flex: 3, child: _Hcell(context.l10n.whOrderRequesterParty)),
+          Expanded(flex: 3, child: _Hcell(context.l10n.colMaterial)),
+          Expanded(flex: 2, child: _Hcell(context.l10n.colQuantity)),
+          Expanded(flex: 3, child: _Hcell(context.l10n.whOrderDate)),
+          Expanded(flex: 2, child: _Hcell(context.l10n.whOrderStatus)),
         ],
       ),
     );
@@ -1361,7 +1361,7 @@ class _StatusPillSmall extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            status.label,
+            status.label(context),
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 11.5,

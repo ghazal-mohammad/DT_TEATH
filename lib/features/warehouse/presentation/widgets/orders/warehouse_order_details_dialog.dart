@@ -12,6 +12,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/l10n/build_context_l10n.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -39,10 +41,10 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
     );
   }
 
-  String get _statusLabel => switch (order.status) {
-        WarehouseOrderStatus.newOrder => 'جديد',
-        WarehouseOrderStatus.fulfilled => 'تم التوريد',
-        WarehouseOrderStatus.missing => 'جزئي',
+  String _statusLabel(AppLocalizations l10n) => switch (order.status) {
+        WarehouseOrderStatus.newOrder => l10n.ordersStatusNew,
+        WarehouseOrderStatus.fulfilled => l10n.ordersStatusFulfilled,
+        WarehouseOrderStatus.missing => l10n.ordersStatusPartial,
       };
 
   Color get _statusColor => switch (order.status) {
@@ -61,6 +63,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     // فرض RTL صراحةً — بعض parent widgets للديالوغ قد تُرجع LTR كافتراضي
     // مما يقلب صفوف داخلية معينة (مثل الـ timeline والـ info rows).
     return Directionality(
@@ -94,18 +97,18 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildStatusBanner(),
+                      _buildStatusBanner(l10n),
                       const SizedBox(height: 18),
-                      _SectionTitle('معلومات الطلبية'),
+                      _SectionTitle(l10n.orderDetailsInfoSection),
                       const SizedBox(height: 10),
-                      _buildInfoCards(),
+                      _buildInfoCards(l10n),
                       const SizedBox(height: 18),
-                      _SectionTitle('تقدم التوريد'),
+                      _SectionTitle(l10n.orderDetailsProgressSection),
                       const SizedBox(height: 14),
-                      _buildTimeline(),
+                      _buildTimeline(l10n),
                       if (order.notes != null && order.notes!.isNotEmpty) ...[
                         const SizedBox(height: 18),
-                        _SectionTitle('ملاحظات'),
+                        _SectionTitle(l10n.orderDetailsNotes),
                         const SizedBox(height: 8),
                         _buildNotes(),
                       ],
@@ -135,7 +138,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'تفاصيل طلبية التوريد $_requestNumber',
+                  context.l10n.orderDetailsTitle(_requestNumber),
                   style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 17,
@@ -145,9 +148,9 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 3),
-                const Text(
-                  'تفاصيل طلبية المواد المرسلة إلى المستودع',
-                  style: TextStyle(
+                Text(
+                  context.l10n.orderDetailsSubtitle,
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
@@ -178,7 +181,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
   }
 
   // ── Status Banner (الحالة + تاريخ الطلب) ─────────────────────────────
-  Widget _buildStatusBanner() {
+  Widget _buildStatusBanner(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
@@ -192,9 +195,9 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'حالة الطلبية',
-                  style: TextStyle(
+                Text(
+                  l10n.orderDetailsStatusLabel,
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -206,7 +209,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      _statusLabel,
+                      _statusLabel(l10n),
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 14,
@@ -230,9 +233,9 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'تاريخ الطلب',
-                style: TextStyle(
+              Text(
+                l10n.orderDetailsOrderDate,
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -257,23 +260,28 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
   }
 
   // ── Info Cards (بيانات الطلب | بيانات الجهة) ─────────────────────────
-  Widget _buildInfoCards() {
+  Widget _buildInfoCards(AppLocalizations l10n) {
     return LayoutBuilder(builder: (context, c) {
       final isNarrow = c.maxWidth < 560;
       final requestInfo = _InfoCard(
-        title: 'بيانات الطلب',
+        title: l10n.orderDetailsRequestData,
         rows: [
-          _InfoRow(label: 'المادة', value: order.materialName),
-          _InfoRow(label: 'الكمية', value: '${order.quantity} ${order.unit}'),
-          _InfoRow.urgentBadge(label: 'الأولوية', urgent: urgent),
+          _InfoRow(label: l10n.orderDetailsMaterial, value: order.materialName),
+          _InfoRow(label: l10n.ordersQuantity, value: '${order.quantity} ${order.unit}'),
+          _InfoRow(
+            label: l10n.orderDetailsPriority,
+            value: urgent ? l10n.ordersUrgent : l10n.orderDetailsNormal,
+            urgent: urgent,
+            showUrgentBadge: true,
+          ),
         ],
       );
       final requesterInfo = _InfoCard(
-        title: 'بيانات الجهة الطالبة',
+        title: l10n.orderDetailsRequesterData,
         rows: [
-          _InfoRow(label: 'الجهة', value: order.requester),
-          _InfoRow(label: 'المسؤول', value: _responsible),
-          _InfoRow(label: 'رقم الطلب', value: _requestNumber),
+          _InfoRow(label: l10n.orderDetailsParty, value: order.requester),
+          _InfoRow(label: l10n.orderDetailsResponsible, value: _responsible),
+          _InfoRow(label: l10n.orderDetailsRequestNumber, value: _requestNumber),
         ],
       );
       if (isNarrow) {
@@ -295,16 +303,16 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
   }
 
   // ── Timeline ─────────────────────────────────────────────────────────
-  Widget _buildTimeline() {
+  Widget _buildTimeline(AppLocalizations l10n) {
     // 3 محطات (من اليمين لليسار): استلام → جزئي → تم
     final List<_TimelineStep> steps = [
       _TimelineStep(
-        label: 'تم الاستلام',
+        label: l10n.orderTimelineReceived,
         date: order.date,
         state: _TimelineState.done,
       ),
       _TimelineStep(
-        label: 'توريد جزئي',
+        label: l10n.orderTimelinePartial,
         date: order.status == WarehouseOrderStatus.missing ||
                 order.status == WarehouseOrderStatus.fulfilled
             ? order.date
@@ -316,7 +324,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
                 : _TimelineState.pending),
       ),
       _TimelineStep(
-        label: 'تم التوريد',
+        label: l10n.ordersStatusFulfilled,
         date: order.status == WarehouseOrderStatus.fulfilled ? order.date : null,
         state: order.status == WarehouseOrderStatus.fulfilled
             ? _TimelineState.done
@@ -368,9 +376,9 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           ),
-          child: const Text(
-            'إغلاق',
-            style: TextStyle(
+          child: Text(
+            context.l10n.close,
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -424,14 +432,6 @@ class _InfoRow {
     this.urgent = false,
     this.showUrgentBadge = false,
   });
-
-  factory _InfoRow.urgentBadge({required String label, required bool urgent}) =>
-      _InfoRow(
-        label: label,
-        value: urgent ? 'عاجل' : 'عادية',
-        urgent: urgent,
-        showUrgentBadge: true,
-      );
 
   final String label;
   final String value;

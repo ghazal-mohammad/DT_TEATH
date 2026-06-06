@@ -192,13 +192,18 @@ class _MaterialRequestsBody extends StatelessWidget {
           // ── Filter Bar + Action ────────────────────────────────────
           AppPageActionBar(
             filter: AppFilterChipRow(
-              options: const ['الكل', 'جديد', 'تم التسليم', 'غير متوفر'],
+              options: [
+                l10n.labOrdersFilterAll,
+                l10n.statusNew,
+                l10n.statusDelivered,
+                l10n.labReqStatusUnavailable,
+              ],
               selectedIndex: filterIndex,
               onChanged: onFilterChanged,
             ),
             actions: [
               AppButton.primary(
-                label: '+ طلب مادة جديدة',
+                label: '+ ${l10n.labReqNewRequest}',
                 onPressed: () => _showNewRequestDialog(context, l10n),
                 size: AppButtonSize.small,
               ),
@@ -227,20 +232,20 @@ class _MaterialRequestsBody extends StatelessWidget {
             ? AppColors.lightSurface
             : AppColors.darkSurface,
         title: Text(
-          'طلب مادة جديدة',
+          l10n.labReqNewRequest,
           style: AppTextStyles.headlineSmall,
         ),
-        content: const SizedBox(
+        content: SizedBox(
           width: 400,
           child: Text(
-            'سيتم إضافة نموذج طلب المواد هنا في الإصدار القادم.',
+            l10n.labReqComingSoon,
             style: AppTextStyles.bodyMedium,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق'),
+            child: Text(l10n.close),
           ),
         ],
       ),
@@ -288,11 +293,11 @@ class _MatRequestCardState extends State<_MatRequestCard> {
   String _badgeText(BuildContext context) {
     switch (widget.request.status) {
       case _MatRequestStatus.newRequest:
-        return 'جديد';
+        return context.l10n.statusNew;
       case _MatRequestStatus.delivered:
-        return 'تم التسليم';
+        return context.l10n.statusDelivered;
       case _MatRequestStatus.unavailable:
-        return 'غير متوفر';
+        return context.l10n.labReqStatusUnavailable;
     }
   }
 
@@ -373,19 +378,19 @@ class _MatRequestCardState extends State<_MatRequestCard> {
               // Row 2: التفاصيل
               Row(
                 children: [
-                  _cell(context, icon: AppIcons.box, label: 'الكمية', value: '${r.quantity} ${r.unit}'),
+                  _cell(context, icon: AppIcons.box, label: context.l10n.colQuantity, value: '${r.quantity} ${r.unit}'),
                   const SizedBox(width: AppSizes.spaceXL),
-                  _cell(context, icon: AppIcons.profile, label: 'طلب بواسطة', value: r.requestedBy, valueColor: AppColors.secondary),
+                  _cell(context, icon: AppIcons.profile, label: context.l10n.labReqRequestedBy, value: r.requestedBy, valueColor: AppColors.secondary),
                   const SizedBox(width: AppSizes.spaceXL),
-                  _cell(context, icon: AppIcons.calendar, label: 'التاريخ', value: r.date),
+                  _cell(context, icon: AppIcons.calendar, label: context.l10n.ordersDate, value: r.date),
                   if (r.labOrderId != null) ...[
                     const SizedBox(width: AppSizes.spaceXL),
-                    _cell(context, icon: AppIcons.labOrders, label: 'طلبية المخبر', value: r.labOrderId!, valueColor: AppColors.accent),
+                    _cell(context, icon: AppIcons.labOrders, label: context.l10n.labReqLabOrder, value: r.labOrderId!, valueColor: AppColors.accent),
                   ],
                   const Spacer(),
                   if (r.status == _MatRequestStatus.newRequest)
                     AppButton.secondary(
-                      label: 'تتبع',
+                      label: context.l10n.labActionTrack,
                       icon: AppIcons.eye,
                       onPressed: () {},
                       size: AppButtonSize.small,
@@ -472,9 +477,15 @@ class _EmptyRequests extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 60),
       child: Column(
         children: [
-          Icon(AppIcons.emptyInbox, size: 48, color: AppColors.darkText4),
+          Icon(
+            AppIcons.emptyInbox,
+            size: 48,
+            color: Theme.of(context).brightness == Brightness.light
+                ? AppColors.lightText4
+                : AppColors.darkText4,
+          ),
           const SizedBox(height: AppSizes.spaceMD),
-          Text('لا توجد طلبيات مواد في هذه الفئة', style: AppTextStyles.bodyMedium),
+          Text(context.l10n.labReqEmptyCategory, style: AppTextStyles.bodyMedium),
         ],
       ),
     );

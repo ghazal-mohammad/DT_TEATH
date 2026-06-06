@@ -191,7 +191,7 @@ class _WarehouseMaterialFormDialogState
       initialDate: _expiryDate ?? now.add(const Duration(days: 30)),
       firstDate: now.subtract(const Duration(days: 365 * 2)),
       lastDate: now.add(const Duration(days: 365 * 10)),
-      helpText: 'تاريخ انتهاء الصلاحية',
+      helpText: context.l10n.whMaterialExpiryDate,
     );
     if (picked != null && mounted) {
       setState(() => _expiryDate = picked);
@@ -394,7 +394,7 @@ class _WarehouseMaterialFormDialogState
                   child: AppFormSelect<String>(
                     label: context.l10n.whMaterialUnit,
                     value: _unitCtrl.text.isEmpty ? null : _unitCtrl.text,
-                    hint: 'اختر الوحدة',
+                    hint: context.l10n.whMaterialUnitHint,
                     options: _unitOptions
                         .map((u) =>
                             AppSelectOption<String>(value: u, label: u))
@@ -496,7 +496,7 @@ class _WarehouseMaterialFormDialogState
                 height: 1.3,
               ),
               decoration: InputDecoration(
-                hintText: 'اكتب أو اختر من القائمة...',
+                hintText: context.l10n.fieldWriteOrPick,
                 hintStyle: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 15,

@@ -10,10 +10,13 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/bloc/theme_cubit.dart';
+import '../../../../shared/bloc/locale_cubit.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
@@ -41,9 +44,9 @@ class _LabSettingsPageState extends State<LabSettingsPage> {
       system: AppSystemType.lab,
       currentRoute: RouteNames.labSettings,
       sections: LabSidebarSections.build(context),
-      pageTitle: 'الإعدادات',
+      pageTitle: context.l10n.settings,
       pageSubtitle: null,
-      searchPlaceholder: 'بحث في هذه الصفحة...',
+      searchPlaceholder: context.l10n.settingsSearchHint,
       userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
@@ -149,10 +152,10 @@ class _TabNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = const [
-      (Icons.lock_outline, 'الأمان'),
-      (Icons.notifications_none, 'الإشعارات'),
-      (Icons.tune, 'التفضيلات'),
+    final items = [
+      (Icons.lock_outline, context.l10n.settingsTabSecurity),
+      (Icons.notifications_none, context.l10n.notifications),
+      (Icons.tune, context.l10n.settingsTabPreferences),
     ];
 
     Widget buildItem(int i, IconData icon, String label) {
@@ -271,13 +274,13 @@ class _SecurityTabState extends State<_SecurityTab> {
         // ── 1) تغيير كلمة المرور ─────────────────────────────────
         _SettingCard(
           isLight: widget.isLight,
-          title: 'تغيير كلمة المرور',
-          subtitle: 'يفضّل تغيير كلمة المرور كل 90 يوماً لزيادة الأمان',
+          title: context.l10n.settingsChangePassword,
+          subtitle: context.l10n.settingsChangePasswordDesc,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _PasswordField(
-                label: 'كلمة المرور الحالية',
+                label: context.l10n.settingsCurrentPassword,
                 controller: _currentPwd,
                 isLight: widget.isLight,
               ),
@@ -285,12 +288,12 @@ class _SecurityTabState extends State<_SecurityTab> {
               LayoutBuilder(builder: (ctx, c) {
                 final wide = c.maxWidth > 520;
                 final f1 = _PasswordField(
-                  label: 'كلمة المرور الجديدة',
+                  label: context.l10n.settingsNewPassword,
                   controller: _newPwd,
                   isLight: widget.isLight,
                 );
                 final f2 = _PasswordField(
-                  label: 'تأكيد كلمة المرور',
+                  label: context.l10n.settingsConfirmPassword,
                   controller: _confirmPwd,
                   isLight: widget.isLight,
                 );
@@ -315,7 +318,7 @@ class _SecurityTabState extends State<_SecurityTab> {
               Row(
                 children: [
                   _SecondaryButton(
-                    label: 'إلغاء',
+                    label: context.l10n.cancel,
                     isLight: widget.isLight,
                     onTap: () {
                       _currentPwd.clear();
@@ -325,7 +328,7 @@ class _SecurityTabState extends State<_SecurityTab> {
                   ),
                   const SizedBox(width: AppSizes.spaceSM),
                   _PrimaryButton(
-                    label: 'تحديث كلمة المرور',
+                    label: context.l10n.settingsUpdatePassword,
                     icon: Icons.check_rounded,
                     onTap: () {},
                   ),
@@ -340,13 +343,13 @@ class _SecurityTabState extends State<_SecurityTab> {
         // ── 2) المصادقة الثنائية ─────────────────────────────────
         _SettingCard(
           isLight: widget.isLight,
-          title: 'المصادقة الثنائية',
-          subtitle: 'حماية إضافية لحسابك عبر رمز OTP',
+          title: context.l10n.settings2FA,
+          subtitle: context.l10n.settings2FADesc,
           child: Column(
             children: [
               _ToggleRow(
-                title: 'طلب رمز OTP عند تسجيل الدخول',
-                subtitle: 'يصلك رمز عبر البريد الإلكتروني في كل مرة تدخل من جهاز جديد',
+                title: context.l10n.settings2FAOtpTitle,
+                subtitle: context.l10n.settings2FAOtpDesc,
                 value: _twoFA,
                 onChanged: (v) => setState(() => _twoFA = v),
                 isLight: widget.isLight,
@@ -362,10 +365,10 @@ class _SecurityTabState extends State<_SecurityTab> {
           isLight: widget.isLight,
           tint: const Color(0xFFFEF2F2),
           tintBorder: const Color(0xFFFCA5A5),
-          title: 'تسجيل الخروج من كل الأجهزة',
-          subtitle: 'إنهاء جميع الجلسات النشطة على الأجهزة الأخرى',
+          title: context.l10n.settingsLogoutAll,
+          subtitle: context.l10n.settingsLogoutAllDesc,
           trailing: _SecondaryButton(
-            label: 'تسجيل الخروج',
+            label: context.l10n.logout,
             isLight: widget.isLight,
             danger: true,
             onTap: () {},
@@ -409,44 +412,44 @@ class _NotificationsTabState extends State<_NotificationsTab> {
       children: [
         _SettingCard(
           isLight: widget.isLight,
-          title: 'تفضيلات الإشعارات',
-          subtitle: 'حدد أنواع الإشعارات التي تريد استقبالها',
+          title: context.l10n.settingsNotifPrefs,
+          subtitle: context.l10n.settingsNotifPrefsDesc,
           child: Column(children: [
             _ToggleRow(
-              title: 'الطلبات العاجلة',
-              subtitle: 'الطلبات اللي يجب إنهاؤها اليوم',
+              title: context.l10n.labSettingsNotifUrgentOrders,
+              subtitle: context.l10n.labSettingsNotifUrgentOrdersDesc,
               value: _urgent,
               onChanged: (v) => setState(() => _urgent = v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
-              title: 'طلبيات جديدة من الأطباء',
-              subtitle: 'عند وصول طلبية جديدة',
+              title: context.l10n.labSettingsNotifNewFromDoctors,
+              subtitle: context.l10n.labSettingsNotifNewFromDoctorsDesc,
               value: _newOrders,
               onChanged: (v) => setState(() => _newOrders = v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
-              title: 'نقص المواد',
-              subtitle: 'عند وصول مادة للحد الأدنى',
+              title: context.l10n.settingsNotifLowMaterials,
+              subtitle: context.l10n.settingsNotifLowMaterialsDesc,
               value: _lowStock,
               onChanged: (v) => setState(() => _lowStock = v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
-              title: 'تحديثات المستودع',
-              subtitle: 'حالة طلبات التوريد المرسلة',
+              title: context.l10n.labSettingsNotifWarehouseUpdates,
+              subtitle: context.l10n.labSettingsNotifWarehouseUpdatesDesc,
               value: _warehouse,
               onChanged: (v) => setState(() => _warehouse = v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
-              title: 'تحديثات الفريق',
-              subtitle: 'إضافة أو تغيير دوام مخبري',
+              title: context.l10n.labSettingsNotifTeamUpdates,
+              subtitle: context.l10n.labSettingsNotifTeamUpdatesDesc,
               value: _team,
               onChanged: (v) => setState(() => _team = v),
               isLight: widget.isLight,
@@ -458,20 +461,20 @@ class _NotificationsTabState extends State<_NotificationsTab> {
 
         _SettingCard(
           isLight: widget.isLight,
-          title: 'قنوات الإشعار',
-          subtitle: 'اختر أين تصلك التنبيهات',
+          title: context.l10n.settingsNotifChannels,
+          subtitle: context.l10n.settingsNotifChannelsDesc,
           child: Column(children: [
             _ToggleRow(
-              title: 'ملخص يومي عبر البريد الإلكتروني',
-              subtitle: 'يصلك في الساعة 8:00 صباحاً كل يوم',
+              title: context.l10n.settingsNotifDailyEmail,
+              subtitle: context.l10n.settingsNotifDailyEmailDesc,
               value: _emailSummary,
               onChanged: (v) => setState(() => _emailSummary = v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
-              title: 'صوت الإشعارات داخل النظام',
-              subtitle: 'تشغيل نغمة عند وصول إشعار جديد',
+              title: context.l10n.settingsNotifSound,
+              subtitle: context.l10n.settingsNotifSoundDesc,
               value: _sounds,
               onChanged: (v) => setState(() => _sounds = v),
               isLight: widget.isLight,
@@ -496,10 +499,14 @@ class _PreferencesTab extends StatefulWidget {
 }
 
 class _PreferencesTabState extends State<_PreferencesTab> {
-  int _themeIndex = 0; // 0=auto 1=dark 2=light
-  int _langIndex = 1;  // 0=English 1=العربية
   bool _compact = false;
   bool _autosave = true;
+
+  /// يحوّل وضع الواجهة المحلي إلى [ThemeMode] الخاص بـ Flutter.
+  ThemeMode _flutterMode(_ThemeMode m) => switch (m) {
+        _ThemeMode.dark => ThemeMode.dark,
+        _ThemeMode.light => ThemeMode.light,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -514,21 +521,27 @@ class _PreferencesTabState extends State<_PreferencesTab> {
         // ── السمة ──────────────────────────────────────────────
         _SettingCard(
           isLight: widget.isLight,
-          title: 'السمة',
-          subtitle: 'اختر مظهر النظام',
+          title: context.l10n.theme,
+          subtitle: context.l10n.settingsThemeDesc,
           child: LayoutBuilder(builder: (ctx, c) {
             final wide = c.maxWidth > 520;
+            // الاختيار يُشتق من الحالة الفعلية لـ ThemeCubit (مصدر الحقيقة).
+            final currentMode = context.watch<ThemeCubit>().state;
             final options = [
-              _ThemePreviewData(label: 'تلقائي', mode: _ThemeMode.auto),
-              _ThemePreviewData(label: 'داكن', mode: _ThemeMode.dark),
-              _ThemePreviewData(label: 'فاتح', mode: _ThemeMode.light),
+              _ThemePreviewData(
+                  label: context.l10n.settingsThemeDark, mode: _ThemeMode.dark),
+              _ThemePreviewData(
+                  label: context.l10n.settingsThemeLight,
+                  mode: _ThemeMode.light),
             ];
             final widgets = [
               for (int i = 0; i < options.length; i++)
                 _ThemeOption(
                   data: options[i],
-                  selected: _themeIndex == i,
-                  onTap: () => setState(() => _themeIndex = i),
+                  selected: _flutterMode(options[i].mode) == currentMode,
+                  onTap: () => context
+                      .read<ThemeCubit>()
+                      .setMode(_flutterMode(options[i].mode)),
                 ),
             ];
             if (wide) {
@@ -553,25 +566,32 @@ class _PreferencesTabState extends State<_PreferencesTab> {
         // ── اللغة ──────────────────────────────────────────────
         _SettingCard(
           isLight: widget.isLight,
-          title: 'اللغة',
-          subtitle: 'لغة عرض النظام',
+          title: context.l10n.language,
+          subtitle: context.l10n.settingsLanguageDesc,
           child: LayoutBuilder(builder: (ctx, c) {
             final wide = c.maxWidth > 520;
+            // الاختيار يُشتق من LocaleCubit (مصدر الحقيقة).
+            final isArabic =
+                context.watch<LocaleCubit>().state.languageCode == 'ar';
             final widgets = [
               _LanguageOption(
                 title: 'English',
                 badge: 'EN',
-                hint: 'LTR',
-                selected: _langIndex == 0,
-                onTap: () => setState(() => _langIndex = 0),
+                hint: context.l10n.settingsLangEnglishHint,
+                selected: !isArabic,
+                onTap: () => context
+                    .read<LocaleCubit>()
+                    .setLocale(SupportedLocale.english),
                 isLight: widget.isLight,
               ),
               _LanguageOption(
-                title: 'العربية',
+                title: context.l10n.languageArabic,
                 badge: 'ع',
-                hint: 'RTL · الافتراضي',
-                selected: _langIndex == 1,
-                onTap: () => setState(() => _langIndex = 1),
+                hint: context.l10n.settingsLangArabicHint,
+                selected: isArabic,
+                onTap: () => context
+                    .read<LocaleCubit>()
+                    .setLocale(SupportedLocale.arabic),
                 isLight: widget.isLight,
               ),
             ];
@@ -595,20 +615,20 @@ class _PreferencesTabState extends State<_PreferencesTab> {
         // ── العرض والأداء ──────────────────────────────────────
         _SettingCard(
           isLight: widget.isLight,
-          title: 'العرض والأداء',
+          title: context.l10n.settingsDisplayPerf,
           subtitle: null,
           child: Column(children: [
             _ToggleRow(
-              title: 'العرض المضغوط',
-              subtitle: 'إظهار مزيد من البيانات في الشاشة الواحدة',
+              title: context.l10n.settingsCompactView,
+              subtitle: context.l10n.settingsCompactViewDesc,
               value: _compact,
               onChanged: (v) => setState(() => _compact = v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
-              title: 'الحفظ التلقائي',
-              subtitle: 'حفظ التعديلات تلقائياً كل دقيقة',
+              title: context.l10n.settingsAutoSave,
+              subtitle: context.l10n.settingsAutoSaveDesc,
               value: _autosave,
               onChanged: (v) => setState(() => _autosave = v),
               isLight: widget.isLight,
@@ -874,7 +894,7 @@ class _PasswordFieldState extends State<_PasswordField> {
 //  REUSABLE — THEME OPTION
 // ══════════════════════════════════════════════════════════════════════════
 
-enum _ThemeMode { auto, dark, light }
+enum _ThemeMode { dark, light }
 
 class _ThemePreviewData {
   const _ThemePreviewData({required this.label, required this.mode});
@@ -966,26 +986,12 @@ class _ThemeOption extends StatelessWidget {
 
   Widget _buildPreview(_ThemeMode mode) {
     switch (mode) {
-      case _ThemeMode.auto:
-        // نصف فاتح / نصف داكن
-        return Row(
-          children: [
-            Expanded(
-              child: Container(color: const Color(0xFFE9ECFB)),
-            ),
-            Expanded(
-              child: Container(color: AppColors.primary),
-            ),
-            Expanded(
-              child: Container(color: const Color(0xFFE9ECFB)),
-            ),
-          ],
-        );
       case _ThemeMode.dark:
+        // الوضع الغامق الفعلي: slate + لمسة إندِغو
         return Row(
           children: [
-            Expanded(child: Container(color: AppColors.primary)),
-            Expanded(child: Container(color: const Color(0xFF2A2D6E))),
+            Expanded(child: Container(color: AppColors.darkBg)),
+            Expanded(child: Container(color: AppColors.brand)),
           ],
         );
       case _ThemeMode.light:

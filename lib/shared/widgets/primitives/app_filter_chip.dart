@@ -63,19 +63,19 @@ class _AppFilterChipState extends State<AppFilterChip> {
 
     if (widget.isSelected) {
       // light: أزرق فاتح مطابق للـ Design Guide (Table Header BED8FA).
-      // dark: cyan كما كان.
+      // dark: indigo (brand) — مطابق للموكب الجديد.
       backgroundColor = isLight
           ? AppColors.tableHeader
-          : const Color(0x2E9EFBEC);
+          : AppColors.brand.withValues(alpha: 0.18);
       borderColor = isLight
           ? AppColors.tableHeader
-          : const Color(0x669EFBEC);
-      textColor = isLight ? AppColors.lightText1 : AppColors.accent;
+          : AppColors.brand.withValues(alpha: 0.4);
+      textColor = isLight ? AppColors.lightText1 : AppColors.brand;
     } else if (_isHovered) {
       backgroundColor = isLight
           ? const Color(0x081A1C4E)
           : const Color(0x05FFFFFF);
-      borderColor = isLight ? AppColors.lightBorder : AppColors.accent;
+      borderColor = isLight ? AppColors.lightBorder : AppColors.brand;
       textColor = isLight ? AppColors.lightText1 : AppColors.darkText1;
     } else {
       backgroundColor = isLight

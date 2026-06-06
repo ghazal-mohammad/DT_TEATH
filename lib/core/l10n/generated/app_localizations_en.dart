@@ -633,6 +633,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whMaterialUnit => 'Unit';
 
   @override
+  String get whMaterialUnitHint => 'Choose unit';
+
+  @override
   String get whMaterialMinStock => 'Minimum Stock';
 
   @override
@@ -669,7 +672,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whOrderRequester => 'Requester';
 
   @override
-  String get whOrderDate => 'Date';
+  String get whOrderDate => 'Order date';
 
   @override
   String get whOrderStatus => 'Status';
@@ -1068,4 +1071,1007 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labManageTechnicians => 'Manage Technicians';
+
+  @override
+  String get labDashboardSearchHint =>
+      'Filter this page\'s orders... (number, doctor, material)';
+
+  @override
+  String get priorityUrgent => 'Urgent';
+
+  @override
+  String get priorityMedium => 'Medium';
+
+  @override
+  String get priorityNormal => 'Normal';
+
+  @override
+  String get labStatNeedsFollowup => 'Needs follow-up';
+
+  @override
+  String get labChipThisMonth => 'This month';
+
+  @override
+  String get labChipActive => 'Active';
+
+  @override
+  String get labStatReadyOrders => 'Ready orders';
+
+  @override
+  String labTrendFromLastMonth(String value) {
+    return '$value from last month';
+  }
+
+  @override
+  String labTrendFromYesterday(String value) {
+    return '$value from yesterday';
+  }
+
+  @override
+  String get labTodayOrders => 'Today\'s Orders';
+
+  @override
+  String labOrdersCount(String count) {
+    return '$count orders';
+  }
+
+  @override
+  String get colOrderNumber => 'Order #';
+
+  @override
+  String get colDoctor => 'Doctor';
+
+  @override
+  String get colType => 'Type';
+
+  @override
+  String get colMaterial => 'Material';
+
+  @override
+  String get colTooth => 'Tooth';
+
+  @override
+  String get colDate => 'Date';
+
+  @override
+  String get colPriority => 'Priority';
+
+  @override
+  String get colStatus => 'Status';
+
+  @override
+  String labGreeting(String name) {
+    return 'Welcome, $name';
+  }
+
+  @override
+  String get systemAllNormal => 'All systems operating normally';
+
+  @override
+  String labLastUpdate(String time) {
+    return 'Last update: $time';
+  }
+
+  @override
+  String get labOrdersSearchHint =>
+      'Filter doctor orders... (number, doctor, material, tooth)';
+
+  @override
+  String labOrdersCountOfTotal(String shown, String total) {
+    return '$shown of $total orders';
+  }
+
+  @override
+  String get labOrderProcess => 'Process';
+
+  @override
+  String get actionView => 'View';
+
+  @override
+  String get labNoOrdersInCategory => 'No orders in this category';
+
+  @override
+  String get settingsSearchHint => 'Search this page...';
+
+  @override
+  String get settingsTabSecurity => 'Security';
+
+  @override
+  String get settingsTabPreferences => 'Preferences';
+
+  @override
+  String get settingsChangePassword => 'Change Password';
+
+  @override
+  String get settingsChangePasswordDesc =>
+      'It\'s recommended to change your password every 90 days for better security';
+
+  @override
+  String get settingsCurrentPassword => 'Current Password';
+
+  @override
+  String get settingsNewPassword => 'New Password';
+
+  @override
+  String get settingsConfirmPassword => 'Confirm Password';
+
+  @override
+  String get settingsUpdatePassword => 'Update Password';
+
+  @override
+  String get settings2FA => 'Two-Factor Authentication';
+
+  @override
+  String get settings2FADesc => 'Extra protection for your account via OTP';
+
+  @override
+  String get settings2FAOtpTitle => 'Require OTP on login';
+
+  @override
+  String get settings2FAOtpDesc =>
+      'You receive a code by email each time you sign in from a new device';
+
+  @override
+  String get settingsLogoutAll => 'Sign out of all devices';
+
+  @override
+  String get settingsLogoutAllDesc =>
+      'End all active sessions on other devices';
+
+  @override
+  String get settingsNotifPrefs => 'Notification Preferences';
+
+  @override
+  String get settingsNotifPrefsDesc =>
+      'Choose which notifications you want to receive';
+
+  @override
+  String get labSettingsNotifUrgentOrders => 'Urgent Orders';
+
+  @override
+  String get labSettingsNotifUrgentOrdersDesc =>
+      'Orders that must be completed today';
+
+  @override
+  String get labSettingsNotifNewFromDoctors => 'New orders from doctors';
+
+  @override
+  String get labSettingsNotifNewFromDoctorsDesc => 'When a new order arrives';
+
+  @override
+  String get settingsNotifLowMaterials => 'Low materials';
+
+  @override
+  String get settingsNotifLowMaterialsDesc =>
+      'When a material reaches its minimum';
+
+  @override
+  String get labSettingsNotifWarehouseUpdates => 'Warehouse updates';
+
+  @override
+  String get labSettingsNotifWarehouseUpdatesDesc =>
+      'Status of sent supply requests';
+
+  @override
+  String get labSettingsNotifTeamUpdates => 'Team updates';
+
+  @override
+  String get labSettingsNotifTeamUpdatesDesc =>
+      'Adding or changing a technician\'s shift';
+
+  @override
+  String get settingsNotifChannels => 'Notification Channels';
+
+  @override
+  String get settingsNotifChannelsDesc => 'Choose where you receive alerts';
+
+  @override
+  String get settingsNotifDailyEmail => 'Daily summary by email';
+
+  @override
+  String get settingsNotifDailyEmailDesc => 'Delivered at 8:00 AM every day';
+
+  @override
+  String get settingsNotifSound => 'In-app notification sound';
+
+  @override
+  String get settingsNotifSoundDesc =>
+      'Play a tone when a new notification arrives';
+
+  @override
+  String get settingsThemeDesc => 'Choose the system appearance';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsLanguageDesc => 'System display language';
+
+  @override
+  String get settingsLangArabicHint => 'RTL · Default';
+
+  @override
+  String get settingsLangEnglishHint => 'LTR';
+
+  @override
+  String get settingsDisplayPerf => 'Display & Performance';
+
+  @override
+  String get settingsCompactView => 'Compact View';
+
+  @override
+  String get settingsCompactViewDesc => 'Show more data on a single screen';
+
+  @override
+  String get settingsAutoSave => 'Auto-save';
+
+  @override
+  String get settingsAutoSaveDesc => 'Automatically save changes every minute';
+
+  @override
+  String get notifSearchHint => 'Search notifications...';
+
+  @override
+  String get sectionToday => 'Today';
+
+  @override
+  String get sectionYesterday => 'Yesterday';
+
+  @override
+  String get notifEmptyInCategory => 'No notifications in this category';
+
+  @override
+  String get notifFilterAll => 'All';
+
+  @override
+  String get notifFilterUnread => 'Unread';
+
+  @override
+  String get notifFilterOrders => 'Orders';
+
+  @override
+  String get notifFilterMaterials => 'Materials';
+
+  @override
+  String get notifFilterSystem => 'System';
+
+  @override
+  String get techSearchHint => 'Search technicians... (name, role, task)';
+
+  @override
+  String get labTeamSectionTitle => 'Lab Team';
+
+  @override
+  String get labTeamTotalChip => 'Total';
+
+  @override
+  String get labTeamActiveChip => 'Working now';
+
+  @override
+  String get labTeamReadyChip => 'Ready to assign';
+
+  @override
+  String get techStatActiveLabel => 'Active Technicians';
+
+  @override
+  String get techStatusBreak => 'On Break';
+
+  @override
+  String get labTeamAddTechnician => 'Add Technician';
+
+  @override
+  String get notifMarkAllRead => 'Mark all as read';
+
+  @override
+  String get whNotifExpiry => 'Expiry';
+
+  @override
+  String get whNotifExpiryDesc => '30 days before expiry';
+
+  @override
+  String get whNotifNewSupply => 'New supply orders';
+
+  @override
+  String get whNotifNewSupplyDesc =>
+      'When an order arrives from the lab/clinic';
+
+  @override
+  String get whNotifSupplierDelay => 'Supplier delays';
+
+  @override
+  String get whNotifSupplierDelayDesc =>
+      'When a supplier misses a delivery date';
+
+  @override
+  String get whNotifInvoicesDue => 'Invoices pending payment';
+
+  @override
+  String get whNotifInvoicesDueDesc => 'Reminder before the due date';
+
+  @override
+  String get whOrderPartial => 'Partial';
+
+  @override
+  String get whOrderFulfilled => 'Fulfilled';
+
+  @override
+  String get whOrdersEmptyFilter => 'No orders match this filter';
+
+  @override
+  String get whOrderRequesterParty => 'Requesting party';
+
+  @override
+  String get colQuantity => 'Quantity';
+
+  @override
+  String get profileGeneralInfo => 'General Info';
+
+  @override
+  String get profileHireDate => 'Hire Date';
+
+  @override
+  String get profileLanguages => 'Languages';
+
+  @override
+  String get profileAdminNotes => 'Admin Notes';
+
+  @override
+  String get profileCompletion => 'Profile Completion';
+
+  @override
+  String get profileEdit => 'Edit Profile';
+
+  @override
+  String get profileSaving => 'Saving…';
+
+  @override
+  String get profileSaveChanges => 'Save Changes';
+
+  @override
+  String get profileChangePhoto => 'Change Photo';
+
+  @override
+  String get profilePersonalInfo => 'Personal Information';
+
+  @override
+  String get profilePersonalInfoSubtitle => 'Identity and contact details';
+
+  @override
+  String get profilePhone => 'Phone Number';
+
+  @override
+  String get profileNationalId => 'National ID';
+
+  @override
+  String get profileBirthDate => 'Date of Birth';
+
+  @override
+  String get profileGender => 'Gender';
+
+  @override
+  String get profileAddress => 'Address';
+
+  @override
+  String get profileEmployeeId => 'Employee ID';
+
+  @override
+  String get profileJobInfo => 'Job Information';
+
+  @override
+  String get profileJobInfoSubtitle => 'Department, schedule and job title';
+
+  @override
+  String get profileDepartment => 'Department';
+
+  @override
+  String get profileWorkDays => 'Work Days';
+
+  @override
+  String get profilePosition => 'Job Title';
+
+  @override
+  String get profileDayOff => 'Weekly Day Off';
+
+  @override
+  String get profileWeeklyHours => 'Weekly Work Hours';
+
+  @override
+  String get profileSavedSuccess => 'Changes saved successfully';
+
+  @override
+  String get profileSaveError => 'Failed to save changes';
+
+  @override
+  String get profilePhotoUpdated => 'Profile photo updated';
+
+  @override
+  String get profileLoadError => 'Failed to load profile';
+
+  @override
+  String get roleEmployee => 'Employee';
+
+  @override
+  String get profileStatCompletedOrders => 'Completed Orders';
+
+  @override
+  String get profileStatExecTime => 'Execution Time';
+
+  @override
+  String get profileStatOnTime => 'On-time Completion';
+
+  @override
+  String get profileBadgeThisMonth => 'This Month';
+
+  @override
+  String get profileBadgeAverage => 'Average';
+
+  @override
+  String get profileStatMovementsThisMonth => 'Movements This Month';
+
+  @override
+  String get profileStatLowItems => 'Low Stock Items';
+
+  @override
+  String get profileStatStockAccuracy => 'Stock Accuracy';
+
+  @override
+  String get profileBadgeAlert => 'Alert';
+
+  @override
+  String profilePhotoError(Object error) {
+    return 'Failed to pick image: $error';
+  }
+
+  @override
+  String get ordersFilterAll => 'All';
+
+  @override
+  String get ordersUrgent => 'Urgent';
+
+  @override
+  String get ordersStatusNew => 'New';
+
+  @override
+  String get ordersStatusPartial => 'Partial';
+
+  @override
+  String get ordersStatusFulfilled => 'Fulfilled';
+
+  @override
+  String get ordersQuantity => 'Quantity';
+
+  @override
+  String get ordersRequester => 'Requester';
+
+  @override
+  String get ordersDate => 'Date';
+
+  @override
+  String get ordersView => 'View';
+
+  @override
+  String get ordersSupply => 'Supply';
+
+  @override
+  String get ordersEmptyTitle => 'No Orders';
+
+  @override
+  String get ordersEmptyMessage => 'No orders match the current filter';
+
+  @override
+  String ordersSupplyConfirmed(Object material, Object order) {
+    return 'Supply confirmed for $material (order $order)';
+  }
+
+  @override
+  String ordersCountSummary(Object count, Object total) {
+    return '$count orders of $total';
+  }
+
+  @override
+  String get orderDetailsSubtitle =>
+      'Details of the materials order sent to the warehouse';
+
+  @override
+  String get orderDetailsInfoSection => 'Order Information';
+
+  @override
+  String get orderDetailsProgressSection => 'Supply Progress';
+
+  @override
+  String get orderDetailsNotes => 'Notes';
+
+  @override
+  String get orderDetailsStatusLabel => 'Order Status';
+
+  @override
+  String get orderDetailsOrderDate => 'Order Date';
+
+  @override
+  String get orderDetailsRequestData => 'Order Data';
+
+  @override
+  String get orderDetailsMaterial => 'Material';
+
+  @override
+  String get orderDetailsPriority => 'Priority';
+
+  @override
+  String get orderDetailsNormal => 'Normal';
+
+  @override
+  String get orderDetailsRequesterData => 'Requester Data';
+
+  @override
+  String get orderDetailsParty => 'Party';
+
+  @override
+  String get orderDetailsResponsible => 'Responsible';
+
+  @override
+  String get orderDetailsRequestNumber => 'Order Number';
+
+  @override
+  String get orderTimelineReceived => 'Received';
+
+  @override
+  String get orderTimelinePartial => 'Partial Supply';
+
+  @override
+  String orderDetailsTitle(Object req) {
+    return 'Supply Order Details $req';
+  }
+
+  @override
+  String get notifEmptyTitle => 'No Notifications';
+
+  @override
+  String get notifEmptyMessage => 'No notifications to show in this filter';
+
+  @override
+  String get notifGroupToday => 'Today';
+
+  @override
+  String get notifGroupYesterday => 'Yesterday';
+
+  @override
+  String get notifGroupOlder => 'Older';
+
+  @override
+  String get notifBadgeOrder => 'Order';
+
+  @override
+  String get notifBadgeDone => 'Done';
+
+  @override
+  String get reportRangeDaily => 'Daily';
+
+  @override
+  String get reportRangeWeekly => 'Weekly';
+
+  @override
+  String get reportRangeMonthly => 'Monthly';
+
+  @override
+  String get reportRangeYearly => 'Yearly';
+
+  @override
+  String get reportSuppliersPerf => 'Suppliers Performance';
+
+  @override
+  String get reportTopMaterials => 'Most Consumed Materials';
+
+  @override
+  String get reportFullReport => 'Full Report';
+
+  @override
+  String get reportExportPdf => 'Export PDF';
+
+  @override
+  String get reportExportExcel => 'Export Excel';
+
+  @override
+  String get reportStatAvgSupplyTime => 'Avg Supply Time';
+
+  @override
+  String get reportStatSupplyRate => 'Supply Rate';
+
+  @override
+  String get reportStatConsumed => 'Materials Consumed';
+
+  @override
+  String get reportStatTotalMaterials => 'Total Materials';
+
+  @override
+  String get reportUnitDay => 'day';
+
+  @override
+  String get reportConsumptionByCategory => 'Consumption by Category';
+
+  @override
+  String get reportOfConsumption => 'of consumption';
+
+  @override
+  String get reportSupplyByDays => 'Supply orders across the month';
+
+  @override
+  String get reportLess => 'Less';
+
+  @override
+  String get reportMore => 'More';
+
+  @override
+  String get reportWeekdaySun => 'Sun';
+
+  @override
+  String get reportWeekdayMon => 'Mon';
+
+  @override
+  String get reportWeekdayTue => 'Tue';
+
+  @override
+  String get reportWeekdayWed => 'Wed';
+
+  @override
+  String get reportWeekdayThu => 'Thu';
+
+  @override
+  String get reportWeekdayFri => 'Fri';
+
+  @override
+  String get reportWeekdaySat => 'Sat';
+
+  @override
+  String reportMonthlyTitle(Object period) {
+    return '$period — Monthly Report';
+  }
+
+  @override
+  String reportGeneratedAt(Object date) {
+    return 'Report generated $date';
+  }
+
+  @override
+  String reportDaysCount(Object days) {
+    return '$days days';
+  }
+
+  @override
+  String reportSupplierSubtitle(Object invoices, Object avgDays) {
+    return '$invoices invoices · avg $avgDays days';
+  }
+
+  @override
+  String get whBadgeTotal => 'Total';
+
+  @override
+  String get whStatOutMaterials => 'Out of Stock';
+
+  @override
+  String get whStatLowMaterials => 'Low Stock';
+
+  @override
+  String get whStatAvailMaterials => 'Available Materials';
+
+  @override
+  String get whStatTotalMaterials => 'Materials in Warehouse';
+
+  @override
+  String get whMaterialsEmptyTitle => 'No Materials';
+
+  @override
+  String get whMaterialsEmptyMessage =>
+      'No materials match the current filters';
+
+  @override
+  String get whColCode => 'Code';
+
+  @override
+  String get whColName => 'Material Name';
+
+  @override
+  String get whColCategory => 'Category';
+
+  @override
+  String get whColStock => 'Stock';
+
+  @override
+  String get whColMinStock => 'Min Stock';
+
+  @override
+  String get whColExpiry => 'Expiry';
+
+  @override
+  String get whColSupplier => 'Supplier';
+
+  @override
+  String get whColStatus => 'Status';
+
+  @override
+  String whMaterialsCount(Object count, Object total) {
+    return '$count materials of $total';
+  }
+
+  @override
+  String get invStatusPaid => 'Paid';
+
+  @override
+  String get invStatusPending => 'Pending';
+
+  @override
+  String get invEmptyTitle => 'No Invoices';
+
+  @override
+  String get invEmptyMessage => 'No invoices match the current filter';
+
+  @override
+  String get invPurchaseInvoices => 'Purchase Invoices';
+
+  @override
+  String get invAddInvoice => 'Add Invoice';
+
+  @override
+  String get invBadgePaid => 'Paid';
+
+  @override
+  String get invBadgePending => 'Pending';
+
+  @override
+  String get invBadgeTotal => 'Total';
+
+  @override
+  String get invStatThisMonth => 'invoices this month';
+
+  @override
+  String get invStatPaidTotal => 'Total Paid';
+
+  @override
+  String get invStatPendingPay => 'Awaiting Payment';
+
+  @override
+  String get invStatTotalPurchases => 'Total Purchases';
+
+  @override
+  String get invColNumber => 'Invoice Number';
+
+  @override
+  String get invColItemCount => 'Item Count';
+
+  @override
+  String get invColTotalSyp => 'Total (SYP)';
+
+  @override
+  String invCount(Object count, Object total) {
+    return '$count invoices of $total';
+  }
+
+  @override
+  String get fieldRequired => 'Required';
+
+  @override
+  String get fieldOptional => 'Optional';
+
+  @override
+  String get fieldInvalidNumber => 'Invalid number';
+
+  @override
+  String get fieldInvalidAmount => 'Invalid amount';
+
+  @override
+  String get fieldWriteOrPick => 'Type or pick from the list...';
+
+  @override
+  String get invFormTitle => 'Add Purchase Invoice';
+
+  @override
+  String get invFormSubtitle => 'Fill in the new invoice details';
+
+  @override
+  String get invFormSupplier => 'Supplier';
+
+  @override
+  String get invFormSupplierHint => 'e.g. Medical Supplies Co.';
+
+  @override
+  String get invFormDate => 'Date';
+
+  @override
+  String get invFormNotes => 'Notes';
+
+  @override
+  String get invFormSave => 'Save Invoice';
+
+  @override
+  String whGreeting(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get whSystemsNormal => 'All systems operating normally';
+
+  @override
+  String get whLastUpdateLabel => 'Last update: ';
+
+  @override
+  String get whTotalMaterials => 'Total materials';
+
+  @override
+  String get whMiniOrdersToday => 'Today\'s orders';
+
+  @override
+  String get whSupplyRate => 'Supply rate';
+
+  @override
+  String get whStatLowStockShort => 'Low-stock materials';
+
+  @override
+  String get whStatPendingSupply => 'Orders awaiting supply';
+
+  @override
+  String get whStatMonthPurchases => 'Month purchases (SYP)';
+
+  @override
+  String get whBadgeAlert => 'Alert';
+
+  @override
+  String get whBadgeNew => 'New';
+
+  @override
+  String get whBadgeThisMonth => 'This month';
+
+  @override
+  String get whNeedsSupply => 'Needs supply';
+
+  @override
+  String whTrendThisWeek(String count) {
+    return '$count this week';
+  }
+
+  @override
+  String whTrendToday(String count) {
+    return '$count today';
+  }
+
+  @override
+  String whTrendVsLastMonth(String value) {
+    return '$value from last month';
+  }
+
+  @override
+  String get whExpiringTitle => 'Materials expiring soon';
+
+  @override
+  String get whExpiringSubtitle =>
+      'These materials must be handled before they expire';
+
+  @override
+  String whTodayOrdersCount(Object count) {
+    return '$count orders';
+  }
+
+  @override
+  String get labNotifActionOpenOrder => 'Open order';
+
+  @override
+  String get labNotifActionReview => 'Review';
+
+  @override
+  String get labActionTrack => 'Track';
+
+  @override
+  String get labReqStatusUnavailable => 'Unavailable';
+
+  @override
+  String get labReqRequestedBy => 'Requested by';
+
+  @override
+  String get labReqLabOrder => 'Lab order';
+
+  @override
+  String get labReqEmptyCategory => 'No material requests in this category';
+
+  @override
+  String get labReqNewRequest => 'New material request';
+
+  @override
+  String get labReqComingSoon =>
+      'The material request form will be added here in the next version.';
+
+  @override
+  String get labTechPendingAssign => 'Awaiting assignment';
+
+  @override
+  String get techAddButton => 'Add technician';
+
+  @override
+  String get techAddTitle => 'Add new technician';
+
+  @override
+  String get techAddSubtitle =>
+      'Enter the technician\'s details to join the lab team';
+
+  @override
+  String get techSectionBasic => 'Basic information';
+
+  @override
+  String get techFieldFullName => 'Full name';
+
+  @override
+  String get techFieldFullNameHint => 'e.g. Mohammad Ali';
+
+  @override
+  String get techFieldRole => 'Role / Specialty';
+
+  @override
+  String get techFieldPhone => 'Phone number (optional)';
+
+  @override
+  String get techFieldShiftStart => 'Shift start';
+
+  @override
+  String get techFieldShiftEnd => 'Shift end';
+
+  @override
+  String get techSkills => 'Skills';
+
+  @override
+  String get techNotesHint => 'Additional notes about the technician...';
+
+  @override
+  String get techNoNameYet => 'No name yet';
+
+  @override
+  String get orderDetailsProgress => 'Work progress';
+
+  @override
+  String get orderDetailsHeading => 'Order details';
+
+  @override
+  String get orderDetailsSubtitleLab =>
+      'Order details sent from the doctor to the lab';
+
+  @override
+  String get orderDetailsExpectedDelivery => 'Expected delivery date';
+
+  @override
+  String get orderDetailsOrderData => 'Order data';
+
+  @override
+  String get orderDetailsDoctorData => 'Doctor data';
+
+  @override
+  String get orderDetailsSenderDoctor => 'Sending doctor';
+
+  @override
+  String get orderDetailsReceivingLab => 'Receiving lab';
+
+  @override
+  String get orderDetailsReadyForDelivery => 'Ready for delivery';
+
+  @override
+  String get labProcessUpdateStatus => 'Update status';
+
+  @override
+  String get labProcessTitle => 'Process order';
+
+  @override
+  String get labProcessDeliveredDesc =>
+      'Material available and delivered to the doctor';
+
+  @override
+  String get labProcessMissingDesc => 'Material not available in the lab';
+
+  @override
+  String get labAssignTitle => 'Assign order';
+
+  @override
+  String labAssignSubtitle(String name) {
+    return 'Choose the order for $name';
+  }
+
+  @override
+  String get profilePageSubtitle => 'Employee data and job information';
 }

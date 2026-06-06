@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -117,11 +118,12 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                     children: [
                       _previewCard(),
                       const SizedBox(height: 18),
-                      _sectionLabel('البيانات الأساسية'),
+                      _sectionLabel(context.l10n.techSectionBasic),
                       const SizedBox(height: 10),
-                      _fieldLabel('الاسم الكامل'),
+                      _fieldLabel(context.l10n.techFieldFullName),
                       const SizedBox(height: 6),
-                      _textField(_nameCtrl, hint: 'مثال: محمد علي'),
+                      _textField(_nameCtrl,
+                          hint: context.l10n.techFieldFullNameHint),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -129,7 +131,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _fieldLabel('الدور / التخصص'),
+                                _fieldLabel(context.l10n.techFieldRole),
                                 const SizedBox(height: 6),
                                 _roleDropdown(),
                               ],
@@ -140,7 +142,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _fieldLabel('رقم الهاتف (اختياري)'),
+                                _fieldLabel(context.l10n.techFieldPhone),
                                 const SizedBox(height: 6),
                                 _textField(_phoneCtrl, hint: '09xxxxxxxx'),
                               ],
@@ -155,7 +157,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _fieldLabel('بداية الدوام'),
+                                _fieldLabel(context.l10n.techFieldShiftStart),
                                 const SizedBox(height: 6),
                                 _timeBox(_shiftStart, () async {
                                   final time = await showTimePicker(
@@ -174,7 +176,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _fieldLabel('نهاية الدوام'),
+                                _fieldLabel(context.l10n.techFieldShiftEnd),
                                 const SizedBox(height: 6),
                                 _timeBox(_shiftEnd, () async {
                                   final time = await showTimePicker(
@@ -191,7 +193,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _sectionLabel('المهارات'),
+                      _sectionLabel(context.l10n.techSkills),
                       const SizedBox(height: 10),
                       Wrap(
                         spacing: 8,
@@ -201,11 +203,11 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _sectionLabel('ملاحظات'),
+                      _sectionLabel(context.l10n.invFormNotes),
                       const SizedBox(height: 10),
                       _textField(
                         _notesCtrl,
-                        hint: 'ملاحظات إضافية عن المخبري...',
+                        hint: context.l10n.techNotesHint,
                         maxLines: 3,
                       ),
                     ],
@@ -218,7 +220,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                 child: Row(
                   children: [
                     _PrimaryBtn(
-                      label: 'إضافة المخبري',
+                      label: context.l10n.techAddButton,
                       icon: Icons.check_rounded,
                       onTap: () {
                         Navigator.of(context).pop(TechnicianFormResult(
@@ -234,7 +236,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
                     ),
                     const SizedBox(width: 10),
                     _OutlineBtn(
-                      label: 'إلغاء',
+                      label: context.l10n.cancel,
                       onTap: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -261,7 +263,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'إضافة مخبري جديد',
+                context.l10n.techAddTitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
@@ -271,7 +273,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
               ),
               const SizedBox(height: 2),
               Text(
-                'أدخل بيانات المخبري للانضمام إلى فريق المخبر',
+                context.l10n.techAddSubtitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
@@ -336,7 +338,7 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                hasName ? _nameCtrl.text.trim() : 'بدون اسم بعد',
+                hasName ? _nameCtrl.text.trim() : context.l10n.techNoNameYet,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 15,
