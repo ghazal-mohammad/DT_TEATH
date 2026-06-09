@@ -230,7 +230,9 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
         curve: Curves.easeOut,
         transform: Matrix4.translationValues(0, _hover ? -3 : 0, 0),
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : AppColors.darkBg1,
+          // خلفية بيضاء من الداخل + حدود رمادية محايدة — مطابق لبطاقات المستودع
+          // (اللون يظهر فقط عبر الشريط الجانبي وصندوق الأيقونة والـ chip).
+          color: isLight ? AppColors.baseComponent : AppColors.darkBg1,
           borderRadius: radius,
           border: Border.all(
               color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
@@ -252,7 +254,7 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
                 end: 0,
                 top: 0,
                 bottom: 0,
-                child: Container(width: 5, color: widget.accentColor),
+                child: Container(width: 4, color: widget.accentColor),
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(18, 14, 14, 16),
@@ -282,7 +284,8 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
                             ),
                           ),
                         ),
-                        // icon (يسار البطاقة في RTL)
+                        // icon (يسار البطاقة في RTL) — صندوق ملوّن خفيف (tint)
+                        // مطابق لبطاقات المستودع.
                         Container(
                           width: 32,
                           height: 32,
@@ -989,18 +992,15 @@ class _DashboardGreeting extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
       decoration: BoxDecoration(
-        // الفاتح: مطابق لـ hero المستودع — أزرق فاتح (tableHeader) → وردي خفيف.
+        // الفاتح: تدرّج لافندر مطابق لـ hero المستودع (توحيد بصري بين النظامين).
         // الغامق: navy → بنفسجي (مطابق روح الـ hero بالموكب).
         gradient: isLight
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.tableHeader.withValues(alpha: 0.08),
-                  AppColors.secondaryComponent.withValues(alpha: 0.05),
-                ],
+            ? const LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [Color(0xFFF3E9FB), Color(0xFFE7DBF5)],
               )
             : const LinearGradient(
                 begin: Alignment.topRight,
@@ -1015,7 +1015,7 @@ class _DashboardGreeting extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(
             color: isLight
-                ? AppColors.tableHeader.withValues(alpha: 0.15)
+                ? const Color(0xFFE0D2F0)
                 : AppColors.darkBorder),
         boxShadow: [
           BoxShadow(

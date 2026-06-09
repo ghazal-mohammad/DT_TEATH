@@ -195,6 +195,14 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
     );
     if (orderId == null) return;
     setState(() {
+      // تسجيل المنفّذ على الطلبية نفسها (UC70/UC71) + نقلها لقيد التصنيع.
+      final idx = _orders.indexWhere((o) => o.id == orderId);
+      if (idx != -1) {
+        _orders[idx].assignedTechnician = tech.name;
+        if (_orders[idx].statusVariant == LabOrderBadgeVariant.newOrder) {
+          _orders[idx].statusVariant = LabOrderBadgeVariant.manufacturing;
+        }
+      }
       tech.taskCount += 1;
       tech.status = TechnicianStatus.active;
     });

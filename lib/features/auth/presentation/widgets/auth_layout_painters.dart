@@ -137,7 +137,7 @@ class AuthDiagRightClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(covariant AuthDiagRightClipper old) =>
-      old.topX != topX || old.botX != botX;
+      old.topX != topX || old.botX != botX || old.W != W || old.H != H;
 }
 
 /// الجانب الأيسر الأبيض — الـ form على اليسار والـ branding على اليمين.
@@ -162,7 +162,7 @@ class AuthDiagLeftClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(covariant AuthDiagLeftClipper old) =>
-      old.topX != topX || old.botX != botX;
+      old.topX != topX || old.botX != botX || old.W != W || old.H != H;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -185,5 +185,130 @@ class AuthNavyBackground extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//   AUTH SHAPE BACKGROUND — Animated diagonal (مستوحى من HTML المرجعي)
+// ══════════════════════════════════════════════════════════════════════════
+
+/// خلفية Auth المتحركة — تحاكي انيميشن background-shape من الـ HTML.
+///
+/// عند تحميل كل شاشة auth، اللوحة القطرية (البيضاء) تبرز من حافة الشاشة
+/// إلى موقعها النهائي. هذا يحاكي حركة `rotate(10deg) skewY(40deg)` من HTML.
+///
+/// الاستخدام:
+/// ```dart
+/// Positioned.fill(
+///   child: AuthShapeBackground(
+///     shapeCtrl: _shapeCtrl,  // 0→1 عند تحميل الصفحة
+///     glowCtrl: _glowCtrl,    // repeating للخط النابض
+///   ),
+/// )
+/// ```
+///
+/// [whiteOnRight]  : true = البيضاء على اليمين (email/login/setPassword).
+///                   false = البيضاء على اليسار (verify_code).
+/// [topRatio]      : نسبة بداية الخط القطري من الأعلى (افتراضي 0.75).
+/// [botRatio]      : نسبة نهاية الخط القطري من الأسفل (افتراضي 0.25).
+/// [glowColor]     : لون خط التوهج (null = AppColors.accent).
+class AuthShapeBackground extends StatelessWidget {
+  const AuthShapeBackground({
+    super.key,
+    required this.shapeCtrl,
+    required this.glowCtrl,
+    this.whiteOnRight = true,
+    this.topRatio = 0.75,
+    this.botRatio = 0.25,
+    this.glowColor,
+  });
+
+  final AnimationController shapeCtrl;
+  final AnimationController glowCtrl;
+  final bool whiteOnRight;
+  final double topRatio;
+  final double botRatio;
+  final Color? glowColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color effectiveGlow = glowColor ?? AppColors.accent;
+
+    return LayoutBuilder(builder: (_, box) {
+      final double W = box.maxWidth;
+      final double H = box.maxHeight;
+
+      return AnimatedBuilder(
+        animation: shapeCtrl,
+        builder: (_, __) {
+          // easeOutCubic — نفس timing الـ HTML (1.5s ease)
+          final double t = CurvedAnimation(
+            parent: shapeCtrl,
+            curve: Curves.easeOutCubic,
+          ).value;
+
+          final double topXFinal = W * topRatio;
+          final double botXFinal = W * botRatio;
+
+          // اللوحة البيضاء تبدأ مختبئة خارج الشاشة ثم تنزلق للموقع النهائي
+          final double topX, botX;
+          if (whiteOnRight) {
+            // يبدأ من الحافة اليمنى (W) ← يتحرك لـ topRatio
+            topX = W + (topXFinal - W) * t;
+            botX = W + (botXFinal - W) * t;
+          } else {
+            // معكوس — يبدأ من الحافة اليسرى (0) ← يتحرك لـ topRatio
+            topX = topXFinal * t;
+            botX = botXFinal * t;
+          }
+
+          // مسار قص التوهج على الجانب الداكن فقط
+          final Path glowClip = whiteOnRight
+              ? (Path()
+                ..moveTo(0, 0)
+                ..lineTo(topX, 0)
+                ..lineTo(botX, H)
+                ..lineTo(0, H)
+                ..close())
+              : (Path()
+                ..moveTo(topX, 0)
+                ..lineTo(W, 0)
+                ..lineTo(W, H)
+                ..lineTo(botX, H)
+                ..close());
+
+          return Stack(children: [
+            // 1 ─ خلفية Navy (بدون تغيير)
+            const AuthNavyBackground(),
+
+            // 2 ─ اللوحة البيضاء المتحركة
+            Positioned.fill(
+              child: ClipPath(
+                clipper: whiteOnRight
+                    ? AuthDiagRightClipper(topX: topX, botX: botX, W: W, H: H)
+                    : AuthDiagLeftClipper(topX: topX, botX: botX, W: W, H: H),
+                child: const ColoredBox(color: Colors.white),
+              ),
+            ),
+
+            // 3 ─ خط التوهج المتحرك (بنفس الألوان الأصلية)
+            Positioned.fill(
+              child: AnimatedBuilder(
+                animation: glowCtrl,
+                builder: (_, __) => CustomPaint(
+                  painter: AuthGlowLinePainter(
+                    start: Offset(topX, 0),
+                    end: Offset(botX, H),
+                    phase: glowCtrl.value * 2 * math.pi,
+                    glowColor: effectiveGlow,
+                    glowClipPath: glowClip,
+                  ),
+                ),
+              ),
+            ),
+          ]);
+        },
+      );
+    });
   }
 }

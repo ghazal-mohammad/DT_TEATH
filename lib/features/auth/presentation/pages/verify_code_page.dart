@@ -21,8 +21,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:async';
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -62,6 +60,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
 
   late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
+  late final AnimationController _shapeCtrl;
 
   final AuthRepository _repo = sl<AuthRepository>();
 
@@ -79,6 +78,11 @@ class _VerifyCodePageState extends State<VerifyCodePage>
       duration: const Duration(seconds: 3),
     )..repeat();
 
+    _shapeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..forward();
+
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
@@ -91,6 +95,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   void dispose() {
     _timer?.cancel();
     _glowCtrl.dispose();
+    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -145,7 +150,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
     if (!mounted) return;
     setState(() => _verifying = false);
 
-    await _entryCtrl.reverse();
+    await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
     if (!mounted) return;
     context.go(
       RouteNames.authSetPassword,
@@ -178,48 +183,19 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   // ── DESKTOP — layout معكوس (form يسار، branding يمين) ────────────────────
 
   Widget _buildDesktop(double W, double H) {
-    final double topX = W * 0.75;
-    final double botX = W * 0.25;
-
     return AuthCardGlowBorder(
       glowColor: AppColors.accent,
       borderRadius: 0,
       child: Stack(
         children: [
-          // 1 ─ خلفية Navy (مشتركة)
-          const AuthNavyBackground(),
-
-          // 2 ─ الجانب الأبيض على اليسار (معكوس عن باقي الصفحات)
+          // 1-3: خلفية متحركة — layout معكوس (white على اليسار)
           Positioned.fill(
-            child: ClipPath(
-              clipper: AuthDiagLeftClipper(
-                topX: topX, botX: botX, W: W, H: H,
-              ),
-              child: const ColoredBox(color: Colors.white),
+            child: AuthShapeBackground(
+              shapeCtrl: _shapeCtrl,
+              glowCtrl: _glowCtrl,
+              whiteOnRight: false,
             ),
           ),
-
-          // 3 ─ خط التوهج (التوهج محصور بجهة الكحلي — اليمين هنا)
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _glowCtrl,
-              builder: (_, __) => CustomPaint(
-                painter: AuthGlowLinePainter(
-                  start: Offset(topX, 0),
-                  end: Offset(botX, H),
-                  phase: _glowCtrl.value * 2 * math.pi,
-                  glowColor: AppColors.accent,
-                  glowClipPath: Path()
-                    ..moveTo(topX, 0)
-                    ..lineTo(W, 0)
-                    ..lineTo(W, H)
-                    ..lineTo(botX, H)
-                    ..close(),
-                ),
-              ),
-            ),
-          ),
-
           // 4 ─ Branding (يمين — داكن)
           Positioned(
             right: 0, width: W * 0.40,

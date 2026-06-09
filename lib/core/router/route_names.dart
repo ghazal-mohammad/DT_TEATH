@@ -42,6 +42,8 @@ class RouteNames {
   static const String labNotifications = '/lab/notifications';
   static const String labSettings = '/lab/settings';
   static const String labMaterialRequests = '/lab/material-requests';
+  static const String labInventory = '/lab/inventory';
+  static const String labProducts = '/lab/products';
 
   // ── نظام المستودع (Warehouse) ───────────────────────────────────────────
   static const String warehouseRoot = '/warehouse';

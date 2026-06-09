@@ -2074,4 +2074,174 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePageSubtitle => 'Employee data and job information';
+
+  @override
+  String get labInventory => 'Lab Inventory';
+
+  @override
+  String get labInvSearchHint => 'Search lab materials...';
+
+  @override
+  String get labInvTotal => 'Total materials';
+
+  @override
+  String get labInvLow => 'Low stock';
+
+  @override
+  String get labInvOut => 'Out of stock';
+
+  @override
+  String get labInvColCategory => 'Category';
+
+  @override
+  String get labInvConsume => 'Record usage';
+
+  @override
+  String get labInvConsumeTitle => 'Record material usage';
+
+  @override
+  String get labInvConsumeAmount => 'Consumed quantity';
+
+  @override
+  String get labInvConsumeHint => 'Enter the quantity withdrawn from stock';
+
+  @override
+  String get labInvCurrentQty => 'Currently available';
+
+  @override
+  String get labInvEmpty => 'No materials in this category';
+
+  @override
+  String get labInvConsumeExceeds => 'Quantity exceeds available stock';
+
+  @override
+  String get labInvConsumeInvalid => 'Enter a valid quantity';
+
+  @override
+  String get labProducts => 'Lab Products';
+
+  @override
+  String get labProductsSearchHint => 'Search products...';
+
+  @override
+  String get labProdTotal => 'Total products';
+
+  @override
+  String get labProdActiveCount => 'Active products';
+
+  @override
+  String get labProdAdd => 'New product';
+
+  @override
+  String get labProdAddTitle => 'Add product';
+
+  @override
+  String get labProdEditTitle => 'Edit product';
+
+  @override
+  String get labProdColType => 'Type';
+
+  @override
+  String get labProdColPrice => 'Price (SYP)';
+
+  @override
+  String get labProdColDuration => 'Production time';
+
+  @override
+  String get labProdDaysUnit => 'days';
+
+  @override
+  String get labProdStatusActive => 'Active';
+
+  @override
+  String get labProdStatusInactive => 'Inactive';
+
+  @override
+  String get labProdFieldName => 'Product name';
+
+  @override
+  String get labProdFieldType => 'Type';
+
+  @override
+  String get labProdFieldMaterial => 'Material';
+
+  @override
+  String get labProdFieldPrice => 'Price in Syrian Pounds';
+
+  @override
+  String get labProdFieldDuration => 'Production time (days)';
+
+  @override
+  String get labProdEmpty => 'No products';
+
+  @override
+  String get labProdNameRequired => 'Product name is required';
+
+  @override
+  String get labProcessCost => 'Order cost (SYP)';
+
+  @override
+  String get labProcessCostHint => 'Enter manufacturing cost';
+
+  @override
+  String get labProcessTechnician => 'Executing technician';
+
+  @override
+  String get labProcessTechnicianNone => 'Not specified';
+
+  @override
+  String get labProcessManufacturingDesc =>
+      'Order is currently being manufactured';
+
+  @override
+  String get labProcessReadyTitle => 'Ready for delivery';
+
+  @override
+  String get orderDetailsCost => 'Cost';
+
+  @override
+  String get orderDetailsExecutor => 'Executing technician';
+
+  @override
+  String get whMovementColumn => 'Movement';
+
+  @override
+  String get whMovementTitle => 'Stock movement';
+
+  @override
+  String get whMovementIn => 'Stock in';
+
+  @override
+  String get whMovementOut => 'Stock out';
+
+  @override
+  String get whMovementAmount => 'Quantity';
+
+  @override
+  String get whMovementExceeds => 'Quantity exceeds available stock';
+
+  @override
+  String get whMovementInvalid => 'Enter a valid quantity';
+
+  @override
+  String get whMovementCurrent => 'Currently available';
+
+  @override
+  String get labProcessConsumedSection => 'Materials consumed from inventory';
+
+  @override
+  String get labProcessConsumedHint =>
+      'These materials are deducted from lab inventory on save';
+
+  @override
+  String get labProcessAddMaterial => 'Add material';
+
+  @override
+  String get labProcessSelectMaterial => 'Select material';
+
+  @override
+  String get labProcessMaterialsCost => 'Materials cost';
+
+  @override
+  String get labProcessNoMaterials => 'No materials added yet';
 }

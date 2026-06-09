@@ -17,8 +17,6 @@
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
 // ════════════════════════════════════════════════════════════════════════════
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -65,6 +63,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
 
   late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
+  late final AnimationController _shapeCtrl;
 
   String _pwd = '', _cfm = '';
   bool _submitting = false;
@@ -79,8 +78,12 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     _glowCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
-
     )..repeat();
+
+    _shapeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..forward();
 
     _entryCtrl = AnimationController(
       vsync: this,
@@ -93,6 +96,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     _pwdCtrl.dispose();
     _cfmCtrl.dispose();
     _glowCtrl.dispose();
+    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -132,7 +136,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
       // ignore: avoid_print
       print('[DT.Teeth][setPassword] user=${state.user} role=${state.user?.role}');
 
-      await _entryCtrl.reverse();
+      await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
       if (!mounted) return;
       // الباك بيرجع توكن جاهز + role — ندخّل المستخدم مباشرة لنظامه.
       context.go(_dashboardForRole(state.user?.role));
@@ -173,45 +177,16 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   // ── DESKTOP ──────────────────────────────────────────────────────────────
 
   Widget _buildDesktop(double W, double H) {
-    final double topX = W * 0.75;
-    final double botX = W * 0.25;
-
     return AuthCardGlowBorder(
       glowColor: AppColors.accent,
       borderRadius: 0,
       child: Stack(
         children: [
-          // 1 ─ خلفية Navy (مشتركة)
-          const AuthNavyBackground(),
-
-          // 2 ─ الجانب الأبيض (diagonal)
+          // 1-3: خلفية متحركة (navy + diagonal + glow) — الانيميشن من الـ HTML
           Positioned.fill(
-            child: ClipPath(
-              clipper: AuthDiagRightClipper(
-                topX: topX, botX: botX, W: W, H: H,
-              ),
-              child: const ColoredBox(color: Colors.white),
-            ),
-          ),
-
-          // 3 ─ خط التوهج المتحرك (التوهج محصور بجهة الكحلي)
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _glowCtrl,
-              builder: (_, __) => CustomPaint(
-                painter: AuthGlowLinePainter(
-                  start: Offset(topX, 0),
-                  end: Offset(botX, H),
-                  phase: _glowCtrl.value * 2 * math.pi,
-                  glowColor: AppColors.accent,
-                  glowClipPath: Path()
-                    ..moveTo(0, 0)
-                    ..lineTo(topX, 0)
-                    ..lineTo(botX, H)
-                    ..lineTo(0, H)
-                    ..close(),
-                ),
-              ),
+            child: AuthShapeBackground(
+              shapeCtrl: _shapeCtrl,
+              glowCtrl: _glowCtrl,
             ),
           ),
 

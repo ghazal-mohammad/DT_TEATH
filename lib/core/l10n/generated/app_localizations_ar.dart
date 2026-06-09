@@ -2057,4 +2057,173 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profilePageSubtitle => 'بيانات الموظف ومعلومات الوظيفة';
+
+  @override
+  String get labInventory => 'مخزون المخبر';
+
+  @override
+  String get labInvSearchHint => 'ابحث عن مادة في المخبر...';
+
+  @override
+  String get labInvTotal => 'إجمالي المواد';
+
+  @override
+  String get labInvLow => 'مواد تنفد';
+
+  @override
+  String get labInvOut => 'مواد نفدت';
+
+  @override
+  String get labInvColCategory => 'الفئة';
+
+  @override
+  String get labInvConsume => 'تسجيل استهلاك';
+
+  @override
+  String get labInvConsumeTitle => 'تسجيل استهلاك مادة';
+
+  @override
+  String get labInvConsumeAmount => 'الكمية المستهلكة';
+
+  @override
+  String get labInvConsumeHint => 'أدخل الكمية المسحوبة من المخزون';
+
+  @override
+  String get labInvCurrentQty => 'المتوفر حالياً';
+
+  @override
+  String get labInvEmpty => 'لا توجد مواد في هذه الفئة';
+
+  @override
+  String get labInvConsumeExceeds => 'الكمية أكبر من المتوفر';
+
+  @override
+  String get labInvConsumeInvalid => 'أدخل كمية صحيحة';
+
+  @override
+  String get labProducts => 'منتجات المخبر';
+
+  @override
+  String get labProductsSearchHint => 'ابحث عن منتج...';
+
+  @override
+  String get labProdTotal => 'إجمالي المنتجات';
+
+  @override
+  String get labProdActiveCount => 'منتجات مفعّلة';
+
+  @override
+  String get labProdAdd => 'منتج جديد';
+
+  @override
+  String get labProdAddTitle => 'إضافة منتج';
+
+  @override
+  String get labProdEditTitle => 'تعديل منتج';
+
+  @override
+  String get labProdColType => 'النوع';
+
+  @override
+  String get labProdColPrice => 'السعر (ل.س)';
+
+  @override
+  String get labProdColDuration => 'مدة التصنيع';
+
+  @override
+  String get labProdDaysUnit => 'يوم';
+
+  @override
+  String get labProdStatusActive => 'مفعّل';
+
+  @override
+  String get labProdStatusInactive => 'متوقف';
+
+  @override
+  String get labProdFieldName => 'اسم المنتج';
+
+  @override
+  String get labProdFieldType => 'النوع';
+
+  @override
+  String get labProdFieldMaterial => 'المادة';
+
+  @override
+  String get labProdFieldPrice => 'السعر بالليرة السورية';
+
+  @override
+  String get labProdFieldDuration => 'مدة التصنيع (أيام)';
+
+  @override
+  String get labProdEmpty => 'لا توجد منتجات';
+
+  @override
+  String get labProdNameRequired => 'اسم المنتج مطلوب';
+
+  @override
+  String get labProcessCost => 'تكلفة الطلبية (ل.س)';
+
+  @override
+  String get labProcessCostHint => 'أدخل تكلفة التصنيع';
+
+  @override
+  String get labProcessTechnician => 'المخبري المنفّذ';
+
+  @override
+  String get labProcessTechnicianNone => 'بدون تحديد';
+
+  @override
+  String get labProcessManufacturingDesc => 'الطلبية قيد التصنيع حالياً';
+
+  @override
+  String get labProcessReadyTitle => 'جاهز للتسليم';
+
+  @override
+  String get orderDetailsCost => 'التكلفة';
+
+  @override
+  String get orderDetailsExecutor => 'المخبري المنفّذ';
+
+  @override
+  String get whMovementColumn => 'حركة';
+
+  @override
+  String get whMovementTitle => 'حركة مخزون';
+
+  @override
+  String get whMovementIn => 'إدخال';
+
+  @override
+  String get whMovementOut => 'إخراج';
+
+  @override
+  String get whMovementAmount => 'الكمية';
+
+  @override
+  String get whMovementExceeds => 'الكمية أكبر من المتوفر';
+
+  @override
+  String get whMovementInvalid => 'أدخل كمية صحيحة';
+
+  @override
+  String get whMovementCurrent => 'المتوفر حالياً';
+
+  @override
+  String get labProcessConsumedSection => 'المواد المستهلكة من المخزون';
+
+  @override
+  String get labProcessConsumedHint =>
+      'تُنقص هذه المواد من مخزون المخبر عند الحفظ';
+
+  @override
+  String get labProcessAddMaterial => 'إضافة مادة';
+
+  @override
+  String get labProcessSelectMaterial => 'اختر مادة';
+
+  @override
+  String get labProcessMaterialsCost => 'تكلفة المواد';
+
+  @override
+  String get labProcessNoMaterials => 'لم تُضف مواد بعد';
 }

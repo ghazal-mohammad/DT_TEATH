@@ -364,9 +364,26 @@ class _OrderInfoCard extends StatelessWidget {
         (label: context.l10n.colType, value: order.type, pillColor: null),
         (label: context.l10n.colMaterial, value: order.material, pillColor: null),
         (label: context.l10n.colTooth, value: order.tooth, pillColor: null),
+        if (order.cost != null)
+          (
+            label: context.l10n.orderDetailsCost,
+            value: '${_formatMoney(order.cost!)} ل.س',
+            pillColor: null,
+          ),
       ],
     );
   }
+}
+
+/// تنسيق رقم بفواصل آلاف (1200000 → 1,200,000).
+String _formatMoney(int v) {
+  final s = v.toString();
+  final buf = StringBuffer();
+  for (int i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+    buf.write(s[i]);
+  }
+  return buf.toString();
 }
 
 class _DoctorInfoCard extends StatelessWidget {
@@ -389,6 +406,12 @@ class _DoctorInfoCard extends StatelessWidget {
               : AppColors.lightText3,
         ),
         (label: context.l10n.orderDetailsReceivingLab, value: 'مختبر الشام', pillColor: null),
+        if (order.assignedTechnician != null)
+          (
+            label: context.l10n.orderDetailsExecutor,
+            value: order.assignedTechnician!,
+            pillColor: null,
+          ),
       ],
     );
   }

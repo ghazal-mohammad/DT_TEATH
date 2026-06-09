@@ -2,8 +2,6 @@
 // email_entry_page.dart — F3.2
 // ════════════════════════════════════════════════════════════════════════════
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -45,6 +43,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
   final TextEditingController _emailCtrl = TextEditingController();
   late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
+  late final AnimationController _shapeCtrl;
 
   @override
   void initState() {
@@ -53,6 +52,10 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat();
+    _shapeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..forward();
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
@@ -63,6 +66,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
   void dispose() {
     _emailCtrl.dispose();
     _glowCtrl.dispose();
+    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -75,7 +79,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
 
   Future<void> _playExitAndNavigate(String email) async {
     if (!mounted) return;
-    await _entryCtrl.reverse();
+    await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
     if (!mounted) return;
     // ✅ FIX 2: استخدم context مباشرة من State (مضمون صالح ما دام mounted)
     context.go(RouteNames.authVerifyCode, extra: email.trim());
@@ -109,42 +113,16 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
   }
 
   Widget _buildDesktop(double W, double H) {
-    final double topX = W * 0.75;
-    final double botX = W * 0.25;
-
     return AuthCardGlowBorder(
       glowColor: AppColors.accent,
       borderRadius: 0,
       child: Stack(
         children: [
-          const AuthNavyBackground(),
-
-          // Diagonal white side
+          // 1-3: خلفية متحركة (navy + diagonal + glow) — الانيميشن من الـ HTML
           Positioned.fill(
-            child: ClipPath(
-              clipper: AuthDiagRightClipper(topX: topX, botX: botX, W: W, H: H),
-              child: const ColoredBox(color: Colors.white),
-            ),
-          ),
-
-          // Turquoise glow line — التوهج محصور بجهة اللوحة الكحلية فقط
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _glowCtrl,
-              builder: (_, __) => CustomPaint(
-                painter: AuthGlowLinePainter(
-                  start: Offset(topX, 0),
-                  end: Offset(botX, H),
-                  phase: _glowCtrl.value * 2 * math.pi,
-                  glowColor: AppColors.accent,
-                  glowClipPath: Path()
-                    ..moveTo(0, 0)
-                    ..lineTo(topX, 0)
-                    ..lineTo(botX, H)
-                    ..lineTo(0, H)
-                    ..close(),
-                ),
-              ),
+            child: AuthShapeBackground(
+              shapeCtrl: _shapeCtrl,
+              glowCtrl: _glowCtrl,
             ),
           ),
 

@@ -60,6 +60,16 @@ class LabSidebarSections {
             route: RouteNames.labTechnicians,
           ),
           SidebarItemData(
+            icon: AppIcons.materials,
+            label: context.l10n.labInventory,
+            route: RouteNames.labInventory,
+          ),
+          SidebarItemData(
+            icon: AppIcons.tooth,
+            label: context.l10n.labProducts,
+            route: RouteNames.labProducts,
+          ),
+          SidebarItemData(
             icon: AppIcons.reports,
             label: context.l10n.labReports,
             route: RouteNames.labReports,

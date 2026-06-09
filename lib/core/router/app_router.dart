@@ -245,6 +245,16 @@ class AppRouter {
         name: 'labMaterialRequests',
         builder: (context, state) => const LabMaterialRequestsPage(),
       ),
+      GoRoute(
+        path: RouteNames.labInventory,
+        name: 'labInventory',
+        builder: (context, state) => const LabInventoryPage(),
+      ),
+      GoRoute(
+        path: RouteNames.labProducts,
+        name: 'labProducts',
+        builder: (context, state) => const LabProductsPage(),
+      ),
 
       // ── Warehouse ─────────────────────────────────────────────────────
       GoRoute(

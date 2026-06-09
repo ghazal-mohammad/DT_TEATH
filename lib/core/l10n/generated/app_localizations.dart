@@ -4051,6 +4051,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Employee data and job information'**
   String get profilePageSubtitle;
+
+  /// No description provided for @labInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Inventory'**
+  String get labInventory;
+
+  /// No description provided for @labInvSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search lab materials...'**
+  String get labInvSearchHint;
+
+  /// No description provided for @labInvTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total materials'**
+  String get labInvTotal;
+
+  /// No description provided for @labInvLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock'**
+  String get labInvLow;
+
+  /// No description provided for @labInvOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of stock'**
+  String get labInvOut;
+
+  /// No description provided for @labInvColCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get labInvColCategory;
+
+  /// No description provided for @labInvConsume.
+  ///
+  /// In en, this message translates to:
+  /// **'Record usage'**
+  String get labInvConsume;
+
+  /// No description provided for @labInvConsumeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record material usage'**
+  String get labInvConsumeTitle;
+
+  /// No description provided for @labInvConsumeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumed quantity'**
+  String get labInvConsumeAmount;
+
+  /// No description provided for @labInvConsumeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the quantity withdrawn from stock'**
+  String get labInvConsumeHint;
+
+  /// No description provided for @labInvCurrentQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently available'**
+  String get labInvCurrentQty;
+
+  /// No description provided for @labInvEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials in this category'**
+  String get labInvEmpty;
+
+  /// No description provided for @labInvConsumeExceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity exceeds available stock'**
+  String get labInvConsumeExceeds;
+
+  /// No description provided for @labInvConsumeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid quantity'**
+  String get labInvConsumeInvalid;
+
+  /// No description provided for @labProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Products'**
+  String get labProducts;
+
+  /// No description provided for @labProductsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search products...'**
+  String get labProductsSearchHint;
+
+  /// No description provided for @labProdTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total products'**
+  String get labProdTotal;
+
+  /// No description provided for @labProdActiveCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Active products'**
+  String get labProdActiveCount;
+
+  /// No description provided for @labProdAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New product'**
+  String get labProdAdd;
+
+  /// No description provided for @labProdAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add product'**
+  String get labProdAddTitle;
+
+  /// No description provided for @labProdEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit product'**
+  String get labProdEditTitle;
+
+  /// No description provided for @labProdColType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get labProdColType;
+
+  /// No description provided for @labProdColPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (SYP)'**
+  String get labProdColPrice;
+
+  /// No description provided for @labProdColDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Production time'**
+  String get labProdColDuration;
+
+  /// No description provided for @labProdDaysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get labProdDaysUnit;
+
+  /// No description provided for @labProdStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get labProdStatusActive;
+
+  /// No description provided for @labProdStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get labProdStatusInactive;
+
+  /// No description provided for @labProdFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Product name'**
+  String get labProdFieldName;
+
+  /// No description provided for @labProdFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get labProdFieldType;
+
+  /// No description provided for @labProdFieldMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get labProdFieldMaterial;
+
+  /// No description provided for @labProdFieldPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price in Syrian Pounds'**
+  String get labProdFieldPrice;
+
+  /// No description provided for @labProdFieldDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Production time (days)'**
+  String get labProdFieldDuration;
+
+  /// No description provided for @labProdEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No products'**
+  String get labProdEmpty;
+
+  /// No description provided for @labProdNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Product name is required'**
+  String get labProdNameRequired;
+
+  /// No description provided for @labProcessCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Order cost (SYP)'**
+  String get labProcessCost;
+
+  /// No description provided for @labProcessCostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter manufacturing cost'**
+  String get labProcessCostHint;
+
+  /// No description provided for @labProcessTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Executing technician'**
+  String get labProcessTechnician;
+
+  /// No description provided for @labProcessTechnicianNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get labProcessTechnicianNone;
+
+  /// No description provided for @labProcessManufacturingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Order is currently being manufactured'**
+  String get labProcessManufacturingDesc;
+
+  /// No description provided for @labProcessReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready for delivery'**
+  String get labProcessReadyTitle;
+
+  /// No description provided for @orderDetailsCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get orderDetailsCost;
+
+  /// No description provided for @orderDetailsExecutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Executing technician'**
+  String get orderDetailsExecutor;
+
+  /// No description provided for @whMovementColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get whMovementColumn;
+
+  /// No description provided for @whMovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock movement'**
+  String get whMovementTitle;
+
+  /// No description provided for @whMovementIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock in'**
+  String get whMovementIn;
+
+  /// No description provided for @whMovementOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock out'**
+  String get whMovementOut;
+
+  /// No description provided for @whMovementAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get whMovementAmount;
+
+  /// No description provided for @whMovementExceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity exceeds available stock'**
+  String get whMovementExceeds;
+
+  /// No description provided for @whMovementInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid quantity'**
+  String get whMovementInvalid;
+
+  /// No description provided for @whMovementCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently available'**
+  String get whMovementCurrent;
+
+  /// No description provided for @labProcessConsumedSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials consumed from inventory'**
+  String get labProcessConsumedSection;
+
+  /// No description provided for @labProcessConsumedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These materials are deducted from lab inventory on save'**
+  String get labProcessConsumedHint;
+
+  /// No description provided for @labProcessAddMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Add material'**
+  String get labProcessAddMaterial;
+
+  /// No description provided for @labProcessSelectMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Select material'**
+  String get labProcessSelectMaterial;
+
+  /// No description provided for @labProcessMaterialsCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials cost'**
+  String get labProcessMaterialsCost;
+
+  /// No description provided for @labProcessNoMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials added yet'**
+  String get labProcessNoMaterials;
 }
 
 class _AppLocalizationsDelegate

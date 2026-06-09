@@ -17,6 +17,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../data/lab_inventory_store.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 import '../navigation/lab_sidebar_sections.dart';
 import '../widgets/lab_order_details_dialog.dart';
@@ -154,14 +155,19 @@ class _LabOrdersPageState extends State<LabOrdersPage> {
         filtered: _filtered,
         filter: _filter,
         onFilterChange: (v) => setState(() => _filter = v),
-        onProcessSaved: (orderId, choice) {
+        onProcessSaved: (orderId, result) {
           final idx = _orders.indexWhere((o) => o.id == orderId);
           if (idx == -1) return;
           setState(() {
-            _orders[idx].statusVariant = choice == LabProcessChoice.delivered
-                ? LabOrderBadgeVariant.ready
-                : LabOrderBadgeVariant.newOrder;
+            final order = _orders[idx];
+            order.statusVariant = result.status;
+            if (result.cost != null) order.cost = result.cost;
+            order.assignedTechnician = result.technician;
           });
+          // إنجاز الطلب → إنقاص المواد المستهلكة من مخزون المخبر (UC75).
+          if (result.consumption.isNotEmpty) {
+            LabInventoryStore.instance.applyConsumption(result.consumption);
+          }
         },
       ),
     );
@@ -185,7 +191,7 @@ class _LabOrdersBody extends StatelessWidget {
   final List<LabOrderFull> filtered;
   final String filter;
   final ValueChanged<String> onFilterChange;
-  final void Function(String orderId, LabProcessChoice choice) onProcessSaved;
+  final void Function(String orderId, LabProcessResult result) onProcessSaved;
 
   int _count(bool Function(LabOrderFull) test) =>
       orders.where(test).length;

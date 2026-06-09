@@ -19,8 +19,6 @@
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
 // ════════════════════════════════════════════════════════════════════════════
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,6 +47,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
     with TickerProviderStateMixin {
   late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
+  late final AnimationController _shapeCtrl;
 
   @override
   void initState() {
@@ -57,6 +56,11 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat();
+
+    _shapeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..forward();
 
     _entryCtrl = AnimationController(
       vsync: this,
@@ -67,6 +71,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
   @override
   void dispose() {
     _glowCtrl.dispose();
+    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -96,31 +101,14 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
       borderRadius: 0,
       child: Stack(
         children: [
-          // 1 ─ خلفية Navy (مشتركة)
-          const AuthNavyBackground(),
-
-          // 2 ─ الجانب الأبيض (diagonal)
+          // 1-3: خلفية متحركة — نسب مختلفة ولون بلوري خاص بـ system_selection
           Positioned.fill(
-            child: ClipPath(
-              clipper: AuthDiagRightClipper(
-                topX: topX, botX: botX, W: W, H: H,
-              ),
-              child: const ColoredBox(color: Colors.white),
-            ),
-          ),
-
-          // 3 ─ خط التوهج البلوري (glowColor مختلف — system_selection)
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _glowCtrl,
-              builder: (_, __) => CustomPaint(
-                painter: AuthGlowLinePainter(
-                  start: Offset(topX, 0),
-                  end: Offset(botX, H),
-                  phase: _glowCtrl.value * 2 * math.pi,
-                  glowColor: const Color(0xFFBED8FA), // بلوري لـ system
-                ),
-              ),
+            child: AuthShapeBackground(
+              shapeCtrl: _shapeCtrl,
+              glowCtrl: _glowCtrl,
+              topRatio: topXRatio,
+              botRatio: botXRatio,
+              glowColor: const Color(0xFFBED8FA),
             ),
           ),
 

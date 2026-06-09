@@ -30,6 +30,7 @@ import '../../../domain/entities/warehouse_material.dart';
 import '../../bloc/materials_cubit.dart';
 import '../../bloc/materials_state.dart';
 import 'warehouse_material_form_dialog.dart';
+import 'warehouse_material_movement_dialog.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //                             LOCAL FILTERS
@@ -135,6 +136,7 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
               isLight: isLight,
               onAddTap: () => _openForm(context),
               onRowTap: (m) => _openForm(context, initial: m),
+              onMovement: (m) => _openMovement(context, m),
             ),
           ],
         );
@@ -153,6 +155,16 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
     } else {
       await cubit.update(result);
     }
+  }
+
+  /// تسجيل حركة مخزون (إدخال/إخراج) على مادة — UC81.
+  Future<void> _openMovement(BuildContext context,
+      WarehouseMaterial material) async {
+    final cubit = context.read<MaterialsCubit>();
+    final delta = await WarehouseMaterialMovementDialog.show(context, material);
+    if (delta == null) return;
+    final newQty = (material.quantity + delta).clamp(0, 1 << 30);
+    await cubit.update(material.copyWith(quantity: newQty));
   }
 }
 
@@ -458,6 +470,7 @@ class _TableSection extends StatelessWidget {
     required this.isLight,
     required this.onAddTap,
     required this.onRowTap,
+    required this.onMovement,
   });
 
   final int total;
@@ -468,6 +481,7 @@ class _TableSection extends StatelessWidget {
   final bool isLight;
   final VoidCallback onAddTap;
   final ValueChanged<WarehouseMaterial> onRowTap;
+  final ValueChanged<WarehouseMaterial> onMovement;
 
   int _statusCount(_StatusFilter s) =>
       all.where(s.matches).length;
@@ -503,6 +517,7 @@ class _TableSection extends StatelessWidget {
               rows: filtered,
               isLight: isLight,
               onRowTap: onRowTap,
+              onMovement: onMovement,
             ),
         ],
       ),
@@ -675,10 +690,12 @@ class _MaterialsTable extends StatelessWidget {
     required this.rows,
     required this.isLight,
     required this.onRowTap,
+    required this.onMovement,
   });
   final List<WarehouseMaterial> rows;
   final bool isLight;
   final ValueChanged<WarehouseMaterial> onRowTap;
+  final ValueChanged<WarehouseMaterial> onMovement;
 
   @override
   Widget build(BuildContext context) {
@@ -695,6 +712,7 @@ class _MaterialsTable extends StatelessWidget {
             isLight: isLight,
             isLast: i == rows.length - 1,
             onTap: () => onRowTap(rows[i]),
+            onMovement: () => onMovement(rows[i]),
           ),
       ],
     );
@@ -720,6 +738,7 @@ class _TableHeader extends StatelessWidget {
           Expanded(flex: 2, child: _HCell(context.l10n.whColExpiry)),
           Expanded(flex: 2, child: _HCell(context.l10n.whColSupplier)),
           Expanded(flex: 2, child: _HCell(context.l10n.whColStatus)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whMovementColumn)),
         ],
       ),
     );
@@ -750,11 +769,13 @@ class _TableDataRow extends StatelessWidget {
     required this.isLight,
     required this.isLast,
     required this.onTap,
+    required this.onMovement,
   });
   final WarehouseMaterial material;
   final bool isLight;
   final bool isLast;
   final VoidCallback onTap;
+  final VoidCallback onMovement;
 
   String get _code => 'MAT-${material.id.padLeft(3, '0').substring(material.id.length > 3 ? material.id.length - 3 : 0)}';
 
@@ -860,7 +881,60 @@ class _TableDataRow extends StatelessWidget {
                 child: _StatusPill(status: material.status),
               ),
             ),
+            Expanded(
+              flex: 2,
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: _MovementButton(onTap: onMovement, isLight: isLight),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// زر فتح مودال حركة المخزون (إدخال/إخراج).
+class _MovementButton extends StatelessWidget {
+  const _MovementButton({required this.onTap, required this.isLight});
+  final VoidCallback onTap;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: context.l10n.whMovementTitle,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: isLight ? Colors.white : AppColors.darkBg1,
+              border: Border.all(
+                  color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.swap_vert_rounded,
+                    size: 15, color: AppColors.primary),
+                const SizedBox(width: 4),
+                Text(
+                  context.l10n.whMovementColumn,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

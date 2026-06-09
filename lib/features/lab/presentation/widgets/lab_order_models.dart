@@ -10,6 +10,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 
+/// أسماء المخبريين (الفنيين) المتاحين — مرجع موحّد للتوكيل وتسجيل المنفّذ.
+/// تُستبدل بقائمة من API لاحقاً (GET /api/lab/technicians).
+const List<String> kLabTechnicianNames = [
+  'محمد علي',
+  'سامر حسن',
+  'ليلى كريم',
+  'يوسف ناصر',
+];
+
 /// نموذج كامل لطلب المخبر — يستخدم بصفحة الطلبات والمودالات.
 class LabOrderFull {
   LabOrderFull({
@@ -22,6 +31,8 @@ class LabOrderFull {
     required this.statusVariant,
     this.isUrgent = false,
     this.notes = '',
+    this.cost,
+    this.assignedTechnician,
   });
 
   final String id;
@@ -33,6 +44,12 @@ class LabOrderFull {
   LabOrderBadgeVariant statusVariant;
   final bool isUrgent;
   final String notes;
+
+  /// تكلفة تصنيع الطلبية بالليرة السورية (تُسجَّل عند المعالجة) — UC69.
+  int? cost;
+
+  /// اسم المخبري المنفّذ للطلبية (تسجيل المنفّذ) — UC70 / UC71.
+  String? assignedTechnician;
 }
 
 /// ألوان الـ status badge (نقطة + نص) — مطابقة لتصميم الجدول بالـ Dashboard.

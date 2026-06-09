@@ -6,6 +6,8 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 export 'lab_dashboard_page.dart';
+export 'lab_inventory_page.dart';
+export 'lab_products_page.dart';
 export 'lab_material_requests_page.dart';
 export 'lab_notifications_page.dart';
 export 'lab_orders_page.dart';
