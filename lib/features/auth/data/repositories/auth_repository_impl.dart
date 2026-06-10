@@ -8,6 +8,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/auth/auth_models.dart';
+import '../../../../core/auth/current_user.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/failure.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -61,6 +62,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       await DioClient.saveToken(user.token);
+      CurrentUser.instance.setUser(user);
       return user;
     } on DioException catch (e) {
       throw _mapDioError(e);
@@ -88,6 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // حفظ التوكن — Dio interceptor رح يستعملو تلقائياً بعد هيك.
       await DioClient.saveToken(user.token);
+      CurrentUser.instance.setUser(user);
       return user;
     } on DioException catch (e) {
       throw _mapDioError(e);
@@ -102,6 +105,43 @@ class AuthRepositoryImpl implements AuthRepository {
       // تجاهل أخطاء الـAPI — لازم نمسح التوكن محلياً مهما يكن.
     } finally {
       await DioClient.clearToken();
+      CurrentUser.instance.clear();
+    }
+  }
+
+  @override
+  Future<void> sendResetCode({required String email}) async {
+    try {
+      await _remote.sendResetCode(email: email);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<void> verifyResetCode({
+    required String email,
+    required String verificationCode,
+  }) async {
+    try {
+      await _remote.verifyResetCode(
+        email: email,
+        verificationCode: verificationCode,
+      );
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _remote.resetPassword(email: email, password: password);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
     }
   }
 

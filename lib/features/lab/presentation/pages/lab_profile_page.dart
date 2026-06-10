@@ -30,9 +30,9 @@ class LabProfilePage extends StatelessWidget {
       userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
-      // صفحة الملف الشخصي: حقل البحث وحده في التوب بار بلا أيقونات جانبية.
+      // صفحة الملف الشخصي: بلا بحث وبلا أيقونات جانبية.
       showTopbarActions: false,
-      searchPlaceholder: context.l10n.settingsSearchHint,
+      showSearch: false,
       // المحتوى يدير السكرول داخلياً ليتمكّن العمود الجانبي من البقاء ثابتاً (sticky).
       body: const LabProfileContent(),
     );

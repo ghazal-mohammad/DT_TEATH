@@ -110,6 +110,7 @@ class AppShellLayout extends StatelessWidget {
     this.contentPadding,
     this.showThemeToggle = true,
     this.showTopbarActions = true,
+    this.showSearch = true,
   });
 
   /// النظام الحالي — يحدد ألوان الـ active state وشارة السايدبار.
@@ -144,6 +145,9 @@ class AppShellLayout extends StatelessWidget {
 
   /// نص placeholder لحقل البحث (اختياري — افتراضه AppStrings.search).
   final String? searchPlaceholder;
+
+  /// إظهار حقل البحث في التوب بار (يُخفى مثلاً في صفحة الملف الشخصي).
+  final bool showSearch;
 
   /// padding داخلي للمحتوى. الافتراضي = 22px (مطابق لـ .ct في HTML).
   final EdgeInsetsGeometry? contentPadding;
@@ -301,7 +305,7 @@ class AppShellLayout extends StatelessWidget {
     return AppTopbar(
       title: pageTitle,
       subtitle: pageSubtitle,
-      showSearch: !isMobile,
+      showSearch: showSearch && !isMobile,
       onSearchChanged: onSearchChanged,
       searchPlaceholder: searchPlaceholder ?? AppStrings.search,
       notificationCount: notificationCount,

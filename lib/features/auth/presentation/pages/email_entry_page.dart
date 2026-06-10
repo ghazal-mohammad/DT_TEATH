@@ -14,6 +14,7 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
+import '../../domain/auth_flow_mode.dart';
 import '../bloc/email_entry_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
 import '../widgets/auth_layout_painters.dart';
@@ -22,19 +23,23 @@ import '../widgets/auth_submit_button.dart';
 import '../widgets/email_form_field.dart';
 
 class EmailEntryPage extends StatelessWidget {
-  const EmailEntryPage({super.key});
+  const EmailEntryPage({super.key, this.mode = AuthFlowMode.activation});
+
+  /// نوع التدفّق: تفعيل أول مرة أو "نسيت كلمة السر".
+  final AuthFlowMode mode;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<EmailEntryCubit>(),
-      child: const _View(),
+      create: (_) => sl<EmailEntryCubit>()..setMode(mode),
+      child: _View(mode: mode),
     );
   }
 }
 
 class _View extends StatefulWidget {
-  const _View();
+  const _View({required this.mode});
+  final AuthFlowMode mode;
   @override
   State<_View> createState() => _ViewState();
 }
@@ -82,7 +87,10 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
     await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
     if (!mounted) return;
     // ✅ FIX 2: استخدم context مباشرة من State (مضمون صالح ما دام mounted)
-    context.go(RouteNames.authVerifyCode, extra: email.trim());
+    context.go(
+      RouteNames.authVerifyCode,
+      extra: {'email': email.trim(), 'mode': widget.mode},
+    );
   }
 
   void _submit() {
@@ -140,6 +148,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
             child: _DesktopForm(
               emailCtrl: _emailCtrl,
               entryCtrl: _entryCtrl,
+              mode: widget.mode,
               onSubmit: _submit,
             ),
           ),
@@ -179,6 +188,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
                     _MobileForm(
                       emailCtrl: _emailCtrl,
                       entryCtrl: _entryCtrl,
+                      mode: widget.mode,
                       onSubmit: _submit,
                     ),
                   ],
@@ -258,10 +268,12 @@ class _DesktopForm extends StatelessWidget {
   const _DesktopForm({
     required this.emailCtrl,
     required this.entryCtrl,
+    required this.mode,
     required this.onSubmit,
   });
   final TextEditingController emailCtrl;
   final AnimationController entryCtrl;
+  final AuthFlowMode mode;
   final VoidCallback onSubmit;
 
   @override
@@ -284,6 +296,7 @@ class _DesktopForm extends StatelessWidget {
                   child: _FormContent(
                     emailCtrl: emailCtrl,
                     entryCtrl: entryCtrl,
+                    mode: mode,
                     isMobile: false,
                     onSubmit: onSubmit,
                   ),
@@ -304,10 +317,12 @@ class _MobileForm extends StatelessWidget {
   const _MobileForm({
     required this.emailCtrl,
     required this.entryCtrl,
+    required this.mode,
     required this.onSubmit,
   });
   final TextEditingController emailCtrl;
   final AnimationController entryCtrl;
+  final AuthFlowMode mode;
   final VoidCallback onSubmit;
 
   @override
@@ -315,6 +330,7 @@ class _MobileForm extends StatelessWidget {
     return _FormContent(
       emailCtrl: emailCtrl,
       entryCtrl: entryCtrl,
+      mode: mode,
       isMobile: true,
       onSubmit: onSubmit,
     );
@@ -328,12 +344,14 @@ class _FormContent extends StatelessWidget {
   const _FormContent({
     required this.emailCtrl,
     required this.entryCtrl,
+    required this.mode,
     required this.isMobile,
     required this.onSubmit,
   });
 
   final TextEditingController emailCtrl;
   final AnimationController entryCtrl;
+  final AuthFlowMode mode;
   final bool isMobile;
   final VoidCallback onSubmit;
 
@@ -347,6 +365,19 @@ class _FormContent extends StatelessWidget {
         final Color subColor = isMobile
             ? Colors.white.withValues(alpha: 0.65)
             : AppColors.authFormSubLight;
+
+        // وضع reset: عنوان/شرح واضح إنها "إعادة تعيين" مش تسجيل أول مرة.
+        final bool isReset = mode == AuthFlowMode.reset;
+        final bool isAr =
+            Localizations.localeOf(context).languageCode == 'ar';
+        final String titleText = isReset
+            ? (isAr ? 'إعادة تعيين كلمة المرور' : 'Reset Password')
+            : context.l10n.authEnterEmailTitle;
+        final String subtitleText = isReset
+            ? (isAr
+                ? 'أدخل بريدك المسجَّل ونرسل لك كود التحقق'
+                : 'Enter your registered email to receive a verification code')
+            : context.l10n.authEnterEmailSubtitle;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -372,7 +403,7 @@ class _FormContent extends StatelessWidget {
               controller: entryCtrl,
               delay: AuthStaggerDelays.title,
               child: Text(
-                context.l10n.authEnterEmailTitle,
+                titleText,
                 style: AppTextStyles.authFormTitle.copyWith(color: titleColor),
               ),
             ),
@@ -382,7 +413,7 @@ class _FormContent extends StatelessWidget {
               controller: entryCtrl,
               delay: AuthStaggerDelays.subtitle,
               child: Text(
-                context.l10n.authEnterEmailSubtitle,
+                subtitleText,
                 style: AppTextStyles.authFormSubtitle.copyWith(color: subColor),
               ),
             ),

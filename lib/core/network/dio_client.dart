@@ -19,6 +19,12 @@ class DioClient {
   static const _storage = FlutterSecureStorage();
   static const _tokenKey = 'auth_token';
 
+  /// نسخة بالذاكرة من التوكن — مصدر الحقيقة أثناء الجلسة.
+  /// السبب: قراءة FlutterSecureStorage على Flutter Web غير مستقرة أحياناً
+  /// (قد ترجّع null لحظياً)، فكان طلب يُرسَل بدون توكن → 401. الذاكرة تضمن
+  /// إرفاق التوكن لكل طلب بشكل حتمي.
+  static String? _cachedToken;
+
   /// Dio instance جاهزة للاستخدام.
   /// تُبنى مرة واحدة عند بدء التطبيق وتُسجّل في GetIt.
   static Dio build() {
@@ -40,19 +46,19 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await _storage.read(key: _tokenKey);
+          // الذاكرة أولاً، ثم secure storage كاحتياط (وتسخين الذاكرة).
+          var token = _cachedToken;
+          if (token == null || token.isEmpty) {
+            token = await _storage.read(key: _tokenKey);
+            if (token != null && token.isNotEmpty) _cachedToken = token;
+          }
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
           handler.next(options);
         },
-        onError: (error, handler) {
-          // معالجة 401 تلقائياً — مسح التوكن ليُعاد التوجيه لـ login.
-          if (error.response?.statusCode == 401) {
-            _storage.delete(key: _tokenKey);
-          }
-          handler.next(error);
-        },
+        // ملاحظة: لا نمسح التوكن تلقائياً عند 401 — كان أي 401 عابر يهدم
+        // الجلسة كلها. تسجيل الخروج الصريح هو اللي يمسح التوكن.
       ),
     );
 
@@ -74,13 +80,19 @@ class DioClient {
     return dio;
   }
 
-  /// حفظ التوكن بعد تسجيل الدخول.
-  static Future<void> saveToken(String token) =>
-      _storage.write(key: _tokenKey, value: token);
+  /// حفظ التوكن بعد تسجيل الدخول (ذاكرة + storage).
+  static Future<void> saveToken(String token) {
+    _cachedToken = token;
+    return _storage.write(key: _tokenKey, value: token);
+  }
 
-  /// مسح التوكن عند تسجيل الخروج.
-  static Future<void> clearToken() => _storage.delete(key: _tokenKey);
+  /// مسح التوكن عند تسجيل الخروج (ذاكرة + storage).
+  static Future<void> clearToken() {
+    _cachedToken = null;
+    return _storage.delete(key: _tokenKey);
+  }
 
-  /// قراءة التوكن الحالي.
-  static Future<String?> readToken() => _storage.read(key: _tokenKey);
+  /// قراءة التوكن الحالي (الذاكرة أولاً).
+  static Future<String?> readToken() async =>
+      _cachedToken ?? await _storage.read(key: _tokenKey);
 }

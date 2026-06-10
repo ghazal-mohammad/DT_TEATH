@@ -27,6 +27,11 @@ import '../../features/profile/data/repositories/profile_repository_impl.dart';
 import '../../features/profile/domain/repositories/profile_repository.dart';
 import '../../features/profile/presentation/bloc/profile_cubit.dart';
 
+// ── Lab feature ────────────────────────────────────────────────────────────
+import '../../features/lab/data/datasources/lab_remote_datasource.dart';
+import '../../features/lab/data/repositories/lab_repository_impl.dart';
+import '../../features/lab/domain/repositories/lab_repository.dart';
+
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
 
@@ -70,6 +75,14 @@ Future<void> initDependencies() async {
   // ── Profile: Cubit — Factory (instance لكل صفحة بروفايل) ───────────────
   sl.registerFactory<ProfileCubit>(
     () => ProfileCubit(sl<ProfileRepository>()),
+  );
+
+  // ── Lab: Data + Domain ─────────────────────────────────────────────────
+  sl.registerLazySingleton<LabRemoteDataSource>(
+    () => LabRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<LabRepository>(
+    () => LabRepositoryImpl(sl<LabRemoteDataSource>()),
   );
 }
 

@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/failure.dart';
 import '../../../../core/utils/validators.dart';
+import '../../domain/auth_flow_mode.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -58,11 +59,16 @@ class EmailEntryCubit extends Cubit<EmailEntryState> {
 
   final AuthRepository _repo;
 
+  /// نوع التدفّق — يحدّد أي endpoint نستدعي (تفعيل أول مرة أو إعادة تعيين).
+  AuthFlowMode _mode = AuthFlowMode.activation;
+  AuthFlowMode get mode => _mode;
+  void setMode(AuthFlowMode mode) => _mode = mode;
+
   void emailChanged(String value) {
     emit(state.copyWith(email: value, clearError: true));
   }
 
-  /// يرسل كود التحقق للإيميل عبر AuthRepository.
+  /// يرسل كود التحقق للإيميل عبر AuthRepository (حسب الـ mode).
   Future<void> submit() async {
     final trimmed = state.email.trim();
 
@@ -87,7 +93,11 @@ class EmailEntryCubit extends Cubit<EmailEntryState> {
     ));
 
     try {
-      await _repo.sendVerification(email: trimmed);
+      if (_mode == AuthFlowMode.reset) {
+        await _repo.sendResetCode(email: trimmed);
+      } else {
+        await _repo.sendVerification(email: trimmed);
+      }
       emit(state.copyWith(status: EmailEntryStatus.success));
     } on Failure catch (f) {
       emit(state.copyWith(

@@ -75,6 +75,47 @@ class AuthRemoteDataSource {
     await _dio.post(ApiEndpoints.employeeLogout);
   }
 
+  // ── Forgot Password (إعادة تعيين كلمة سر لحساب مُفعَّل) ──────────────────
+
+  /// POST /api/forgotPassword/sendCode
+  Future<Map<String, dynamic>> sendResetCode({required String email}) async {
+    final response = await _dio.post(
+      ApiEndpoints.forgotPasswordSendCode,
+      data: FormData.fromMap({'email': email}),
+    );
+    return _asMap(response.data);
+  }
+
+  /// POST /api/forgotPassword/verifyCode
+  Future<Map<String, dynamic>> verifyResetCode({
+    required String email,
+    required String verificationCode,
+  }) async {
+    final response = await _dio.post(
+      ApiEndpoints.forgotPasswordVerifyCode,
+      data: FormData.fromMap({
+        'email': email,
+        'verification_code': verificationCode,
+      }),
+    );
+    return _asMap(response.data);
+  }
+
+  /// POST /api/forgotPassword/resetPassword (body: email + password فقط)
+  Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String password,
+  }) async {
+    final response = await _dio.post(
+      ApiEndpoints.forgotPasswordReset,
+      data: FormData.fromMap({
+        'email': email,
+        'password': password,
+      }),
+    );
+    return _asMap(response.data);
+  }
+
   Map<String, dynamic> _asMap(Object? data) {
     if (data is Map<String, dynamic>) return data;
     if (data is Map) return Map<String, dynamic>.from(data);

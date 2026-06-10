@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../auth/presentation/logout_action.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/bloc/theme_cubit.dart';
 import '../../../../shared/bloc/locale_cubit.dart';
@@ -371,7 +372,7 @@ class _SecurityTabState extends State<_SecurityTab> {
             label: context.l10n.logout,
             isLight: widget.isLight,
             danger: true,
-            onTap: () {},
+            onTap: () => performLogout(context),
           ),
         ),
       ],

@@ -36,4 +36,22 @@ abstract class AuthRepository {
 
   /// تسجيل خروج. يمسح التوكن من SecureStorage حتى لو فشل طلب الـAPI.
   Future<void> logout();
+
+  // ── Forgot Password (إعادة تعيين كلمة سر لحساب مُفعَّل) ──────────────────
+
+  /// إرسال كود إعادة تعيين كلمة السر لإيميل موجود (لحساب مفعّل).
+  Future<void> sendResetCode({required String email});
+
+  /// التحقق من كود إعادة التعيين قبل تعيين كلمة سر جديدة.
+  Future<void> verifyResetCode({
+    required String email,
+    required String verificationCode,
+  });
+
+  /// تعيين كلمة سر جديدة بعد التحقق من الكود.
+  /// لا يرجّع توكن (الباك يلغي كل التوكنات) — لازم المستخدم يسجّل دخول من جديد.
+  Future<void> resetPassword({
+    required String email,
+    required String password,
+  });
 }

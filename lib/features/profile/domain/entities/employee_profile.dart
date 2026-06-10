@@ -40,6 +40,10 @@ class EmployeeProfile {
     required this.salary,
     required this.hireDate,
     required this.skills,
+    required this.educations,
+    required this.experiences,
+    required this.trainings,
+    this.profilePicture = '',
   });
 
   final int id;
@@ -59,11 +63,26 @@ class EmployeeProfile {
   final String salary;
   final String hireDate;
   final List<String> skills;
+  final List<Education> educations;
+  final List<Experience> experiences;
+  final List<Training> trainings;
+
+  /// رابط صورة البروفايل. حالياً `showProfile` بالباك **ما يرجّعه** — جاهز
+  /// فاللحظة اللي الباك يضيف `profile_picture` لردّ EmployeeProfileResource.
+  final String profilePicture;
 
   /// بناء من الرد الخام. يتعامل مع التغليف `{ data: {...} }` ومع الكائن المباشر.
   factory EmployeeProfile.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> d =
         json['data'] is Map<String, dynamic> ? json['data'] as Map<String, dynamic> : json;
+
+    List<T> parseList<T>(Object? raw, T Function(Map<String, dynamic>) fromMap) {
+      if (raw is! List) return <T>[];
+      return raw
+          .whereType<Map>()
+          .map((e) => fromMap(Map<String, dynamic>.from(e)))
+          .toList();
+    }
 
     return EmployeeProfile(
       id: _toInt(d['id']),
@@ -80,6 +99,11 @@ class EmployeeProfile {
       skills: d['skills'] is List
           ? (d['skills'] as List).map((e) => e.toString()).toList()
           : const <String>[],
+      educations: parseList(d['educations'], Education.fromJson),
+      experiences: parseList(d['experiences'], Experience.fromJson),
+      trainings: parseList(d['trainings'], Training.fromJson),
+      profilePicture:
+          _toStr(d['profile_picture'] ?? d['profile_picture_url']),
     );
   }
 
@@ -90,4 +114,67 @@ class EmployeeProfile {
   }
 
   static String _toStr(Object? v) => v == null ? '' : v.toString();
+}
+
+/// شهادة علمية ضمن ملف الموظف.
+class Education {
+  const Education({
+    required this.degree,
+    required this.institution,
+    required this.completionDate,
+    required this.grade,
+  });
+
+  final String degree;
+  final String institution;
+  final String completionDate; // yyyy-MM-dd
+  final String grade;
+
+  factory Education.fromJson(Map<String, dynamic> j) => Education(
+        degree: EmployeeProfile._toStr(j['degree']),
+        institution: EmployeeProfile._toStr(j['institution']),
+        completionDate: EmployeeProfile._toStr(j['completion_date']),
+        grade: EmployeeProfile._toStr(j['grade']),
+      );
+}
+
+/// خبرة عملية ضمن ملف الموظف.
+class Experience {
+  const Experience({
+    required this.title,
+    required this.company,
+    required this.startDate,
+    required this.endDate,
+  });
+
+  final String title;
+  final String company;
+  final String startDate; // yyyy-MM-dd
+  final String endDate; // yyyy-MM-dd
+
+  factory Experience.fromJson(Map<String, dynamic> j) => Experience(
+        title: EmployeeProfile._toStr(j['title']),
+        company: EmployeeProfile._toStr(j['company']),
+        startDate: EmployeeProfile._toStr(j['start_date']),
+        endDate: EmployeeProfile._toStr(j['end_date']),
+      );
+}
+
+/// دورة تدريبية ضمن ملف الموظف.
+class Training {
+  const Training({
+    required this.courseTitle,
+    required this.trainer,
+    required this.courseDate,
+  });
+
+  final String courseTitle;
+  final String trainer;
+  final String courseDate; // yyyy-MM-dd
+
+  factory Training.fromJson(Map<String, dynamic> j) => Training(
+        courseTitle: EmployeeProfile._toStr(j['course_title']),
+        trainer: EmployeeProfile._toStr(j['trainer']),
+        courseDate: EmployeeProfile._toStr(j['course_date']),
+      );
 }

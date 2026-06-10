@@ -29,6 +29,8 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../profile/domain/entities/edit_profile_payload.dart';
 import '../../../../profile/domain/entities/employee_profile.dart';
+import '../../../../../core/utils/app_date.dart';
+import '../../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../profile/presentation/bloc/profile_cubit.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -76,6 +78,16 @@ class _EmployeeData {
   String adminNotes;
   int completion;
 
+  // حقول حقيقية من الباك (showProfile)
+  String secondaryPhone;
+  String maritalStatus;
+  String salary;
+  String avatarUrl;
+  List<Education> educations;
+  List<Experience> experiences;
+  List<Training> trainings;
+  List<String> skills;
+
   _EmployeeData({
     required this.fullName,
     required this.roleTitle,
@@ -95,6 +107,14 @@ class _EmployeeData {
     required this.languages,
     required this.adminNotes,
     required this.completion,
+    this.secondaryPhone = '',
+    this.maritalStatus = '',
+    this.salary = '',
+    this.avatarUrl = '',
+    this.educations = const [],
+    this.experiences = const [],
+    this.trainings = const [],
+    this.skills = const [],
   });
 
   static _EmployeeData mockData() => _EmployeeData(
@@ -105,7 +125,7 @@ class _EmployeeData {
         nationalId: '01010101234',
         birthDate: '1990 / 06 / 15',
         gender: 'ذكر',
-        address: 'دمشق - المزة',
+        address: '',
         employeeId: 'LAB-2026-007',
         department: 'مخبر التعويضات السنية',
         position: 'مدير المخبر',
@@ -137,6 +157,14 @@ class _EmployeeData {
         languages: languages,
         adminNotes: adminNotes,
         completion: completion,
+        secondaryPhone: secondaryPhone,
+        maritalStatus: maritalStatus,
+        salary: salary,
+        avatarUrl: avatarUrl,
+        educations: educations,
+        experiences: experiences,
+        trainings: trainings,
+        skills: skills,
       );
 }
 
@@ -196,20 +224,18 @@ class _LabProfileContentState extends State<LabProfileContent> {
         _savingEdit = false;
       });
       if (wasSaving) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.profileSavedSuccess),
-            duration: const Duration(seconds: 2),
-          ),
+        GlassToast.show(
+          context,
+          message: context.l10n.profileSavedSuccess,
+          icon: Icons.check_circle_rounded,
         );
       }
     } else if (state.status == ProfileStatus.error && _savingEdit) {
       _savingEdit = false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.errorMessage ?? context.l10n.profileSaveError),
-          duration: const Duration(seconds: 3),
-        ),
+      GlassToast.show(
+        context,
+        message: state.errorMessage ?? context.l10n.profileSaveError,
+        icon: Icons.error_outline_rounded,
       );
     }
   }
@@ -224,7 +250,25 @@ class _LabProfileContentState extends State<LabProfileContent> {
     if (p.phone.isNotEmpty) c.phone = p.phone;
     c.roleTitle = _rolePosition(l10n, p.role);
     c.position = _rolePosition(l10n, p.role);
-    if (p.hireDate.isNotEmpty) c.hireDate = p.hireDate;
+    if (p.hireDate.isNotEmpty) c.hireDate = AppDate.display(p.hireDate);
+    // الجنس الراجع من الباك (نص أو 1/2) → نطبّعه لقيمة الـ dropdown.
+    if (p.gender.trim().isNotEmpty) {
+      final g = p.gender.trim().toLowerCase();
+      if (g == '1' || g == 'male' || g.contains('ذكر')) {
+        c.gender = 'ذكر';
+      } else if (g == '2' || g == 'female' || g.contains('أنثى') || g.contains('انثى')) {
+        c.gender = 'أنثى';
+      }
+    }
+    // حقول حقيقية إضافية من الباك.
+    c.secondaryPhone = p.secondaryPhone;
+    c.maritalStatus = _maritalToAr(p.maritalStatus);
+    c.salary = p.salary;
+    if (p.profilePicture.isNotEmpty) c.avatarUrl = p.profilePicture;
+    c.educations = p.educations;
+    c.experiences = p.experiences;
+    c.trainings = p.trainings;
+    c.skills = p.skills;
     return c;
   }
 
@@ -258,20 +302,18 @@ class _LabProfileContentState extends State<LabProfileContent> {
         _avatarBytes = bytes;
         _pickingImage = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.profilePhotoUpdated),
-          duration: const Duration(seconds: 2),
-        ),
+      GlassToast.show(
+        context,
+        message: context.l10n.profilePhotoUpdated,
+        icon: Icons.check_circle_rounded,
       );
     } catch (e) {
       if (!mounted) return;
       setState(() => _pickingImage = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.profilePhotoError(e)),
-          duration: const Duration(seconds: 3),
-        ),
+      GlassToast.show(
+        context,
+        message: context.l10n.profilePhotoError(e),
+        icon: Icons.error_outline_rounded,
       );
     }
   }
@@ -290,16 +332,27 @@ class _LabProfileContentState extends State<LabProfileContent> {
     });
   }
 
+  /// تحويل نص الجنس لرقم يقبله الباك (1=ذكر، 2=أنثى، null=غير محدّد).
+  int? _genderToInt(String g) {
+    final v = g.trim();
+    if (v == 'ذكر' || v.toLowerCase() == 'male') return 1;
+    if (v == 'أنثى' || v.toLowerCase() == 'female') return 2;
+    return null;
+  }
+
   void _saveEdit() {
     if (_draft == null || _savingEdit) return;
     final d = _draft!;
     // الحقول التي يقبلها الباك ويمكن إرسالها بأمان: name, phone, address,
-    // profile_picture. (تاريخ الميلاد نص حرّ فلا يُرسل تفادياً لرفض الـ
-    // validation على نوع date.)
+    // gender(1|2), profile_picture. (تاريخ الميلاد نص حرّ فلا يُرسل تفادياً
+    // لرفض الـ validation على نوع date.)
     final payload = EditProfilePayload(
       name: d.fullName,
       phone: d.phone,
       address: d.address,
+      gender: _genderToInt(d.gender),
+      secondaryPhone: d.secondaryPhone,
+      maritalStatus: _maritalToApi(d.maritalStatus),
       imageBytes: _avatarBytes,
       imageFilename: 'profile_picture.jpg',
     );
@@ -454,8 +507,11 @@ class _ProfileSidebar extends StatelessWidget {
         children: [
           Center(
             child: _Avatar(
-              initial: 'د',
+              initial: data.fullName.trim().isEmpty
+                  ? 'م'
+                  : data.fullName.trim().substring(0, 1),
               bytes: avatarBytes,
+              imageUrl: data.avatarUrl,
               loading: pickingImage,
               onChangePhoto: onChangePhoto,
             ),
@@ -493,22 +549,15 @@ class _ProfileSidebar extends StatelessWidget {
             value: data.hireDate,
             tint: const Color(0xFFEFF2FA),
           ),
-          const SizedBox(height: 10),
-          _SideMetaCard(
-            icon: Icons.language_outlined,
-            label: context.l10n.profileLanguages,
-            value: data.languages,
-            tint: const Color(0xFFF4EEFB),
-          ),
-          const SizedBox(height: 10),
-          _SideMetaCard(
-            icon: Icons.description_outlined,
-            label: context.l10n.profileAdminNotes,
-            value: data.adminNotes,
-            tint: const Color(0xFFEFF2FA),
-          ),
-          const SizedBox(height: 18),
-          _CompletionBar(percent: data.completion),
+          if (data.salary.trim().isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _SideMetaCard(
+              icon: Icons.payments_outlined,
+              label: 'الراتب',
+              value: _formatSalary(data.salary),
+              tint: const Color(0xFFF4EEFB),
+            ),
+          ],
           const SizedBox(height: 18),
           _SidebarActions(
             editing: editing,
@@ -619,66 +668,6 @@ class _SideMetaCard extends StatelessWidget {
   }
 }
 
-// ── شريط اكتمال الملف ───────────────────────────────────────────────────────
-class _CompletionBar extends StatelessWidget {
-  const _CompletionBar({required this.percent});
-  final int percent;
-
-  @override
-  Widget build(BuildContext context) {
-    final pct = (percent.clamp(0, 100)) / 100.0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '$percent%',
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
-                fontWeight: FontWeight.w900,
-                color: AppColors.success,
-              ),
-            ),
-            Text(
-              context.l10n.profileCompletion,
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
-                fontWeight: FontWeight.w700,
-                color: _Palette.label,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          child: Stack(
-            children: [
-              Container(height: 8, color: const Color(0xFFE7EBF3)),
-              FractionallySizedBox(
-                widthFactor: pct,
-                alignment: AlignmentDirectional.centerStart,
-                child: Container(
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.success],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _SidebarActions extends StatelessWidget {
   const _SidebarActions({
     required this.editing,
@@ -782,16 +771,22 @@ class _Avatar extends StatelessWidget {
     required this.bytes,
     required this.loading,
     required this.onChangePhoto,
+    this.imageUrl = '',
   });
 
   final String initial;
   final Uint8List? bytes;
+
+  /// رابط صورة من السيرفر (يُعرض لو ما في صورة محلية مختارة).
+  final String imageUrl;
   final bool loading;
   final VoidCallback onChangePhoto;
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = bytes != null;
+    final bool hasLocal = bytes != null;
+    final bool hasNetwork = imageUrl.isNotEmpty;
+    final hasImage = hasLocal || hasNetwork;
     return SizedBox(
       width: 150,
       height: 150,
@@ -816,12 +811,17 @@ class _Avatar extends StatelessWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                  image: hasImage
+                  image: hasLocal
                       ? DecorationImage(
                           image: MemoryImage(bytes!),
                           fit: BoxFit.cover,
                         )
-                      : null,
+                      : hasNetwork
+                          ? DecorationImage(
+                              image: NetworkImage(imageUrl),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                   boxShadow: [
                     BoxShadow(
                       color: _Palette.accent.withValues(alpha: 0.24),
@@ -987,22 +987,24 @@ class _MainColumn extends StatelessWidget {
               onChanged: (v) => data.phone = v,
             ),
             _RowSpec(
-              icon: Icons.badge_outlined,
-              label: context.l10n.profileNationalId,
-              value: data.nationalId,
-              onChanged: (v) => data.nationalId = v,
-            ),
-            _RowSpec(
-              icon: Icons.calendar_month_outlined,
-              label: context.l10n.profileBirthDate,
-              value: data.birthDate,
-              onChanged: (v) => data.birthDate = v,
+              icon: Icons.phone_in_talk_outlined,
+              label: 'الهاتف الثانوي',
+              value: data.secondaryPhone,
+              onChanged: (v) => data.secondaryPhone = v,
             ),
             _RowSpec(
               icon: Icons.wc_outlined,
               label: context.l10n.profileGender,
               value: data.gender,
               onChanged: (v) => data.gender = v,
+              options: const ['ذكر', 'أنثى'],
+            ),
+            _RowSpec(
+              icon: Icons.favorite_outline_rounded,
+              label: 'الحالة الاجتماعية',
+              value: data.maritalStatus,
+              onChanged: (v) => data.maritalStatus = v,
+              options: const ['أعزب', 'متزوج', 'مطلّق', 'أرمل'],
             ),
             _RowSpec(
               icon: Icons.location_on_outlined,
@@ -1010,54 +1012,347 @@ class _MainColumn extends StatelessWidget {
               value: data.address,
               onChanged: (v) => data.address = v,
             ),
-            _RowSpec(
-              icon: Icons.assignment_ind_outlined,
-              label: context.l10n.profileEmployeeId,
-              value: data.employeeId,
-              onChanged: (v) => data.employeeId = v,
-            ),
           ],
         ),
-        const SizedBox(height: 18),
-        _InfoSection(
-          icon: Icons.work_outline_rounded,
-          title: context.l10n.profileJobInfo,
-          subtitle: context.l10n.profileJobInfoSubtitle,
-          editing: editing,
-          fields: [
-            _RowSpec(
-              icon: Icons.inventory_2_outlined,
-              label: context.l10n.profileDepartment,
-              value: data.department,
-              onChanged: (v) => data.department = v,
-            ),
-            _RowSpec(
-              icon: Icons.calendar_today_outlined,
-              label: context.l10n.profileWorkDays,
-              value: data.workDays,
-              onChanged: (v) => data.workDays = v,
-            ),
-            _RowSpec(
-              icon: Icons.badge_outlined,
-              label: context.l10n.profilePosition,
-              value: data.position,
-              onChanged: (v) => data.position = v,
-            ),
-            _RowSpec(
-              icon: Icons.do_not_disturb_on_outlined,
-              label: context.l10n.profileDayOff,
-              value: data.dayOff,
-              onChanged: (v) => data.dayOff = v,
-            ),
-            _RowSpec(
-              icon: Icons.access_time_rounded,
-              label: context.l10n.profileWeeklyHours,
-              value: data.weeklyHours,
-              onChanged: (v) => data.weeklyHours = v,
-            ),
-          ],
-        ),
+        // ── أقسام حقيقية من الباك (showProfile) ──────────────────────────
+        if (data.educations.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          _RelationSection(
+            icon: Icons.school_outlined,
+            title: 'الشهادات العلمية',
+            items: [
+              for (final e in data.educations)
+                _RelationItem(
+                  primary: e.degree,
+                  secondary: e.institution,
+                  trailing: [
+                    AppDate.display(e.completionDate, fallback: ''),
+                    e.grade,
+                  ].where((x) => x.isNotEmpty).join(' · '),
+                ),
+            ],
+          ),
+        ],
+        if (data.experiences.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          _RelationSection(
+            icon: Icons.work_history_outlined,
+            title: 'الخبرات العملية',
+            items: [
+              for (final x in data.experiences)
+                _RelationItem(
+                  primary: x.title,
+                  secondary: x.company,
+                  trailing:
+                      '${AppDate.display(x.startDate, fallback: '?')} — ${AppDate.display(x.endDate, fallback: 'الآن')}',
+                ),
+            ],
+          ),
+        ],
+        if (data.trainings.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          _RelationSection(
+            icon: Icons.military_tech_outlined,
+            title: 'الدورات التدريبية',
+            items: [
+              for (final t in data.trainings)
+                _RelationItem(
+                  primary: t.courseTitle,
+                  secondary: t.trainer,
+                  trailing: AppDate.display(t.courseDate, fallback: ''),
+                ),
+            ],
+          ),
+        ],
+        if (data.skills.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          _SkillsSection(skills: data.skills),
+        ],
       ],
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//                  أقسام علائقية (شهادات/خبرات/تدريبات/مهارات)
+// ══════════════════════════════════════════════════════════════════════════
+
+/// تنسيق الراتب: "1800000.00" → "1,800,000 ل.س".
+String _formatSalary(String raw) {
+  var s = raw.trim();
+  final dot = s.indexOf('.');
+  if (dot != -1) s = s.substring(0, dot);
+  final digits = s.replaceAll(RegExp(r'[^0-9]'), '');
+  if (digits.isEmpty) return raw;
+  final buf = StringBuffer();
+  for (int i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) buf.write(',');
+    buf.write(digits[i]);
+  }
+  return '$buf ل.س';
+}
+
+/// تحويل الحالة الاجتماعية من رمز الباك (إنجليزي) لعربي للعرض.
+String _maritalToAr(String en) {
+  switch (en.trim().toLowerCase()) {
+    case 'single':
+      return 'أعزب';
+    case 'married':
+      return 'متزوج';
+    case 'divorced':
+      return 'مطلّق';
+    case 'widowed':
+      return 'أرمل';
+    default:
+      return en;
+  }
+}
+
+/// عكس [_maritalToAr]: من العربي لرمز الباك (للإرسال).
+String? _maritalToApi(String ar) {
+  switch (ar.trim()) {
+    case 'أعزب':
+      return 'single';
+    case 'متزوج':
+      return 'married';
+    case 'مطلّق':
+      return 'divorced';
+    case 'أرمل':
+      return 'widowed';
+    default:
+      return null;
+  }
+}
+
+class _RelationItem {
+  const _RelationItem({
+    required this.primary,
+    required this.secondary,
+    required this.trailing,
+  });
+  final String primary;
+  final String secondary;
+  final String trailing;
+}
+
+class _RelationSection extends StatelessWidget {
+  const _RelationSection({
+    required this.icon,
+    required this.title,
+    required this.items,
+  });
+
+  final IconData icon;
+  final String title;
+  final List<_RelationItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        border: Border.all(color: _Palette.cardBorder),
+      ),
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _Palette.blueIconBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 19, color: _Palette.blueAccent),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.lightText1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _Palette.blueIconBg,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${items.length}',
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: _Palette.blueAccent,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          for (int i = 0; i < items.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            _RelationRow(item: items[i]),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _RelationRow extends StatelessWidget {
+  const _RelationRow({required this.item});
+  final _RelationItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+        border: Border.all(color: _Palette.cardBorder),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            width: 7,
+            height: 7,
+            decoration: const BoxDecoration(
+              color: _Palette.blueAccent,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.primary,
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.lightText1,
+                  ),
+                ),
+                if (item.secondary.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    item.secondary,
+                    style: const TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: _Palette.label,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (item.trailing.isNotEmpty) ...[
+            const SizedBox(width: 8),
+            Text(
+              item.trailing,
+              style: const TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: _Palette.blueAccent,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SkillsSection extends StatelessWidget {
+  const _SkillsSection({required this.skills});
+  final List<String> skills;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        border: Border.all(color: _Palette.cardBorder),
+      ),
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _Palette.pinkBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.auto_awesome_outlined,
+                    size: 19, color: _Palette.pinkAccent),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'المهارات',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.lightText1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final s in skills)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: _Palette.pinkBg,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                    border: Border.all(
+                        color: _Palette.pinkAccent.withValues(alpha: 0.25)),
+                  ),
+                  child: Text(
+                    s,
+                    style: const TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: _Palette.pinkAccent,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1369,12 +1664,25 @@ class _RowSpec {
     required this.label,
     required this.value,
     required this.onChanged,
+    this.options,
+    this.isDate = false,
+    this.editable = true,
   });
 
   final IconData icon;
   final String label;
   final String value;
   final ValueChanged<String> onChanged;
+
+  /// لو موجودة، يُعرض الحقل كقائمة منسدلة (بدل إدخال نصّي حر) عند التعديل.
+  final List<String>? options;
+
+  /// لو true، يُعرض كحقل تاريخ يفتح Date Picker عند الضغط (بدل إدخال حر).
+  final bool isDate;
+
+  /// لو false، الحقل للقراءة فقط (يديره الأدمن/السكرتيرة أو ثابت) — لا يُعدَّل
+  /// من الموظف حتى بوضع التعديل. يطابق عقد editProfile بالباك.
+  final bool editable;
 }
 
 class _FieldPill extends StatefulWidget {
@@ -1395,6 +1703,9 @@ class _FieldPill extends StatefulWidget {
 class _FieldPillState extends State<_FieldPill> {
   late TextEditingController _controller;
 
+  /// عرض محلي لحقل التاريخ بعد اختيار من الـ Date Picker (يطغى على spec.value).
+  String? _dateDisplay;
+
   @override
   void initState() {
     super.initState();
@@ -1406,7 +1717,30 @@ class _FieldPillState extends State<_FieldPill> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.editing != widget.editing) {
       _controller.text = widget.spec.value;
+      _dateDisplay = null;
     }
+  }
+
+  Future<void> _pickDate(Color accent) async {
+    final current = _dateDisplay ?? widget.spec.value;
+    DateTime initial = DateTime(2000, 1, 1);
+    final api = AppDate.toApi(current);
+    if (api != null) {
+      final parsed = DateTime.tryParse(api);
+      if (parsed != null) initial = parsed;
+    }
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(1940),
+      lastDate: DateTime.now(),
+    );
+    if (picked == null) return;
+    final iso =
+        '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+    final shown = AppDate.display(iso);
+    setState(() => _dateDisplay = shown);
+    widget.spec.onChanged(shown);
   }
 
   @override
@@ -1460,17 +1794,127 @@ class _FieldPillState extends State<_FieldPill> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        widget.spec.label,
-                        style: const TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: _Palette.label,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            widget.spec.label,
+                            style: const TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: _Palette.label,
+                            ),
+                          ),
+                          // قفل صغير للحقول غير القابلة للتعديل (عند وضع التعديل).
+                          if (widget.editing && !widget.spec.editable) ...[
+                            const SizedBox(width: 5),
+                            const Icon(Icons.lock_outline_rounded,
+                                size: 11, color: _Palette.label),
+                          ],
+                        ],
                       ),
                       const SizedBox(height: 4),
-                      if (widget.editing)
+                      if (widget.editing &&
+                          widget.spec.editable &&
+                          widget.spec.isDate)
+                        GestureDetector(
+                          onTap: () => _pickDate(accent),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 9),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF7F9FC),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusSM),
+                              border:
+                                  Border.all(color: _Palette.cardBorder),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    (_dateDisplay ?? widget.spec.value)
+                                            .trim()
+                                            .isEmpty
+                                        ? 'اختر التاريخ'
+                                        : (_dateDisplay ?? widget.spec.value),
+                                    style: TextStyle(
+                                      fontFamily: AppTextStyles.fontFamily,
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: (_dateDisplay ?? widget.spec.value)
+                                              .trim()
+                                              .isEmpty
+                                          ? _Palette.label
+                                          : AppColors.lightText1,
+                                    ),
+                                  ),
+                                ),
+                                Icon(Icons.calendar_month_rounded,
+                                    size: 18, color: accent),
+                              ],
+                            ),
+                          ),
+                        )
+                      else if (widget.editing &&
+                          widget.spec.editable &&
+                          widget.spec.options != null)
+                        DropdownButtonFormField<String>(
+                          initialValue: widget.spec.options!
+                                  .contains(widget.spec.value)
+                              ? widget.spec.value
+                              : null,
+                          isDense: true,
+                          isExpanded: true,
+                          icon: Icon(Icons.keyboard_arrow_down_rounded,
+                              size: 20, color: accent),
+                          borderRadius:
+                              BorderRadius.circular(AppSizes.radiusMD),
+                          dropdownColor: Colors.white,
+                          elevation: 3,
+                          style: const TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.lightText1,
+                          ),
+                          items: widget.spec.options!
+                              .map((o) => DropdownMenuItem<String>(
+                                    value: o,
+                                    child: Text(
+                                      o,
+                                      style: const TextStyle(
+                                        fontFamily: AppTextStyles.fontFamily,
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.lightText1,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                          onChanged: (v) {
+                            if (v != null) widget.spec.onChanged(v);
+                          },
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 7),
+                            filled: true,
+                            fillColor: const Color(0xFFF7F9FC),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusSM),
+                              borderSide:
+                                  const BorderSide(color: _Palette.cardBorder),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.radiusSM),
+                              borderSide: BorderSide(color: accent, width: 1.6),
+                            ),
+                          ),
+                        )
+                      else if (widget.editing && widget.spec.editable)
                         TextField(
                           controller: _controller,
                           onChanged: widget.spec.onChanged,

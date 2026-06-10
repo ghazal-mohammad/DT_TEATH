@@ -28,6 +28,7 @@ import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/router/route_names.dart';
+import '../../domain/auth_flow_mode.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -46,9 +47,16 @@ import '../widgets/otp_input.dart';
 // ══════════════════════════════════════════════════════════════════════════
 
 class VerifyCodePage extends StatefulWidget {
-  const VerifyCodePage({super.key, required this.email});
+  const VerifyCodePage({
+    super.key,
+    required this.email,
+    this.mode = AuthFlowMode.activation,
+  });
 
   final String email;
+
+  /// نوع التدفّق: تفعيل أول مرة أو "نسيت كلمة السر".
+  final AuthFlowMode mode;
 
   @override
   State<VerifyCodePage> createState() => _VerifyCodePageState();
@@ -123,10 +131,17 @@ class _VerifyCodePageState extends State<VerifyCodePage>
     // التحقق الفعلي من الكود عبر الباك — لازم يصير قبل setPassword وإلا
     // الباك بيرفض تعيين كلمة المرور بـ"you have not verified your email yet".
     try {
-      await _repo.verifyCode(
-        email: widget.email,
-        verificationCode: _code,
-      );
+      if (widget.mode == AuthFlowMode.reset) {
+        await _repo.verifyResetCode(
+          email: widget.email,
+          verificationCode: _code,
+        );
+      } else {
+        await _repo.verifyCode(
+          email: widget.email,
+          verificationCode: _code,
+        );
+      }
     } on Failure catch (f) {
       if (!mounted) return;
       setState(() {
@@ -154,7 +169,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
     if (!mounted) return;
     context.go(
       RouteNames.authSetPassword,
-      extra: {'email': widget.email, 'code': _code},
+      extra: {'email': widget.email, 'code': _code, 'mode': widget.mode},
     );
   }
 
@@ -224,6 +239,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
                           child: _FormContent(
                             otpKey: _otpKey,
                             email: widget.email,
+                            mode: widget.mode,
                             code: _code,
                             verifying: _verifying,
                             hasError: _hasError,
@@ -300,6 +316,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
                     _FormContent(
                       otpKey: _otpKey,
                       email: widget.email,
+                      mode: widget.mode,
                       code: _code,
                       verifying: _verifying,
                       hasError: _hasError,
@@ -405,6 +422,7 @@ class _FormContent extends StatelessWidget {
   const _FormContent({
     required this.otpKey,
     required this.email,
+    required this.mode,
     required this.code,
     required this.verifying,
     required this.hasError,
@@ -418,6 +436,7 @@ class _FormContent extends StatelessWidget {
   });
 
   final GlobalKey<OtpInputState> otpKey;
+  final AuthFlowMode mode;
   final String email, code;
   final bool verifying, hasError, isMobile;
   final String? errMsg;
@@ -629,7 +648,11 @@ class _FormContent extends StatelessWidget {
           delay: AuthStaggerDelays.footer,
           child: Center(
             child: TextButton(
-              onPressed: () => context.go(RouteNames.authEmail),
+              onPressed: () => context.go(
+                mode == AuthFlowMode.reset
+                    ? RouteNames.login
+                    : RouteNames.authEmail,
+              ),
               child: Text(
                 '← ${context.l10n.authBack}',
                 style: AppTextStyles.authLink.copyWith(color: sub),

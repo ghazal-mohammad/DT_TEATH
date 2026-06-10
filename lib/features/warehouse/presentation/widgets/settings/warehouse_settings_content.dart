@@ -24,6 +24,7 @@ import '../../../../../shared/bloc/locale_cubit.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/forms/app_form_field.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
+import '../../../../auth/presentation/logout_action.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //  CONSTANTS
@@ -444,7 +445,7 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
               const SizedBox(width: 12),
               AppButton(
                 label: context.l10n.logout,
-                onPressed: () {},
+                onPressed: () => performLogout(context),
                 variant: AppButtonVariant.secondary,
                 size: AppButtonSize.small,
               ),

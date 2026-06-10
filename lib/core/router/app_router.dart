@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/domain/auth_flow_mode.dart';
 import '../../features/auth/presentation/pages/email_entry_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/set_password_page.dart';
@@ -132,23 +133,40 @@ class AppRouter {
       GoRoute(
         path: RouteNames.authEmail,
         name: 'authEmail',
-        pageBuilder: (context, state) => _authSlide(
-          key: state.pageKey,
-          child: const EmailEntryPage(),
-          direction: 1,
-        ),
+        pageBuilder: (context, state) {
+          // extra اختياري: {mode} — لتمييز تدفّق "نسيت كلمة السر".
+          final extra = state.extra;
+          final mode = (extra is Map && extra['mode'] is AuthFlowMode)
+              ? extra['mode'] as AuthFlowMode
+              : AuthFlowMode.activation;
+          return _authSlide(
+            key: state.pageKey,
+            child: EmailEntryPage(mode: mode),
+            direction: 1,
+          );
+        },
       ),
 
       GoRoute(
         path: RouteNames.authVerifyCode,
         name: 'authVerifyCode',
         pageBuilder: (context, state) {
-          // ✅ FIX: تحقق من نوع extra بأمان
-          final email = (state.extra is String) ? state.extra as String : '';
+          // extra: {email, mode} — أو String (توافق رجعي) = email فقط.
+          String email = '';
+          AuthFlowMode mode = AuthFlowMode.activation;
+          final extra = state.extra;
+          if (extra is Map) {
+            email = (extra['email'] ?? '') as String;
+            if (extra['mode'] is AuthFlowMode) {
+              mode = extra['mode'] as AuthFlowMode;
+            }
+          } else if (extra is String) {
+            email = extra;
+          }
           return authFlowPage(
             key: state.pageKey,
             direction: 1,
-            child: VerifyCodePage(email: email),
+            child: VerifyCodePage(email: email, mode: mode),
           );
         },
       ),
@@ -159,17 +177,25 @@ class AppRouter {
         pageBuilder: (context, state) {
           String email = '';
           String code = '';
+          AuthFlowMode mode = AuthFlowMode.activation;
           final extra = state.extra;
           if (extra is Map) {
             email = (extra['email'] ?? '') as String;
             code = (extra['code'] ?? '') as String;
+            if (extra['mode'] is AuthFlowMode) {
+              mode = extra['mode'] as AuthFlowMode;
+            }
           } else if (extra is String) {
             email = extra; // توافق رجعي
           }
           return authFlowPage(
             key: state.pageKey,
             direction: 1,
-            child: SetPasswordPage(email: email, verificationCode: code),
+            child: SetPasswordPage(
+              email: email,
+              verificationCode: code,
+              mode: mode,
+            ),
           );
         },
       ),

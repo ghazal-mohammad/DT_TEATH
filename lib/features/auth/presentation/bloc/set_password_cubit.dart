@@ -73,4 +73,28 @@ class SetPasswordCubit extends Cubit<SetPasswordState> {
       ));
     }
   }
+
+  /// إعادة تعيين كلمة سر لحساب مفعّل (تدفّق "نسيت كلمة السر").
+  /// لا يرجّع توكن — عند النجاح الـ user يبقى null والصفحة ترجّع لتسجيل الدخول.
+  Future<void> submitReset({
+    required String email,
+    required String password,
+  }) async {
+    emit(state.copyWith(status: SetPasswordStatus.submitting, clearError: true));
+
+    try {
+      await _repo.resetPassword(email: email, password: password);
+      emit(state.copyWith(status: SetPasswordStatus.success));
+    } on Failure catch (f) {
+      emit(state.copyWith(
+        status: SetPasswordStatus.failure,
+        errorMessage: f.message,
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        status: SetPasswordStatus.failure,
+        errorMessage: 'خطأ غير متوقع — حاول مرة أخرى',
+      ));
+    }
+  }
 }

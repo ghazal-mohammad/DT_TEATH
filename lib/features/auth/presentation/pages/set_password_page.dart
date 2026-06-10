@@ -28,8 +28,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/validators.dart';
+import '../../domain/auth_flow_mode.dart';
 import '../bloc/set_password_cubit.dart';
 import '../../../../shared/widgets/brand/app_logo.dart';
+import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
 import '../widgets/auth_layout_painters.dart';
@@ -47,10 +49,14 @@ class SetPasswordPage extends StatefulWidget {
     super.key,
     required this.email,
     this.verificationCode = '',
+    this.mode = AuthFlowMode.activation,
   });
 
   final String email;
   final String verificationCode;
+
+  /// نوع التدفّق: تفعيل أول مرة (دخول مباشر) أو "نسيت كلمة السر" (رجوع للـ login).
+  final AuthFlowMode mode;
 
   @override
   State<SetPasswordPage> createState() => _SetPasswordPageState();
@@ -114,27 +120,47 @@ class _SetPasswordPageState extends State<SetPasswordPage>
       setState(() => _errCfm = context.l10n.passwordMismatch);
       return;
     }
-    if (widget.verificationCode.isEmpty) {
+    // كود التحقق مطلوب فقط لتدفّق التفعيل (setPassword)؛ إعادة التعيين ما بتحتاجه.
+    if (widget.mode == AuthFlowMode.activation &&
+        widget.verificationCode.isEmpty) {
       setState(() => _errPwd = 'كود التحقق مفقود — ارجع لشاشة الإيميل');
       return;
     }
 
     setState(() => _submitting = true);
 
-    await _cubit.submit(
-      email: widget.email,
-      verificationCode: widget.verificationCode,
-      password: _pwd,
-    );
+    final bool isReset = widget.mode == AuthFlowMode.reset;
+    if (isReset) {
+      await _cubit.submitReset(email: widget.email, password: _pwd);
+    } else {
+      await _cubit.submit(
+        email: widget.email,
+        verificationCode: widget.verificationCode,
+        password: _pwd,
+      );
+    }
     if (!mounted) return;
 
     final state = _cubit.state;
     setState(() => _submitting = false);
 
     if (state.status == SetPasswordStatus.success) {
-      // 🔍 DEBUG: نطبع المستخدم اللي رجع من الباك لمعرفة الـ role الفعلي.
-      // ignore: avoid_print
-      print('[DT.Teeth][setPassword] user=${state.user} role=${state.user?.role}');
+      final bool isAr =
+          Localizations.localeOf(context).languageCode == 'ar';
+
+      if (isReset) {
+        // إعادة التعيين نجحت — الباك ألغى التوكنات، فنرجّع لتسجيل الدخول برسالة.
+        GlassToast.show(
+          context,
+          message: isAr
+              ? 'تم تغيير كلمة المرور — سجّل دخولك بكلمتك الجديدة'
+              : 'Password changed — sign in with your new password',
+        );
+        await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
+        if (!mounted) return;
+        context.go(RouteNames.login);
+        return;
+      }
 
       await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
       if (!mounted) return;
@@ -219,6 +245,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
                             pwdCtrl: _pwdCtrl,
                             cfmCtrl: _cfmCtrl,
                             pwd: _pwd,
+                            mode: widget.mode,
                             valid: _valid,
                             submitting: _submitting,
                             errPwd: _errPwd,
@@ -296,6 +323,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
                       pwdCtrl: _pwdCtrl,
                       cfmCtrl: _cfmCtrl,
                       pwd: _pwd,
+                      mode: widget.mode,
                       valid: _valid,
                       submitting: _submitting,
                       errPwd: _errPwd,
@@ -401,6 +429,7 @@ class _FormContent extends StatelessWidget {
     required this.pwdCtrl,
     required this.cfmCtrl,
     required this.pwd,
+    required this.mode,
     required this.valid,
     required this.submitting,
     required this.errPwd,
@@ -414,6 +443,7 @@ class _FormContent extends StatelessWidget {
 
   final TextEditingController pwdCtrl, cfmCtrl;
   final String pwd;
+  final AuthFlowMode mode;
   final bool valid, submitting, isMobile;
   final String? errPwd, errCfm;
   final AnimationController entryCtrl;
@@ -555,7 +585,11 @@ class _FormContent extends StatelessWidget {
           controller: entryCtrl,
           delay: AuthStaggerDelays.button,
           child: AuthSubmitButton(
-            label: context.l10n.authSaveAndLogin,
+            label: mode == AuthFlowMode.reset
+                ? (Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'إعادة تعيين كلمة المرور'
+                    : 'Reset Password')
+                : context.l10n.authSaveAndLogin,
             onPressed: onSubmit,
             isLoading: submitting,
             isEnabled: valid && !submitting,

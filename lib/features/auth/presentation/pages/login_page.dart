@@ -24,6 +24,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/auth/auth_models.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../domain/auth_flow_mode.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -605,7 +606,36 @@ class _FormContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: AppSizes.spaceXL),
+        const SizedBox(height: AppSizes.spaceXS),
+
+        // Forgot password link — يفتح تدفّق إعادة التعيين (reset mode)
+        AuthEntryAnimator(
+          controller: entryCtrl,
+          delay: AuthStaggerDelays.field2,
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: GestureDetector(
+              onTap: () => context.go(
+                RouteNames.authEmail,
+                extra: {'mode': AuthFlowMode.reset},
+              ),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Text(
+                  isAr ? 'نسيت كلمة المرور؟' : 'Forgot password?',
+                  style: AppTextStyles.authLink.copyWith(
+                    color: isMobile ? AppColors.reservedBg : AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                    decoration: TextDecoration.underline,
+                    decorationColor:
+                        isMobile ? AppColors.reservedBg : AppColors.primary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSizes.spaceLG),
 
         // Submit button (مشترك — AuthSubmitButton بدون pulse)
         AuthEntryAnimator(

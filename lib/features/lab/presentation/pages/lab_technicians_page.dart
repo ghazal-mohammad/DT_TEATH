@@ -11,7 +11,9 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
+import '../../../../core/network/failure.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -20,6 +22,8 @@ import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
+import '../../data/models/lab_technician.dart';
+import '../../domain/repositories/lab_repository.dart';
 import '../navigation/lab_sidebar_sections.dart';
 import '../widgets/add_technician_dialog.dart';
 import '../widgets/assign_order_dialog.dart';
@@ -51,45 +55,6 @@ class TechnicianItem {
   String initials;
 }
 
-List<TechnicianItem> _seedTechnicians() => [
-      TechnicianItem(
-        name: 'محمد علي',
-        role: 'فني تلبيسات',
-        shift: '08:00 - 16:00',
-        currentTask: 'طلبات التلبيسات',
-        taskCount: 4,
-        status: TechnicianStatus.active,
-        initials: 'مع',
-      ),
-      TechnicianItem(
-        name: 'سامر حسن',
-        role: 'فني جسور',
-        shift: '09:00 - 17:00',
-        currentTask: 'طلبات الجسور',
-        taskCount: 3,
-        status: TechnicianStatus.active,
-        initials: 'سح',
-      ),
-      TechnicianItem(
-        name: 'ليلى كريم',
-        role: 'فنية أكريل',
-        shift: '10:00 - 18:00',
-        currentTask: 'الأعمال الأكريلية',
-        taskCount: 0,
-        status: TechnicianStatus.available,
-        initials: 'لك',
-      ),
-      TechnicianItem(
-        name: 'يوسف ناصر',
-        role: 'فني زيركون',
-        shift: '08:00 - 16:00',
-        currentTask: 'طلبات Zirconia',
-        taskCount: 2,
-        status: TechnicianStatus.onBreak,
-        initials: 'ين',
-      ),
-    ];
-
 // ══════════════════════════════════════════════════════════════════════════
 //  PAGE
 // ══════════════════════════════════════════════════════════════════════════
@@ -102,13 +67,19 @@ class LabTechniciansPage extends StatefulWidget {
 }
 
 class _LabTechniciansPageState extends State<LabTechniciansPage> {
-  late List<TechnicianItem> _technicians;
+  final LabRepository _labRepo = sl<LabRepository>();
+
+  // الفنيون يُجلبون من الباك (GET /api/labManager/showAllTechnicians).
+  List<TechnicianItem> _technicians = [];
+  bool _loadingTechs = true;
+  String? _techsError;
+
   late List<LabOrderFull> _orders;
 
   @override
   void initState() {
     super.initState();
-    _technicians = _seedTechnicians();
+    _loadTechnicians();
     _orders = [
       LabOrderFull(
         id: 'LAB-045',
@@ -156,6 +127,49 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
         statusVariant: LabOrderBadgeVariant.manufacturing,
       ),
     ];
+  }
+
+  /// جلب الفنيين من الباك ومابّتهم لنموذج العرض.
+  /// الحقول غير المتوفّرة بالباك (الدوام/المهمة/الحالة) تبقى قيمها افتراضية
+  /// وتُدار محلياً (التوكيل/الإيقاف) لأن الباك ما بيدعمها.
+  Future<void> _loadTechnicians() async {
+    setState(() {
+      _loadingTechs = true;
+      _techsError = null;
+    });
+    try {
+      final techs = await _labRepo.getTechnicians();
+      if (!mounted) return;
+      setState(() {
+        _technicians = techs.map(_mapToItem).toList();
+        _loadingTechs = false;
+      });
+    } on Failure catch (f) {
+      if (!mounted) return;
+      setState(() {
+        _techsError = f.message;
+        _loadingTechs = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _techsError = context.l10n.error;
+        _loadingTechs = false;
+      });
+    }
+  }
+
+  TechnicianItem _mapToItem(LabTechnician t) {
+    final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
+    return TechnicianItem(
+      name: t.name,
+      role: isAr ? 'فني' : 'Technician',
+      shift: '—', // غير متوفّر بالباك
+      currentTask: context.l10n.labTechPendingAssign,
+      taskCount: 0,
+      status: TechnicianStatus.available,
+      initials: _computeInitials(t.name),
+    );
   }
 
   int get _totalCount => _technicians.length;
@@ -236,25 +250,75 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
       userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.spaceLG),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _StatsRow(
-              total: _totalCount,
-              active: _activeCount,
-              available: _availableCount,
+      body: _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    if (_loadingTechs) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_techsError != null) {
+      return _TechsError(message: _techsError!, onRetry: _loadTechnicians);
+    }
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSizes.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _StatsRow(
+            total: _totalCount,
+            active: _activeCount,
+            available: _availableCount,
+          ),
+          const SizedBox(height: AppSizes.spaceLG),
+          _TeamTable(
+            technicians: _technicians,
+            onAdd: _onAdd,
+            onAssign: _onAssign,
+            onTogglePause: _onTogglePause,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  ERROR STATE — فشل جلب الفنيين من الباك
+// ══════════════════════════════════════════════════════════════════════════
+
+class _TechsError extends StatelessWidget {
+  const _TechsError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.cloud_off_rounded,
+              size: 42,
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: isLight ? AppColors.lightText2 : AppColors.darkText2,
             ),
-            const SizedBox(height: AppSizes.spaceLG),
-            _TeamTable(
-              technicians: _technicians,
-              onAdd: _onAdd,
-              onAssign: _onAssign,
-              onTogglePause: _onTogglePause,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: Text(context.l10n.retry),
+          ),
+        ],
       ),
     );
   }

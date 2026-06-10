@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/auth/current_user.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -41,7 +42,7 @@ class LabDashboardPage extends StatelessWidget {
       pageSubtitle: null,
       searchPlaceholder: l10n.labDashboardSearchHint,
       showThemeToggle: false,
-      userName: MockUserData.labUserName,
+      userName: CurrentUser.instance.name ?? MockUserData.labUserName,
       userRole: l10n.roleLabManager,
       notificationCount: 2,
       body: const _LabDashboardBody(),
@@ -1085,7 +1086,8 @@ class _GreetingText extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                context.l10n.labGreeting(MockUserData.labUserName),
+                context.l10n.labGreeting(
+                    CurrentUser.instance.name ?? MockUserData.labUserName),
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
