@@ -66,7 +66,10 @@ bool _isUrgent(WarehouseNotification n) =>
 // ══════════════════════════════════════════════════════════════════════════
 
 class WarehouseNotificationsContent extends StatefulWidget {
-  const WarehouseNotificationsContent({super.key});
+  const WarehouseNotificationsContent({super.key, this.query = ''});
+
+  /// نص البحث القادم من شريط الـ topbar الموحّد (لا بحث داخل الصفحة).
+  final String query;
 
   @override
   State<WarehouseNotificationsContent> createState() =>
@@ -77,30 +80,19 @@ class _WarehouseNotificationsContentState
     extends State<WarehouseNotificationsContent> {
   _NotifFilter _filter = _NotifFilter.all;
   late List<WarehouseNotification> _notifications;
-  final TextEditingController _searchCtrl = TextEditingController();
-  String _query = '';
 
   @override
   void initState() {
     super.initState();
     _notifications = List.from(WarehouseNotificationsMockData.notifications);
-    _searchCtrl.addListener(() {
-      setState(() => _query = _searchCtrl.text.trim());
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchCtrl.dispose();
-    super.dispose();
   }
 
   int _count(_NotifFilter f) =>
       _notifications.where(f.matches).length;
 
   bool _matchesQuery(WarehouseNotification n) {
-    if (_query.isEmpty) return true;
-    final q = _query.toLowerCase();
+    final q = widget.query.trim().toLowerCase();
+    if (q.isEmpty) return true;
     return n.title.toLowerCase().contains(q) ||
         n.body.toLowerCase().contains(q);
   }
@@ -147,13 +139,7 @@ class _WarehouseNotificationsContentState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── شريط البحث + أيقونات ───────────────────────────────────────
-        _SearchRow(
-          controller: _searchCtrl,
-          isLight: isLight,
-        ),
-        const SizedBox(height: 14),
-
+        // البحث صار عبر شريط الـ topbar الموحّد (زي المخبر).
         // ── شريط الفلاتر + زر تحديد الكل كمقروء ─────────────────────────
         _FilterAndActionRow(
           filter: _filter,
@@ -577,118 +563,6 @@ class _ActionBtn extends StatelessWidget {
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//                        SEARCH ROW (settings + bell + search)
-// ══════════════════════════════════════════════════════════════════════════
-
-class _SearchRow extends StatelessWidget {
-  const _SearchRow({required this.controller, required this.isLight});
-
-  final TextEditingController controller;
-  final bool isLight;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color iconBg = isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2;
-    final Color border = isLight ? AppColors.lightBorder : AppColors.darkBorder;
-    final Color text2 = isLight ? AppColors.lightText2 : AppColors.darkText2;
-    final Color text4 = isLight ? AppColors.lightText4 : AppColors.darkText4;
-    return Row(
-      children: [
-        _IconBox(
-          icon: Icons.settings_outlined,
-          bg: iconBg,
-          border: border,
-          color: text2,
-          onTap: () {},
-        ),
-        const SizedBox(width: 8),
-        _IconBox(
-          icon: Icons.notifications_none_outlined,
-          bg: iconBg,
-          border: border,
-          color: text2,
-          onTap: () {},
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Container(
-            height: 38,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-              border: Border.all(color: border),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 14,
-                      color: isLight
-                          ? AppColors.lightText1
-                          : AppColors.darkText1,
-                    ),
-                    decoration: InputDecoration(
-                      isCollapsed: true,
-                      border: InputBorder.none,
-                      hintText: context.l10n.notifSearchHint,
-                      hintStyle: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 14,
-                        color: text4,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Icon(Icons.search, size: 18, color: text2),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _IconBox extends StatelessWidget {
-  const _IconBox({
-    required this.icon,
-    required this.bg,
-    required this.border,
-    required this.color,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color bg;
-  final Color border;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-      child: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-          border: Border.all(color: border),
-        ),
-        child: Icon(icon, size: 18, color: color),
-      ),
-    );
-  }
-}
 
 // ══════════════════════════════════════════════════════════════════════════
 //                  FILTER PILLS + MARK-ALL-READ BUTTON ROW

@@ -17,6 +17,7 @@ import '../../../../core/router/route_names.dart';
 import '../../../auth/presentation/logout_action.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/bloc/theme_cubit.dart';
+import '../../../../shared/widgets/primitives/app_theme_option.dart';
 import '../../../../shared/bloc/locale_cubit.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -503,11 +504,6 @@ class _PreferencesTabState extends State<_PreferencesTab> {
   bool _compact = false;
   bool _autosave = true;
 
-  /// يحوّل وضع الواجهة المحلي إلى [ThemeMode] الخاص بـ Flutter.
-  ThemeMode _flutterMode(_ThemeMode m) => switch (m) {
-        _ThemeMode.dark => ThemeMode.dark,
-        _ThemeMode.light => ThemeMode.light,
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -528,21 +524,16 @@ class _PreferencesTabState extends State<_PreferencesTab> {
             final wide = c.maxWidth > 520;
             // الاختيار يُشتق من الحالة الفعلية لـ ThemeCubit (مصدر الحقيقة).
             final currentMode = context.watch<ThemeCubit>().state;
-            final options = [
-              _ThemePreviewData(
-                  label: context.l10n.settingsThemeDark, mode: _ThemeMode.dark),
-              _ThemePreviewData(
-                  label: context.l10n.settingsThemeLight,
-                  mode: _ThemeMode.light),
-            ];
             final widgets = [
-              for (int i = 0; i < options.length; i++)
-                _ThemeOption(
-                  data: options[i],
-                  selected: _flutterMode(options[i].mode) == currentMode,
-                  onTap: () => context
-                      .read<ThemeCubit>()
-                      .setMode(_flutterMode(options[i].mode)),
+              for (final (label, mode) in [
+                (context.l10n.settingsThemeDark, ThemeMode.dark),
+                (context.l10n.settingsThemeLight, ThemeMode.light),
+              ])
+                AppThemeOption(
+                  label: label,
+                  mode: mode,
+                  selected: mode == currentMode,
+                  onTap: () => context.read<ThemeCubit>().setMode(mode),
                 ),
             ];
             if (wide) {
@@ -888,121 +879,6 @@ class _PasswordFieldState extends State<_PasswordField> {
         ),
       ],
     );
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//  REUSABLE — THEME OPTION
-// ══════════════════════════════════════════════════════════════════════════
-
-enum _ThemeMode { dark, light }
-
-class _ThemePreviewData {
-  const _ThemePreviewData({required this.label, required this.mode});
-  final String label;
-  final _ThemeMode mode;
-}
-
-class _ThemeOption extends StatelessWidget {
-  const _ThemeOption({
-    required this.data,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final _ThemePreviewData data;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.all(AppSizes.spaceSM),
-          decoration: BoxDecoration(
-            color: selected
-                ? AppColors.primary.withValues(alpha: 0.08)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-            border: Border.all(
-              color: selected
-                  ? AppColors.primary
-                  : AppColors.lightBorder,
-              width: selected ? 2 : 1,
-            ),
-          ),
-          child: Column(
-            children: [
-              // Preview swatch
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-                    child: SizedBox(
-                      height: 60,
-                      width: double.infinity,
-                      child: _buildPreview(data.mode),
-                    ),
-                  ),
-                  if (selected)
-                    PositionedDirectional(
-                      top: 6,
-                      end: 6,
-                      child: Container(
-                        width: 16,
-                        height: 16,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.check_rounded,
-                          size: 12,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                data.label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.lightText1,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPreview(_ThemeMode mode) {
-    switch (mode) {
-      case _ThemeMode.dark:
-        // الوضع الغامق الفعلي: slate + لمسة إندِغو
-        return Row(
-          children: [
-            Expanded(child: Container(color: AppColors.darkBg)),
-            Expanded(child: Container(color: AppColors.brand)),
-          ],
-        );
-      case _ThemeMode.light:
-        return Row(
-          children: [
-            Expanded(child: Container(color: const Color(0xFFE9ECFB))),
-            Expanded(child: Container(color: const Color(0xFFF8F9FF))),
-          ],
-        );
-    }
   }
 }
 

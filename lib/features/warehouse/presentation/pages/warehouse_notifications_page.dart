@@ -27,8 +27,18 @@ import '../navigation/warehouse_sidebar_sections.dart';
 import '../widgets/notifications/warehouse_notifications_content.dart';
 
 /// صفحة الإشعارات — نظام المستودع.
-class WarehouseNotificationsPage extends StatelessWidget {
+class WarehouseNotificationsPage extends StatefulWidget {
   const WarehouseNotificationsPage({super.key});
+
+  @override
+  State<WarehouseNotificationsPage> createState() =>
+      _WarehouseNotificationsPageState();
+}
+
+class _WarehouseNotificationsPageState
+    extends State<WarehouseNotificationsPage> {
+  // البحث موحّد عبر شريط الـ topbar (زي المخبر) — لا شريط بحث داخل الصفحة.
+  String _query = '';
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +53,8 @@ class WarehouseNotificationsPage extends StatelessWidget {
       ),
       pageTitle: context.l10n.whNotificationsTitle,
       pageSubtitle: context.l10n.warehouseTopbarSubtitle,
+      searchPlaceholder: context.l10n.notifSearchHint,
+      onSearchChanged: (v) => setState(() => _query = v.trim()),
       userName: MockUserData.defaultUserName,
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
@@ -61,7 +73,7 @@ class WarehouseNotificationsPage extends StatelessWidget {
                   minWidth: constraints.maxWidth,
                   maxWidth: constraints.maxWidth,
                 ),
-                child: const WarehouseNotificationsContent(),
+                child: WarehouseNotificationsContent(query: _query),
               ),
             ),
           );

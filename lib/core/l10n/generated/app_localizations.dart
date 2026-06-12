@@ -3854,11 +3854,59 @@ abstract class AppLocalizations {
   /// **'New material request'**
   String get labReqNewRequest;
 
-  /// No description provided for @labReqComingSoon.
+  /// No description provided for @labReqFieldMaterial.
   ///
   /// In en, this message translates to:
-  /// **'The material request form will be added here in the next version.'**
-  String get labReqComingSoon;
+  /// **'Material name'**
+  String get labReqFieldMaterial;
+
+  /// No description provided for @labReqFieldUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get labReqFieldUnit;
+
+  /// No description provided for @labReqFieldCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Company name'**
+  String get labReqFieldCompany;
+
+  /// No description provided for @labReqFieldReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Request reason'**
+  String get labReqFieldReason;
+
+  /// No description provided for @labReqReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. new material not available in the warehouse'**
+  String get labReqReasonHint;
+
+  /// No description provided for @labReqMaterialRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Material name is required'**
+  String get labReqMaterialRequired;
+
+  /// No description provided for @labReqQuantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid quantity'**
+  String get labReqQuantityRequired;
+
+  /// No description provided for @labReqSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get labReqSubmit;
+
+  /// No description provided for @labReqSentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Material request sent to the warehouse'**
+  String get labReqSentSuccess;
 
   /// No description provided for @labTechPendingAssign.
   ///

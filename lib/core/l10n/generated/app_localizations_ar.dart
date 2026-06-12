@@ -1956,8 +1956,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqNewRequest => 'طلب مادة جديدة';
 
   @override
-  String get labReqComingSoon =>
-      'سيتم إضافة نموذج طلب المواد هنا في الإصدار القادم.';
+  String get labReqFieldMaterial => 'اسم المادة';
+
+  @override
+  String get labReqFieldUnit => 'الوحدة';
+
+  @override
+  String get labReqFieldCompany => 'اسم الشركة';
+
+  @override
+  String get labReqFieldReason => 'سبب الطلب';
+
+  @override
+  String get labReqReasonHint => 'مثال: مادة جديدة غير موجودة بالمستودع';
+
+  @override
+  String get labReqMaterialRequired => 'اسم المادة مطلوب';
+
+  @override
+  String get labReqQuantityRequired => 'أدخل كمية صحيحة';
+
+  @override
+  String get labReqSubmit => 'إرسال الطلب';
+
+  @override
+  String get labReqSentSuccess => 'تم إرسال طلب المادة للمستودع';
 
   @override
   String get labTechPendingAssign => 'بانتظار التوكيل';

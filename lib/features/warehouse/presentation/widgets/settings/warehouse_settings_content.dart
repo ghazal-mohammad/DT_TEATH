@@ -20,6 +20,7 @@ import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../shared/bloc/theme_cubit.dart';
+import '../../../../../shared/widgets/primitives/app_theme_option.dart';
 import '../../../../../shared/bloc/locale_cubit.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/forms/app_form_field.dart';
@@ -628,10 +629,11 @@ class _PreferencesTabContentState extends State<_PreferencesTabContent> {
                 builder: (context, c) {
                   final isNarrow = c.maxWidth < 520;
                   final currentMode = context.watch<ThemeCubit>().state;
+                  // بطاقة السمة الموحّدة (تصميم المخبر المعتمد).
                   final children = _ThemeChoice.values
-                      .map((t) => _ThemeOptionCard(
-                            isLight: widget.isLight,
-                            choice: t,
+                      .map((t) => AppThemeOption(
+                            label: t.label(context),
+                            mode: _flutterMode(t),
                             selected: _flutterMode(t) == currentMode,
                             onTap: () => context
                                 .read<ThemeCubit>()
@@ -879,93 +881,6 @@ class _PrefDivider extends StatelessWidget {
         color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
       );
 }
-
-/// بطاقة اختيار السمة (خياران بصريان: داكن/فاتح).
-class _ThemeOptionCard extends StatelessWidget {
-  const _ThemeOptionCard({
-    required this.isLight,
-    required this.choice,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final bool isLight;
-  final _ThemeChoice choice;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final borderColor = selected
-        ? AppColors.primary
-        : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: isLight ? AppColors.lightBg : AppColors.darkBg,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-          border: Border.all(color: borderColor, width: selected ? 2 : 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // معاينة بصرية
-            Container(
-              height: 56,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-                border: Border.all(
-                  color: isLight
-                      ? AppColors.lightBorder
-                      : AppColors.darkBorder,
-                ),
-                gradient: _previewGradient(),
-              ),
-              child: selected
-                  ? const Align(
-                      alignment: AlignmentDirectional.topEnd,
-                      child: Padding(
-                        padding: EdgeInsets.all(6),
-                        child: _SelectedDot(),
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              choice.label(context),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  LinearGradient _previewGradient() {
-    switch (choice) {
-      case _ThemeChoice.dark:
-        // الوضع الغامق الفعلي: slate + لمسة إندِغو
-        return const LinearGradient(
-          colors: [AppColors.darkBg, AppColors.brand],
-        );
-      case _ThemeChoice.light:
-        return const LinearGradient(
-          colors: [Color(0xFFF6F7FB), Color(0xFFF6F7FB)],
-        );
-    }
-  }
-}
-
 /// بطاقة اختيار اللغة.
 class _LangOptionCard extends StatelessWidget {
   const _LangOptionCard({
@@ -1089,24 +1004,6 @@ class _RadioDot extends StatelessWidget {
     );
   }
 }
-
-class _SelectedDot extends StatelessWidget {
-  const _SelectedDot();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-    );
-  }
-}
-
 // ══════════════════════════════════════════════════════════════════════════
 //  CARDS
 // ══════════════════════════════════════════════════════════════════════════

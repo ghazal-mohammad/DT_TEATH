@@ -1971,8 +1971,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqNewRequest => 'New material request';
 
   @override
-  String get labReqComingSoon =>
-      'The material request form will be added here in the next version.';
+  String get labReqFieldMaterial => 'Material name';
+
+  @override
+  String get labReqFieldUnit => 'Unit';
+
+  @override
+  String get labReqFieldCompany => 'Company name';
+
+  @override
+  String get labReqFieldReason => 'Request reason';
+
+  @override
+  String get labReqReasonHint =>
+      'e.g. new material not available in the warehouse';
+
+  @override
+  String get labReqMaterialRequired => 'Material name is required';
+
+  @override
+  String get labReqQuantityRequired => 'Enter a valid quantity';
+
+  @override
+  String get labReqSubmit => 'Send request';
+
+  @override
+  String get labReqSentSuccess => 'Material request sent to the warehouse';
 
   @override
   String get labTechPendingAssign => 'Awaiting assignment';

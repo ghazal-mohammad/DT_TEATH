@@ -18,6 +18,7 @@ export 'primitives/app_icon_button.dart';
 export 'primitives/app_progress_bar.dart';
 export 'primitives/app_segmented_tabs.dart';
 export 'primitives/app_stat_card.dart';
+export 'primitives/app_theme_option.dart';
 
 // ─── Forms (Phase 2.4) ───────────────────────────────────────────────────
 export 'forms/app_form_field.dart';
