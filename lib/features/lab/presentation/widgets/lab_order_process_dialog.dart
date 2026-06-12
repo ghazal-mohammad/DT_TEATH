@@ -14,6 +14,7 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../data/lab_inventory_store.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 import 'lab_order_models.dart';
@@ -184,10 +185,13 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
               // اختيار المادة
               Expanded(
                 flex: 3,
-                child: DropdownButtonFormField<String>(
+                child: AppDropdownMenuTheme(
+                  child: DropdownButtonFormField<String>(
                   initialValue: r.materialId,
                   isExpanded: true,
                   isDense: true,
+                  dropdownColor: Colors.white,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusLG),
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: context.l10n.labProcessSelectMaterial,
@@ -210,6 +214,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                     setState(() => r.materialId = v);
                     _refreshAutoCost();
                   },
+                ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -240,7 +245,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
               const SizedBox(width: 4),
               IconButton(
                 icon: const Icon(Icons.delete_outline_rounded, size: 18),
-                color: const Color(0xFFEF4444),
+                color: AppColors.statusUrgent,
                 onPressed: () => _removeRow(r),
                 splashRadius: 18,
               ),
@@ -264,7 +269,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             context.l10n.labProcessMaterialsCost,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.lightText2,
             ),
@@ -332,8 +337,8 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                           Expanded(
                             child: _ChoiceCard(
                               icon: Icons.build_circle_outlined,
-                              iconColor: const Color(0xFF8B5CF6),
-                              iconBg: const Color(0xFFF1DAFE),
+                              iconColor: AppColors.statusProgress,
+                              iconBg: AppColors.statusProgressBg,
                               title: context.l10n.statusManufacturing,
                               subtitle:
                                   context.l10n.labProcessManufacturingDesc,
@@ -347,8 +352,8 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                           Expanded(
                             child: _ChoiceCard(
                               icon: Icons.check_rounded,
-                              iconColor: const Color(0xFF10B981),
-                              iconBg: const Color(0xFFD0FBD7),
+                              iconColor: AppColors.statusSuccess,
+                              iconBg: AppColors.statusSuccessBg,
                               title: context.l10n.labProcessReadyTitle,
                               subtitle: context.l10n.labProcessDeliveredDesc,
                               selected:
@@ -361,8 +366,8 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                           Expanded(
                             child: _ChoiceCard(
                               icon: Icons.close_rounded,
-                              iconColor: const Color(0xFFEF4444),
-                              iconBg: const Color(0xFFFEE2E2),
+                              iconColor: AppColors.statusUrgent,
+                              iconBg: AppColors.statusUrgentBg,
                               title: context.l10n.whOrderFilterMissing,
                               subtitle: context.l10n.labProcessMissingDesc,
                               selected:
@@ -377,9 +382,13 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                       // المخبري المنفّذ (دائماً)
                       _field(
                         label: context.l10n.labProcessTechnician,
-                        child: DropdownButtonFormField<String?>(
+                        child: AppDropdownMenuTheme(
+                          child: DropdownButtonFormField<String?>(
                           initialValue: _technician,
                           isExpanded: true,
+                          dropdownColor: Colors.white,
+                          borderRadius:
+                              BorderRadius.circular(AppSizes.radiusLG),
                           decoration: InputDecoration(
                             isDense: true,
                             border: OutlineInputBorder(
@@ -400,6 +409,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                               ),
                           ],
                           onChanged: (v) => setState(() => _technician = v),
+                        ),
                         ),
                       ),
                       // قسم المواد المستهلكة + التكلفة — فقط عند "جاهز" (الإنجاز)
@@ -426,18 +436,18 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEF4444)
+                              color: AppColors.statusUrgent
                                   .withValues(alpha: 0.08),
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
                               border: Border.all(
-                                  color: const Color(0xFFEF4444)
+                                  color: AppColors.statusUrgent
                                       .withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               children: [
                                 const Icon(Icons.warning_amber_rounded,
-                                    size: 16, color: Color(0xFFEF4444)),
+                                    size: 16, color: AppColors.statusUrgent),
                                 const SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
@@ -446,7 +456,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                                       fontFamily: AppTextStyles.fontFamily,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
-                                      color: Color(0xFFEF4444),
+                                      color: AppColors.statusUrgent,
                                     ),
                                   ),
                                 ),
@@ -547,7 +557,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
               label,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: AppColors.lightText1,
               ),
@@ -755,7 +765,7 @@ class _ChoiceCard extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: AppColors.lightText1,
                 ),
@@ -766,7 +776,7 @@ class _ChoiceCard extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 10.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w500,
                   color: AppColors.lightText3,
                   height: 1.35,
@@ -812,7 +822,7 @@ class _AddMaterialButton extends StatelessWidget {
                 context.l10n.labProcessAddMaterial,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
                   color: AppColors.primary,
                 ),

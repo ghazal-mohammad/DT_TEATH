@@ -19,6 +19,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../navigation/lab_sidebar_sections.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -63,19 +64,19 @@ _Style _styleOf(NotificationKind k, bool isLight) {
   switch (k) {
     case NotificationKind.urgent:
       return isLight
-          ? const _Style(Color(0xFFFFEDD5), Color(0xFFEA580C))
+          ? const _Style(AppColors.statusWarnBg, AppColors.statusWarn)
           : _Style(AppColors.darkChipOrangeBg, AppColors.darkChipOrangeText);
     case NotificationKind.order:
       return isLight
-          ? const _Style(Color(0xFFE2EDFF), Color(0xFF3B82F6))
+          ? const _Style(AppColors.statusInfoBg, AppColors.statusInfo)
           : _Style(AppColors.darkChipBlueBg, AppColors.darkChipBlueText);
     case NotificationKind.material:
       return isLight
-          ? const _Style(Color(0xFFF1DAFE), Color(0xFF8B5CF6))
+          ? const _Style(AppColors.statusProgressBg, AppColors.statusProgress)
           : _Style(AppColors.darkChipVioletBg, AppColors.darkChipVioletText);
     case NotificationKind.system:
       return isLight
-          ? const _Style(Color(0xFFD0FBD7), Color(0xFF10B981))
+          ? const _Style(AppColors.statusSuccessBg, AppColors.statusSuccess)
           : _Style(AppColors.darkChipGreenBg, AppColors.darkChipGreenText);
   }
 }
@@ -359,51 +360,37 @@ class _FilterRow extends StatelessWidget {
     return Row(
       children: [
         // tabs (RTL start = right visual)
-        Expanded(
-          child: Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              _Tab(
-                label: context.l10n.notifFilterAll,
-                count: total,
-                active: current == 'all',
-                onTap: () => onChange('all'),
-              ),
-              _Tab(
-                label: context.l10n.notifFilterUnread,
-                count: unread,
-                active: current == 'unread',
-                onTap: () => onChange('unread'),
-              ),
-              _Tab(
-                label: context.l10n.priorityUrgent,
-                count: urgent,
-                active: current == 'urgent',
-                accent: const Color(0xFFEA580C),
-                onTap: () => onChange('urgent'),
-              ),
-              _Tab(
-                label: context.l10n.notifFilterOrders,
-                count: orders,
-                active: current == 'order',
-                onTap: () => onChange('order'),
-              ),
-              _Tab(
-                label: context.l10n.notifFilterMaterials,
-                count: materials,
-                active: current == 'material',
-                onTap: () => onChange('material'),
-              ),
-              _Tab(
-                label: context.l10n.notifFilterSystem,
-                count: systemCount,
-                active: current == 'system',
-                onTap: () => onChange('system'),
-              ),
+        Flexible(
+          child: AppSegmentedTabs<String>(
+            values: const [
+              'all',
+              'unread',
+              'urgent',
+              'order',
+              'material',
+              'system',
             ],
+            selected: current,
+            labelOf: (v) => switch (v) {
+              'unread' => context.l10n.notifFilterUnread,
+              'urgent' => context.l10n.priorityUrgent,
+              'order' => context.l10n.notifFilterOrders,
+              'material' => context.l10n.notifFilterMaterials,
+              'system' => context.l10n.notifFilterSystem,
+              _ => context.l10n.notifFilterAll,
+            },
+            countOf: (v) => switch (v) {
+              'unread' => unread,
+              'urgent' => urgent,
+              'order' => orders,
+              'material' => materials,
+              'system' => systemCount,
+              _ => total,
+            },
+            onChanged: onChange,
           ),
         ),
+        const Spacer(),
         const SizedBox(width: 12),
         // mark all read (left visual)
         MouseRegion(
@@ -440,70 +427,6 @@ class _FilterRow extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Tab extends StatelessWidget {
-  const _Tab({
-    required this.label,
-    required this.count,
-    required this.active,
-    required this.onTap,
-    this.accent,
-  });
-
-  final String label;
-  final int count;
-  final bool active;
-  final VoidCallback onTap;
-  final Color? accent;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    final Color activeBg =
-        accent ?? (isLight ? AppColors.primary : AppColors.brand);
-    final Color idleText =
-        accent ?? (isLight ? AppColors.lightText2 : AppColors.darkText2);
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: active ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: active ? Colors.white : idleText,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '$count',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: active
-                      ? Colors.white
-                      : (isLight ? AppColors.lightText3 : AppColors.darkText3),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -563,7 +486,7 @@ class _NotificationCardState extends State<_NotificationCard> {
     final n = widget.item;
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     final s = _styleOf(n.kind, isLight);
-    final radius = BorderRadius.circular(14);
+    final radius = BorderRadius.circular(AppSizes.radiusLG);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hover = true),

@@ -234,7 +234,7 @@ class _QuickActionButtonState extends State<_QuickActionButton> {
                 widget.data.label,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w700,
                   height: 1.2,
                   color: color,

@@ -347,24 +347,24 @@ class _StatsRow extends StatelessWidget {
         final cards = [
           _TechStatCard(
             chipLabel: context.l10n.labTeamTotalChip,
-            chipColor: const Color(0xFF3B82F6),
-            accentColor: const Color(0xFF3B82F6),
+            chipColor: AppColors.statusInfo,
+            accentColor: AppColors.statusInfo,
             icon: Icons.people_alt_rounded,
             value: '$total',
             label: context.l10n.labTeamTotal,
           ),
           _TechStatCard(
             chipLabel: context.l10n.labTeamActiveChip,
-            chipColor: const Color(0xFF8B5CF6),
-            accentColor: const Color(0xFF8B5CF6),
+            chipColor: AppColors.statusProgress,
+            accentColor: AppColors.statusProgress,
             icon: Icons.adjust_rounded,
             value: '$active',
             label: context.l10n.techStatActiveLabel,
           ),
           _TechStatCard(
             chipLabel: context.l10n.labTeamReadyChip,
-            chipColor: const Color(0xFF10B981),
-            accentColor: const Color(0xFF10B981),
+            chipColor: AppColors.statusSuccess,
+            accentColor: AppColors.statusSuccess,
             icon: Icons.check_circle_rounded,
             value: '$available',
             label: context.l10n.labTeamAvailable,
@@ -571,7 +571,7 @@ class _TeamTable extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: isLight
-                        ? const Color(0xFFF1DAFE)
+                        ? AppColors.statusProgressBg
                         : AppColors.darkChipVioletBg,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -613,7 +613,7 @@ class _TableHeader extends StatelessWidget {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-      color: isLight ? const Color(0xFFE2EDFF) : AppColors.darkBg2,
+      color: isLight ? AppColors.statusInfoBg : AppColors.darkBg2,
       child: Row(
         children: [
           Expanded(
@@ -841,13 +841,13 @@ class _StatusPill extends StatelessWidget {
     late final String label;
     switch (status) {
       case TechnicianStatus.active:
-        bg = isLight ? const Color(0xFFF1DAFE) : AppColors.darkChipVioletBg;
-        fg = isLight ? const Color(0xFF8B5CF6) : AppColors.darkChipVioletText;
+        bg = isLight ? AppColors.statusProgressBg : AppColors.darkChipVioletBg;
+        fg = isLight ? AppColors.statusProgress : AppColors.darkChipVioletText;
         label = context.l10n.labTeamActive;
         break;
       case TechnicianStatus.available:
-        bg = isLight ? const Color(0xFFD0FBD7) : AppColors.darkChipGreenBg;
-        fg = isLight ? const Color(0xFF10B981) : AppColors.darkChipGreenText;
+        bg = isLight ? AppColors.statusSuccessBg : AppColors.darkChipGreenBg;
+        fg = isLight ? AppColors.statusSuccess : AppColors.darkChipGreenText;
         label = context.l10n.labTeamAvailable;
         break;
       case TechnicianStatus.onBreak:

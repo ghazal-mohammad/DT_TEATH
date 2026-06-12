@@ -199,7 +199,7 @@ class _AppAlertBoxState extends State<AppAlertBox>
               borderRadius: BorderRadius.circular(AppSizes.radiusXL),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFEF4444).withAlpha(alpha),
+                  color: AppColors.statusUrgent.withAlpha(alpha),
                   spreadRadius: spread,
                   blurRadius: 0,
                 ),
@@ -270,15 +270,15 @@ class _AppAlertBoxState extends State<AppAlertBox>
             const Color(0x08EF4444),
           ],
           borderColor: const Color(0x38EF4444), // 0.22
-          shimmerColor: const Color(0xFFEF4444),
-          iconColor: const Color(0xFFEF4444),
+          shimmerColor: AppColors.statusUrgent,
+          iconColor: AppColors.statusUrgent,
           titleColor: isLight
               ? const Color(0xFFDC2626)
               : const Color(0xFFFCA5A5),
           subtitleColor: isLight
-              ? const Color(0xFFEF4444)
+              ? AppColors.statusUrgent
               : const Color(0x99FCA5A5), // rgba(252,165,165,0.6)
-          valueColor: const Color(0xFFEF4444),
+          valueColor: AppColors.statusUrgent,
         );
       case AppAlertBoxVariant.warning:
         return _AlertBoxColors(
@@ -424,7 +424,7 @@ class _AlertBoxItemTileState extends State<_AlertBoxItemTile> {
                   widget.item.text,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 13.5,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: isLight
                         ? AppColors.lightText1
@@ -437,7 +437,7 @@ class _AlertBoxItemTileState extends State<_AlertBoxItemTile> {
                 widget.item.value,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: isLight
                       ? const Color(0xFF5A6A9A)

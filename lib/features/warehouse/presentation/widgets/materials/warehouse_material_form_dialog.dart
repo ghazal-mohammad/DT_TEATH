@@ -459,7 +459,7 @@ class _WarehouseMaterialFormDialogState
           context.l10n.whMaterialName,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13.5,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
             height: 1.2,
             color: isLight ? AppColors.lightText2 : AppColors.darkText2,
@@ -580,7 +580,7 @@ class _WarehouseMaterialFormDialogState
           context.l10n.whMaterialExpiryDate,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13.5,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
             height: 1.2,
             color: isLight ? AppColors.lightText2 : AppColors.darkText2,

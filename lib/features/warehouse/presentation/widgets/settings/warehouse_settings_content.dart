@@ -433,7 +433,7 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
                       context.l10n.settingsLogoutAllDesc,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
+                        fontSize: 13,
                         color: widget.isLight
                             ? AppColors.lightText3
                             : AppColors.darkText3,
@@ -797,7 +797,7 @@ class _CardHeader extends StatelessWidget {
             subtitle!,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5,
+              fontSize: 13,
               color: isLight ? AppColors.lightText3 : AppColors.darkText3,
             ),
           ),
@@ -848,7 +848,7 @@ class _TogglePref extends StatelessWidget {
                   description,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 12.5,
+                    fontSize: 13,
                     color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                   ),
                 ),

@@ -17,6 +17,8 @@ import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/data/app_data_table.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../../shared/widgets/layout/app_welcome_hero.dart';
+import '../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 import '../navigation/lab_sidebar_sections.dart';
 
@@ -72,7 +74,7 @@ class _LabDashboardBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ── 1. Greeting bar ─────────────────────────────────────────
-          const _DashboardGreeting(),
+          _buildWelcomeHero(context),
           const SizedBox(height: AppSizes.spaceLG),
 
           // ── 2. Stat Cards ────────────────────────────────────────────
@@ -92,6 +94,42 @@ class _LabDashboardBody extends StatelessWidget {
       },
     );
   }
+
+  /// hero الترحيب — الويدجت الموحّد المشترك مع المستودع.
+  Widget _buildWelcomeHero(BuildContext context) {
+    final l10n = context.l10n;
+    return AppWelcomeHero(
+      emoji: '🦷',
+      greeting: l10n.labGreeting(
+          CurrentUser.instance.name ?? MockUserData.labUserName),
+      statusText: l10n.systemAllNormal,
+      metas: const [
+        AppHeroMeta('الاثنين، 18 مايو', faded: true),
+        AppHeroMeta('آخر تحديث: منذ 3 دقيقة', faded: true),
+      ],
+      stats: [
+        AppHeroMiniStat(
+          icon: Icons.check_circle_outline_rounded,
+          value: '96%',
+          label: l10n.labHeroStatCompletionRate,
+          accent: AppColors.statusSuccess,
+          checkmark: true,
+        ),
+        AppHeroMiniStat(
+          icon: Icons.adjust_rounded,
+          value: '5',
+          label: l10n.labHeroStatInProgress,
+          accent: AppColors.statusProgress,
+        ),
+        AppHeroMiniStat(
+          icon: Icons.assignment_outlined,
+          value: '12',
+          label: l10n.labHeroStatTodayOrders,
+          accent: AppColors.primary,
+        ),
+      ],
+    );
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -107,47 +145,47 @@ class _StatCardsRow extends StatelessWidget {
     final cards = <Widget>[
       _DashboardStatCard(
         chipLabel: l10n.priorityUrgent,
-        chipColor: const Color(0xFFEF4444),
-        accentColor: const Color(0xFFEF4444),
+        chipColor: AppColors.statusUrgent,
+        accentColor: AppColors.statusUrgent,
         icon: Icons.local_fire_department_rounded,
         value: '2',
         label: l10n.labStatUrgentToday,
         trendIcon: Icons.arrow_downward_rounded,
         trendText: l10n.labStatNeedsFollowup,
-        trendColor: const Color(0xFFEF4444),
+        trendColor: AppColors.statusUrgent,
       ),
       _DashboardStatCard(
         chipLabel: l10n.labChipThisMonth,
-        chipColor: const Color(0xFF10B981),
-        accentColor: const Color(0xFF10B981),
+        chipColor: AppColors.statusSuccess,
+        accentColor: AppColors.statusSuccess,
         icon: Icons.check_circle_rounded,
         value: '23',
         label: l10n.labStatReadyOrders,
         trendIcon: Icons.arrow_upward_rounded,
         trendText: l10n.labTrendFromLastMonth('+18%'),
-        trendColor: const Color(0xFF10B981),
+        trendColor: AppColors.statusSuccess,
       ),
       _DashboardStatCard(
         chipLabel: l10n.labChipActive,
-        chipColor: const Color(0xFF8B5CF6),
-        accentColor: const Color(0xFF8B5CF6),
+        chipColor: AppColors.statusProgress,
+        accentColor: AppColors.statusProgress,
         icon: Icons.adjust_rounded,
         value: '7',
         label: l10n.labStatManufacturing,
         trendIcon: Icons.arrow_upward_rounded,
         trendText: l10n.labTrendFromYesterday('+1'),
-        trendColor: const Color(0xFF8B5CF6),
+        trendColor: AppColors.statusProgress,
       ),
       _DashboardStatCard(
         chipLabel: l10n.statusNew,
-        chipColor: const Color(0xFF3B82F6),
-        accentColor: const Color(0xFF3B82F6),
+        chipColor: AppColors.statusInfo,
+        accentColor: AppColors.statusInfo,
         icon: Icons.add_rounded,
         value: '4',
         label: l10n.labStatNewOrders,
         trendIcon: Icons.arrow_upward_rounded,
         trendText: l10n.labTrendFromYesterday('+2'),
-        trendColor: const Color(0xFF3B82F6),
+        trendColor: AppColors.statusInfo,
       ),
     ];
 
@@ -413,7 +451,7 @@ class _EndingTodayAlert extends StatelessWidget {
                         height: 20,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                          color: Color(0xFFEF4444),
+                          color: AppColors.statusUrgent,
                           shape: BoxShape.circle,
                         ),
                         child: const Text(
@@ -624,7 +662,7 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                   ),
                   decoration: BoxDecoration(
                     color: isLight
-                        ? const Color(0xFFF1DAFE)
+                        ? AppColors.statusProgressBg
                         : AppColors.darkChipVioletBg,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -641,38 +679,20 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
                   ),
                 ),
                 const Spacer(),
-                // tabs
-                _Tab(
-                  label: context.l10n.labOrdersFilterAll,
-                  count: all.length,
-                  isActive: _activeFilter == 'all',
-                  isLight: isLight,
-                  onTap: () => setState(() => _activeFilter = 'all'),
-                ),
-                const SizedBox(width: 6),
-                _Tab(
-                  label: context.l10n.labOrdersFilterNew,
-                  count: counts['new']!,
-                  isActive: _activeFilter == 'new',
-                  isLight: isLight,
-                  onTap: () => setState(() => _activeFilter = 'new'),
-                ),
-                const SizedBox(width: 6),
-                _Tab(
-                  label: context.l10n.labOrdersFilterManufacturing,
-                  count: counts['manufacturing']!,
-                  isActive: _activeFilter == 'manufacturing',
-                  isLight: isLight,
-                  onTap: () =>
-                      setState(() => _activeFilter = 'manufacturing'),
-                ),
-                const SizedBox(width: 6),
-                _Tab(
-                  label: context.l10n.labOrdersFilterReady,
-                  count: counts['ready']!,
-                  isActive: _activeFilter == 'ready',
-                  isLight: isLight,
-                  onTap: () => setState(() => _activeFilter = 'ready'),
+                // tabs — الستايل الموحّد (نفس شريط المستودع)
+                AppSegmentedTabs<String>(
+                  values: const ['all', 'new', 'manufacturing', 'ready'],
+                  selected: _activeFilter,
+                  labelOf: (v) => switch (v) {
+                    'new' => context.l10n.labOrdersFilterNew,
+                    'manufacturing' =>
+                      context.l10n.labOrdersFilterManufacturing,
+                    'ready' => context.l10n.labOrdersFilterReady,
+                    _ => context.l10n.labOrdersFilterAll,
+                  },
+                  countOf: (v) =>
+                      v == 'all' ? all.length : (counts[v] ?? 0),
+                  onChanged: (v) => setState(() => _activeFilter = v),
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
@@ -782,7 +802,7 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: isLight ? const Color(0xFFE2EDFF) : AppColors.darkChipBlueBg,
+            color: isLight ? AppColors.statusInfoBg : AppColors.darkChipBlueBg,
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
@@ -813,9 +833,9 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
     final l10n = context.l10n;
     final ({Color color, String label, int bars}) data = switch (priority) {
       LabOrderPriority.urgent =>
-        (color: const Color(0xFFEF4444), label: l10n.priorityUrgent, bars: 3),
+        (color: AppColors.statusUrgent, label: l10n.priorityUrgent, bars: 3),
       LabOrderPriority.medium =>
-        (color: const Color(0xFF3B82F6), label: l10n.priorityMedium, bars: 2),
+        (color: AppColors.statusInfo, label: l10n.priorityMedium, bars: 2),
       LabOrderPriority.normal => (
           color: isLight ? AppColors.lightText4 : AppColors.darkText4,
           label: l10n.priorityNormal,
@@ -857,24 +877,24 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
     final ({Color bg, Color text, String label}) data =
         switch (item.statusVariant) {
       LabOrderBadgeVariant.newOrder => (
-          bg: isLight ? const Color(0xFFE2EDFF) : AppColors.darkChipBlueBg,
-          text: isLight ? const Color(0xFF3B82F6) : AppColors.darkChipBlueText,
+          bg: isLight ? AppColors.statusInfoBg : AppColors.darkChipBlueBg,
+          text: isLight ? AppColors.statusInfo : AppColors.darkChipBlueText,
           label: l10n.statusNew,
         ),
       LabOrderBadgeVariant.manufacturing => (
-          bg: isLight ? const Color(0xFFF1DAFE) : AppColors.darkChipVioletBg,
+          bg: isLight ? AppColors.statusProgressBg : AppColors.darkChipVioletBg,
           text:
-              isLight ? const Color(0xFF8B5CF6) : AppColors.darkChipVioletText,
+              isLight ? AppColors.statusProgress : AppColors.darkChipVioletText,
           label: l10n.statusManufacturing,
         ),
       LabOrderBadgeVariant.ready => (
-          bg: isLight ? const Color(0xFFD0FBD7) : AppColors.darkChipGreenBg,
-          text: isLight ? const Color(0xFF10B981) : AppColors.darkChipGreenText,
+          bg: isLight ? AppColors.statusSuccessBg : AppColors.darkChipGreenBg,
+          text: isLight ? AppColors.statusSuccess : AppColors.darkChipGreenText,
           label: l10n.statusReady,
         ),
       LabOrderBadgeVariant.urgent => (
-          bg: isLight ? const Color(0xFFFEE2E2) : AppColors.darkChipRedBg,
-          text: isLight ? const Color(0xFFEF4444) : AppColors.darkChipRedText,
+          bg: isLight ? AppColors.statusUrgentBg : AppColors.darkChipRedBg,
+          text: isLight ? AppColors.statusUrgent : AppColors.darkChipRedText,
           label: l10n.priorityUrgent,
         ),
     };
@@ -912,382 +932,6 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//  TAB CHIP
-// ══════════════════════════════════════════════════════════════════════════
-
-class _Tab extends StatelessWidget {
-  const _Tab({
-    required this.label,
-    required this.count,
-    required this.isActive,
-    required this.isLight,
-    required this.onTap,
-  });
-
-  final String label;
-  final int count;
-  final bool isActive;
-  final bool isLight;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: isActive
-                ? (isLight ? AppColors.primary : AppColors.brand)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isActive
-                      ? Colors.white
-                      : (isLight ? AppColors.lightText2 : AppColors.darkText2),
-                ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '$count',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: isActive
-                      ? Colors.white
-                      : (isLight ? AppColors.lightText3 : AppColors.darkText3),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // قسم الفريق محذوف بالكامل من التصميم الموحّد — تم نقل المعلومات
 // إلى صفحة "إدارة المخبريين" المستقلة.
 
-// ══════════════════════════════════════════════════════════════════════════
-//  DASHBOARD GREETING — "مرحباً، د. رامي" + 3 mini stats
-// ══════════════════════════════════════════════════════════════════════════
-
-class _DashboardGreeting extends StatelessWidget {
-  const _DashboardGreeting();
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-      decoration: BoxDecoration(
-        // الفاتح: تدرّج لافندر مطابق لـ hero المستودع (توحيد بصري بين النظامين).
-        // الغامق: navy → بنفسجي (مطابق روح الـ hero بالموكب).
-        gradient: isLight
-            ? const LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [Color(0xFFF3E9FB), Color(0xFFE7DBF5)],
-              )
-            : const LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Color(0xFF20223A), // navy غامق
-                  Color(0xFF2A2B4A),
-                  Color(0xFF332B57), // لمسة بنفسجية
-                ],
-                stops: [0.0, 0.6, 1.0],
-              ),
-        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(
-            color: isLight
-                ? const Color(0xFFE0D2F0)
-                : AppColors.darkBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: LayoutBuilder(
-        builder: (context, c) {
-          final wide = c.maxWidth > 760;
-          final greetingPart = _GreetingText();
-          final statsPart = _MiniStatsRow();
-          if (wide) {
-            return Row(
-              children: [
-                // الترحيب يمين ويملأ المساحة المتبقّية، فتُدفع الإحصاءات
-                // المصغّرة إلى أقصى اليسار (Expanded بدل Flexible حتى لا
-                // تتكدّس بجانب الترحيب على اليمين).
-                Expanded(child: greetingPart),
-                const SizedBox(width: 24),
-                statsPart,
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              greetingPart,
-              const SizedBox(height: 14),
-              statsPart,
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _GreetingText extends StatelessWidget {
-  const _GreetingText();
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    final Color accent = isLight ? AppColors.primary : AppColors.darkText1;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: (isLight ? AppColors.primary : AppColors.brand)
-                .withValues(alpha: isLight ? 0.08 : 0.20),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(Icons.medical_services_outlined,
-              size: 18, color: isLight ? AppColors.primary : AppColors.brand),
-        ),
-        const SizedBox(width: 10),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                context.l10n.labGreeting(
-                    CurrentUser.instance.name ?? MockUserData.labUserName),
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: accent,
-                  height: 1.2,
-                ),
-              ),
-              const SizedBox(height: 4),
-              // ترتيب التصميم المرجعي (RTL يمين→يسار):
-              // [● جميع الأنظمة] · [الاثنين، 18 مايو] · [آخر تحديث: منذ 3 دقيقة]
-              // في Wrap RTL: أوّل child = يمين، فالـ status pill أوّلاً.
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 9, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: isLight
-                          ? const Color(0xFFD0FBD7)
-                          : AppColors.darkChipGreenBg,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: isLight
-                                ? const Color(0xFF10B981)
-                                : AppColors.darkChipGreenText,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          context.l10n.systemAllNormal,
-                          style: TextStyle(
-                            fontFamily: AppTextStyles.fontFamily,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: isLight
-                                ? const Color(0xFF10B981)
-                                : AppColors.darkChipGreenText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    '·',
-                    style: TextStyle(
-                        color: isLight
-                            ? AppColors.lightText4
-                            : AppColors.darkText4),
-                  ),
-                  Text(
-                    'الاثنين، 18 مايو',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-                    ),
-                  ),
-                  Text(
-                    '·',
-                    style: TextStyle(
-                        color: isLight
-                            ? AppColors.lightText4
-                            : AppColors.darkText4),
-                  ),
-                  Text(
-                    'آخر تحديث: منذ 3 دقيقة',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MiniStatsRow extends StatelessWidget {
-  const _MiniStatsRow();
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    // ترتيب التصميم المرجعي (RTL يمين→يسار):
-    //   [96% نسبة الإنجاز] → [5 قيد التنفيذ] → [12 طلب اليوم]
-    // في Row RTL: أوّل child = يمين، فالـ نسبة الإنجاز أوّلاً.
-    final l10n = context.l10n;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _MiniStat(
-          value: '96%',
-          label: l10n.labHeroStatCompletionRate,
-          icon: Icons.check_circle_outline_rounded,
-          color: const Color(0xFF10B981),
-        ),
-        const SizedBox(width: 10),
-        _MiniStat(
-          value: '5',
-          label: l10n.labHeroStatInProgress,
-          icon: Icons.adjust_rounded,
-          color: const Color(0xFF8B5CF6),
-        ),
-        const SizedBox(width: 10),
-        _MiniStat(
-          value: '12',
-          label: l10n.labHeroStatTodayOrders,
-          icon: Icons.assignment_outlined,
-          // navy غير مرئي على الغامق → نستخدم brand بالغامق
-          color: isLight ? const Color(0xFF1A1C4E) : AppColors.brand,
-        ),
-      ],
-    );
-  }
-}
-
-class _MiniStat extends StatelessWidget {
-  const _MiniStat({
-    required this.value,
-    required this.label,
-    required this.icon,
-    required this.color,
-  });
-
-  final String value;
-  final String label;
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, size: 14, color: color),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                  color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-                  height: 1.1,
-                ),
-              ),
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}

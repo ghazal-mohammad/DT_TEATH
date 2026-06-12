@@ -101,7 +101,7 @@ class _WarehouseMaterialMovementDialogState
                     child: _TypeButton(
                       label: l10n.whMovementIn,
                       icon: Icons.south_west_rounded,
-                      color: const Color(0xFF10B981),
+                      color: AppColors.statusSuccess,
                       selected: _isIn,
                       onTap: () => setState(() => _isIn = true),
                     ),
@@ -111,7 +111,7 @@ class _WarehouseMaterialMovementDialogState
                     child: _TypeButton(
                       label: l10n.whMovementOut,
                       icon: Icons.north_east_rounded,
-                      color: const Color(0xFFEF4444),
+                      color: AppColors.statusUrgent,
                       selected: !_isIn,
                       onTap: () => setState(() => _isIn = false),
                     ),
@@ -208,7 +208,7 @@ class _TypeButton extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: selected ? color : AppColors.lightText2,
                 ),

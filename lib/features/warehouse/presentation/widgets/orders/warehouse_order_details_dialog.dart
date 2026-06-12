@@ -48,9 +48,9 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
       };
 
   Color get _statusColor => switch (order.status) {
-        WarehouseOrderStatus.newOrder => const Color(0xFF2C7FDB),
-        WarehouseOrderStatus.fulfilled => const Color(0xFF1F9B6E),
-        WarehouseOrderStatus.missing => const Color(0xFF7A4FCF),
+        WarehouseOrderStatus.newOrder => AppColors.statusInfo,
+        WarehouseOrderStatus.fulfilled => AppColors.statusSuccess,
+        WarehouseOrderStatus.missing => AppColors.statusProgress,
       };
 
   String get _requestNumber {
@@ -152,7 +152,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
                   context.l10n.orderDetailsSubtitle,
                   style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 12.5,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: AppColors.lightText3,
                   ),
@@ -496,7 +496,7 @@ class _InfoCard extends StatelessWidget {
           r.label,
           style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             color: AppColors.lightText3,
           ),
@@ -507,7 +507,7 @@ class _InfoCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
               color: r.urgent
-                  ? const Color(0xFFD9434E).withValues(alpha: 0.12)
+                  ? AppColors.statusUrgent.withValues(alpha: 0.12)
                   : const Color(0xFFE5E7EB),
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             ),
@@ -515,10 +515,10 @@ class _InfoCard extends StatelessWidget {
               r.value,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: FontWeight.w800,
                 color: r.urgent
-                    ? const Color(0xFFD9434E)
+                    ? AppColors.statusUrgent
                     : AppColors.lightText3,
               ),
             ),
@@ -657,7 +657,7 @@ class _Timeline extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: AppColors.lightText3,
               ),

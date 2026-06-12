@@ -136,7 +136,7 @@ class _StatsRow extends StatelessWidget {
     final l10n = context.l10n;
     final cards = [
       _StatCard(
-        accent: const Color(0xFF3B82F6),
+        accent: AppColors.statusInfo,
         icon: Icons.inventory_2_outlined,
         value: '$total',
         label: l10n.labInvTotal,
@@ -148,7 +148,7 @@ class _StatsRow extends StatelessWidget {
         label: l10n.labInvLow,
       ),
       _StatCard(
-        accent: const Color(0xFFEF4444),
+        accent: AppColors.statusUrgent,
         icon: Icons.error_outline_rounded,
         value: '$out',
         label: l10n.labInvOut,

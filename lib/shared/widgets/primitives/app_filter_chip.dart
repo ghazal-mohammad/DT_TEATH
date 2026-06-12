@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/theme/app_colors.dart';
+import 'app_segmented_tabs.dart';
 
 /// شريحة تصفية (filter chip) قابلة للتبديل.
 ///
@@ -104,7 +105,7 @@ class _AppFilterChipState extends State<AppFilterChip> {
             widget.label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 13.5,
+              fontSize: 14,
               fontWeight: FontWeight.w600, // 600
               color: textColor,
               height: 1.2,
@@ -116,9 +117,10 @@ class _AppFilterChipState extends State<AppFilterChip> {
   }
 }
 
-/// صف أفقي من شرائح التصفية — `.fc-row` في HTML.
+/// صف أفقي من شرائح التصفية.
 ///
-/// يضمن التباعد الصحيح بين الشرائح (4px) مع دعم الـ wrapping.
+/// منذ التوحيد البصري بين النظامين: يُرسم بستايل [AppSegmentedTabs]
+/// (الشريط الأزرق الفاتح + التاب النشط أبيض) — نفس شريط مواد المستودع.
 class AppFilterChipRow extends StatelessWidget {
   const AppFilterChipRow({
     super.key,
@@ -133,16 +135,11 @@ class AppFilterChipRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 4, // CSS: gap:4px
-      runSpacing: 4,
-      children: List.generate(options.length, (i) {
-        return AppFilterChip(
-          label: options[i],
-          isSelected: i == selectedIndex,
-          onTap: () => onChanged(i),
-        );
-      }),
+    return AppSegmentedTabs<int>(
+      values: List.generate(options.length, (i) => i),
+      selected: selectedIndex,
+      labelOf: (i) => options[i],
+      onChanged: onChanged,
     );
   }
 }

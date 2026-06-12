@@ -307,7 +307,7 @@ class _DateField extends StatelessWidget {
               label,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 13.5,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: text2,
               ),
@@ -331,7 +331,7 @@ class _DateField extends StatelessWidget {
                       valueText,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 14.5,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: text1,
                       ),

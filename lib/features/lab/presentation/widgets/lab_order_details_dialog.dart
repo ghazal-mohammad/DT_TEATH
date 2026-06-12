@@ -183,7 +183,7 @@ class _Header extends StatelessWidget {
                   context.l10n.orderDetailsSubtitleLab,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 12.5,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: AppColors.lightText3,
                   ),
@@ -402,7 +402,7 @@ class _DoctorInfoCard extends StatelessWidget {
               ? context.l10n.priorityUrgent
               : context.l10n.priorityNormal,
           pillColor: order.isUrgent
-              ? const Color(0xFFEF4444)
+              ? AppColors.statusUrgent
               : AppColors.lightText3,
         ),
         (label: context.l10n.orderDetailsReceivingLab, value: 'مختبر الشام', pillColor: null),
@@ -446,7 +446,7 @@ class _InfoCard extends StatelessWidget {
                   title,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 13.5,
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: AppColors.lightText1,
                   ),
@@ -648,7 +648,7 @@ class _TimelineStep extends StatelessWidget {
           label,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 11.5,
+            fontSize: 12,
             fontWeight: FontWeight.w700,
             color: labelColor,
           ),
@@ -659,7 +659,7 @@ class _TimelineStep extends StatelessWidget {
             date!,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 10.5,
+              fontSize: 11,
               fontWeight: FontWeight.w500,
               color: AppColors.lightText3,
             ),

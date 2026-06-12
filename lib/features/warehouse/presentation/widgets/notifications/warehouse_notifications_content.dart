@@ -18,6 +18,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
+import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../../warehouse/data/mock/warehouse_pages_mock_data.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -267,7 +268,7 @@ class _DayHeader extends StatelessWidget {
 //                              NOTIFICATION CARD
 // ══════════════════════════════════════════════════════════════════════════
 
-class _NotificationCard extends StatelessWidget {
+class _NotificationCard extends StatefulWidget {
   const _NotificationCard({
     required this.isLight,
     required this.notification,
@@ -278,18 +279,45 @@ class _NotificationCard extends StatelessWidget {
   final WarehouseNotification notification;
   final VoidCallback onMarkRead;
 
+  @override
+  State<_NotificationCard> createState() => _NotificationCardState();
+}
+
+class _NotificationCardState extends State<_NotificationCard> {
+  bool _hover = false;
+
+  bool get isLight => widget.isLight;
+  WarehouseNotification get notification => widget.notification;
+  VoidCallback get onMarkRead => widget.onMarkRead;
+
   bool get _isUrgent => _isUrgentN(notification);
 
+  // الباليتة الدلالية الموحّدة (نفس إشعارات المخبر).
   Color get _accentColor {
-    if (_isUrgent) return AppColors.alertRed;
+    if (_isUrgent) return AppColors.statusUrgent;
     switch (notification.category) {
       case NotificationCategory.low:
       case NotificationCategory.expiry:
-        return AppColors.dashAmber;
+        return AppColors.statusWarn;
       case NotificationCategory.order:
-        return AppColors.dashCyan;
+        return AppColors.statusInfo;
       case NotificationCategory.general:
-        return AppColors.warehouseSystem;
+        return AppColors.statusSuccess;
+    }
+  }
+
+  Color get _accentBg {
+    if (_isUrgent) {
+      return isLight ? AppColors.statusUrgentBg : AppColors.darkChipRedBg;
+    }
+    switch (notification.category) {
+      case NotificationCategory.low:
+      case NotificationCategory.expiry:
+        return isLight ? AppColors.statusWarnBg : AppColors.darkChipOrangeBg;
+      case NotificationCategory.order:
+        return isLight ? AppColors.statusInfoBg : AppColors.darkChipBlueBg;
+      case NotificationCategory.general:
+        return isLight ? AppColors.statusSuccessBg : AppColors.darkChipGreenBg;
     }
   }
 
@@ -322,146 +350,158 @@ class _NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final bool isUnread = !notification.isRead;
-    final cardBg = isLight ? AppColors.baseComponent : AppColors.darkSurface;
-    final unreadTint = isLight
-        ? _accentColor.withValues(alpha: 0.04)
-        : _accentColor.withValues(alpha: 0.08);
+    final radius = BorderRadius.circular(AppSizes.radiusLG);
 
-    // RTL Row: أوّل child = يمين، آخر child = يسار.
-    // ترتيب المطلوب فيزيائياً: [stripe-يسار][icon][content-وسط/يمين]
-    //                          [actionBtn-يسار-تحت]
-    // لذلك بالـ Row: [content-أول=يمين, icon, actionBtn, stripe-آخر=يسار]
-    return Container(
-      decoration: BoxDecoration(
-        color: isUnread ? unreadTint : cardBg,
-        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── المحتوى (يمين) ────────────────────────────────────
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: _buildContent(isUnread, l10n),
-              ),
+    // التصميم الأبيض الموحّد — مطابق لبطاقة إشعارات المخبر بالحرف:
+    // كرت أبيض + شريط جانبي ملوّن (end) + أيقونة دائرية + hover lift.
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
+        decoration: BoxDecoration(
+          color: isLight
+              ? (notification.isRead ? const Color(0xFFFCFCFD) : Colors.white)
+              : (notification.isRead ? AppColors.darkBg2 : AppColors.darkBg1),
+          borderRadius: radius,
+          border: Border.all(
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: _hover ? 0.05 : 0.02),
+              blurRadius: _hover ? 14 : 8,
+              offset: Offset(0, _hover ? 6 : 3),
             ),
-            // ── العمود الأيسر: أيقونة فوق + زر الإجراء تحت ──────
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _accentColor.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(_icon, color: _accentColor, size: 20),
-                  ),
-                  if (notification.actionLabel != null) ...[
-                    const SizedBox(height: 10),
-                    _ActionPill(
-                      label: notification.actionLabel!,
-                      color: _accentColor,
-                      onTap: () {
-                        if (isUnread) onMarkRead();
-                      },
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            // ── شريط جانبي ملوّن (يسار البطاقة فيزيائياً) ───────
-            Container(width: 4, color: _accentColor),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isUnread, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // عنوان + badge
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Text(
-                notification.title,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
-                  fontWeight: isUnread ? FontWeight.w800 : FontWeight.w700,
-                  color: isLight
-                      ? AppColors.lightText1
-                      : AppColors.darkText1,
+        child: ClipRRect(
+          borderRadius: radius,
+          child: Stack(
+            children: [
+              // الشريط الجانبي الملوّن — حافة يسرى بصرياً (end في RTL)
+              PositionedDirectional(
+                end: 0,
+                top: 0,
+                bottom: 0,
+                child: Container(width: 4, color: _accentColor),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(14, 14, 18, 14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // icon دائري على اليمين (start في RTL)
+                    Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _accentBg,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(_icon, size: 20, color: _accentColor),
+                    ),
+                    const SizedBox(width: 12),
+                    // body content (وسط)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  notification.title,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontFamily: AppTextStyles.fontFamily,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: isLight
+                                        ? AppColors.lightText1
+                                        : AppColors.darkText1,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              _CategoryBadge(
+                                  text: _badgeText(l10n),
+                                  color: _accentColor),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            notification.body,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: isLight
+                                  ? AppColors.lightText2
+                                  : AppColors.darkText2,
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                _badgeText(l10n),
+                                style: TextStyle(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isLight
+                                      ? AppColors.lightText3
+                                      : AppColors.darkText3,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text('·',
+                                  style: TextStyle(
+                                    color: isLight
+                                        ? AppColors.lightText4
+                                        : AppColors.darkText4,
+                                  )),
+                              const SizedBox(width: 6),
+                              Text(
+                                notification.time,
+                                style: TextStyle(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: isLight
+                                      ? AppColors.lightText3
+                                      : AppColors.darkText3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    // action button على اليسار (end في RTL)
+                    if (notification.actionLabel != null) ...[
+                      const SizedBox(width: 16),
+                      _ActionBtn(
+                        label: notification.actionLabel!,
+                        color: _accentColor,
+                        onTap: () {
+                          if (!notification.isRead) onMarkRead();
+                        },
+                      ),
+                    ],
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            _CategoryBadge(text: _badgeText(l10n), color: _accentColor),
-          ],
-        ),
-        const SizedBox(height: 6),
-
-        // نص الإشعار
-        Text(
-          notification.body,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
-            height: 1.5,
-            color:
-                isLight ? AppColors.lightText3 : AppColors.darkText2,
+            ],
           ),
         ),
-
-        const SizedBox(height: 10),
-
-        // الصف السفلي: تصنيف · الوقت  (محاذاة يمين في RTL)
-        Row(
-          children: [
-            Text(
-              _badgeText(l10n),
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-              ),
-            ),
-            Text(
-              '  ·  ',
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 11.5,
-                color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-              ),
-            ),
-            Text(
-              notification.time,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 11.5,
-                color:
-                    isLight ? AppColors.lightText4 : AppColors.darkText4,
-              ),
-            ),
-          ],
-        ),
-      ],
+      ),
     );
   }
 }
@@ -496,8 +536,9 @@ class _CategoryBadge extends StatelessWidget {
   }
 }
 
-class _ActionPill extends StatelessWidget {
-  const _ActionPill({
+/// زر الإجراء — نفس ستايل المخبر (أبيض بحدود ملوّنة).
+class _ActionBtn extends StatelessWidget {
+  const _ActionBtn({
     required this.label,
     required this.color,
     required this.onTap,
@@ -509,23 +550,26 @@ class _ActionPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          border: Border.all(color: color.withValues(alpha: 0.32)),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: color,
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: isLight ? Colors.white : AppColors.darkBg1,
+            border: Border.all(color: color.withValues(alpha: 0.4)),
+            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
           ),
         ),
       ),
@@ -584,7 +628,7 @@ class _SearchRow extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 13.5,
+                      fontSize: 14,
                       color: isLight
                           ? AppColors.lightText1
                           : AppColors.darkText1,
@@ -595,7 +639,7 @@ class _SearchRow extends StatelessWidget {
                       hintText: context.l10n.notifSearchHint,
                       hintStyle: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 13.5,
+                        fontSize: 14,
                         color: text4,
                       ),
                     ),
@@ -669,18 +713,12 @@ class _FilterAndActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pills = Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: _NotifFilter.values.map((f) {
-        return _NotifPill(
-          label: f.label(context.l10n),
-          count: counts[f] ?? 0,
-          isActive: f == filter,
-          onTap: () => onChanged(f),
-          isLight: isLight,
-        );
-      }).toList(),
+    final pills = AppSegmentedTabs<_NotifFilter>(
+      values: _NotifFilter.values,
+      selected: filter,
+      labelOf: (f) => f.label(context.l10n),
+      countOf: (f) => counts[f] ?? 0,
+      onChanged: onChanged,
     );
 
     final markBtn = showMarkAll
@@ -711,7 +749,7 @@ class _FilterAndActionRow extends StatelessWidget {
                     context.l10n.notifMarkAllRead,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12.5,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: isLight
                           ? AppColors.lightText2
@@ -734,84 +772,6 @@ class _FilterAndActionRow extends StatelessWidget {
         const Spacer(),
         markBtn,
       ],
-    );
-  }
-}
-
-// ── Pill chip للفلتر: label + count داخل كبسولة، النشط dark navy ─────────
-class _NotifPill extends StatelessWidget {
-  const _NotifPill({
-    required this.label,
-    required this.count,
-    required this.isActive,
-    required this.onTap,
-    required this.isLight,
-  });
-
-  final String label;
-  final int count;
-  final bool isActive;
-  final VoidCallback onTap;
-  final bool isLight;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = isActive
-        ? AppColors.primary
-        : (isLight ? const Color(0xFFF1EDE6) : AppColors.darkBg2);
-    final labelColor = isActive
-        ? Colors.white
-        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-    final countBg = isActive
-        ? Colors.white.withValues(alpha: 0.18)
-        : (isLight ? Colors.white : AppColors.darkBg1);
-    final countColor = isActive
-        ? Colors.white
-        : (isLight ? AppColors.lightText3 : AppColors.darkText3);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.fromLTRB(6, 4, 12, 4),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: countBg,
-                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-              ),
-              child: Text(
-                '$count',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w800,
-                  color: countColor,
-                ),
-              ),
-            ),
-            const SizedBox(width: 7),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
-                fontWeight: FontWeight.w700,
-                color: labelColor,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

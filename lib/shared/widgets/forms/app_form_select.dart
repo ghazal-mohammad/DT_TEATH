@@ -28,6 +28,32 @@ class AppSelectOption<T> {
   final IconData? icon;
 }
 
+/// غلاف يوحّد ستايل قائمة الـ dropdown المنبثقة في كل التطبيق:
+/// خلفية بيضاء + صفوف hover/تحديد بأزرق فاتح (tableHeader) — مطابق
+/// لتصميم القائمة المرجعي المعتمد بين النظامين.
+///
+/// لفّ أي `DropdownButton`/`DropdownButtonFormField` خام فيه:
+/// ```dart
+/// AppDropdownMenuTheme(child: DropdownButton(...))
+/// ```
+class AppDropdownMenuTheme extends StatelessWidget {
+  const AppDropdownMenuTheme({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        hoverColor: AppColors.tableHeader.withValues(alpha: 0.55),
+        focusColor: AppColors.tableHeader,
+        highlightColor: AppColors.tableHeader.withValues(alpha: 0.45),
+      ),
+      child: child,
+    );
+  }
+}
+
 /// قائمة منسدلة موحّدة مع label.
 ///
 /// مثال:
@@ -88,7 +114,7 @@ class AppFormSelect<T> extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: text2,
                 ),
@@ -109,13 +135,8 @@ class AppFormSelect<T> extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 5),
-          // Theme محلي لتقوية ألوان الـ hover/focus داخل قائمة الـ dropdown.
-          Theme(
-            data: Theme.of(context).copyWith(
-              hoverColor: AppColors.tableHeader.withValues(alpha: 0.55),
-              focusColor: AppColors.tableHeader,
-              highlightColor: AppColors.tableHeader.withValues(alpha: 0.45),
-            ),
+          // الستايل الموحّد لقائمة الـ dropdown (hover/focus أزرق فاتح).
+          AppDropdownMenuTheme(
             child:
           DropdownButtonFormField<T>(
             initialValue: value,

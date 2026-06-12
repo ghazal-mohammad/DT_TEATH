@@ -18,6 +18,8 @@ import '../../../../../core/router/route_names.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../shared/widgets/layout/app_welcome_hero.dart';
+import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 
 class WarehouseDashboardContent extends StatelessWidget {
   const WarehouseDashboardContent({super.key});
@@ -28,7 +30,7 @@ class WarehouseDashboardContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _WelcomeHero(isLight: isLight),
+        _buildWelcomeHero(context),
         const SizedBox(height: 16),
         _StatCardsRow(isLight: isLight),
         const SizedBox(height: 16),
@@ -38,275 +40,40 @@ class WarehouseDashboardContent extends StatelessWidget {
       ],
     );
   }
-}
 
-// ══════════════════════════════════════════════════════════════════════════
-//  1) WELCOME HERO
-// ══════════════════════════════════════════════════════════════════════════
-
-class _WelcomeHero extends StatelessWidget {
-  const _WelcomeHero({required this.isLight});
-  final bool isLight;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-      decoration: BoxDecoration(
-        // تدرّج بنفسجي/لافندر فقط — بدون اللون الوردي.
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF3E9FB), Color(0xFFE7DBF5)],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: const Color(0xFFE0D2F0)),
-      ),
-      child: LayoutBuilder(
-        builder: (context, c) {
-          final isNarrow = c.maxWidth < 760;
-          if (isNarrow) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildHeader(context),
-                const SizedBox(height: 14),
-                _buildMiniStats(context),
-              ],
-            );
-          }
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(child: _buildHeader(context)),
-              const SizedBox(width: 12),
-              _buildMiniStats(context),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Text('📦', style: TextStyle(fontSize: 22)),
-            const SizedBox(width: 8),
-            Text(
-              context.l10n.whGreeting('أحمد'),
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: AppColors.primary,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 6,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            _StatusPill(
-              text: context.l10n.whSystemsNormal,
-              color: const Color(0xFF1F9B6E),
-            ),
-            const _DotSep(),
-            _MetaText(context.l10n.whLastUpdateLabel, faded: true),
-            const _MetaText('منذ 5 دقيقة', bold: true),
-            const _DotSep(),
-            const _MetaText('الجمعة، ٢٢ مايو', faded: true),
-          ],
-        ),
+  /// hero الترحيب — الويدجت الموحّد المشترك مع المخبر.
+  Widget _buildWelcomeHero(BuildContext context) {
+    final l10n = context.l10n;
+    return AppWelcomeHero(
+      emoji: '📦',
+      greeting: l10n.whGreeting('أحمد'),
+      statusText: l10n.whSystemsNormal,
+      metas: [
+        AppHeroMeta(l10n.whLastUpdateLabel, faded: true),
+        const AppHeroMeta('منذ 5 دقيقة', bold: true, dotBefore: false),
+        const AppHeroMeta('الجمعة، ٢٢ مايو', faded: true),
       ],
-    );
-  }
-
-  Widget _buildMiniStats(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _MiniStat(
+      stats: [
+        AppHeroMiniStat(
           icon: Icons.inventory_2_outlined,
           value: '247',
-          label: context.l10n.whTotalMaterials,
+          label: l10n.whTotalMaterials,
           accent: const Color(0xFF6E59B6),
         ),
-        const SizedBox(width: 10),
-        _MiniStat(
+        AppHeroMiniStat(
           icon: Icons.assignment_outlined,
           value: '9',
-          label: context.l10n.whMiniOrdersToday,
+          label: l10n.whMiniOrdersToday,
           accent: const Color(0xFFB44286),
         ),
-        const SizedBox(width: 10),
-        _MiniStat(
+        AppHeroMiniStat(
           icon: Icons.verified_outlined,
           value: '94%',
-          label: context.l10n.whSupplyRate,
-          accent: const Color(0xFF1F9B6E),
+          label: l10n.whSupplyRate,
+          accent: AppColors.statusSuccess,
           checkmark: true,
         ),
       ],
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.text, required this.color});
-  final String text;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DotSep extends StatelessWidget {
-  const _DotSep();
-  @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 2),
-        child: Text('·',
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              color: AppColors.lightText4,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-            )),
-      );
-}
-
-class _MetaText extends StatelessWidget {
-  const _MetaText(this.text, {this.bold = false, this.faded = false});
-  final String text;
-  final bool bold;
-  final bool faded;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontFamily: AppTextStyles.fontFamily,
-        fontSize: 11.5,
-        fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-        color: faded ? AppColors.lightText3 : AppColors.lightText1,
-      ),
-    );
-  }
-}
-
-class _MiniStat extends StatelessWidget {
-  const _MiniStat({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.accent,
-    this.checkmark = false,
-  });
-
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color accent;
-  final bool checkmark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.9)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (checkmark)
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: accent,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.check, color: Colors.white, size: 14),
-            )
-          else
-            Container(
-              width: 22,
-              height: 22,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Icon(icon, size: 14, color: accent),
-            ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  height: 1.0,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.lightText3,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }
@@ -319,10 +86,10 @@ enum _StatVariant { green, purple, orange, blue }
 
 extension on _StatVariant {
   Color get accent => switch (this) {
-        _StatVariant.green => const Color(0xFF1F9B6E),
-        _StatVariant.purple => const Color(0xFF7A4FCF),
-        _StatVariant.orange => const Color(0xFFE17B2C),
-        _StatVariant.blue => const Color(0xFF2C7FDB),
+        _StatVariant.green => AppColors.statusSuccess,
+        _StatVariant.purple => AppColors.statusProgress,
+        _StatVariant.orange => AppColors.statusWarn,
+        _StatVariant.blue => AppColors.statusInfo,
       };
 
   Color get tint => accent.withValues(alpha: 0.12);
@@ -513,7 +280,7 @@ class _StatCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 11.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: isLight
                             ? AppColors.lightText3
@@ -538,7 +305,7 @@ class _StatCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 10.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: accent,
                             ),
@@ -578,7 +345,7 @@ class _StatBadge extends StatelessWidget {
         text,
         style: TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          fontSize: 10.5,
+          fontSize: 11,
           fontWeight: FontWeight.w800,
           color: accent,
         ),
@@ -603,7 +370,7 @@ class _ExpiringWarningStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const accent = Color(0xFFE17B2C);
+    const accent = AppColors.statusWarn;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -653,7 +420,7 @@ class _ExpiringWarningStrip extends StatelessWidget {
                     context.l10n.whExpiringSubtitle,
                     style: const TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 11.5,
+                      fontSize: 12,
                       color: AppColors.lightText3,
                     ),
                   ),
@@ -695,14 +462,14 @@ class _CountBadge extends StatelessWidget {
       height: 22,
       alignment: Alignment.center,
       decoration: const BoxDecoration(
-        color: Color(0xFFE17B2C),
+        color: AppColors.statusWarn,
         shape: BoxShape.circle,
       ),
       child: Text(
         '$count',
         style: const TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          fontSize: 11.5,
+          fontSize: 12,
           fontWeight: FontWeight.w800,
           color: Colors.white,
         ),
@@ -743,7 +510,7 @@ class _ExpiringChipView extends StatelessWidget {
             data.qty,
             style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w800,
               color: AppColors.lightText1,
             ),
@@ -753,7 +520,7 @@ class _ExpiringChipView extends StatelessWidget {
             '— ${data.name}',
             style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.lightText3,
             ),
@@ -769,7 +536,7 @@ class _ExpiringChipView extends StatelessWidget {
               data.days,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: accent,
               ),
@@ -806,9 +573,9 @@ extension on _OrderRowStatus {
       };
 
   Color get color => switch (this) {
-        _OrderRowStatus.isNew => const Color(0xFF2C7FDB),
-        _OrderRowStatus.partial => const Color(0xFF7A4FCF),
-        _OrderRowStatus.fulfilled => const Color(0xFF1F9B6E),
+        _OrderRowStatus.isNew => AppColors.statusInfo,
+        _OrderRowStatus.partial => AppColors.statusProgress,
+        _OrderRowStatus.fulfilled => AppColors.statusSuccess,
       };
 }
 
@@ -987,7 +754,7 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: const Color(0xFFEFE3FA),
+              color: AppColors.statusProgressBg,
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             ),
             child: Text(
@@ -996,17 +763,16 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF7A4FCF),
+                color: AppColors.statusProgress,
               ),
             ),
           ),
           const Spacer(),
-          _OrdersSegmentedTabs(
-            tabs: _OrderTab.values,
-            counts: {
-              for (final t in _OrderTab.values) t: _countOrders(t),
-            },
+          AppSegmentedTabs<_OrderTab>(
+            values: _OrderTab.values,
             selected: _tab,
+            labelOf: (t) => t.label(context),
+            countOf: (t) => _countOrders(t),
             onChanged: (t) => setState(() => _tab = t),
           ),
           const SizedBox(width: 10),
@@ -1059,82 +825,6 @@ class _TodayOrdersSectionState extends State<_TodayOrdersSection> {
             isLast: i == rows.length - 1,
           ),
       ],
-    );
-  }
-}
-
-// ── Segmented tabs container (مطابق للـ mockup) ─────────────────────────
-class _OrdersSegmentedTabs extends StatelessWidget {
-  const _OrdersSegmentedTabs({
-    required this.tabs,
-    required this.counts,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  final List<_OrderTab> tabs;
-  final Map<_OrderTab, int> counts;
-  final _OrderTab selected;
-  final ValueChanged<_OrderTab> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        // أزرق فاتح أهدأ — أقرب للون الخلفية الأرضية.
-        color: const Color(0xFFDCE5F4),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: tabs.map((t) {
-          final isActive = t == selected;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 1),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(9),
-              onTap: () => onChanged(t),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOut,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 5),
-                decoration: BoxDecoration(
-                  // النشط: أبيض هادئ داخل الشريط الأزرق.
-                  color: isActive ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      t.label(context),
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
-                        fontWeight:
-                            isActive ? FontWeight.w800 : FontWeight.w600,
-                        color: AppColors.lightText1,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '${counts[t]}',
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.lightText3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 }
@@ -1293,7 +983,7 @@ class _OrdersTableRow extends StatelessWidget {
               row.date,
               style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
+                fontSize: 13,
                 color: AppColors.lightText3,
               ),
             ),
@@ -1364,7 +1054,7 @@ class _StatusPillSmall extends StatelessWidget {
             status.label(context),
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: c,
             ),

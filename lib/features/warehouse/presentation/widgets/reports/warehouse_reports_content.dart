@@ -62,9 +62,9 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
   // توزّع الاستهلاك حسب الفئة — مطابق للـ mockup.
   static const _categoryShares = <_CategoryShare>[
     _CategoryShare(label: 'مستهلكات', percent: 42, color: Color(0xFF1A1C4E)),
-    _CategoryShare(label: 'مواد طبية', percent: 28, color: Color(0xFF7A4FCF)),
-    _CategoryShare(label: 'أدوية', percent: 18, color: Color(0xFF2C7FDB)),
-    _CategoryShare(label: 'معادن', percent: 12, color: Color(0xFF1F9B6E)),
+    _CategoryShare(label: 'مواد طبية', percent: 28, color: AppColors.statusProgress),
+    _CategoryShare(label: 'أدوية', percent: 18, color: AppColors.statusInfo),
+    _CategoryShare(label: 'معادن', percent: 12, color: AppColors.statusSuccess),
   ];
 
   @override
@@ -269,7 +269,7 @@ class _SupplierRow extends StatelessWidget {
                 data.name,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: text1,
                 ),
@@ -297,7 +297,7 @@ class _SupplierRow extends StatelessWidget {
                 data.totalLabel,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
                   color: text1,
                 ),
@@ -381,7 +381,7 @@ class _TopMaterialsCard extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.star_border_rounded,
-                  size: 18, color: Color(0xFFE17B2C)),
+                  size: 18, color: AppColors.statusWarn),
               const SizedBox(width: 6),
               Text(
                 context.l10n.reportTopMaterials,
@@ -396,7 +396,7 @@ class _TopMaterialsCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFE3FA),
+                  color: AppColors.statusProgressBg,
                   borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                 ),
                 child: const Text(
@@ -405,7 +405,7 @@ class _TopMaterialsCard extends StatelessWidget {
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF7A4FCF),
+                    color: AppColors.statusProgress,
                   ),
                 ),
               ),
@@ -458,7 +458,7 @@ class _MaterialRow extends StatelessWidget {
                 data.name,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: text1,
                 ),
@@ -603,7 +603,7 @@ class _Toolbar extends StatelessWidget {
             'مارس 2026',
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               color: isLight ? AppColors.lightText1 : AppColors.darkText1,
             ),
@@ -737,37 +737,37 @@ class _StatsRow extends StatelessWidget {
         children: [
           _StatBox(
             badge: '-0.4 ${context.l10n.reportUnitDay}',
-            badgeColor: const Color(0xFFE17B2C),
+            badgeColor: AppColors.statusWarn,
             value: '1.8',
             valueSuffix: context.l10n.reportUnitDay,
             label: context.l10n.reportStatAvgSupplyTime,
             icon: Icons.access_time_rounded,
-            accent: const Color(0xFFE17B2C),
+            accent: AppColors.statusWarn,
           ),
           _StatBox(
             badge: '+2%',
-            badgeColor: const Color(0xFF1F9B6E),
+            badgeColor: AppColors.statusSuccess,
             value: '94',
             valueSuffix: '%',
             label: context.l10n.reportStatSupplyRate,
             icon: Icons.check_rounded,
-            accent: const Color(0xFF1F9B6E),
+            accent: AppColors.statusSuccess,
           ),
           _StatBox(
             badge: context.l10n.profileBadgeThisMonth,
-            badgeColor: const Color(0xFF7A4FCF),
+            badgeColor: AppColors.statusProgress,
             value: '156',
             label: context.l10n.reportStatConsumed,
             icon: Icons.trending_up_rounded,
-            accent: const Color(0xFF7A4FCF),
+            accent: AppColors.statusProgress,
           ),
           _StatBox(
             badge: '4+',
-            badgeColor: const Color(0xFF2C7FDB),
+            badgeColor: AppColors.statusInfo,
             value: '247',
             label: context.l10n.reportStatTotalMaterials,
             icon: Icons.inventory_2_outlined,
-            accent: const Color(0xFF2C7FDB),
+            accent: AppColors.statusInfo,
           ),
         ],
       );
@@ -830,7 +830,7 @@ class _StatBox extends StatelessWidget {
                             badge,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 10.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.w800,
                               color: badgeColor,
                             ),
@@ -1044,7 +1044,7 @@ class _DonutCard extends StatelessWidget {
                         s.label,
                         style: TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 12.5,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: isLight
                               ? AppColors.lightText1
@@ -1056,7 +1056,7 @@ class _DonutCard extends StatelessWidget {
                       '${s.percent}%',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: isLight
                             ? AppColors.lightText3
@@ -1068,7 +1068,7 @@ class _DonutCard extends StatelessWidget {
                       '${s.percent}',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: s.color,
                       ),
@@ -1163,7 +1163,7 @@ class _CalendarCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFE3FA),
+                  color: AppColors.statusProgressBg,
                   borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                 ),
                 child: Text(
@@ -1172,7 +1172,7 @@ class _CalendarCard extends StatelessWidget {
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF7A4FCF),
+                    color: AppColors.statusProgress,
                   ),
                 ),
               ),
@@ -1478,7 +1478,7 @@ class _PillChip extends StatelessWidget {
           label,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: FontWeight.w700,
             color: fg,
           ),

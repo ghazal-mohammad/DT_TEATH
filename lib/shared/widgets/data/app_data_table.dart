@@ -246,7 +246,7 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
                         col.label.toUpperCase(),
                         style: TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 11.5,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.8,
                           color: isLight

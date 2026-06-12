@@ -22,6 +22,7 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
+import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../data/mock/warehouse_pages_mock_data.dart';
 import 'warehouse_order_details_dialog.dart';
 
@@ -143,12 +144,11 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _OrdersSegmentedTabs(
+        AppSegmentedTabs<_OrderFilter>(
           values: _OrderFilter.values,
-          counts: {
-            for (final f in _OrderFilter.values) f: _count(f),
-          },
           selected: _filter,
+          labelOf: (f) => f.label(context.l10n),
+          countOf: (f) => _count(f),
           onChanged: (f) => setState(() => _filter = f),
         ),
         const Spacer(),
@@ -165,33 +165,36 @@ class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
   }
 
   Widget _buildGrid(List<WarehouseOrderItem> orders, bool isLight) {
+    // Wrap بارتفاع طبيعي حسب المحتوى — نفس نمط كروت طلبات المخبر
+    // (توحيد المسافات: spacing 16 بدون فراغ داخلي زائد).
     return LayoutBuilder(builder: (context, c) {
       final cols = c.maxWidth >= 1180
           ? 3
           : c.maxWidth >= 760
               ? 2
               : 1;
-      return GridView.count(
-        crossAxisCount: cols,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        // بطاقات أعرض من ارتفاعها — مطابقة لـ mockup (مدمجة بدون فراغ).
-        childAspectRatio: switch (cols) { 3 => 1.55, 2 => 1.85, _ => 2.2 },
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: orders
-            .map((o) => _OrderCard(
+      const double spacing = 16;
+      final double cardW = (c.maxWidth - spacing * (cols - 1)) / cols;
+      return Wrap(
+        spacing: spacing,
+        runSpacing: spacing,
+        children: [
+          for (final o in orders)
+            SizedBox(
+              width: cardW,
+              child: _OrderCard(
+                order: o,
+                urgent: _isUrgent(o),
+                isLight: isLight,
+                onView: () => WarehouseOrderDetailsDialog.show(
+                  context,
                   order: o,
                   urgent: _isUrgent(o),
-                  isLight: isLight,
-                  onView: () => WarehouseOrderDetailsDialog.show(
-                    context,
-                    order: o,
-                    urgent: _isUrgent(o),
-                  ),
-                  onSupply: () => _onSupplyTap(context, o),
-                ))
-            .toList(),
+                ),
+                onSupply: () => _onSupplyTap(context, o),
+              ),
+            ),
+        ],
       );
     });
   }
@@ -223,13 +226,13 @@ class _OrderCard extends StatelessWidget {
       };
 
   Color get _statusColor => switch (order.status) {
-        WarehouseOrderStatus.newOrder => const Color(0xFF2C7FDB),
-        WarehouseOrderStatus.fulfilled => const Color(0xFF1F9B6E),
-        WarehouseOrderStatus.missing => const Color(0xFF7A4FCF),
+        WarehouseOrderStatus.newOrder => AppColors.statusInfo,
+        WarehouseOrderStatus.fulfilled => AppColors.statusSuccess,
+        WarehouseOrderStatus.missing => AppColors.statusProgress,
       };
 
   Color get _accentColor =>
-      urgent ? const Color(0xFFD9434E) : _statusColor;
+      urgent ? AppColors.statusUrgent : _statusColor;
 
   String get _requesterInitial {
     final r = order.requester.trim();
@@ -265,7 +268,9 @@ class _OrderCard extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                // توحيد مع كرت طلبات المخبر (أفقي 16 / عمودي 14)
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -274,7 +279,7 @@ class _OrderCard extends StatelessWidget {
                     _buildRequesterRow(),
                     const SizedBox(height: 10),
                     _buildStatsRow(l10n),
-                    const Spacer(),
+                    const SizedBox(height: 12),
                     _buildBottomRow(l10n),
                   ],
                 ),
@@ -296,7 +301,7 @@ class _OrderCard extends StatelessWidget {
     final materialBadge = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFEFE3FA),
+        color: AppColors.statusProgressBg,
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
       child: Text(
@@ -305,16 +310,16 @@ class _OrderCard extends StatelessWidget {
         maxLines: 1,
         style: const TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          fontSize: 11.5,
+          fontSize: 12,
           fontWeight: FontWeight.w800,
-          color: Color(0xFF7A4FCF),
+          color: AppColors.statusProgress,
         ),
       ),
     );
     final urgentBadge = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEE9D9),
+        color: AppColors.statusUrgentBg,
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
       // RTL داخل الـ pill: الأيقونة يمين، النص يسار → [icon, SizedBox, text]
@@ -326,14 +331,14 @@ class _OrderCard extends StatelessWidget {
             l10n.ordersUrgent,
             style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 10.5,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
-              color: Color(0xFFE17B2C),
+              color: AppColors.statusUrgent,
             ),
           ),
           const SizedBox(width: 3),
           const Icon(Icons.priority_high_rounded,
-              size: 12, color: Color(0xFFE17B2C)),
+              size: 12, color: AppColors.statusUrgent),
         ],
       ),
     );
@@ -344,7 +349,7 @@ class _OrderCard extends StatelessWidget {
           _requestNumber,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: FontWeight.w800,
             color: isLight ? AppColors.lightText3 : AppColors.darkText3,
           ),
@@ -493,7 +498,7 @@ class _MiniStat extends StatelessWidget {
           label,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 10.5,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             color: txt3,
           ),
@@ -505,7 +510,7 @@ class _MiniStat extends StatelessWidget {
           maxLines: 1,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: FontWeight.w700,
             color: txt1,
           ),
@@ -537,7 +542,7 @@ class _StatusPill extends StatelessWidget {
             label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: color,
             ),
@@ -554,87 +559,4 @@ class _StatusPill extends StatelessWidget {
   }
 }
 
-// ── Filter pills (النشط dark navy + count badge داخل الكبسولة) ─────────
-class _OrdersSegmentedTabs extends StatelessWidget {
-  const _OrdersSegmentedTabs({
-    required this.values,
-    required this.counts,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  final List<_OrderFilter> values;
-  final Map<_OrderFilter, int> counts;
-  final _OrderFilter selected;
-  final ValueChanged<_OrderFilter> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: values.map((v) {
-        final isActive = v == selected;
-        final bg = isActive
-            ? AppColors.primary
-            : (isLight ? const Color(0xFFF1EDE6) : AppColors.darkBg2);
-        final labelColor = isActive
-            ? Colors.white
-            : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-        final countBg = isActive
-            ? Colors.white.withValues(alpha: 0.18)
-            : (isLight ? Colors.white : AppColors.darkBg1);
-        final countColor = isActive
-            ? Colors.white
-            : (isLight ? AppColors.lightText3 : AppColors.darkText3);
-        return InkWell(
-          onTap: () => onChanged(v),
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            padding: const EdgeInsets.fromLTRB(6, 4, 12, 4),
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: countBg,
-                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                  ),
-                  child: Text(
-                    '${counts[v] ?? 0}',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w800,
-                      color: countColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 7),
-                Text(
-                  v.label(context.l10n),
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: labelColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
 

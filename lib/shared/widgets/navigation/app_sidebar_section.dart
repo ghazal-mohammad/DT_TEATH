@@ -89,7 +89,7 @@ class AppSidebarSection extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
                 height: 1.2,
                 letterSpacing: 1.5,

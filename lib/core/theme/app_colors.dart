@@ -322,6 +322,49 @@ class AppColors {
   }
 
   // ── Phase 5.x — ألوان خلفية بديلة للعناصر الداخلية ─────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  //      UNIFIED SEMANTIC STATUS PALETTE (توحيد المخبر + المستودع)
+  // ══════════════════════════════════════════════════════════════════════
+  // الباليتة الدلالية الموحّدة بين النظامين (قرار التوحيد 2026-06-11):
+  // نفس الحالة المنطقية = نفس اللون في كل الشاشات.
+  // الوضع الغامق: استخدم darkChip* المقابلة (موجودة أعلاه).
+  //
+  //   عاجل / خطر       → statusUrgent   (أحمر)
+  //   جاهز / تم / نجاح → statusSuccess  (أخضر)
+  //   جديد / معلومة    → statusInfo     (أزرق)
+  //   قيد التنفيذ      → statusProgress (بنفسجي)
+  //   تحذير / جزئي     → statusWarn     (برتقالي)
+
+  /// عاجل/خطأ — أحمر موحّد (كان EF4444 بالمخبر و D9434E/E17B2C بالمستودع).
+  static const Color statusUrgent = Color(0xFFEF4444);
+
+  /// خلفية شارة "عاجل" الفاتحة.
+  static const Color statusUrgentBg = Color(0xFFFEE2E2);
+
+  /// جاهز/تم/نجاح — أخضر موحّد (كان 10B981 بالمخبر و 1F9B6E بالمستودع).
+  static const Color statusSuccess = Color(0xFF10B981);
+
+  /// خلفية شارة النجاح الفاتحة (من Design Guide: reserved D0FBD7).
+  static const Color statusSuccessBg = reservedBg;
+
+  /// جديد/معلومة — أزرق موحّد (كان 3B82F6 بالمخبر و 2C7FDB بالمستودع).
+  static const Color statusInfo = Color(0xFF3B82F6);
+
+  /// خلفية شارة المعلومة الفاتحة (من Design Guide: empty E2EDFF).
+  static const Color statusInfoBg = emptyBg;
+
+  /// قيد التنفيذ — بنفسجي موحّد (كان 8B5CF6 بالمخبر و 7A4FCF بالمستودع).
+  static const Color statusProgress = Color(0xFF8B5CF6);
+
+  /// خلفية شارة قيد التنفيذ (من Design Guide: 2nd Component F1DAFE).
+  static const Color statusProgressBg = secondaryComponent;
+
+  /// تحذير/جزئي — برتقالي موحّد (كان EA580C بالمخبر و E17B2C بالمستودع).
+  static const Color statusWarn = Color(0xFFEA580C);
+
+  /// خلفية شارة التحذير الفاتحة.
+  static const Color statusWarnBg = Color(0xFFFFEDD5);
+
   /// خلفية بديلة للعناصر الداخلية (icon containers, input backgrounds)
   static const Color lightBgAlt = Color(0xFFEEF1F9);
   static const Color darkBgAlt = Color(0x1AFFFFFF);

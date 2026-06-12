@@ -283,7 +283,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 14.5,
+              fontSize: 15,
               fontWeight: FontWeight.w800,
               color: AppColors.lightText1,
             ),
@@ -379,7 +379,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
           day.toString(),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13.5,
+            fontSize: 14,
             fontWeight: isSelected || isToday
                 ? FontWeight.w800
                 : FontWeight.w600,

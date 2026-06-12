@@ -7,5 +7,6 @@
       "runtimeArgs": ["run", "-d", "chrome", "--web-port", "8090"],
       "port": 8090
     }
-  ]
+  ],
+  "autoVerify": false
 }

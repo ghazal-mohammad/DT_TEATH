@@ -267,7 +267,7 @@ class _WarehouseMaterialCardState extends State<WarehouseMaterialCard>
         widget.material.category.label(context),
         style: TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          fontSize: 11.5,
+          fontSize: 12,
           fontWeight: FontWeight.w700,
           height: 1.2,
           color: color,
@@ -433,7 +433,7 @@ class _WarehouseMaterialCardState extends State<WarehouseMaterialCard>
           status.label(context),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 11.5,
+            fontSize: 12,
             fontWeight: FontWeight.w700,
             height: 1.2,
             color: status.accentColor,
@@ -529,7 +529,7 @@ class _ActionButtonState extends State<_ActionButton> {
             widget.label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               height: 1.2,
               color: _hovered ? AppColors.dashCyan : defaultColor,

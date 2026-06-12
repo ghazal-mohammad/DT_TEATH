@@ -303,7 +303,7 @@ class _AppStatCardState extends State<AppStatCard>
             widget.trendLabel!,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: fg,
               height: 1.0,

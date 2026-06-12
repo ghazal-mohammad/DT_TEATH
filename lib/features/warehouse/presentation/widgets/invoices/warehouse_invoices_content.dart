@@ -21,6 +21,7 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
+import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../data/mock/warehouse_pages_mock_data.dart';
 import 'warehouse_invoice_form_dialog.dart';
 
@@ -114,10 +115,11 @@ class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _InvoiceSegmentedTabs(
+        AppSegmentedTabs<_InvoiceFilter>(
           values: _InvoiceFilter.values,
-          counts: counts,
           selected: _filter,
+          labelOf: (v) => v.label(context.l10n),
+          countOf: (v) => counts[v] ?? 0,
           onChanged: (v) => setState(() => _filter = v),
         ),
         const Spacer(),
@@ -257,38 +259,38 @@ class _StatsRow extends StatelessWidget {
           _StatBox(
             isLight: isLight,
             badge: context.l10n.invBadgeTotal,
-            badgeColor: const Color(0xFF2C7FDB),
+            badgeColor: AppColors.statusInfo,
             valueLine: '$totalCount',
             label: context.l10n.invStatThisMonth,
             icon: Icons.receipt_long_outlined,
-            accent: const Color(0xFF2C7FDB),
+            accent: AppColors.statusInfo,
           ),
           _StatBox(
             isLight: isLight,
             badge: context.l10n.invBadgePaid,
-            badgeColor: const Color(0xFF1F9B6E),
+            badgeColor: AppColors.statusSuccess,
             valueLine: _fmtMoney(paidSum),
             label: context.l10n.invStatPaidTotal,
             icon: Icons.check_circle_outline_rounded,
-            accent: const Color(0xFF1F9B6E),
+            accent: AppColors.statusSuccess,
           ),
           _StatBox(
             isLight: isLight,
             badge: context.l10n.invBadgePending,
-            badgeColor: const Color(0xFF7A4FCF),
+            badgeColor: AppColors.statusProgress,
             valueLine: _fmtMoney(pendingSum),
             label: context.l10n.invStatPendingPay,
             icon: Icons.access_time_rounded,
-            accent: const Color(0xFF7A4FCF),
+            accent: AppColors.statusProgress,
           ),
           _StatBox(
             isLight: isLight,
             badge: '+12%',
-            badgeColor: const Color(0xFFE17B2C),
+            badgeColor: AppColors.statusWarn,
             valueLine: _fmtMoney(purchasesSum),
             label: context.l10n.invStatTotalPurchases,
             icon: Icons.trending_up_rounded,
-            accent: const Color(0xFFE17B2C),
+            accent: AppColors.statusWarn,
           ),
         ],
       );
@@ -363,7 +365,7 @@ class _StatBox extends StatelessWidget {
                             badge,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 10.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.w800,
                               color: badgeColor,
                             ),
@@ -496,7 +498,7 @@ class _InvoiceDataRow extends StatelessWidget {
               invoice.invoiceNumber,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
                 color: txt1,
               ),
@@ -547,7 +549,7 @@ class _InvoiceDataRow extends StatelessWidget {
               invoice.date,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12.5,
+                fontSize: 13,
                 color: txt3,
               ),
             ),
@@ -596,7 +598,7 @@ class _PaymentPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPaid = status == _PaymentStatus.paid;
-    final color = isPaid ? const Color(0xFF1F9B6E) : const Color(0xFF7A4FCF);
+    final color = isPaid ? AppColors.statusSuccess : AppColors.statusProgress;
     final label =
         isPaid ? context.l10n.invStatusPaid : context.l10n.invStatPendingPay;
     return Container(
@@ -613,7 +615,7 @@ class _PaymentPill extends StatelessWidget {
             label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: color,
             ),
@@ -634,89 +636,6 @@ class _PaymentPill extends StatelessWidget {
 //                              SMALL PIECES
 // ══════════════════════════════════════════════════════════════════════════
 
-// ── Filter pills (النشط dark navy + count badge داخل الكبسولة) ─────────
-class _InvoiceSegmentedTabs extends StatelessWidget {
-  const _InvoiceSegmentedTabs({
-    required this.values,
-    required this.counts,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  final List<_InvoiceFilter> values;
-  final Map<_InvoiceFilter, int> counts;
-  final _InvoiceFilter selected;
-  final ValueChanged<_InvoiceFilter> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: values.map((v) {
-        final isActive = v == selected;
-        final bg = isActive
-            ? AppColors.primary
-            : (isLight ? const Color(0xFFF1EDE6) : AppColors.darkBg2);
-        final labelColor = isActive
-            ? Colors.white
-            : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-        final countBg = isActive
-            ? Colors.white.withValues(alpha: 0.18)
-            : (isLight ? Colors.white : AppColors.darkBg1);
-        final countColor = isActive
-            ? Colors.white
-            : (isLight ? AppColors.lightText3 : AppColors.darkText3);
-        return InkWell(
-          onTap: () => onChanged(v),
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            padding: const EdgeInsets.fromLTRB(6, 4, 12, 4),
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: countBg,
-                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                  ),
-                  child: Text(
-                    '${counts[v] ?? 0}',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w800,
-                      color: countColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 7),
-                Text(
-                  v.label(context.l10n),
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: labelColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
 
 class _CountBadge extends StatelessWidget {
   const _CountBadge({required this.count});
@@ -727,7 +646,7 @@ class _CountBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFFEFE3FA),
+        color: AppColors.statusProgressBg,
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
       child: Text(
@@ -736,7 +655,7 @@ class _CountBadge extends StatelessWidget {
           fontFamily: AppTextStyles.fontFamily,
           fontSize: 11,
           fontWeight: FontWeight.w800,
-          color: Color(0xFF7A4FCF),
+          color: AppColors.statusProgress,
         ),
       ),
     );

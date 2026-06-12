@@ -212,7 +212,7 @@ class _AppBadgeState extends State<AppBadge>
             widget.text,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5, // CSS exact
+              fontSize: 13, // CSS exact
               fontWeight: FontWeight.w700, // 700
               color: colors.text,
               height: 1.2,

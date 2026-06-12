@@ -116,7 +116,7 @@ class AppProgressBar extends StatelessWidget {
                       label!,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).brightness == Brightness.light
                             ? const Color(0xFF3A5AB8)
@@ -129,7 +129,7 @@ class AppProgressBar extends StatelessWidget {
                     '${(value * 100).toStringAsFixed(0)}%',
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12.5,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: _buildSolidColor() ?? const Color(0xFF9EFBEC),
                     ),

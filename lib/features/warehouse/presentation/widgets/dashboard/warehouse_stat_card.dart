@@ -308,7 +308,7 @@ class _WarehouseStatCardState extends State<WarehouseStatCard> {
         widget.chipText,
         style: TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          fontSize: 11.5,
+          fontSize: 12,
           fontWeight: FontWeight.w700,
           height: 1.2,
           color: fg,

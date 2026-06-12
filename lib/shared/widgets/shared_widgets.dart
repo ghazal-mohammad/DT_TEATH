@@ -16,6 +16,7 @@ export 'primitives/app_card.dart';
 export 'primitives/app_filter_chip.dart';
 export 'primitives/app_icon_button.dart';
 export 'primitives/app_progress_bar.dart';
+export 'primitives/app_segmented_tabs.dart';
 export 'primitives/app_stat_card.dart';
 
 // ─── Forms (Phase 2.4) ───────────────────────────────────────────────────
@@ -32,6 +33,7 @@ export 'feedback/app_empty_state.dart';
 
 // ─── Layout (Phase 2.4) ──────────────────────────────────────────────────
 export 'layout/app_dashboard_hero.dart';
+export 'layout/app_welcome_hero.dart';
 
 // ─── Core Types (Phase 2.5) ──────────────────────────────────────────────
 export 'core/app_system_type.dart';

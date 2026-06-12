@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 
 /// أسماء المخبريين (الفنيين) المتاحين — مرجع موحّد للتوكيل وتسجيل المنفّذ.
@@ -59,20 +60,20 @@ class LabStatusColors {
   final Color fg;
 
   static const newOrder = LabStatusColors._(
-    Color(0xFFE2EDFF),
-    Color(0xFF3B82F6),
+    AppColors.statusInfoBg,
+    AppColors.statusInfo,
   );
   static const manufacturing = LabStatusColors._(
-    Color(0xFFF1DAFE),
-    Color(0xFF8B5CF6),
+    AppColors.statusProgressBg,
+    AppColors.statusProgress,
   );
   static const ready = LabStatusColors._(
-    Color(0xFFD0FBD7),
-    Color(0xFF10B981),
+    AppColors.statusSuccessBg,
+    AppColors.statusSuccess,
   );
   static const urgent = LabStatusColors._(
-    Color(0xFFFEE2E2),
-    Color(0xFFEF4444),
+    AppColors.statusUrgentBg,
+    AppColors.statusUrgent,
   );
 
   static LabStatusColors of(LabOrderBadgeVariant variant) {
@@ -110,6 +111,6 @@ Color labOrderAccentColor({
   required LabOrderBadgeVariant statusVariant,
   required bool isUrgent,
 }) {
-  if (isUrgent) return const Color(0xFFEF4444);
+  if (isUrgent) return AppColors.statusUrgent;
   return LabStatusColors.of(statusVariant).fg;
 }

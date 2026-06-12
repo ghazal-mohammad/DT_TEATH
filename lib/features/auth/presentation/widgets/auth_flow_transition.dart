@@ -68,42 +68,51 @@ class _AuthFlowTransition extends StatelessWidget {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     final dir = (isRtl ? -1 : 1) * direction.toDouble();
 
+    // ════════════════════════════════════════════════════════════════════════
+    // ثلاث مراحل بلا أي لحظة مكشوفة — بدون "حيط" يطمس الشاشة:
+    //   1) 0%  → 40% : الصفحة الصادرة تنزلق وتتلاشى، وتحتها بتظهر تدريجياً
+    //                  خلفية كحلية وسيطة (نفس خلفية صفحات الـ auth) — فما في
+    //                  أبداً فراغ/أسود بين الصفحتين.
+    //   2) ~30%→ ~75%: الشكل القطري المتوهّج يكتسح فوق الخلفية الوسيطة —
+    //                  مرئي كشكل (مش غطاء مصمت) تماماً مثل الفيديو.
+    //   3) 64% → 100%: الصفحة الواردة تنكشف (انزلاق + إزالة blur).
+    // ════════════════════════════════════════════════════════════════════════
+
     // ── الصفحة الصادرة (secondaryAnimation) ─────────────────────────────────
-    // تنزلق وتتلاشى مبكراً (0%→40%) — مثل عناصر signin يلي بتطلع أول بالفيديو.
     final outgoingSlide = Tween<Offset>(
       begin: Offset.zero,
-      end: Offset(-0.32 * dir, 0),
+      end: Offset(-0.30 * dir, 0),
     ).animate(CurvedAnimation(
       parent: secondaryAnimation,
-      curve: const Interval(0.0, 0.40, curve: Curves.easeInCubic),
+      curve: const Interval(0.0, 0.42, curve: Curves.easeInCubic),
     ));
 
     final outgoingOpacity = Tween<double>(begin: 1, end: 0).animate(
       CurvedAnimation(
         parent: secondaryAnimation,
-        curve: const Interval(0.05, 0.38, curve: Curves.easeIn),
+        curve: const Interval(0.08, 0.40, curve: Curves.easeIn),
       ),
     );
 
     // ── الصفحة الواردة (animation) ───────────────────────────────────────────
-    // تتأخّر للنص الأخير (60%→100%) — مثل عناصر signup يلي بتدخل آخر شي.
+    // مخفية تماماً حتى 64% — تنكشف فقط بعد ما يكون الغطاء غطّى التبديل.
     final incomingSlide = Tween<Offset>(
-      begin: Offset(1.05 * dir, 0),
+      begin: Offset(0.22 * dir, 0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: animation,
-      curve: const Interval(0.60, 1.0, curve: Curves.easeOutCubic),
+      curve: const Interval(0.64, 1.0, curve: Curves.easeOutCubic),
     ));
 
     final incomingOpacity = CurvedAnimation(
       parent: animation,
-      curve: const Interval(0.62, 0.95, curve: Curves.easeOut),
+      curve: const Interval(0.64, 0.92, curve: Curves.easeOut),
     );
 
-    final incomingBlur = Tween<double>(begin: 12, end: 0).animate(
+    final incomingBlur = Tween<double>(begin: 10, end: 0).animate(
       CurvedAnimation(
         parent: animation,
-        curve: const Interval(0.60, 0.98, curve: Curves.easeOut),
+        curve: const Interval(0.64, 0.96, curve: Curves.easeOut),
       ),
     );
 
@@ -129,7 +138,7 @@ class _AuthFlowTransition extends StatelessWidget {
         final double blur = incomingBlur.value;
 
         Widget content = TickerMode(
-          enabled: u >= 0.58,
+          enabled: u >= 0.62,
           child: child,
         );
 
@@ -148,10 +157,25 @@ class _AuthFlowTransition extends StatelessWidget {
           ),
         );
 
-        // الشكلان القطريان الدوّاران فوق المحتوى — يكتسحان بالمنتصف.
+        // ترتيب الطبقات: خلفية كحلية وسيطة (تمنع أي فراغ) ← المحتوى الوارد
+        // ← الشكل القطري الكاسح فوقهما.
         return Stack(
           fit: StackFit.expand,
           children: [
+            // الخلفية الوسيطة — تظهر مبكراً تحت الصفحة الصادرة وتختفي
+            // تلقائياً لما يكتمل الانتقال (المحتوى فوقها مصمت).
+            // ملاحظة: DecoratedBox مباشرة (ممنوع AuthNavyBackground هنا لأنه
+            // Positioned.fill — لفّه بـ Opacity يكسر الـ Stack: ParentDataWidget).
+            if (u < 0.995)
+              Opacity(
+                opacity: const Interval(0.10, 0.32, curve: Curves.easeOut)
+                    .transform(u),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.authNavyGradient,
+                  ),
+                ),
+              ),
             content,
             IgnorePointer(
               child: _RotatingShapes(progress: u, dir: dir),
@@ -195,20 +219,21 @@ class _RotatingShapes extends StatelessWidget {
         return Stack(
           fit: StackFit.expand,
           children: [
-            // background-shape — يقود (طور 18%→71% تقريباً): يبدأ أبكر.
+            // background-shape — صدى خلفي يقود الحركة (طبقة عمق بلا توهّج).
             _buildShape(
               w: w,
               h: h,
-              phase: _remap(progress, 0.10, 0.78),
+              phase: _remap(progress, 0.10, 0.80),
               fill: AppColors.authNavyGradient,
-              edgeAlpha: 0.0, // بدون توهّج — طبقة عمق خلفية
+              edgeAlpha: 0.0,
               skewScale: 1.0,
             ),
-            // secondary-shape — يتبع (طور 43%→96%): الطبقة الأمامية المتوهّجة.
+            // secondary-shape — الشكل الأمامي المتوهّج المرئي (الخلفية
+            // الوسيطة تحته هي اللي تمنع الفراغ — مش حجمه).
             _buildShape(
               w: w,
               h: h,
-              phase: _remap(progress, 0.28, 0.96),
+              phase: _remap(progress, 0.26, 0.96),
               fill: AppColors.authNavyGradient,
               edgeAlpha: 0.9,
               skewScale: 1.15,
@@ -240,6 +265,8 @@ class _RotatingShapes extends StatelessWidget {
     // خارج الشاشة تماماً → لا رسم.
     if (phase <= 0.0 || phase >= 1.0) return const SizedBox.shrink();
 
+    // عرض الكاسح 2.2w — شريط قطري مرئي يمرّ عبر الشاشة (مثل الفيديو)؛
+    // الخلفية الوسيطة تحته تتكفّل بعدم انكشاف أي فراغ.
     final double sweepW = w * 2.2;
 
     // الترجمة: من خارج جهة الدخول إلى خارج الجهة المقابلة.
@@ -276,12 +303,12 @@ class _RotatingShapes extends StatelessWidget {
                     left: BorderSide(
                       color: AppColors.accent
                           .withValues(alpha: edgeAlpha * glow),
-                      width: 2.5,
+                      width: 3,
                     ),
                     right: BorderSide(
                       color: AppColors.accent
                           .withValues(alpha: edgeAlpha * glow),
-                      width: 2.5,
+                      width: 3,
                     ),
                   ),
             boxShadow: edgeAlpha <= 0
@@ -289,12 +316,32 @@ class _RotatingShapes extends StatelessWidget {
                 : [
                     BoxShadow(
                       color:
-                          AppColors.accent.withValues(alpha: 0.4 * glow),
-                      blurRadius: 48,
-                      spreadRadius: 2,
+                          AppColors.accent.withValues(alpha: 0.55 * glow),
+                      blurRadius: 64,
+                      spreadRadius: 4,
                     ),
                   ],
           ),
+          // لمعة تركواز شفافة بعرض الشريط — تميّزه بوضوح فوق الخلفية
+          // الكحلية الوسيطة (وإلا كان كحلي-فوق-كحلي بالكاد يبان).
+          child: edgeAlpha <= 0
+              ? null
+              : DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        AppColors.accent.withValues(alpha: 0.16 * glow),
+                        AppColors.accent.withValues(alpha: 0.04 * glow),
+                        Colors.transparent,
+                        AppColors.accent.withValues(alpha: 0.04 * glow),
+                        AppColors.accent.withValues(alpha: 0.16 * glow),
+                      ],
+                      stops: const [0.0, 0.12, 0.5, 0.88, 1.0],
+                    ),
+                  ),
+                ),
         ),
       ),
     );

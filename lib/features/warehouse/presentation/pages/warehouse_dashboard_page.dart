@@ -21,6 +21,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
@@ -59,7 +60,7 @@ class WarehouseDashboardPage extends StatelessWidget {
             child: SingleChildScrollView(
               controller: controller,
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(22.0),
+              padding: const EdgeInsets.all(AppSizes.spaceLG),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minWidth: constraints.maxWidth,

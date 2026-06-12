@@ -24,6 +24,7 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
+import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../domain/entities/material_category.dart';
 import '../../../domain/entities/material_status.dart';
 import '../../../domain/entities/warehouse_material.dart';
@@ -210,38 +211,38 @@ class _StatsRow extends StatelessWidget {
           _StatBox(
             isLight: isLight,
             badge: context.l10n.profileBadgeAlert,
-            badgeColor: const Color(0xFF7A4FCF),
+            badgeColor: AppColors.statusProgress,
             value: '$outCount',
             label: context.l10n.whStatOutMaterials,
             icon: Icons.access_time_rounded,
-            accent: const Color(0xFF7A4FCF),
+            accent: AppColors.statusProgress,
           ),
           _StatBox(
             isLight: isLight,
             badge: context.l10n.profileBadgeAlert,
-            badgeColor: const Color(0xFFE17B2C),
+            badgeColor: AppColors.statusWarn,
             value: '$lowCount',
             label: context.l10n.whStatLowMaterials,
             icon: Icons.warning_amber_rounded,
-            accent: const Color(0xFFE17B2C),
+            accent: AppColors.statusWarn,
           ),
           _StatBox(
             isLight: isLight,
             badge: context.l10n.whStatusAvailable,
-            badgeColor: const Color(0xFF1F9B6E),
+            badgeColor: AppColors.statusSuccess,
             value: '$availCount',
             label: context.l10n.whStatAvailMaterials,
             icon: Icons.check_rounded,
-            accent: const Color(0xFF1F9B6E),
+            accent: AppColors.statusSuccess,
           ),
           _StatBox(
             isLight: isLight,
             badge: context.l10n.whBadgeTotal,
-            badgeColor: const Color(0xFF2C7FDB),
+            badgeColor: AppColors.statusInfo,
             value: '$total',
             label: context.l10n.whStatTotalMaterials,
             icon: Icons.inventory_2_outlined,
-            accent: const Color(0xFF2C7FDB),
+            accent: AppColors.statusInfo,
           ),
         ],
       );
@@ -301,7 +302,7 @@ class _StatBox extends StatelessWidget {
                             badge,
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 10.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.w800,
                               color: badgeColor,
                             ),
@@ -340,7 +341,7 @@ class _StatBox extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 11.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: isLight
                             ? AppColors.lightText3
@@ -446,7 +447,7 @@ class _PillChip extends StatelessWidget {
           label,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: FontWeight.w700,
             color: fg,
           ),
@@ -548,12 +549,11 @@ class _TableSection extends StatelessWidget {
           ],
         );
 
-        final tabs = _StatusSegmentedTabs(
+        final tabs = AppSegmentedTabs<_StatusFilter>(
           values: _StatusFilter.values,
-          counts: {
-            for (final s in _StatusFilter.values) s: _statusCount(s),
-          },
           selected: status,
+          labelOf: (v) => v.label(context.l10n),
+          countOf: (v) => _statusCount(v),
           onChanged: onStatusChange,
         );
 
@@ -582,80 +582,6 @@ class _TableSection extends StatelessWidget {
   }
 }
 
-// ── Segmented tabs (شريط أزرق فاتح + النشط أبيض داخله) ─────────────────
-class _StatusSegmentedTabs extends StatelessWidget {
-  const _StatusSegmentedTabs({
-    required this.values,
-    required this.counts,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  final List<_StatusFilter> values;
-  final Map<_StatusFilter, int> counts;
-  final _StatusFilter selected;
-  final ValueChanged<_StatusFilter> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: const Color(0xFFDCE5F4),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: values.map((v) {
-          final isActive = v == selected;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 1),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(9),
-              onTap: () => onChanged(v),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOut,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 5),
-                decoration: BoxDecoration(
-                  color: isActive ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      v.label(context.l10n),
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12.5,
-                        fontWeight:
-                            isActive ? FontWeight.w800 : FontWeight.w600,
-                        color: AppColors.lightText1,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '${counts[v]}',
-                      style: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.lightText3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
 class _CountBadge extends StatelessWidget {
   const _CountBadge({required this.count});
   final int count;
@@ -665,7 +591,7 @@ class _CountBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFFEFE3FA),
+        color: AppColors.statusProgressBg,
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
       ),
       child: Text(
@@ -674,7 +600,7 @@ class _CountBadge extends StatelessWidget {
           fontFamily: AppTextStyles.fontFamily,
           fontSize: 11,
           fontWeight: FontWeight.w800,
-          color: Color(0xFF7A4FCF),
+          color: AppColors.statusProgress,
         ),
       ),
     );
@@ -813,7 +739,7 @@ class _TableDataRow extends StatelessWidget {
                 _code,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
                   color: txt3,
                 ),
@@ -826,7 +752,7 @@ class _TableDataRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: txt1,
                 ),
@@ -857,7 +783,7 @@ class _TableDataRow extends StatelessWidget {
                 _expiryStr,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   color: txt3,
                 ),
               ),
@@ -869,7 +795,7 @@ class _TableDataRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12.5,
+                  fontSize: 13,
                   color: txt1,
                 ),
               ),
@@ -946,8 +872,8 @@ class _CategoryDot extends StatelessWidget {
   final MaterialCategory category;
 
   Color get _color => switch (category) {
-        MaterialCategory.medical => const Color(0xFF7A4FCF),
-        MaterialCategory.consumables => const Color(0xFF2C7FDB),
+        MaterialCategory.medical => AppColors.statusProgress,
+        MaterialCategory.consumables => AppColors.statusInfo,
         MaterialCategory.medicines => const Color(0xFFB44286),
         MaterialCategory.equipment => const Color(0xFF6B7280),
       };
@@ -969,7 +895,7 @@ class _CategoryDot extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12.5,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: _color,
             ),
@@ -1046,7 +972,7 @@ class _StatusPill extends StatelessWidget {
             status.label(context),
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: c,
             ),

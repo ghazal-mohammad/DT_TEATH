@@ -44,6 +44,8 @@ class EmployeeProfile {
     required this.experiences,
     required this.trainings,
     this.profilePicture = '',
+    this.address = '',
+    this.dateOfBirth = '',
   });
 
   final int id;
@@ -67,9 +69,13 @@ class EmployeeProfile {
   final List<Experience> experiences;
   final List<Training> trainings;
 
-  /// رابط صورة البروفايل. حالياً `showProfile` بالباك **ما يرجّعه** — جاهز
-  /// فاللحظة اللي الباك يضيف `profile_picture` لردّ EmployeeProfileResource.
+  /// رابط/مسار صورة البروفايل من الباك.
   final String profilePicture;
+
+  /// العنوان وتاريخ الميلاد — `showProfile` بالباك ما يرجّعهما **بعد**؛
+  /// جاهزان فاللحظة اللي يُضافان لـ EmployeeProfileResource.
+  final String address;
+  final String dateOfBirth;
 
   /// بناء من الرد الخام. يتعامل مع التغليف `{ data: {...} }` ومع الكائن المباشر.
   factory EmployeeProfile.fromJson(Map<String, dynamic> json) {
@@ -104,6 +110,8 @@ class EmployeeProfile {
       trainings: parseList(d['trainings'], Training.fromJson),
       profilePicture:
           _toStr(d['profile_picture'] ?? d['profile_picture_url']),
+      address: _toStr(d['address']),
+      dateOfBirth: _toStr(d['date_of_birth']),
     );
   }
 

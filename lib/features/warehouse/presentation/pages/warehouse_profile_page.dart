@@ -14,7 +14,7 @@ import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../navigation/warehouse_sidebar_sections.dart';
-import '../widgets/profile/warehouse_profile_content.dart';
+import '../../../profile/presentation/widgets/employee_profile_content.dart';
 
 /// صفحة الملف الشخصي — نظام المستودع.
 class WarehouseProfilePage extends StatelessWidget {
@@ -40,7 +40,7 @@ class WarehouseProfilePage extends StatelessWidget {
       showTopbarActions: false,
       searchPlaceholder: context.l10n.settingsSearchHint,
       // المحتوى يدير السكرول داخلياً ليتمكّن العمود الجانبي من البقاء ثابتاً (sticky).
-      body: const WarehouseProfileContent(),
+      body: const EmployeeProfileContent(),
     );
   }
 }

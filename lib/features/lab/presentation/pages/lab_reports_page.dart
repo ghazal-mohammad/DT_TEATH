@@ -24,6 +24,7 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
+import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../shared/widgets/primitives/app_filter_chip.dart';
@@ -43,15 +44,15 @@ class _ReportMockData {
 
   // Donut chart - الطلبات حسب النوع
   static const List<_ChartSegment> chartSegments = [
-    _ChartSegment(label: 'تلبيسات', percentage: 55, count: 46, color: Color(0xFF8B5CF6)),
-    _ChartSegment(label: 'جسور', percentage: 30, count: 25, color: Color(0xFF3B82F6)),
+    _ChartSegment(label: 'تلبيسات', percentage: 55, count: 46, color: AppColors.statusProgress),
+    _ChartSegment(label: 'جسور', percentage: 30, count: 25, color: AppColors.statusInfo),
     _ChartSegment(label: 'أخرى', percentage: 15, count: 12, color: Color(0xFF22C55E)),
   ];
 
   // أداء الفريق
   static const List<_TeamPerf> teamPerformance = [
-    _TeamPerf(name: 'محمد علي', ordersCount: 34, avgTime: '2.1h', progress: 0.85, color1: Color(0xFF1A1C4E), color2: Color(0xFF3B82F6)),
-    _TeamPerf(name: 'سامر حسن', ordersCount: 28, avgTime: '2.6h', progress: 0.70, color1: Color(0xFF8B5CF6), color2: Color(0xFFC084FC)),
+    _TeamPerf(name: 'محمد علي', ordersCount: 34, avgTime: '2.1h', progress: 0.85, color1: Color(0xFF1A1C4E), color2: AppColors.statusInfo),
+    _TeamPerf(name: 'سامر حسن', ordersCount: 28, avgTime: '2.6h', progress: 0.70, color1: AppColors.statusProgress, color2: Color(0xFFC084FC)),
     _TeamPerf(name: 'ليلى كريم', ordersCount: 21, avgTime: '2.8h', progress: 0.52, color1: Color(0xFF22C55E), color2: Color(0xFF86EFAC)),
   ];
 
@@ -213,33 +214,15 @@ class _LabReportsBody extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 650;
-        final filterChips = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppFilterChip(
-              label: l10n.labReportFilterMonthly,
-              isSelected: filterIndex == 0,
-              onTap: () => onFilterChanged(0),
-            ),
-            const SizedBox(width: AppSizes.spaceSM),
-            AppFilterChip(
-              label: l10n.labReportFilterWeekly,
-              isSelected: filterIndex == 1,
-              onTap: () => onFilterChanged(1),
-            ),
-            const SizedBox(width: AppSizes.spaceSM),
-            AppFilterChip(
-              label: l10n.labReportFilterDaily,
-              isSelected: filterIndex == 2,
-              onTap: () => onFilterChanged(2),
-            ),
-            const SizedBox(width: AppSizes.spaceSM),
-            AppFilterChip(
-              label: l10n.labReportFilterYearly,
-              isSelected: filterIndex == 3,
-              onTap: () => onFilterChanged(3),
-            ),
+        final filterChips = AppFilterChipRow(
+          options: [
+            l10n.labReportFilterMonthly,
+            l10n.labReportFilterWeekly,
+            l10n.labReportFilterDaily,
+            l10n.labReportFilterYearly,
           ],
+          selectedIndex: filterIndex,
+          onChanged: onFilterChanged,
         );
 
         final exportButtons = Row(
@@ -634,23 +617,25 @@ class _MonthDropdownState extends State<_MonthDropdown> {
               : AppColors.darkBorder,
         ),
       ),
-      child: DropdownButton<String>(
-        value: _selected,
-        isDense: true,
-        underline: const SizedBox(),
-        dropdownColor: widget.isLight
-            ? AppColors.lightBg1
-            : AppColors.darkBg1,
-        style: AppTextStyles.bodySmall.copyWith(
-          color: widget.isLight
-              ? AppColors.lightText1
-              : AppColors.darkText1,
-          fontSize: 13,
+      child: AppDropdownMenuTheme(
+        child: DropdownButton<String>(
+          value: _selected,
+          isDense: true,
+          underline: const SizedBox(),
+          dropdownColor:
+              widget.isLight ? Colors.white : AppColors.darkBg1,
+          borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+          style: AppTextStyles.bodySmall.copyWith(
+            color: widget.isLight
+                ? AppColors.lightText1
+                : AppColors.darkText1,
+            fontSize: 13,
+          ),
+          items: _options
+              .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+              .toList(),
+          onChanged: (v) => setState(() => _selected = v!),
         ),
-        items: _options
-            .map((o) => DropdownMenuItem(value: o, child: Text(o)))
-            .toList(),
-        onChanged: (v) => setState(() => _selected = v!),
       ),
     );
   }

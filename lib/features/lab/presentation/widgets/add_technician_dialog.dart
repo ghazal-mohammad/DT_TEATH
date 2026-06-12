@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
+import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 class TechnicianFormResult {
@@ -448,21 +449,25 @@ class _AddTechnicianDialogState extends State<AddTechnicianDialog> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.lightBorder),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _role,
-          isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
-            color: AppColors.lightText1,
+      child: AppDropdownMenuTheme(
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: _role,
+            isExpanded: true,
+            icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
+            dropdownColor: Colors.white,
+            borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 13,
+              color: AppColors.lightText1,
+            ),
+            items: [
+              for (final r in _roles)
+                DropdownMenuItem(value: r, child: Text(r)),
+            ],
+            onChanged: (v) => setState(() => _role = v ?? _role),
           ),
-          items: [
-            for (final r in _roles)
-              DropdownMenuItem(value: r, child: Text(r)),
-          ],
-          onChanged: (v) => setState(() => _role = v ?? _role),
         ),
       ),
     );

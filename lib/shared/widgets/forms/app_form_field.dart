@@ -155,7 +155,7 @@ class _AppFormFieldState extends State<AppFormField> {
             widget.label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 13.5,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
               color: color,
               height: 1.2,

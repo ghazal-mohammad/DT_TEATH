@@ -17,6 +17,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../data/lab_inventory_store.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -308,111 +309,26 @@ class _FilterBar extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: [
-            _Tab(
-              label: context.l10n.labOrdersFilterAll,
-              count: total,
-              active: current == 'all',
-              onTap: () => onChange('all'),
-            ),
-            _Tab(
-              label: context.l10n.priorityUrgent,
-              count: urgentCount,
-              active: current == 'urgent',
-              accent: const Color(0xFFEF4444),
-              onTap: () => onChange('urgent'),
-            ),
-            _Tab(
-              label: context.l10n.labOrdersFilterNew,
-              count: newCount,
-              active: current == 'new',
-              onTap: () => onChange('new'),
-            ),
-            _Tab(
-              label: context.l10n.labOrdersFilterManufacturing,
-              count: mfgCount,
-              active: current == 'manufacturing',
-              onTap: () => onChange('manufacturing'),
-            ),
-            _Tab(
-              label: context.l10n.labOrdersFilterReady,
-              count: readyCount,
-              active: current == 'ready',
-              onTap: () => onChange('ready'),
-            ),
-          ],
+        AppSegmentedTabs<String>(
+          values: const ['all', 'urgent', 'new', 'manufacturing', 'ready'],
+          selected: current,
+          labelOf: (v) => switch (v) {
+            'urgent' => context.l10n.priorityUrgent,
+            'new' => context.l10n.labOrdersFilterNew,
+            'manufacturing' => context.l10n.labOrdersFilterManufacturing,
+            'ready' => context.l10n.labOrdersFilterReady,
+            _ => context.l10n.labOrdersFilterAll,
+          },
+          countOf: (v) => switch (v) {
+            'urgent' => urgentCount,
+            'new' => newCount,
+            'manufacturing' => mfgCount,
+            'ready' => readyCount,
+            _ => total,
+          },
+          onChanged: onChange,
         ),
       ],
-    );
-  }
-}
-
-class _Tab extends StatelessWidget {
-  const _Tab({
-    required this.label,
-    required this.count,
-    required this.active,
-    required this.onTap,
-    this.accent,
-  });
-
-  final String label;
-  final int count;
-  final bool active;
-  final VoidCallback onTap;
-  final Color? accent;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    final Color activeBg =
-        accent ?? (isLight ? AppColors.primary : AppColors.brand);
-    final Color idleText =
-        accent ?? (isLight ? AppColors.lightText2 : AppColors.darkText2);
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: active
-                ? activeBg
-                : (isLight ? const Color(0xFFF6F7FB) : AppColors.darkBg2),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: active ? Colors.white : idleText,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '$count',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: active
-                      ? Colors.white
-                      : (isLight ? AppColors.lightText3 : AppColors.darkText3),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -449,7 +365,7 @@ class _OrderCardState extends State<_OrderCard> {
     );
     final initial =
         o.doctor.replaceAll('د. ', '').characters.firstOrNull ?? '';
-    final radius = BorderRadius.circular(16);
+    final radius = BorderRadius.circular(AppSizes.radiusLG);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hover = true),
@@ -516,7 +432,7 @@ class _OrderCardState extends State<_OrderCard> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isLight
-                                ? const Color(0xFFE2EDFF)
+                                ? AppColors.statusInfoBg
                                 : AppColors.darkChipBlueBg,
                             shape: BoxShape.circle,
                           ),
@@ -610,7 +526,7 @@ class _UrgentPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFFEE2E2) : AppColors.darkChipRedBg,
+        color: isLight ? AppColors.statusUrgentBg : AppColors.darkChipRedBg,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -619,7 +535,7 @@ class _UrgentPill extends StatelessWidget {
           Icon(
             Icons.local_fire_department_rounded,
             size: 13,
-            color: isLight ? const Color(0xFFEF4444) : AppColors.darkChipRedText,
+            color: isLight ? AppColors.statusUrgent : AppColors.darkChipRedText,
           ),
           const SizedBox(width: 4),
           Text(
@@ -629,7 +545,7 @@ class _UrgentPill extends StatelessWidget {
               fontSize: 12,
               fontWeight: FontWeight.w800,
               color:
-                  isLight ? const Color(0xFFEF4444) : AppColors.darkChipRedText,
+                  isLight ? AppColors.statusUrgent : AppColors.darkChipRedText,
             ),
           ),
         ],

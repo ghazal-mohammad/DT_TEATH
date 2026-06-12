@@ -21,6 +21,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/data/app_data_table.dart';
+import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_badge.dart';
@@ -235,13 +236,13 @@ class _StatsRow extends StatelessWidget {
     final l10n = context.l10n;
     final cards = [
       _StatCard(
-        accent: const Color(0xFF8B5CF6),
+        accent: AppColors.statusProgress,
         icon: Icons.category_outlined,
         value: '$total',
         label: l10n.labProdTotal,
       ),
       _StatCard(
-        accent: const Color(0xFF10B981),
+        accent: AppColors.statusSuccess,
         icon: Icons.check_circle_outline_rounded,
         value: '$active',
         label: l10n.labProdActiveCount,
@@ -473,7 +474,7 @@ class _ProductsTable extends StatelessWidget {
                           ? l10n.labProdStatusInactive
                           : l10n.labProdStatusActive,
                       color: p.isActive
-                          ? const Color(0xFF10B981)
+                          ? AppColors.statusSuccess
                           : (isLight
                               ? AppColors.lightText3
                               : AppColors.darkText3),
@@ -777,15 +778,21 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
-    return DropdownButtonFormField<String>(
-      initialValue: value,
-      isExpanded: true,
-      decoration: _decoration(),
-      items: [
-        for (final item in items)
-          DropdownMenuItem(value: item, child: Text(item)),
-      ],
-      onChanged: onChanged,
+    final bool isLight =
+        Theme.of(context).brightness == Brightness.light;
+    return AppDropdownMenuTheme(
+      child: DropdownButtonFormField<String>(
+        initialValue: value,
+        isExpanded: true,
+        decoration: _decoration(),
+        dropdownColor: isLight ? Colors.white : AppColors.darkBg1,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        items: [
+          for (final item in items)
+            DropdownMenuItem(value: item, child: Text(item)),
+        ],
+        onChanged: onChanged,
+      ),
     );
   }
 }

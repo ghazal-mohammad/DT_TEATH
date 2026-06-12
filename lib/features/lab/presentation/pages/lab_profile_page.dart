@@ -2,7 +2,7 @@
 // lab_profile_page.dart
 //
 // صفحة الملف الشخصي لمدير/مخبري المخبر.
-// تستخدم LabProfileContent المطابق هيكلياً لـ WarehouseProfileContent.
+// تستخدم EmployeeProfileContent الموحّد (مشترك مع المستودع).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../navigation/lab_sidebar_sections.dart';
-import '../widgets/profile/lab_profile_content.dart';
+import '../../../profile/presentation/widgets/employee_profile_content.dart';
 
 /// صفحة الملف الشخصي — نظام المخبر.
 class LabProfilePage extends StatelessWidget {
@@ -34,7 +34,7 @@ class LabProfilePage extends StatelessWidget {
       showTopbarActions: false,
       showSearch: false,
       // المحتوى يدير السكرول داخلياً ليتمكّن العمود الجانبي من البقاء ثابتاً (sticky).
-      body: const LabProfileContent(),
+      body: const EmployeeProfileContent(),
     );
   }
 }

@@ -139,7 +139,9 @@ class AppRouter {
           final mode = (extra is Map && extra['mode'] is AuthFlowMode)
               ? extra['mode'] as AuthFlowMode
               : AuthFlowMode.activation;
-          return _authSlide(
+          // authFlowPage (وليس _authSlide) ليشمل انتقال الشكل القطري الدوّار
+          // كل مسارات الدخول: login ↔ email ↔ verify ↔ password.
+          return authFlowPage(
             key: state.pageKey,
             child: EmailEntryPage(mode: mode),
             direction: 1,

@@ -349,7 +349,7 @@ class _AlertItemState extends State<_AlertItem> {
                   widget.data.text,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 13.5,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     height: 1.2,
                     color: widget.isLight
@@ -366,7 +366,7 @@ class _AlertItemState extends State<_AlertItem> {
                 widget.data.value,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13.5,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   height: 1.2,
                   color: widget.accentColor,
