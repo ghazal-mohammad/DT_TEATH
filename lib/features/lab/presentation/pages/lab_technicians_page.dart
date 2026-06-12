@@ -21,6 +21,8 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../../shared/widgets/loading/app_shimmer_card.dart';
+import '../../../../shared/widgets/loading/app_shimmer_table.dart';
 import '../../data/mock/lab_dashboard_mock_data.dart';
 import '../../data/models/lab_technician.dart';
 import '../../domain/repositories/lab_repository.dart';
@@ -239,7 +241,36 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
 
   Widget _buildBody(BuildContext context) {
     if (_loadingTechs) {
-      return const Center(child: CircularProgressIndicator());
+      // Skeleton فوري بدل spinner يحجب الصفحة — الصفحة تبيّن بنيتها
+      // فوراً حتى لو تأخّر الباك (أول طلب Laravel بيكون بطيء).
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSizes.spaceLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: const [
+                Expanded(child: AppShimmerCard(height: 96)),
+                SizedBox(width: AppSizes.spaceMD),
+                Expanded(child: AppShimmerCard(height: 96)),
+                SizedBox(width: AppSizes.spaceMD),
+                Expanded(child: AppShimmerCard(height: 96)),
+              ],
+            ),
+            const SizedBox(height: AppSizes.spaceLG),
+            const AppShimmerTable(
+              columns: [
+                AppShimmerTableColumn.wide,
+                AppShimmerTableColumn.text,
+                AppShimmerTableColumn.text,
+                AppShimmerTableColumn.badge,
+                AppShimmerTableColumn.actions,
+              ],
+              rowCount: 6,
+            ),
+          ],
+        ),
+      );
     }
     if (_techsError != null) {
       return _TechsError(message: _techsError!, onRetry: _loadTechnicians);

@@ -108,10 +108,12 @@ class _LabDashboardBody extends StatelessWidget {
         AppHeroMeta('آخر تحديث: منذ 3 دقيقة', faded: true),
       ],
       stats: [
+        // عدد الطلبات الموصّلة للطبيب — مقياس المدير (قرار الفريق:
+        // "نسبة الإنجاز" باسم المدير غلط، يُستبدل بعدد الطلبات المنجزة).
         AppHeroMiniStat(
-          icon: Icons.check_circle_outline_rounded,
-          value: '96%',
-          label: l10n.labHeroStatCompletionRate,
+          icon: Icons.local_shipping_outlined,
+          value: '31',
+          label: l10n.labHeroStatDelivered,
           accent: AppColors.statusSuccess,
           checkmark: true,
         ),

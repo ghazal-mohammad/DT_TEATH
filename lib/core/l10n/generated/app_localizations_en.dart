@@ -896,7 +896,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labHeroStatInProgress => 'In Progress';
 
   @override
-  String get labHeroStatCompletionRate => 'Completion Rate';
+  String get labHeroStatDelivered => 'Delivered';
 
   @override
   String get labStatNewOrders => 'New Orders';
@@ -1495,12 +1495,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileStatCompletedOrders => 'Completed Orders';
-
-  @override
-  String get profileStatExecTime => 'Execution Time';
-
-  @override
-  String get profileStatOnTime => 'On-time Completion';
 
   @override
   String get profileBadgeThisMonth => 'This Month';

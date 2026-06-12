@@ -67,7 +67,8 @@ class LabDashboardMockData {
   // Hero stats
   static const int todayOrdersCount = 12;
   static const int inProgressCount = 5;
-  static const int completionRate = 96;
+  // الطلبات الموصّلة للطبيب (تم التوصيل) — مقياس المدير بدل "نسبة الإنجاز".
+  static const int deliveredCount = 31;
 
   // Stat card values
   static const int newOrdersCount = 4;

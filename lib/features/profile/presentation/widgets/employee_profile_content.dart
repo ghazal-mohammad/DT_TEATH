@@ -34,6 +34,7 @@ import '../../domain/entities/employee_profile.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/utils/app_date.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
+import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../bloc/profile_cubit.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -373,12 +374,15 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
         // نعرض المحتوى فوراً ببيانات placeholder (_data) ونُحدّثه لمّا يرجع
         // الباك عبر الـ listener — بدون حجب الصفحة بـ spinner لانهائي لو
         // تأخّر/فشل طلب showProfile (شائع على الويب بسبب CORS).
-        return _buildContent(context);
+        return _buildContent(
+          context,
+          loading: state.status == ProfileStatus.loading,
+        );
       },
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, {required bool loading}) {
     return LayoutBuilder(builder: (context, c) {
       final isWide = c.maxWidth >= 900;
 
@@ -397,6 +401,7 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
       final main = _MainColumn(
         data: _current,
         editing: _editing,
+        loading: loading,
       );
 
       if (isWide) {
@@ -977,10 +982,15 @@ class _MainColumn extends StatelessWidget {
   const _MainColumn({
     required this.data,
     required this.editing,
+    this.loading = false,
   });
 
   final _EmployeeData data;
   final bool editing;
+
+  /// هل ما زال طلب showProfile قيد التحميل؟ (تظهر shimmer placeholders
+  /// مكان أقسام الباك بدل ما تنطّ فجأة لاحقاً).
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -1039,6 +1049,16 @@ class _MainColumn extends StatelessWidget {
           ],
         ),
         // ── أقسام حقيقية من الباك (showProfile) ──────────────────────────
+        // أثناء التحميل: shimmer placeholders مكان الأقسام القادمة من الباك
+        // (الشهادات/الخبرات/الدورات/المهارات) بدل ما تظهر فجأة بعد الرد.
+        if (loading) ...[
+          const SizedBox(height: 18),
+          const AppShimmerCard(height: 140),
+          const SizedBox(height: 18),
+          const AppShimmerCard(height: 140),
+          const SizedBox(height: 18),
+          const AppShimmerCard(height: 100),
+        ],
         if (data.educations.isNotEmpty) ...[
           const SizedBox(height: 18),
           _RelationSection(
@@ -1415,8 +1435,9 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // الترتيب في RTL: أول عنصر = أقصى اليمين. لمطابقة الموك أب
-    // (96% أقصى اليسار، 142 أقصى اليمين) نضع 142 أولاً ثم 2.4 ثم 96.
+    // قرار الفريق 2026-06-12: لا ساعات ولا "وقت تنفيذ" بملف المدير —
+    // المقاييس الزمنية تُستبدل بعدادات طلبات (مثل الواجهة الرئيسية).
+    // الترتيب في RTL: أول عنصر = أقصى اليمين.
     final stats = [
       _StatSpec(
         value: '142',
@@ -1428,20 +1449,20 @@ class _StatsRow extends StatelessWidget {
         bg: AppColors.statusSuccessBg,
       ),
       _StatSpec(
-        value: '2.4',
-        unit: 'س',
-        label: context.l10n.profileStatExecTime,
-        badge: context.l10n.profileBadgeAverage,
-        icon: Icons.schedule_rounded,
+        value: '5',
+        unit: '',
+        label: context.l10n.labHeroStatInProgress,
+        badge: context.l10n.labChipActive,
+        icon: Icons.adjust_rounded,
         accent: AppColors.statusProgress,
         bg: const Color(0xFFF4ECFB),
       ),
       _StatSpec(
-        value: '96',
-        unit: '%',
-        label: context.l10n.profileStatOnTime,
-        badge: '2%+',
-        icon: Icons.star_border_rounded,
+        value: '7',
+        unit: '',
+        label: context.l10n.labStatReadyOrders,
+        badge: context.l10n.profileBadgeThisMonth,
+        icon: Icons.inventory_2_outlined,
         accent: const Color(0xFF2E48B5),
         bg: const Color(0xFFEFF3FD),
       ),
@@ -2011,94 +2032,6 @@ class _FieldPillState extends State<_FieldPill> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//                       حالات التحميل / الخطأ (الربط بالباك)
-// ══════════════════════════════════════════════════════════════════════════
-
-class _ProfileCenterLoader extends StatelessWidget {
-  const _ProfileCenterLoader();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(40),
-        child: SizedBox(
-          width: 34,
-          height: 34,
-          child: CircularProgressIndicator(
-            strokeWidth: 3,
-            valueColor: AlwaysStoppedAnimation(_Palette.accent),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileCenterError extends StatelessWidget {
-  const _ProfileCenterError({required this.message, required this.onRetry});
-
-  final String? message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.cloud_off_rounded,
-                size: 44, color: AppColors.lightText4),
-            const SizedBox(height: 12),
-            Text(
-              message ?? context.l10n.profileLoadError,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: AppColors.lightText2,
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: onRetry,
-              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                decoration: BoxDecoration(
-                  color: _Palette.accent,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.refresh_rounded, size: 16, color: Colors.white),
-                    const SizedBox(width: 6),
-                    Text(
-                      context.l10n.retry,
-                      style: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

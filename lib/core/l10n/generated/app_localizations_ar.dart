@@ -887,7 +887,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labHeroStatInProgress => 'قيد التنفيذ';
 
   @override
-  String get labHeroStatCompletionRate => 'نسبة الإنجاز';
+  String get labHeroStatDelivered => 'تم توصيلها';
 
   @override
   String get labStatNewOrders => 'طلبات جديدة';
@@ -1483,12 +1483,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileStatCompletedOrders => 'طلبات منجزة';
-
-  @override
-  String get profileStatExecTime => 'وقت التنفيذ';
-
-  @override
-  String get profileStatOnTime => 'الإنجاز في الوقت';
 
   @override
   String get profileBadgeThisMonth => 'هذا الشهر';

@@ -1820,11 +1820,11 @@ abstract class AppLocalizations {
   /// **'In Progress'**
   String get labHeroStatInProgress;
 
-  /// No description provided for @labHeroStatCompletionRate.
+  /// No description provided for @labHeroStatDelivered.
   ///
   /// In en, this message translates to:
-  /// **'Completion Rate'**
-  String get labHeroStatCompletionRate;
+  /// **'Delivered'**
+  String get labHeroStatDelivered;
 
   /// No description provided for @labStatNewOrders.
   ///
@@ -2971,18 +2971,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Completed Orders'**
   String get profileStatCompletedOrders;
-
-  /// No description provided for @profileStatExecTime.
-  ///
-  /// In en, this message translates to:
-  /// **'Execution Time'**
-  String get profileStatExecTime;
-
-  /// No description provided for @profileStatOnTime.
-  ///
-  /// In en, this message translates to:
-  /// **'On-time Completion'**
-  String get profileStatOnTime;
 
   /// No description provided for @profileBadgeThisMonth.
   ///
