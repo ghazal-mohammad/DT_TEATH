@@ -2173,6 +2173,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labProcessTechnicianNone => 'بدون تحديد';
 
   @override
+  String get labProcessTechnicianRequired =>
+      'اختر المخبري المنفّذ قبل تغيير الحالة';
+
+  @override
   String get labProcessManufacturingDesc => 'الطلبية قيد التصنيع حالياً';
 
   @override

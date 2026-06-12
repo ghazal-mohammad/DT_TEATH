@@ -142,7 +142,10 @@
       "Bash(python -)",
       "Bash(base=\"C:/Users/Asus/Desktop/Comprehensive_Dental_Clinics_Management_system/backend_project\"; echo \"=== الـ Resource كامل \\(أول 30 سطر من toArray\\) ===\"; sed -n '/function toArray/,/educations/p' \"$base/app/Http/Resources/EmployeeProfileResource.php\" | head -25; echo \"\"; echo \"=== profile_picture_url accessor \\(full URL كيف مبني؟\\) ===\"; grep -nA8 \"profilePictureUrl\\\\|profile_picture_url\" \"$base/app/Models/User.php\" | head -20)",
       "Bash(grep -nB2 -A10 profile_picture C:/Users/Asus/Desktop/Comprehensive_Dental_Clinics_Management_system/backend_project/app/Models/User.php)",
-      "Bash(grep -rnA20 \"_resolvePictureUrl\\(String\" lib/features/lab/presentation/widgets/profile/lab_profile_content.dart)"
+      "Bash(grep -rnA20 \"_resolvePictureUrl\\(String\" lib/features/lab/presentation/widgets/profile/lab_profile_content.dart)",
+      "PowerShell(Remove-Item \"lib\\\\features\\\\lab\\\\presentation\\\\widgets\\\\add_technician_dialog.dart\" -Confirm:$false)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{time_total}s\" -m 5 http://localhost:8000/api/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{time_total}s\" -m 5 http://127.0.0.1:8000)"
     ]
   }
 }

@@ -4280,6 +4280,12 @@ abstract class AppLocalizations {
   /// **'Not specified'**
   String get labProcessTechnicianNone;
 
+  /// No description provided for @labProcessTechnicianRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the executing technician before changing the status'**
+  String get labProcessTechnicianRequired;
+
   /// No description provided for @labProcessManufacturingDesc.
   ///
   /// In en, this message translates to:

@@ -75,6 +75,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
   String? _technician;
   final List<_ConsumeRow> _rows = [];
   bool _costEdited = false; // هل عدّل المستخدم التكلفة يدوياً؟
+  bool _technicianError = false; // محاولة حفظ بدون اختيار المخبري المنفّذ.
 
   @override
   void initState() {
@@ -135,6 +136,12 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
       _rows.any((r) => _qtyError(r) != null);
 
   void _save() {
+    // الحالة لا تتغير من "جديد" إلا بتوكيل مخبري (قرار الفريق 2026-06-12):
+    // قيد التصنيع/جاهز ⇒ اسم المخبري المنفّذ إلزامي.
+    if (_technician == null) {
+      setState(() => _technicianError = true);
+      return;
+    }
     // منع الحفظ لو في كمية مستهلكة أكبر من المتوفر.
     if (_hasConsumeError) {
       setState(() {});
@@ -379,7 +386,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                         ],
                       ),
                       const SizedBox(height: 18),
-                      // المخبري المنفّذ (دائماً)
+                      // المخبري المنفّذ — إلزامي: تغيير الحالة = توكيل مخبري.
                       _field(
                         label: context.l10n.labProcessTechnician,
                         child: AppDropdownMenuTheme(
@@ -391,24 +398,26 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                               BorderRadius.circular(AppSizes.radiusLG),
                           decoration: InputDecoration(
                             isDense: true,
+                            hintText: context.l10n.labProcessTechnicianNone,
+                            errorText: _technicianError
+                                ? context.l10n.labProcessTechnicianRequired
+                                : null,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
                             ),
                           ),
                           items: [
-                            DropdownMenuItem<String?>(
-                              value: null,
-                              child:
-                                  Text(context.l10n.labProcessTechnicianNone),
-                            ),
                             for (final name in kLabTechnicianNames)
                               DropdownMenuItem<String?>(
                                 value: name,
                                 child: Text(name),
                               ),
                           ],
-                          onChanged: (v) => setState(() => _technician = v),
+                          onChanged: (v) => setState(() {
+                            _technician = v;
+                            _technicianError = false;
+                          }),
                         ),
                         ),
                       ),

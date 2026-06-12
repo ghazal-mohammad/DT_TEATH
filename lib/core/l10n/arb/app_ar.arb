@@ -750,6 +750,7 @@
   "labProcessCostHint": "أدخل تكلفة التصنيع",
   "labProcessTechnician": "المخبري المنفّذ",
   "labProcessTechnicianNone": "بدون تحديد",
+  "labProcessTechnicianRequired": "اختر المخبري المنفّذ قبل تغيير الحالة",
   "labProcessManufacturingDesc": "الطلبية قيد التصنيع حالياً",
   "labProcessReadyTitle": "جاهز للتسليم",
   "orderDetailsCost": "التكلفة",

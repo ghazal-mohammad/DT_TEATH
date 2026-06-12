@@ -556,7 +556,6 @@ class _ProgressTimeline extends StatelessWidget {
       case LabOrderBadgeVariant.manufacturing:
         return 1;
       case LabOrderBadgeVariant.newOrder:
-      case LabOrderBadgeVariant.urgent:
         return 0;
     }
   }

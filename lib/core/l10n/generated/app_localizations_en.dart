@@ -2190,6 +2190,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProcessTechnicianNone => 'Not specified';
 
   @override
+  String get labProcessTechnicianRequired =>
+      'Select the executing technician before changing the status';
+
+  @override
   String get labProcessManufacturingDesc =>
       'Order is currently being manufactured';
 

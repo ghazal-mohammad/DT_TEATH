@@ -892,11 +892,6 @@ class _OrdersTableSectionState extends State<_OrdersTableSection> {
           text: isLight ? AppColors.statusSuccess : AppColors.darkChipGreenText,
           label: l10n.statusReady,
         ),
-      LabOrderBadgeVariant.urgent => (
-          bg: isLight ? AppColors.statusUrgentBg : AppColors.darkChipRedBg,
-          text: isLight ? AppColors.statusUrgent : AppColors.darkChipRedText,
-          label: l10n.priorityUrgent,
-        ),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),

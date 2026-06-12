@@ -71,11 +71,6 @@ class LabStatusColors {
     AppColors.statusSuccessBg,
     AppColors.statusSuccess,
   );
-  static const urgent = LabStatusColors._(
-    AppColors.statusUrgentBg,
-    AppColors.statusUrgent,
-  );
-
   static LabStatusColors of(LabOrderBadgeVariant variant) {
     switch (variant) {
       case LabOrderBadgeVariant.newOrder:
@@ -84,8 +79,6 @@ class LabStatusColors {
         return manufacturing;
       case LabOrderBadgeVariant.ready:
         return ready;
-      case LabOrderBadgeVariant.urgent:
-        return urgent;
     }
   }
 }
@@ -100,8 +93,6 @@ String labStatusLabel(BuildContext context, LabOrderBadgeVariant variant) {
       return l10n.statusManufacturing;
     case LabOrderBadgeVariant.ready:
       return l10n.statusReady;
-    case LabOrderBadgeVariant.urgent:
-      return l10n.priorityUrgent;
   }
 }
 

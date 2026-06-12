@@ -818,6 +818,7 @@
   "labProcessCostHint": "Enter manufacturing cost",
   "labProcessTechnician": "Executing technician",
   "labProcessTechnicianNone": "Not specified",
+  "labProcessTechnicianRequired": "Select the executing technician before changing the status",
   "labProcessManufacturingDesc": "Order is currently being manufactured",
   "labProcessReadyTitle": "Ready for delivery",
   "orderDetailsCost": "Cost",

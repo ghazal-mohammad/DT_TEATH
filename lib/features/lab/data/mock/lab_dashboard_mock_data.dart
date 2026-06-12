@@ -2,11 +2,11 @@
 // بيانات وهمية لـ Dashboard المخبر (Phase 5.1)
 
 /// نوع badge لطلبات المخبر.
+/// "مستعجل" ليست حالة — هي خاصية يحددها الطبيب وتُعرض كشارة منفصلة (isUrgent).
 enum LabOrderBadgeVariant {
   newOrder,
   manufacturing,
   ready,
-  urgent,
 }
 
 /// مستوى أولوية الطلب.

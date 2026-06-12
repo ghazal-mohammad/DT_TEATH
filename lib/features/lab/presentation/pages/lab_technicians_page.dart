@@ -5,8 +5,8 @@
 //   - 3 stat cards (الإجمالي / يعمل الآن / جاهز للتوكيل)
 //   - جدول فريق المخبر مع: المخبري (avatar+اسم+دور) / أوقات الدوام /
 //     المسؤولية الحالية / الحالة (نشط/متاح/استراحة) / إجراء (توكيل + pause/play)
-//   - مودال "إضافة مخبري جديد"
 //   - مودال "توكيل طلبية"
+//   ملاحظة: لا يوجد "إضافة مخبري" هنا — إضافة الموظفين من صلاحيات الأدمن فقط.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -25,7 +25,6 @@ import '../../data/mock/lab_dashboard_mock_data.dart';
 import '../../data/models/lab_technician.dart';
 import '../../domain/repositories/lab_repository.dart';
 import '../navigation/lab_sidebar_sections.dart';
-import '../widgets/add_technician_dialog.dart';
 import '../widgets/assign_order_dialog.dart';
 import '../widgets/lab_order_models.dart';
 
@@ -178,22 +177,6 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
   int get _availableCount =>
       _technicians.where((t) => t.status == TechnicianStatus.available).length;
 
-  Future<void> _onAdd() async {
-    final r = await AddTechnicianDialog.show(context);
-    if (r == null || r.name.isEmpty) return;
-    setState(() {
-      _technicians.add(TechnicianItem(
-        name: r.name,
-        role: r.role,
-        shift: '${r.shiftStart} - ${r.shiftEnd}',
-        currentTask: context.l10n.labTechPendingAssign,
-        taskCount: 0,
-        status: TechnicianStatus.available,
-        initials: _computeInitials(r.name),
-      ));
-    });
-  }
-
   String _computeInitials(String name) {
     final parts = name.split(' ').where((p) => p.isNotEmpty).toList();
     if (parts.isEmpty) return '?';
@@ -274,7 +257,6 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
           const SizedBox(height: AppSizes.spaceLG),
           _TeamTable(
             technicians: _technicians,
-            onAdd: _onAdd,
             onAssign: _onAssign,
             onTogglePause: _onTogglePause,
           ),
@@ -525,13 +507,11 @@ class _TechStatCardState extends State<_TechStatCard> {
 class _TeamTable extends StatelessWidget {
   const _TeamTable({
     required this.technicians,
-    required this.onAdd,
     required this.onAssign,
     required this.onTogglePause,
   });
 
   final List<TechnicianItem> technicians;
-  final VoidCallback onAdd;
   final void Function(TechnicianItem) onAssign;
   final void Function(TechnicianItem) onTogglePause;
 
@@ -587,9 +567,6 @@ class _TeamTable extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Spacer(),
-                // الزر آخر → end side (LEFT in RTL)
-                _AddBtn(onTap: onAdd),
               ],
             ),
           ),
@@ -966,41 +943,3 @@ class _AssignBtn extends StatelessWidget {
   }
 }
 
-class _AddBtn extends StatelessWidget {
-  const _AddBtn({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: isLight ? AppColors.primary : AppColors.brand,
-            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.add_rounded, size: 14, color: Colors.white),
-              const SizedBox(width: 6),
-              Text(
-                context.l10n.labTeamAddTechnician,
-                style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

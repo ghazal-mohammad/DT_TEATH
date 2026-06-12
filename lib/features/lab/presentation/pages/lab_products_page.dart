@@ -4,7 +4,8 @@
 // الفجوة #2 من تدقيق التقرير:
 //   متطلب رئيس المخبر — "عرض وتعديل المنتجات التي يصنعها المخبر".
 //   - عرض كتالوج المنتجات (تلبيسات/جسور/أطقم...) مع السعر ومدة التصنيع.
-//   - إضافة منتج / تعديل منتج / تفعيل-إيقاف.
+//   - إضافة منتج / تعديل منتج.
+//   ملاحظة: لا توجد "حالة" للمنتج (قرار الفريق 2026-06-12) — الكتالوج ثابت.
 //
 // ملاحظة: بيانات mock حالياً — تُستبدل بـ API لاحقاً
 //          (GET/POST/PUT /api/lab/products).
@@ -24,7 +25,6 @@ import '../../../../shared/widgets/data/app_data_table.dart';
 import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
-import '../../../../shared/widgets/primitives/app_badge.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
 import '../navigation/lab_sidebar_sections.dart';
 
@@ -52,7 +52,6 @@ class LabProduct {
     required this.material,
     required this.price,
     required this.productionDays,
-    this.isActive = true,
   });
 
   String name;
@@ -60,7 +59,6 @@ class LabProduct {
   String material;
   int price;
   int productionDays;
-  bool isActive;
   final String id;
 }
 
@@ -112,7 +110,6 @@ List<LabProduct> _seedProducts() => [
         material: 'Metal',
         price: 45000,
         productionDays: 2,
-        isActive: false,
       ),
     ];
 
@@ -145,8 +142,6 @@ class _LabProductsPageState extends State<LabProductsPage> {
         .toList();
   }
 
-  int get _activeCount => _products.where((p) => p.isActive).length;
-
   Future<void> _onAdd() async {
     final result = await LabProductFormDialog.show(context, null);
     if (result == null) return;
@@ -174,10 +169,6 @@ class _LabProductsPageState extends State<LabProductsPage> {
     });
   }
 
-  void _onToggleActive(LabProduct p) {
-    setState(() => p.isActive = !p.isActive);
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -196,7 +187,7 @@ class _LabProductsPageState extends State<LabProductsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _StatsRow(total: _products.length, active: _activeCount),
+            _StatsRow(total: _products.length),
             const SizedBox(height: AppSizes.spaceLG),
             AppPageActionBar(
               filter: const SizedBox.shrink(),
@@ -212,7 +203,6 @@ class _LabProductsPageState extends State<LabProductsPage> {
             _ProductsTable(
               products: _filtered,
               onEdit: _onEdit,
-              onToggleActive: _onToggleActive,
             ),
           ],
         ),
@@ -226,47 +216,18 @@ class _LabProductsPageState extends State<LabProductsPage> {
 // ══════════════════════════════════════════════════════════════════════════
 
 class _StatsRow extends StatelessWidget {
-  const _StatsRow({required this.total, required this.active});
+  const _StatsRow({required this.total});
 
   final int total;
-  final int active;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final cards = [
-      _StatCard(
-        accent: AppColors.statusProgress,
-        icon: Icons.category_outlined,
-        value: '$total',
-        label: l10n.labProdTotal,
-      ),
-      _StatCard(
-        accent: AppColors.statusSuccess,
-        icon: Icons.check_circle_outline_rounded,
-        value: '$active',
-        label: l10n.labProdActiveCount,
-      ),
-    ];
-    return LayoutBuilder(
-      builder: (context, c) {
-        if (c.maxWidth > 700) {
-          return Row(
-            children: [
-              Expanded(child: cards[0]),
-              const SizedBox(width: AppSizes.spaceMD),
-              Expanded(child: cards[1]),
-            ],
-          );
-        }
-        return Column(
-          children: [
-            cards[0],
-            const SizedBox(height: AppSizes.spaceMD),
-            cards[1],
-          ],
-        );
-      },
+    return _StatCard(
+      accent: AppColors.statusProgress,
+      icon: Icons.category_outlined,
+      value: '$total',
+      label: l10n.labProdTotal,
     );
   }
 }
@@ -366,12 +327,10 @@ class _ProductsTable extends StatelessWidget {
   const _ProductsTable({
     required this.products,
     required this.onEdit,
-    required this.onToggleActive,
   });
 
   final List<LabProduct> products;
   final void Function(LabProduct) onEdit;
-  final void Function(LabProduct) onToggleActive;
 
   @override
   Widget build(BuildContext context) {
@@ -439,48 +398,14 @@ class _ProductsTable extends StatelessWidget {
               ),
             ),
             AppDataColumn<LabProduct>(
-              label: l10n.colStatus,
-              flex: 2,
-              cellBuilder: (p) => Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: AppBadge(
-                  text: p.isActive
-                      ? l10n.labProdStatusActive
-                      : l10n.labProdStatusInactive,
-                  variant:
-                      p.isActive ? AppBadgeVariant.green : AppBadgeVariant.gold,
-                ),
-              ),
-            ),
-            AppDataColumn<LabProduct>(
               label: '',
               flex: 2,
               cellBuilder: (p) => Align(
                 alignment: AlignmentDirectional.centerStart,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _IconAction(
-                      icon: Icons.edit_outlined,
-                      tooltip: l10n.labProdEditTitle,
-                      onTap: () => onEdit(p),
-                    ),
-                    const SizedBox(width: 6),
-                    _IconAction(
-                      icon: p.isActive
-                          ? Icons.toggle_on_rounded
-                          : Icons.toggle_off_outlined,
-                      tooltip: p.isActive
-                          ? l10n.labProdStatusInactive
-                          : l10n.labProdStatusActive,
-                      color: p.isActive
-                          ? AppColors.statusSuccess
-                          : (isLight
-                              ? AppColors.lightText3
-                              : AppColors.darkText3),
-                      onTap: () => onToggleActive(p),
-                    ),
-                  ],
+                child: _IconAction(
+                  icon: Icons.edit_outlined,
+                  tooltip: l10n.labProdEditTitle,
+                  onTap: () => onEdit(p),
                 ),
               ),
             ),
