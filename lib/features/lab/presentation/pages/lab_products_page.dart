@@ -20,7 +20,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
-import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/data/app_data_table.dart';
 import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
@@ -180,7 +179,6 @@ class _LabProductsPageState extends State<LabProductsPage> {
       pageSubtitle: l10n.labTopbarSubtitle,
       searchPlaceholder: l10n.labProductsSearchHint,
       onSearchChanged: (v) => setState(() => _query = v),
-      userName: MockUserData.labUserName,
       userRole: l10n.roleLabManager,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSizes.spaceLG),

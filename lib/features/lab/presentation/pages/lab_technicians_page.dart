@@ -19,7 +19,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
-import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../../../../shared/widgets/loading/app_shimmer_table.dart';
@@ -232,7 +231,6 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
       pageSubtitle: null,
       searchPlaceholder: context.l10n.techSearchHint,
       showThemeToggle: false,
-      userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
       body: _buildBody(context),

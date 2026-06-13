@@ -17,7 +17,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
-import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -262,7 +261,6 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
       pageSubtitle: null,
       searchPlaceholder: context.l10n.notifSearchHint,
       showThemeToggle: false,
-      userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       notificationCount: _items.where((n) => !n.isRead).length,
       body: SingleChildScrollView(

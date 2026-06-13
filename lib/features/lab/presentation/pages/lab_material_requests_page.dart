@@ -195,7 +195,6 @@ class _LabMaterialRequestsPageState extends State<LabMaterialRequestsPage> {
       sections: LabSidebarSections.build(context),
       pageTitle: context.l10n.materialRequests,
       pageSubtitle: context.l10n.labTopbarSubtitle,
-      userName: MockUserData.labUserName,
       userRole: context.l10n.roleLabManager,
       body: _MaterialRequestsBody(
         filterIndex: _filterIndex,

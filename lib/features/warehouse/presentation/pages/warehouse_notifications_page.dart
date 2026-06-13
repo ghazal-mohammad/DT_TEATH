@@ -21,7 +21,6 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
-import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../navigation/warehouse_sidebar_sections.dart';
 import '../widgets/notifications/warehouse_notifications_content.dart';
@@ -55,7 +54,6 @@ class _WarehouseNotificationsPageState
       pageSubtitle: context.l10n.warehouseTopbarSubtitle,
       searchPlaceholder: context.l10n.notifSearchHint,
       onSearchChanged: (v) => setState(() => _query = v.trim()),
-      userName: MockUserData.defaultUserName,
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
       body: LayoutBuilder(

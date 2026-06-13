@@ -49,9 +49,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/auth/current_user.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
+import '../core/mock_user_data.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../bloc/mock_system_cubit.dart';
 import '../../bloc/theme_cubit.dart';
@@ -100,7 +102,7 @@ class AppShellLayout extends StatelessWidget {
     required this.currentRoute,
     required this.sections,
     required this.pageTitle,
-    required this.userName,
+    this.userName,
     required this.userRole,
     required this.body,
     this.pageSubtitle,
@@ -129,7 +131,21 @@ class AppShellLayout extends StatelessWidget {
   final String? pageSubtitle;
 
   /// اسم المستخدم — يظهر في switcher السايدبار وتولتيب البروفايل.
-  final String userName;
+  ///
+  /// اختياري: لو null (الحالة الافتراضية للصفحات) يحلّه الـ shell من
+  /// [CurrentUser] الحقيقي، ثم fallback تطويري حسب النظام. هكذا يبقى مصدر
+  /// اسم المستخدم في مكان واحد بدل تمريره يدوياً من كل صفحة.
+  final String? userName;
+
+  /// الاسم المعروض فعلياً: المُمرَّر صراحةً، وإلا المستخدم الحقيقي، وإلا
+  /// fallback تطويري حسب النظام (يُحذف مع [MockUserData] عند نضوج الـ Auth).
+  String get _resolvedUserName =>
+      userName ?? CurrentUser.instance.name ?? _devFallbackName;
+
+  String get _devFallbackName => switch (system) {
+        AppSystemType.lab => MockUserData.labUserName,
+        AppSystemType.warehouse => MockUserData.defaultUserName,
+      };
 
   /// الدور الوظيفي — يظهر تحت الاسم في switcher.
   final String userRole;
@@ -264,7 +280,7 @@ class AppShellLayout extends StatelessWidget {
       system: system,
       currentRoute: currentRoute,
       sections: sections,
-      userName: userName,
+      userName: _resolvedUserName,
       userRole: userRole,
       collapsed: collapsed,
       onItemTap: (route) {

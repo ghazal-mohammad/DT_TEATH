@@ -44,7 +44,6 @@ class LabDashboardPage extends StatelessWidget {
       pageSubtitle: null,
       searchPlaceholder: l10n.labDashboardSearchHint,
       showThemeToggle: false,
-      userName: CurrentUser.instance.name ?? MockUserData.labUserName,
       userRole: l10n.roleLabManager,
       notificationCount: 2,
       body: const _LabDashboardBody(),

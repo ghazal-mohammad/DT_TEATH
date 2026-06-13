@@ -23,7 +23,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
-import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
@@ -120,7 +119,6 @@ class _LabReportsPageState extends State<LabReportsPage> {
       sections: LabSidebarSections.build(context),
       pageTitle: l10n.labReports,
       pageSubtitle: l10n.labTopbarSubtitle,
-      userName: MockUserData.labUserName,
       userRole: l10n.roleLabManager,
       body: _LabReportsBody(
         filterIndex: _filterIndex,
