@@ -30,7 +30,7 @@ class AuthGlowLinePainter extends CustomPainter {
     required this.start,
     required this.end,
     required this.phase,
-    this.glowColor = const Color(0xFFD0FBD7),
+    this.glowColor = AppColors.reservedBg,
     this.glowClipPath,
   });
 
@@ -39,8 +39,8 @@ class AuthGlowLinePainter extends CustomPainter {
   final double phase;
 
   /// لون التوهج.
-  /// - صفحات Auth العادية: `Color(0xFFD0FBD7)` (أخضر فاتح).
-  /// - system_selection: `Color(0xFFBED8FA)` (أزرق فاتح).
+  /// - صفحات Auth العادية: `AppColors.reservedBg` (أخضر فاتح).
+  /// - system_selection: `AppColors.tableHeader` (أزرق فاتح).
   final Color glowColor;
 
   /// مسار قص اختياري للطبقات الضبابية فقط — يبقي التوهج محصوراً على جهة معينة

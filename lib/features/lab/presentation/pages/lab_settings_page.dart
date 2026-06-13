@@ -364,7 +364,7 @@ class _SecurityTabState extends State<_SecurityTab> {
         _SettingCard(
           isLight: widget.isLight,
           tint: const Color(0xFFFEF2F2),
-          tintBorder: const Color(0xFFFCA5A5),
+          tintBorder: AppColors.dashPink,
           title: context.l10n.settingsLogoutAll,
           subtitle: context.l10n.settingsLogoutAllDesc,
           trailing: _SecondaryButton(
@@ -1070,7 +1070,7 @@ class _SecondaryButton extends StatelessWidget {
         ? const Color(0xFFDC2626)
         : (isLight ? AppColors.lightText1 : AppColors.darkText1);
     final border = danger
-        ? const Color(0xFFFCA5A5)
+        ? AppColors.dashPink
         : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
     return MouseRegion(
       cursor: SystemMouseCursors.click,

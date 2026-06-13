@@ -15,7 +15,7 @@
 //   ✅ AuthDiagRightClipper  ← بدل _DiagClipper الخاص
 //   ✅ AuthSubmitButton      ← بدل _SubmitBtn الخاص (withPulseAnimation: false)
 //   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
-//   ✅ AppColors.authXxx     ← بدل Color(0xFF111111) hardcoded
+//   ✅ AppColors.authXxx     ← بدل AppColors.authFormTitleLight hardcoded
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -517,8 +517,9 @@ class _FormContent extends StatelessWidget {
               vertical: 9,
             ),
             decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.08),
-              border: Border.all(color: Colors.red.withValues(alpha: 0.30)),
+              color: AppColors.statusUrgent.withValues(alpha: 0.08),
+              border:
+                  Border.all(color: AppColors.statusUrgent.withValues(alpha: 0.30)),
               borderRadius: BorderRadius.circular(AppSizes.radiusSM),
             ),
             child: Row(
@@ -526,7 +527,7 @@ class _FormContent extends StatelessWidget {
                 const Icon(
                   Icons.error_outline_rounded,
                   size: 15,
-                  color: Colors.red,
+                  color: AppColors.statusUrgent,
                 ),
                 const SizedBox(width: 8),
                 Expanded(

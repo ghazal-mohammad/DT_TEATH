@@ -13,7 +13,7 @@
 //   ✅ AuthDiagRightClipper  ← بدل _DC الخاص
 //   ✅ AuthSubmitButton      ← بدل _SB/_SBS الخاص
 //   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
-//   ✅ AppColors.authXxx     ← بدل Color(0xFF111111) hardcoded
+//   ✅ AppColors.authXxx     ← بدل AppColors.authFormTitleLight hardcoded
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
 // ════════════════════════════════════════════════════════════════════════════
 

@@ -97,7 +97,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
 
     return AuthCardGlowBorder(
       // system_selection يستخدم لون بلوري (مختلف عن أخضر Auth)
-      glowColor: const Color(0xFFBED8FA),
+      glowColor: AppColors.tableHeader,
       borderRadius: 0,
       child: Stack(
         children: [
@@ -108,7 +108,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
               glowCtrl: _glowCtrl,
               topRatio: topXRatio,
               botRatio: botXRatio,
-              glowColor: const Color(0xFFBED8FA),
+              glowColor: AppColors.tableHeader,
             ),
           ),
 
@@ -134,7 +134,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
 
   Widget _buildMobile() {
     return AuthCardGlowBorder(
-      glowColor: const Color(0xFFBED8FA),
+      glowColor: AppColors.tableHeader,
       borderRadius: 0,
       child: Stack(
         children: [
@@ -291,7 +291,7 @@ class _BrandingPanel extends StatelessWidget {
               textDirection: TextDirection.ltr,
               style: AppTextStyles.authSystemSubtitle.copyWith(
                 // لون بلوري لـ system_selection (مختلف عن أخضر Auth)
-                color: const Color(0xFFBED8FA).withValues(alpha: 0.80),
+                color: AppColors.tableHeader.withValues(alpha: 0.80),
               ),
             ),
           ),

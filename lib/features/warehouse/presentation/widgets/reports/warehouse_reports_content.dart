@@ -61,7 +61,7 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
 
   // توزّع الاستهلاك حسب الفئة — مطابق للـ mockup.
   static const _categoryShares = <_CategoryShare>[
-    _CategoryShare(label: 'مستهلكات', percent: 42, color: Color(0xFF1A1C4E)),
+    _CategoryShare(label: 'مستهلكات', percent: 42, color: AppColors.primary),
     _CategoryShare(label: 'مواد طبية', percent: 28, color: AppColors.statusProgress),
     _CategoryShare(label: 'أدوية', percent: 18, color: AppColors.statusInfo),
     _CategoryShare(label: 'معادن', percent: 12, color: AppColors.statusSuccess),

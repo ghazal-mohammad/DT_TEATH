@@ -45,14 +45,14 @@ class _ReportMockData {
   static const List<_ChartSegment> chartSegments = [
     _ChartSegment(label: 'تلبيسات', percentage: 55, count: 46, color: AppColors.statusProgress),
     _ChartSegment(label: 'جسور', percentage: 30, count: 25, color: AppColors.statusInfo),
-    _ChartSegment(label: 'أخرى', percentage: 15, count: 12, color: Color(0xFF22C55E)),
+    _ChartSegment(label: 'أخرى', percentage: 15, count: 12, color: AppColors.dashGreen),
   ];
 
   // أداء الفريق
   static const List<_TeamPerf> teamPerformance = [
-    _TeamPerf(name: 'محمد علي', ordersCount: 34, avgTime: '2.1h', progress: 0.85, color1: Color(0xFF1A1C4E), color2: AppColors.statusInfo),
+    _TeamPerf(name: 'محمد علي', ordersCount: 34, avgTime: '2.1h', progress: 0.85, color1: AppColors.primary, color2: AppColors.statusInfo),
     _TeamPerf(name: 'سامر حسن', ordersCount: 28, avgTime: '2.6h', progress: 0.70, color1: AppColors.statusProgress, color2: Color(0xFFC084FC)),
-    _TeamPerf(name: 'ليلى كريم', ordersCount: 21, avgTime: '2.8h', progress: 0.52, color1: Color(0xFF22C55E), color2: Color(0xFF86EFAC)),
+    _TeamPerf(name: 'ليلى كريم', ordersCount: 21, avgTime: '2.8h', progress: 0.52, color1: AppColors.dashGreen, color2: Color(0xFF86EFAC)),
   ];
 
   // بيانات التقويم - عدد الطلبات لكل يوم

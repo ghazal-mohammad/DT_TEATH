@@ -22,6 +22,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../../../../core/theme/app_colors.dart';
+
 // ══════════════════════════════════════════════════════════════════════════
 //   PART 1 — RADIAL PULSE WIDGET
 // ══════════════════════════════════════════════════════════════════════════
@@ -334,7 +336,7 @@ class _ParticlesPainter extends CustomPainter {
           Offset(p.x, p.y),
           p.size * 2.2,
           Paint()
-            ..color = const Color(0xFFBED8FA).withValues(alpha: p.opacity * 0.18)
+            ..color = AppColors.tableHeader.withValues(alpha: p.opacity * 0.18)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
         );
       }
