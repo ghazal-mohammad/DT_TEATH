@@ -12,9 +12,9 @@
 // في الجزء الداكن من الشاشة.
 //
 // الألوان من التحليل البصري للفيديو:
-//   - Pulse peak  : Color(0xFF1C6377) — teal عميق
-//   - Pulse rest  : Color(0xFF090D1B) — navy داكن
-//   - Particles   : Color(0xFFB8BCC8) — رمادي-أزرق محايد
+//   - Pulse peak  : AppColors.authPulsePeak — teal عميق
+//   - Pulse rest  : AppColors.authPulseRest — navy داكن
+//   - Particles   : AppColors.authParticle — رمادي-أزرق محايد
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:math' as math;
@@ -41,7 +41,7 @@ class AuthRadialPulseWidget extends StatefulWidget {
   const AuthRadialPulseWidget({
     super.key,
     this.centerAlignment = const Alignment(-0.35, -0.15),
-    this.peakColor = const Color(0xFF1C6377),
+    this.peakColor = AppColors.authPulsePeak,
   });
 
   /// مركز النبضة (على الجانب الداكن).
@@ -328,7 +328,7 @@ class _ParticlesPainter extends CustomPainter {
         Offset(p.x, p.y),
         p.size,
         Paint()
-          ..color = const Color(0xFFB8BCC8).withValues(alpha: p.opacity),
+          ..color = AppColors.authParticle.withValues(alpha: p.opacity),
       );
       // glow خفيف
       if (p.size > 2.0) {

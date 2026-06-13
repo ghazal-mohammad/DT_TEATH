@@ -295,7 +295,7 @@ class _DateField extends StatelessWidget {
   Widget build(BuildContext context) {
     final text1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
     final text2 = isLight ? AppColors.lightText2 : AppColors.darkText2;
-    final bg = isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2;
+    final bg = isLight ? AppColors.surfaceTintCool2 : AppColors.darkBg2;
     return Padding(
       padding: const EdgeInsets.only(bottom: 11),
       child: Column(

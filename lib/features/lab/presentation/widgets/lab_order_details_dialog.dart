@@ -136,7 +136,7 @@ class _Header extends StatelessWidget {
       padding: const EdgeInsetsDirectional.fromSTEB(22, 18, 16, 18),
       decoration: const BoxDecoration(
         // خلفية لافندر فاتح
-        color: Color(0xFFEEEEFB),
+        color: AppColors.surfaceTintIndigo2,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -227,7 +227,7 @@ class _StatusBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEEFB),
+        color: AppColors.surfaceTintIndigo2,
         borderRadius: BorderRadius.circular(12),
       ),
       // RTL: أوّل child = يمين. حالة الطلبية يمين، تاريخ التسليم يسار.
@@ -612,7 +612,7 @@ class _TimelineStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color circleColor = isActive || isDone
         ? AppColors.primary
-        : const Color(0xFFD8DBE6);
+        : AppColors.borderTintNeutral;
     final Color labelColor = isActive || isDone
         ? AppColors.lightText1
         : AppColors.lightText4;
@@ -683,7 +683,7 @@ class _NotesBox extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7FB),
+        color: AppColors.surfaceTintCool3,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.lightBorder),
       ),

@@ -447,4 +447,77 @@ class AppColors {
   /// لون الأيقونات على الـ mobile.
   static Color authInputIconMobile({double alpha = 0.45}) =>
       Colors.white.withValues(alpha: alpha);
+
+  // ══════════════════════════════════════════════════════════════════════
+  //   PROMOTED FROM FEATURE FILES (Phase 6 — مصدر واحد للألوان)
+  // ══════════════════════════════════════════════════════════════════════
+  // درجات كانت مكتوبة يدوياً داخل الشاشات ونُقلت هنا كما هي (نفس القيمة
+  // بالضبط — صفر تغيير بصري) لتوحيد مصدر اللون. مرشّحة للدمج لاحقاً مع
+  // الباليتة الدلالية عند اعتماد التصميم.
+
+  // ── Auth — خلفية متحركة وسبلاش ──────────────────────────────────────────
+  static const Color authPulsePeak = Color(0xFF1C6377); // teal عميق
+  static const Color authPulseRest = Color(0xFF090D1B); // navy داكن
+  static const Color authParticle = Color(0xFFB8BCC8); // رمادي-أزرق محايد
+  static const Color splashSurface = Color(0xFFEFF0F7); // خلفية السبلاش
+  static const Color loginErrorText = Color(0xFFFF6B6B); // نص خطأ تسجيل الدخول
+
+  // ── شارات برتقالية/كهرمانية (الوجه الفاتح لـ darkChipOrange*) ───────────
+  static const Color chipOrangeBgLight = Color(0xFFFFF7ED);
+  static const Color chipOrangeAccentLight = Color(0xFFF59E0B);
+  static const Color chipAmberBgLight = Color(0xFFFEF3C7);
+  static const Color chipAmberTextLight = Color(0xFFD97706);
+
+  // ── درجات أسطح فاتحة (الوجه الفاتح لـ darkBg2/Surface/Border) ───────────
+  static const Color surfaceTintCool = Color(0xFFF1F3F8);
+  static const Color surfaceTintCool2 = Color(0xFFF8F9FC);
+  static const Color surfaceTintCool3 = Color(0xFFF6F7FB);
+  static const Color surfaceTintCool4 = Color(0xFFEFF2FB);
+  static const Color surfaceFaint = Color(0xFFFCFCFD);
+  static const Color surfaceTintIndigo = Color(0xFFE9ECFB);
+  static const Color surfaceTintIndigo2 = Color(0xFFEEEEFB);
+  static const Color surfaceTintIndigo3 = Color(0xFFEAECF7);
+  static const Color surfaceTintBlue = Color(0xFFC8D2F2);
+
+  // ── حدود/فواصل فاتحة محايدة ─────────────────────────────────────────────
+  static const Color borderTintCool = Color(0xFFE5E7EE);
+  static const Color borderTintNeutral = Color(0xFFD8DBE6);
+  static const Color borderNeutralLight = Color(0xFFE5E7EB);
+  static const Color dividerNeutral = Color(0xFFE0E0E0);
+  static const Color iconMutedLight = Color(0xFFB0B6C3); // أيقونات placeholder
+
+  // ── درجات دلالية ناعمة (نسخ فاتحة — لا تُغيّر القيمة) ───────────────────
+  static const Color progressSoft = Color(0xFFC084FC); // بنفسجي فاتح
+  static const Color successSoft = Color(0xFF86EFAC); // أخضر فاتح
+  static const Color dangerStrong = Color(0xFFDC2626); // أحمر صريح
+  static const Color dangerTintLight = Color(0xFFFEF2F2); // خلفية خطر فاتحة
+
+  // ── تنبيهات تحذير برتقالية فاتحة (warehouse) ────────────────────────────
+  static const Color warnTintLight = Color(0xFFFEF5EC);
+  static const Color warnTintLight2 = Color(0xFFFFF4EC);
+  static const Color warnBorderLight = Color(0xFFF6D8B7);
+  static const Color warnBorderLight2 = Color(0xFFF7C6A8);
+  static const Color amberBorderLight = Color(0xFFF1CFA8);
+
+  // ── Dashboard accents إضافية ────────────────────────────────────────────
+  static const Color dashVioletDeep = Color(0xFF6E59B6);
+  static const Color dashMagenta = Color(0xFFB44286);
+  static const Color categoryGrey = Color(0xFF6B7280); // تصنيف "معدات"
+
+  // ── ملف الموظف (Employee Profile) — باليتة محلية نُقلت هنا ──────────────
+  static const Color profileAvatarGradTop = Color(0xFF2E3270);
+  static const Color profileAvatarGradBottom = Color(0xFF14163F);
+  static const Color profileBlueIconBg = Color(0xFFE3ECFA);
+  static const Color profileBlueAccent = Color(0xFF2E48B5);
+  static const Color profilePinkBg = Color(0xFFFBEFF5);
+  static const Color profilePinkIconBg = Color(0xFFF7E1EC);
+  static const Color profilePinkAccent = Color(0xFFC03E7C);
+  static const Color profileCardBorder = Color(0xFFE7EBF3);
+  static const Color profileLabel = Color(0xFF8A93A7);
+  static const Color profileTintBlue = Color(0xFFEFF2FA);
+  static const Color profileTintBlue2 = Color(0xFFEFF3FD);
+  static const Color profileTintViolet = Color(0xFFF4EEFB);
+  static const Color profileTintViolet2 = Color(0xFFF4ECFB);
+  static const Color profileSurface = Color(0xFFF7F9FC);
+  static const Color profileGreenAccent = Color(0xFF12A150);
 }

@@ -499,7 +499,7 @@ class _TypePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFF1F3F8) : AppColors.darkBg2,
+        color: isLight ? AppColors.surfaceTintCool : AppColors.darkBg2,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -569,7 +569,7 @@ class _InfoBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2,
+        color: isLight ? AppColors.surfaceTintCool2 : AppColors.darkBg2,
         borderRadius: BorderRadius.circular(12),
       ),
       // RTL: أوّل child = يمين. الترتيب المطلوب (يمين→يسار):
@@ -589,7 +589,7 @@ class _InfoBox extends StatelessWidget {
   Widget _divider(bool isLight) => Container(
         width: 1,
         height: 28,
-        color: isLight ? const Color(0xFFE5E7EE) : AppColors.darkBorder,
+        color: isLight ? AppColors.borderTintCool : AppColors.darkBorder,
       );
 
   Widget _cell(String label, String value, bool isLight) {
@@ -749,7 +749,7 @@ class _EmptyOrders extends StatelessWidget {
           const Icon(
             Icons.inbox_outlined,
             size: 48,
-            color: Color(0xFFB0B6C3),
+            color: AppColors.iconMutedLight,
           ),
           const SizedBox(height: AppSizes.spaceMD),
           Text(

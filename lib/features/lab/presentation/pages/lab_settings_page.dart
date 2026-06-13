@@ -363,7 +363,7 @@ class _SecurityTabState extends State<_SecurityTab> {
         // ── 3) تسجيل الخروج من كل الأجهزة ───────────────────────
         _SettingCard(
           isLight: widget.isLight,
-          tint: const Color(0xFFFEF2F2),
+          tint: AppColors.dangerTintLight,
           tintBorder: AppColors.dashPink,
           title: context.l10n.settingsLogoutAll,
           subtitle: context.l10n.settingsLogoutAllDesc,
@@ -979,7 +979,7 @@ class _LanguageOption extends StatelessWidget {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE9ECFB),
+                  color: AppColors.surfaceTintIndigo,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -1067,7 +1067,7 @@ class _SecondaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fg = danger
-        ? const Color(0xFFDC2626)
+        ? AppColors.dangerStrong
         : (isLight ? AppColors.lightText1 : AppColors.darkText1);
     final border = danger
         ? AppColors.dashPink
@@ -1079,7 +1079,7 @@ class _SecondaryButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsetsDirectional.fromSTEB(16, 11, 16, 11),
           decoration: BoxDecoration(
-            color: danger ? const Color(0xFFFEF2F2) : Colors.transparent,
+            color: danger ? AppColors.dangerTintLight : Colors.transparent,
             borderRadius: BorderRadius.circular(AppSizes.radiusMD),
             border: Border.all(color: border),
           ),

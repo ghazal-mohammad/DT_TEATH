@@ -140,7 +140,7 @@ class _StatsRow extends StatelessWidget {
         label: l10n.labInvTotal,
       ),
       _StatCard(
-        accent: const Color(0xFFF59E0B),
+        accent: AppColors.chipOrangeAccentLight,
         icon: Icons.trending_down_rounded,
         value: '$low',
         label: l10n.labInvLow,

@@ -58,13 +58,13 @@ class WarehouseDashboardContent extends StatelessWidget {
           icon: Icons.inventory_2_outlined,
           value: '247',
           label: l10n.whTotalMaterials,
-          accent: const Color(0xFF6E59B6),
+          accent: AppColors.dashVioletDeep,
         ),
         AppHeroMiniStat(
           icon: Icons.assignment_outlined,
           value: '9',
           label: l10n.whMiniOrdersToday,
-          accent: const Color(0xFFB44286),
+          accent: AppColors.dashMagenta,
         ),
         AppHeroMiniStat(
           icon: Icons.verified_outlined,
@@ -374,9 +374,9 @@ class _ExpiringWarningStrip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF5EC),
+        color: AppColors.warnTintLight,
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(color: const Color(0xFFF6D8B7)),
+        border: Border.all(color: AppColors.warnBorderLight),
       ),
       child: LayoutBuilder(
         builder: (context, c) {
@@ -501,7 +501,7 @@ class _ExpiringChipView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-        border: Border.all(color: const Color(0xFFF1CFA8)),
+        border: Border.all(color: AppColors.amberBorderLight),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

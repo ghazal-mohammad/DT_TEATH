@@ -51,8 +51,8 @@ class _ReportMockData {
   // أداء الفريق
   static const List<_TeamPerf> teamPerformance = [
     _TeamPerf(name: 'محمد علي', ordersCount: 34, avgTime: '2.1h', progress: 0.85, color1: AppColors.primary, color2: AppColors.statusInfo),
-    _TeamPerf(name: 'سامر حسن', ordersCount: 28, avgTime: '2.6h', progress: 0.70, color1: AppColors.statusProgress, color2: Color(0xFFC084FC)),
-    _TeamPerf(name: 'ليلى كريم', ordersCount: 21, avgTime: '2.8h', progress: 0.52, color1: AppColors.dashGreen, color2: Color(0xFF86EFAC)),
+    _TeamPerf(name: 'سامر حسن', ordersCount: 28, avgTime: '2.6h', progress: 0.70, color1: AppColors.statusProgress, color2: AppColors.progressSoft),
+    _TeamPerf(name: 'ليلى كريم', ordersCount: 21, avgTime: '2.8h', progress: 0.52, color1: AppColors.dashGreen, color2: AppColors.successSoft),
   ];
 
   // بيانات التقويم - عدد الطلبات لكل يوم
@@ -549,7 +549,7 @@ class _LabReportsBody extends StatelessWidget {
                         Container(
                           height: 8,
                           color: isLight
-                              ? const Color(0xFFE0E0E0)
+                              ? AppColors.dividerNeutral
                               : Colors.white.withValues(alpha: 0.06),
                         ),
                         FractionallySizedBox(

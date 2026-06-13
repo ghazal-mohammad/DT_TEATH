@@ -348,7 +348,7 @@ class _NotificationCardState extends State<_NotificationCard> {
         transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
         decoration: BoxDecoration(
           color: isLight
-              ? (notification.isRead ? const Color(0xFFFCFCFD) : Colors.white)
+              ? (notification.isRead ? AppColors.surfaceFaint : Colors.white)
               : (notification.isRead ? AppColors.darkBg2 : AppColors.darkBg1),
           borderRadius: radius,
           border: Border.all(
@@ -603,7 +603,7 @@ class _FilterAndActionRow extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isLight ? const Color(0xFFF8F9FC) : AppColors.darkBg2,
+                color: isLight ? AppColors.surfaceTintCool2 : AppColors.darkBg2,
                 borderRadius: BorderRadius.circular(AppSizes.radiusSM),
                 border: Border.all(
                   color:

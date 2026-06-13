@@ -143,7 +143,7 @@ class _AuthSubmitButtonState extends State<AuthSubmitButton>
                           ),
                         if (widget.withPulseAnimation && glow > 0)
                           BoxShadow(
-                            color: const Color(0xFF1C6377)
+                            color: AppColors.authPulsePeak
                                 .withValues(alpha: 0.45 * glow),
                             blurRadius: 20 + 10 * glow,
                             spreadRadius: 2 * glow,

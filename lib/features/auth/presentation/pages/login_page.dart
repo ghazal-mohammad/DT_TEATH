@@ -534,7 +534,7 @@ class _FormContent extends StatelessWidget {
                   child: Text(
                     error!,
                     style: AppTextStyles.authFooterNote.copyWith(
-                      color: const Color(0xFFFF6B6B),
+                      color: AppColors.loginErrorText,
                     ),
                   ),
                 ),

@@ -305,7 +305,7 @@ class _LabNotificationsPageState extends State<LabNotificationsPage> {
                   child: Column(
                     children: [
                       const Icon(Icons.notifications_none_rounded,
-                          size: 48, color: Color(0xFFB0B6C3)),
+                          size: 48, color: AppColors.iconMutedLight),
                       const SizedBox(height: AppSizes.spaceMD),
                       Text(
                         context.l10n.notifEmptyInCategory,
@@ -494,7 +494,7 @@ class _NotificationCardState extends State<_NotificationCard> {
         transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
         decoration: BoxDecoration(
           color: isLight
-              ? (n.isRead ? const Color(0xFFFCFCFD) : Colors.white)
+              ? (n.isRead ? AppColors.surfaceFaint : Colors.white)
               : (n.isRead ? AppColors.darkBg2 : AppColors.darkBg1),
           borderRadius: radius,
           border: Border.all(

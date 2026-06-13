@@ -123,7 +123,7 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
   Widget _header() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFE9ECFB),
+        color: AppColors.surfaceTintIndigo,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: const EdgeInsetsDirectional.fromSTEB(22, 16, 16, 16),

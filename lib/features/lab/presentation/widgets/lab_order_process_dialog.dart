@@ -267,7 +267,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3F8),
+        color: AppColors.surfaceTintCool,
         borderRadius: BorderRadius.circular(AppSizes.radiusSM),
       ),
       child: Row(
@@ -616,7 +616,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
               height: 32,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F3F8),
+                color: AppColors.surfaceTintCool,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(Icons.close_rounded, size: 18),
@@ -631,7 +631,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFE9ECFB),
+        color: AppColors.surfaceTintIndigo,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(

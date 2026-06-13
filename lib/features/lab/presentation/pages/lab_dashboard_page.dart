@@ -400,13 +400,13 @@ class _EndingTodayAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color accent = Color(0xFFF59E0B);
+    const Color accent = AppColors.chipOrangeAccentLight;
     final bool isLight = Theme.of(context).brightness == Brightness.light;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFFFF7ED) : AppColors.darkChipOrangeBg,
+        color: isLight ? AppColors.chipOrangeBgLight : AppColors.darkChipOrangeBg,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(color: accent.withValues(alpha: 0.25)),
       ),
@@ -530,7 +530,7 @@ class _EndingTodayAlert extends StatelessWidget {
               color: isLight ? Colors.white : AppColors.darkBg1,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                color: AppColors.chipOrangeAccentLight.withValues(alpha: 0.25),
               ),
             ),
             child: Row(
@@ -548,7 +548,7 @@ class _EndingTodayAlert extends StatelessWidget {
                 const SizedBox(width: 6),
                 const Text(
                   '•',
-                  style: TextStyle(color: Color(0xFFF59E0B)),
+                  style: TextStyle(color: AppColors.chipOrangeAccentLight),
                 ),
                 const SizedBox(width: 6),
                 Text(

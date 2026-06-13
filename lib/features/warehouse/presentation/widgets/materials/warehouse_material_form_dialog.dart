@@ -503,7 +503,7 @@ class _WarehouseMaterialFormDialogState
                   color: isLight ? AppColors.lightText4 : AppColors.darkText4,
                 ),
                 filled: true,
-                fillColor: const Color(0xFFF8F9FC),
+                fillColor: AppColors.surfaceTintCool2,
                 suffixIcon: Icon(Icons.search,
                     size: 18, color: AppColors.lightText3),
                 contentPadding:

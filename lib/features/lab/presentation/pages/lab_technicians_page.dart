@@ -792,7 +792,7 @@ class _TaskPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: isLight ? const Color(0xFFF1F3F8) : AppColors.darkBg2,
+          color: isLight ? AppColors.surfaceTintCool : AppColors.darkBg2,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -857,8 +857,8 @@ class _StatusPill extends StatelessWidget {
         label = context.l10n.labTeamAvailable;
         break;
       case TechnicianStatus.onBreak:
-        bg = isLight ? const Color(0xFFFEF3C7) : AppColors.darkChipOrangeBg;
-        fg = isLight ? const Color(0xFFD97706) : AppColors.darkChipOrangeText;
+        bg = isLight ? AppColors.chipAmberBgLight : AppColors.darkChipOrangeBg;
+        fg = isLight ? AppColors.chipAmberTextLight : AppColors.darkChipOrangeText;
         label = context.l10n.techStatusBreak;
         break;
     }

@@ -185,7 +185,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAECF7),
+        color: AppColors.surfaceTintIndigo3,
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
       ),
       child: Row(
@@ -339,7 +339,7 @@ class WarehouseOrderDetailsDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FC),
+        color: AppColors.surfaceTintCool2,
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
         border: Border.all(color: AppColors.lightBorder),
       ),
@@ -508,7 +508,7 @@ class _InfoCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: r.urgent
                   ? AppColors.statusUrgent.withValues(alpha: 0.12)
-                  : const Color(0xFFE5E7EB),
+                  : AppColors.borderNeutralLight,
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
             ),
             child: Text(

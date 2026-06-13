@@ -528,7 +528,7 @@ class _HBar extends StatelessWidget {
     return Container(
       height: 8,
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFEFF2FB) : AppColors.darkBg2,
+        color: isLight ? AppColors.surfaceTintCool4 : AppColors.darkBg2,
         borderRadius: BorderRadius.circular(4),
       ),
       child: FractionallySizedBox(
@@ -1224,9 +1224,9 @@ class _HeatmapLegend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = [
-      isLight ? const Color(0xFFEFF2FB) : AppColors.darkBg2,
-      isLight ? const Color(0xFFE9ECFB) : AppColors.darkBg2,
-      isLight ? const Color(0xFFC8D2F2) : AppColors.darkSurface,
+      isLight ? AppColors.surfaceTintCool4 : AppColors.darkBg2,
+      isLight ? AppColors.surfaceTintIndigo : AppColors.darkBg2,
+      isLight ? AppColors.surfaceTintBlue : AppColors.darkSurface,
       AppColors.primary,
     ];
     return Row(
@@ -1367,8 +1367,8 @@ class _DayCell extends StatelessWidget {
     final lvl = _level;
     final bg = switch (lvl) {
       3 => AppColors.primary,
-      2 => isLight ? const Color(0xFFC8D2F2) : AppColors.darkSurface,
-      1 => isLight ? const Color(0xFFE9ECFB) : AppColors.darkBg2,
+      2 => isLight ? AppColors.surfaceTintBlue : AppColors.darkSurface,
+      1 => isLight ? AppColors.surfaceTintIndigo : AppColors.darkBg2,
       _ => Colors.transparent,
     };
     final isDark = lvl == 3;

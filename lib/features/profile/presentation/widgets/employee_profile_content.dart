@@ -43,19 +43,19 @@ import '../bloc/profile_cubit.dart';
 
 class _Palette {
   static const Color accent = AppColors.primary; // navy
-  static const List<Color> avatarGradient = [Color(0xFF2E3270), Color(0xFF14163F)];
+  static const List<Color> avatarGradient = [AppColors.profileAvatarGradTop, AppColors.profileAvatarGradBottom];
 
   // حبّتا البطاقات الملوّنة (تتبادل أزرق/وردي كل صفّين).
-  static const Color blueIconBg = Color(0xFFE3ECFA);
-  static const Color blueAccent = Color(0xFF2E48B5);
+  static const Color blueIconBg = AppColors.profileBlueIconBg;
+  static const Color blueAccent = AppColors.profileBlueAccent;
 
-  static const Color pinkBg = Color(0xFFFBEFF5);
-  static const Color pinkIconBg = Color(0xFFF7E1EC);
-  static const Color pinkAccent = Color(0xFFC03E7C);
+  static const Color pinkBg = AppColors.profilePinkBg;
+  static const Color pinkIconBg = AppColors.profilePinkIconBg;
+  static const Color pinkAccent = AppColors.profilePinkAccent;
 
   // ألوان محايدة.
-  static const Color cardBorder = Color(0xFFE7EBF3);
-  static const Color label = Color(0xFF8A93A7);
+  static const Color cardBorder = AppColors.profileCardBorder;
+  static const Color label = AppColors.profileLabel;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -551,7 +551,7 @@ class _ProfileSidebar extends StatelessWidget {
             icon: Icons.event_outlined,
             label: context.l10n.profileHireDate,
             value: data.hireDate,
-            tint: const Color(0xFFEFF2FA),
+            tint: AppColors.profileTintBlue,
           ),
           if (data.salary.trim().isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -559,7 +559,7 @@ class _ProfileSidebar extends StatelessWidget {
               icon: Icons.payments_outlined,
               label: 'الراتب',
               value: _formatSalary(data.salary),
-              tint: const Color(0xFFF4EEFB),
+              tint: AppColors.profileTintViolet,
             ),
           ],
           const SizedBox(height: 18),
@@ -1289,7 +1289,7 @@ class _RelationRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F9FC),
+        color: AppColors.profileSurface,
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
         border: Border.all(color: _Palette.cardBorder),
       ),
@@ -1445,7 +1445,7 @@ class _StatsRow extends StatelessWidget {
         label: context.l10n.profileStatCompletedOrders,
         badge: context.l10n.profileBadgeThisMonth,
         icon: Icons.check_circle_outline_rounded,
-        accent: const Color(0xFF12A150),
+        accent: AppColors.profileGreenAccent,
         bg: AppColors.statusSuccessBg,
       ),
       _StatSpec(
@@ -1455,7 +1455,7 @@ class _StatsRow extends StatelessWidget {
         badge: context.l10n.labChipActive,
         icon: Icons.adjust_rounded,
         accent: AppColors.statusProgress,
-        bg: const Color(0xFFF4ECFB),
+        bg: AppColors.profileTintViolet2,
       ),
       _StatSpec(
         value: '7',
@@ -1463,8 +1463,8 @@ class _StatsRow extends StatelessWidget {
         label: context.l10n.labStatReadyOrders,
         badge: context.l10n.profileBadgeThisMonth,
         icon: Icons.inventory_2_outlined,
-        accent: const Color(0xFF2E48B5),
-        bg: const Color(0xFFEFF3FD),
+        accent: AppColors.profileBlueAccent,
+        bg: AppColors.profileTintBlue2,
       ),
     ];
 
@@ -1893,7 +1893,7 @@ class _FieldPillState extends State<_FieldPill> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 9),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF7F9FC),
+                              color: AppColors.profileSurface,
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
                               border:
@@ -1971,7 +1971,7 @@ class _FieldPillState extends State<_FieldPill> {
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 7),
                             filled: true,
-                            fillColor: const Color(0xFFF7F9FC),
+                            fillColor: AppColors.profileSurface,
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
@@ -2001,7 +2001,7 @@ class _FieldPillState extends State<_FieldPill> {
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 7),
                             filled: true,
-                            fillColor: const Color(0xFFF7F9FC),
+                            fillColor: AppColors.profileSurface,
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),

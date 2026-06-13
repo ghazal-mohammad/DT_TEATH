@@ -71,7 +71,7 @@ class _SplashPageState extends State<SplashPage>
   Widget build(BuildContext context) {
     // خلفية فاتحة: #E9ECFB من الباليت (lightBg)
     return Scaffold(
-      backgroundColor: const Color(0xFFEFF0F7),
+      backgroundColor: AppColors.splashSurface,
       body: GestureDetector(
         onTap: () { _ctrl.stop(); _go(); },
         behavior: HitTestBehavior.opaque,

@@ -1043,8 +1043,8 @@ class _DangerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // لون برتقالي/تحذير خفيف يطابق الـ mockup
-    const dangerTint = Color(0xFFFFF4EC);
-    const dangerBorder = Color(0xFFF7C6A8);
+    const dangerTint = AppColors.warnTintLight2;
+    const dangerBorder = AppColors.warnBorderLight2;
     return Container(
       padding: const EdgeInsets.all(AppSizes.spaceLG),
       decoration: BoxDecoration(

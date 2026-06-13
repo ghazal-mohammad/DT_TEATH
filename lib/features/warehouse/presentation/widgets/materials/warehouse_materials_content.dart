@@ -874,8 +874,8 @@ class _CategoryDot extends StatelessWidget {
   Color get _color => switch (category) {
         MaterialCategory.medical => AppColors.statusProgress,
         MaterialCategory.consumables => AppColors.statusInfo,
-        MaterialCategory.medicines => const Color(0xFFB44286),
-        MaterialCategory.equipment => const Color(0xFF6B7280),
+        MaterialCategory.medicines => AppColors.dashMagenta,
+        MaterialCategory.equipment => AppColors.categoryGrey,
       };
 
   @override
