@@ -147,7 +147,9 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code} %{time_total}s\" -m 5 http://localhost:8000/api/)",
       "Bash(curl -s -o /dev/null -w \"%{http_code} %{time_total}s\" -m 5 http://127.0.0.1:8000)",
       "Bash(sed -n '55,110p' lib/shared/widgets/loading/app_shimmer_table.dart)",
-      "Bash(sed -n '60,100p' lib/shared/widgets/loading/app_shimmer_card.dart)"
+      "Bash(sed -n '60,100p' lib/shared/widgets/loading/app_shimmer_card.dart)",
+      "PowerShell(Remove-Item -Force \"lib\\\\core\\\\shared_widgets\\\\app_logo.dart\"; if \\(-not \\(Get-ChildItem \"lib\\\\core\\\\shared_widgets\" -ErrorAction SilentlyContinue\\)\\) { Remove-Item -Force \"lib\\\\core\\\\shared_widgets\" }; Test-Path \"lib\\\\core\\\\shared_widgets\")",
+      "PowerShell(flutter analyze 2>&1)"
     ]
   }
 }
