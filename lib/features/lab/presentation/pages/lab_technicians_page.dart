@@ -248,11 +248,17 @@ class _LabTechniciansPageState extends State<LabTechniciansPage> {
           children: [
             Row(
               children: const [
-                Expanded(child: AppShimmerCard(height: 96)),
+                Expanded(
+                    child: AppShimmerCard(
+                        layout: AppShimmerCardLayout.statCard)),
                 SizedBox(width: AppSizes.spaceMD),
-                Expanded(child: AppShimmerCard(height: 96)),
+                Expanded(
+                    child: AppShimmerCard(
+                        layout: AppShimmerCardLayout.statCard)),
                 SizedBox(width: AppSizes.spaceMD),
-                Expanded(child: AppShimmerCard(height: 96)),
+                Expanded(
+                    child: AppShimmerCard(
+                        layout: AppShimmerCardLayout.statCard)),
               ],
             ),
             const SizedBox(height: AppSizes.spaceLG),
