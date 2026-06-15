@@ -14,7 +14,7 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
-import 'lab_product_data.dart';
+import '../../../domain/entities/lab_product.dart';
 
 /// نتيجة مودال المنتج (القيم المُدخَلة بعد الحفظ).
 class LabProductFormResult {

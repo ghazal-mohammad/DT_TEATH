@@ -1,0 +1,28 @@
+// ════════════════════════════════════════════════════════════════════════════
+// lab_products_repository.dart
+//
+// عقد (interface) للوصول لبيانات كتالوج منتجات المخبر — يفصل الـ UI عن مصدر
+// البيانات (mock/API). يطابق نمط WarehouseMaterialsRepository.
+//
+// التطبيقات:
+//   - الحالي: MockLabProductsRepository (بيانات في الذاكرة)
+//   - Backend لاحقاً: RemoteLabProductsRepository (GET/POST/PUT /api/lab/products)
+// كل تطبيق ينفّذ نفس العقد — الـ UI ما يلاحظ الفرق.
+// ════════════════════════════════════════════════════════════════════════════
+
+import '../entities/lab_product.dart';
+
+/// عقد الوصول لبيانات منتجات المخبر.
+abstract class LabProductsRepository {
+  /// يجلب كل المنتجات.
+  Future<List<LabProduct>> getAll();
+
+  /// يضيف منتجاً جديداً. يرجع الـ entity مع id مولّد.
+  Future<LabProduct> create(LabProduct product);
+
+  /// يحدّث منتجاً موجوداً. يرجع الـ entity المحدّث.
+  Future<LabProduct> update(LabProduct product);
+
+  /// stream للمنتجات — لتحديث الـ UI تلقائياً عند أي تغيير.
+  Stream<List<LabProduct>> watchAll();
+}

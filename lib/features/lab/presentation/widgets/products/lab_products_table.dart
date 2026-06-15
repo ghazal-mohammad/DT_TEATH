@@ -12,7 +12,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/data/app_data_table.dart';
-import 'lab_product_data.dart';
+import '../../../domain/entities/lab_product.dart';
 
 /// جدول عرض كتالوج المنتجات مع زر تعديل لكل صف.
 class LabProductsTable extends StatelessWidget {
