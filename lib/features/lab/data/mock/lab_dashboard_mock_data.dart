@@ -1,13 +1,11 @@
 // lab_dashboard_mock_data.dart
 // بيانات وهمية لـ Dashboard المخبر (Phase 5.1)
 
-/// نوع badge لطلبات المخبر.
-/// "مستعجل" ليست حالة — هي خاصية يحددها الطبيب وتُعرض كشارة منفصلة (isUrgent).
-enum LabOrderBadgeVariant {
-  newOrder,
-  manufacturing,
-  ready,
-}
+import '../../domain/entities/lab_order.dart';
+
+// LabOrderBadgeVariant انتقل إلى domain/entities/lab_order.dart؛ نعيد تصديره
+// هنا كي تبقى الملفات التي تستورد هذا الملف تعمل دون تعديل.
+export '../../domain/entities/lab_order.dart' show LabOrderBadgeVariant;
 
 /// مستوى أولوية الطلب.
 enum LabOrderPriority {

@@ -9,7 +9,12 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../data/mock/lab_dashboard_mock_data.dart';
+import '../../domain/entities/lab_order.dart';
+
+// LabOrderFull و LabOrderBadgeVariant انتقلا إلى domain/entities/lab_order.dart؛
+// نعيد تصديرهما هنا كي تبقى الملفات المستوردة لهذا الملف تعمل دون تعديل.
+export '../../domain/entities/lab_order.dart'
+    show LabOrderFull, LabOrderBadgeVariant;
 
 /// أسماء المخبريين (الفنيين) المتاحين — مرجع موحّد للتوكيل وتسجيل المنفّذ.
 /// تُستبدل بقائمة من API لاحقاً (GET /api/lab/technicians).
@@ -19,39 +24,6 @@ const List<String> kLabTechnicianNames = [
   'ليلى كريم',
   'يوسف ناصر',
 ];
-
-/// نموذج كامل لطلب المخبر — يستخدم بصفحة الطلبات والمودالات.
-class LabOrderFull {
-  LabOrderFull({
-    required this.id,
-    required this.doctor,
-    required this.type,
-    required this.material,
-    required this.tooth,
-    required this.date,
-    required this.statusVariant,
-    this.isUrgent = false,
-    this.notes = '',
-    this.cost,
-    this.assignedTechnician,
-  });
-
-  final String id;
-  final String doctor;
-  final String type;
-  final String material;
-  final String tooth;
-  final String date;
-  LabOrderBadgeVariant statusVariant;
-  final bool isUrgent;
-  final String notes;
-
-  /// تكلفة تصنيع الطلبية بالليرة السورية (تُسجَّل عند المعالجة) — UC69.
-  int? cost;
-
-  /// اسم المخبري المنفّذ للطلبية (تسجيل المنفّذ) — UC70 / UC71.
-  String? assignedTechnician;
-}
 
 /// ألوان الـ status badge (نقطة + نص) — مطابقة لتصميم الجدول بالـ Dashboard.
 class LabStatusColors {
