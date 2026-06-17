@@ -1,43 +1,19 @@
 // ════════════════════════════════════════════════════════════════════════════
 // lab_notification_data.dart
 //
-// نموذج إشعار المخبر + ستايل النوع (خلفية/لون) + نص الشارة المترجم —
-// مُستخرَجة من lab_notifications_page.dart ضمن تقسيم الصفحات العملاقة.
+// ستايل نوع الإشعار (خلفية/لون) + نص الشارة المترجم (يعتمدان على AppColors و
+// l10n — من اختصاص presentation). الكيان (NotificationItem + الـ enums) انتقل
+// إلى domain/entities/lab_notification.dart ونُعيد تصديره هنا.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../domain/entities/lab_notification.dart';
 
-enum NotificationKind { urgent, order, material, system }
-
-enum NotificationDay { today, yesterday }
-
-/// عنصر إشعار واحد في قائمة إشعارات المخبر.
-class NotificationItem {
-  NotificationItem({
-    required this.kind,
-    required this.title,
-    required this.description,
-    required this.category,
-    required this.timeLabel,
-    required this.day,
-    required this.icon,
-    this.action,
-    this.isRead = false,
-  });
-
-  final NotificationKind kind;
-  final String title;
-  final String description;
-  final String category;
-  final String timeLabel;
-  final NotificationDay day;
-  final IconData icon;
-  final String? action;
-  bool isRead;
-}
+export '../../../domain/entities/lab_notification.dart'
+    show NotificationItem, NotificationKind, NotificationDay;
 
 /// ستايل شارة/أيقونة الإشعار (خلفية + لون أمامي) حسب النوع.
 class NotificationStyle {
