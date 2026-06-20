@@ -57,7 +57,7 @@ import '../core/app_system_type.dart';
 /// AppSidebarSystemSwitcher(
 ///   currentSystem: AppSystemType.lab,
 ///   userName: 'شام',
-///   userRole: AppStrings.roleLabManager,
+///   userRole: l10n.roleLabManager,
 ///   onTap: () => cubit.switchSystem(),
 /// )
 /// ```
@@ -77,7 +77,7 @@ class AppSidebarSystemSwitcher extends StatefulWidget {
   /// اسم المستخدم (مثل "شام" أو "غزال").
   final String userName;
 
-  /// الدور الوظيفي (من AppStrings — مثل `roleLabManager`).
+  /// الدور الوظيفي (مترجم عبر l10n — مثل `roleLabManager`).
   final String userRole;
 
   /// القيمة لما المستخدم يضغط على الكرت — للتبديل بين الأنظمة.

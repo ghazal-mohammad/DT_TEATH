@@ -46,9 +46,9 @@ enum AppEmptyStateVariant {
 /// ```dart
 /// AppEmptyState(
 ///   icon: AppIcons.emptyBox,
-///   title: AppStrings.emptyNoOrdersTitle,
-///   message: AppStrings.emptyNoOrdersMessage,
-///   actionLabel: AppStrings.add,
+///   title: l10n.emptyNoOrdersTitle,
+///   message: l10n.emptyNoOrdersMessage,
+///   actionLabel: l10n.add,
 ///   onActionTap: () => _showAddDialog(),
 /// )
 /// ```

@@ -66,7 +66,7 @@ import '../core/app_system_type.dart';
 /// ```dart
 /// AppSidebarItem(
 ///   icon: AppIcons.dashboard,
-///   label: AppStrings.dashboard,
+///   label: l10n.dashboard,
 ///   isActive: true,
 ///   system: AppSystemType.lab,
 ///   onTap: () => context.go(RouteNames.labDashboard),
@@ -87,7 +87,7 @@ class AppSidebarItem extends StatefulWidget {
   /// أيقونة العنصر (من AppIcons).
   final IconData icon;
 
-  /// نص العنصر (من AppStrings).
+  /// نص العنصر (مترجم عبر l10n).
   final String label;
 
   /// شارة عدد اختيارية — تعرض رقماً (مثل عدد الإشعارات الجديدة).

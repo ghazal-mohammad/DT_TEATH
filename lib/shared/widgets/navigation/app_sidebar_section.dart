@@ -41,7 +41,7 @@ class AppSidebarSection extends StatelessWidget {
     this.collapsed = false,
   });
 
-  /// نص العنوان (من AppStrings). يُعرض بأحرف uppercase في اللاتيني.
+  /// نص العنوان (مترجم عبر l10n). يُعرض بأحرف uppercase في اللاتيني.
   final String title;
 
   /// إذا true، يُخفى النص ويُعرض خط فاصل بدلاً منه (للـ mobile).

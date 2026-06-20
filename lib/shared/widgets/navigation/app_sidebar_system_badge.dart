@@ -127,7 +127,7 @@ class _AppSidebarSystemBadgeState extends State<AppSidebarSystemBadge>
           // ── نص الشارة ────────────────────────────────────────────────
           Flexible(
             child: Text(
-              widget.system.shortLabel,
+              widget.system.shortLabel(context),
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 14, // من CSS

@@ -26,7 +26,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-import '../../../core/constants/app_strings.dart';
+import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -42,7 +42,7 @@ import '../../../core/theme/app_sizes.dart';
 /// ```dart
 /// AppTopbarSearch(
 ///   onChanged: (query) => bloc.search(query),
-///   placeholder: AppStrings.search,
+///   placeholder: 'بحث في النظام...',
 /// )
 /// ```
 class AppTopbarSearch extends StatefulWidget {
@@ -51,7 +51,7 @@ class AppTopbarSearch extends StatefulWidget {
     this.controller,
     this.onChanged,
     this.onSubmitted,
-    this.placeholder = AppStrings.search,
+    this.placeholder,
     this.width = AppSizes.topbarSearchWidth,
   });
 
@@ -64,8 +64,8 @@ class AppTopbarSearch extends StatefulWidget {
   /// callback لما المستخدم يضغط Enter.
   final ValueChanged<String>? onSubmitted;
 
-  /// نص الـ placeholder — افتراضياً "بحث في النظام...".
-  final String placeholder;
+  /// نص الـ placeholder (null → يُحلّ عبر context.l10n.search).
+  final String? placeholder;
 
   /// عرض الحقل — افتراضياً 240px (من CSS).
   final double width;
@@ -173,7 +173,7 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
                 color: isLight ? AppColors.lightText1 : AppColors.darkText1,
               ),
               decoration: InputDecoration(
-                hintText: widget.placeholder,
+                hintText: widget.placeholder ?? context.l10n.search,
                 hintStyle: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,

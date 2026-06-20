@@ -83,7 +83,7 @@ class AppBadge extends StatefulWidget {
     this.showDot = true,
   });
 
-  /// النص المعروض داخل الشارة. يُمرَّر مترجماً (من AppStrings).
+  /// النص المعروض داخل الشارة. يُمرَّر مترجماً (مترجم عبر l10n).
   final String text;
 
   /// نوع الشارة — يحدّد الألوان والسلوك.

@@ -31,7 +31,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-import '../../../core/constants/app_strings.dart';
+import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -52,7 +52,7 @@ import 'app_topbar_search.dart';
 /// مثال:
 /// ```dart
 /// AppTopbar(
-///   title: AppStrings.dashboard,
+///   title: 'لوحة التحكم',
 ///   subtitle: 'مرحباً بك في نظام المخبر',
 ///   showSearch: true,
 ///   onSearchChanged: (q) => bloc.search(q),
@@ -68,7 +68,7 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
     this.subtitle,
     this.showSearch = true,
     this.onSearchChanged,
-    this.searchPlaceholder = AppStrings.search,
+    this.searchPlaceholder,
     this.onThemeToggle,
     this.onNotificationTap,
     this.notificationCount = 0,
@@ -90,8 +90,8 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
   /// callback لما النص في حقل البحث يتغيّر.
   final ValueChanged<String>? onSearchChanged;
 
-  /// نص الـ placeholder لحقل البحث.
-  final String searchPlaceholder;
+  /// نص الـ placeholder لحقل البحث (null → يُحلّ عبر context.l10n.search).
+  final String? searchPlaceholder;
 
   /// callback لتبديل الثيم (Dark ↔ Light).
   final VoidCallback? onThemeToggle;
@@ -154,7 +154,7 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
                     AppTopbarAction(
                       icon: AppIcons.menu,
                       onPressed: onMenuTap,
-                      tooltip: AppStrings.menu,
+                      tooltip: context.l10n.menu,
                     ),
                     const SizedBox(width: AppSizes.topbarGap), // gap:11px
                   ],
@@ -256,7 +256,7 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
           AppTopbarAction(
             icon: isLight ? AppIcons.darkMode : AppIcons.lightMode,
             onPressed: onThemeToggle,
-            tooltip: isLight ? AppStrings.darkMode : AppStrings.lightMode,
+            tooltip: isLight ? context.l10n.darkMode : context.l10n.lightMode,
           ),
 
         // ملاحظة: أزرار الإشعارات والبروفايل انحذفت من التوب-بار عمداً —

@@ -43,7 +43,7 @@ import '../../../core/theme/app_sizes.dart';
 ///   icon: AppIcons.bell,
 ///   onPressed: () => context.go(RouteNames.labNotifications),
 ///   hasDot: unreadCount > 0,
-///   tooltip: AppStrings.notifications,
+///   tooltip: l10n.notifications,
 /// )
 /// ```
 class AppTopbarAction extends StatefulWidget {

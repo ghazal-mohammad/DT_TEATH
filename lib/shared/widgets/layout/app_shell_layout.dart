@@ -50,7 +50,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/auth/current_user.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../core/mock_user_data.dart';
@@ -159,7 +158,7 @@ class AppShellLayout extends StatelessWidget {
   /// callback عند تغيير نص البحث.
   final ValueChanged<String>? onSearchChanged;
 
-  /// نص placeholder لحقل البحث (اختياري — افتراضه AppStrings.search).
+  /// نص placeholder لحقل البحث (اختياري — افتراضه context.l10n.search).
   final String? searchPlaceholder;
 
   /// إظهار حقل البحث في التوب بار (يُخفى مثلاً في صفحة الملف الشخصي).
@@ -316,14 +315,14 @@ class AppShellLayout extends StatelessWidget {
     void onNotificationTap() => _handleNotificationTap(context);
     void onProfileTap() => _handleProfileTap(context);
 
-    // إذا الـ user مرّر placeholder خاص نستخدمه، وإلا نترك AppTopbar
-    // يستخدم defaultه (AppStrings.search).
+    // نمرّر الـ placeholder كما هو (قد يكون null)؛ AppTopbar يحلّ الافتراضي
+    // عبر context.l10n.search عند العرض.
     return AppTopbar(
       title: pageTitle,
       subtitle: pageSubtitle,
       showSearch: showSearch && !isMobile,
       onSearchChanged: onSearchChanged,
-      searchPlaceholder: searchPlaceholder ?? AppStrings.search,
+      searchPlaceholder: searchPlaceholder,
       notificationCount: notificationCount,
       onMenuTap: isMobile ? onMenuTap : null,
       showMenuButton: isMobile,

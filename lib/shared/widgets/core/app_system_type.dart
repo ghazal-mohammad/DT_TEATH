@@ -22,7 +22,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_strings.dart';
+import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 
@@ -86,23 +86,13 @@ extension AppSystemTypeX on AppSystemType {
     ];
   }
 
-  /// النص المعروض — اسم النظام كاملاً.
-  String get label {
+  /// النص المختصر المعروض في الـ sidebar badge (مترجم).
+  String shortLabel(BuildContext context) {
     switch (this) {
       case AppSystemType.lab:
-        return AppStrings.labSystem;
+        return context.l10n.labSystemBadge;
       case AppSystemType.warehouse:
-        return AppStrings.warehouseSystem;
-    }
-  }
-
-  /// النص المختصر المعروض في الـ sidebar badge.
-  String get shortLabel {
-    switch (this) {
-      case AppSystemType.lab:
-        return AppStrings.labSystemBadge;
-      case AppSystemType.warehouse:
-        return AppStrings.warehouseSystemBadge;
+        return context.l10n.warehouseSystemBadge;
     }
   }
 
@@ -116,15 +106,6 @@ extension AppSystemTypeX on AppSystemType {
     }
   }
 
-  /// رسالة الترحيب.
-  String get welcomeMessage {
-    switch (this) {
-      case AppSystemType.lab:
-        return AppStrings.welcomeLab;
-      case AppSystemType.warehouse:
-        return AppStrings.welcomeWarehouse;
-    }
-  }
 
   /// النظام الثاني (للتبديل).
   AppSystemType get other {

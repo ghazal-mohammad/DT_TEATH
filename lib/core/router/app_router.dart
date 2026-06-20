@@ -15,7 +15,7 @@ import '../../features/auth/presentation/pages/verify_code_page.dart';
 import '../../features/auth/presentation/widgets/auth_flow_transition.dart';
 import '../../features/lab/presentation/pages/lab_pages.dart';
 import '../../features/warehouse/presentation/pages/warehouse_pages.dart';
-import '../constants/app_strings.dart';
+import '../l10n/build_context_l10n.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_text_styles.dart';
@@ -225,8 +225,8 @@ class AppRouter {
       GoRoute(
         path: RouteNames.firstLogin,
         name: 'firstLogin',
-        builder: (context, state) => const _PlaceholderScreen(
-          title: AppStrings.firstLogin,
+        builder: (context, state) => _PlaceholderScreen(
+          title: context.l10n.firstLogin,
           subtitle: 'Legacy — سيُحذف في Phase 3.6',
           icon: Icons.person_add,
         ),
@@ -330,24 +330,24 @@ class AppRouter {
       GoRoute(
         path: RouteNames.unauthorized,
         name: 'unauthorized',
-        builder: (context, state) => const _ErrorScreen(
-          error: AppStrings.errorForbidden,
+        builder: (context, state) => _ErrorScreen(
+          error: context.l10n.errorForbidden,
           code: '401',
         ),
       ),
       GoRoute(
         path: RouteNames.notFound,
         name: 'notFound',
-        builder: (context, state) => const _ErrorScreen(
-          error: AppStrings.errorNotFound,
+        builder: (context, state) => _ErrorScreen(
+          error: context.l10n.errorNotFound,
           code: '404',
         ),
       ),
       GoRoute(
         path: RouteNames.serverError,
         name: 'serverError',
-        builder: (context, state) => const _ErrorScreen(
-          error: AppStrings.errorServer,
+        builder: (context, state) => _ErrorScreen(
+          error: context.l10n.errorServer,
           code: '500',
         ),
       ),
@@ -403,7 +403,7 @@ class _PlaceholderScreen extends StatelessWidget {
                   style: AppTextStyles.bodyLarge,
                   textAlign: TextAlign.center),
               const SizedBox(height: AppSizes.space3XL),
-              const Text('${AppStrings.appName} · ${AppStrings.appVersion}',
+              const Text('DT.Teeth · v1.0 · Flutter Web',
                   style: AppTextStyles.bodySmall),
             ],
           ),

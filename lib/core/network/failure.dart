@@ -10,7 +10,9 @@
 
 import 'package:equatable/equatable.dart';
 
-import '../constants/app_strings.dart';
+// رسائل الأخطاء عربية inline (القرار 16) — طبقة الشبكة تُنشأ بلا BuildContext،
+// لذا تملك نصوصها الافتراضية مباشرة. واجهات العرض تستخدم رسالة الـ Failure،
+// أو تعود لـ context.l10n.error كاحتياط حين تتوفّر.
 
 /// الصنف الأساسي لكل أنواع الفشل في التطبيق.
 abstract class Failure extends Equatable {
@@ -33,17 +35,20 @@ class ServerFailure extends Failure {
   /// بناء Failure مناسب من كود HTTP.
   factory ServerFailure.fromStatusCode(int statusCode) {
     return switch (statusCode) {
-      400 => const ServerFailure(AppStrings.errorValidation, code: '400'),
-      401 => const ServerFailure(AppStrings.errorUnauthorized, code: '401'),
-      403 => const ServerFailure(AppStrings.errorForbidden, code: '403'),
-      404 => const ServerFailure(AppStrings.errorNotFound, code: '404'),
+      400 => const ServerFailure('تحقق من الحقول المطلوبة', code: '400'),
+      401 => const ServerFailure(
+          'انتهت صلاحية الجلسة — سجّل دخولك مجدداً', code: '401'),
+      403 => const ServerFailure(
+          'ليس لديك صلاحية للوصول لهذه الصفحة', code: '403'),
+      404 => const ServerFailure('العنصر المطلوب غير موجود', code: '404'),
       409 => const ServerFailure(
           'يوجد تعارض — تم تعديل البيانات من مستخدم آخر',
           code: '409',
         ),
-      422 => const ServerFailure(AppStrings.errorValidation, code: '422'),
-      500 => const ServerFailure(AppStrings.errorServer, code: '500'),
-      503 => const ServerFailure(AppStrings.errorMaintenance, code: '503'),
+      422 => const ServerFailure('تحقق من الحقول المطلوبة', code: '422'),
+      500 => const ServerFailure(
+          'خطأ في السيرفر — حاول مرة أخرى بعد قليل', code: '500'),
+      503 => const ServerFailure('السيرفر في صيانة — عد لاحقاً', code: '503'),
       _ => ServerFailure('خطأ غير متوقع ($statusCode)', code: '$statusCode'),
     };
   }
@@ -51,12 +56,14 @@ class ServerFailure extends Failure {
 
 /// أخطاء الشبكة — عدم اتصال.
 class NetworkFailure extends Failure {
-  const NetworkFailure() : super(AppStrings.errorNetwork, code: 'NETWORK');
+  const NetworkFailure()
+      : super('لا يوجد اتصال بالإنترنت — تحقق من الشبكة', code: 'NETWORK');
 }
 
 /// أخطاء التخزين المحلي.
 class CacheFailure extends Failure {
-  const CacheFailure() : super(AppStrings.errorCache, code: 'CACHE');
+  const CacheFailure()
+      : super('خطأ في البيانات المحلية — حاول مجدداً', code: 'CACHE');
 }
 
 /// أخطاء التحقق من الحقول.
@@ -66,11 +73,12 @@ class ValidationFailure extends Failure {
 
 /// انتهاء مهلة الانتظار.
 class TimeoutFailure extends Failure {
-  const TimeoutFailure() : super(AppStrings.errorTimeout, code: 'TIMEOUT');
+  const TimeoutFailure()
+      : super('انتهت مهلة الانتظار — السيرفر لا يستجيب', code: 'TIMEOUT');
 }
 
 /// خطأ غير متوقع — للحالات الاستثنائية.
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure([String? customMessage])
-      : super(customMessage ?? AppStrings.error, code: 'UNEXPECTED');
+      : super(customMessage ?? 'حدث خطأ', code: 'UNEXPECTED');
 }

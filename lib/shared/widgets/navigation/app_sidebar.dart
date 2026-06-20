@@ -56,7 +56,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_strings.dart';
+import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -95,7 +95,7 @@ class SidebarSectionData {
     required this.items,
   });
 
-  /// عنوان القسم (من AppStrings).
+  /// عنوان القسم (مترجم عبر l10n).
   final String title;
 
   /// قائمة العناصر ضمن القسم.
@@ -118,8 +118,10 @@ class AppSidebar extends StatelessWidget {
     required this.onItemTap,
     required this.onSystemSwitch,
     this.collapsed = false,
-    this.appVersion = AppStrings.appVersion,
-    this.appName = AppStrings.appName,
+    // اسم وإصدار التطبيق ثابتان (علامة تجارية + رقم نسخة) — ليسا نصّ واجهة قابل
+    // للترجمة، لذا يبقيان literals وليس عبر l10n.
+    this.appVersion = 'v1.0 · Flutter Web',
+    this.appName = 'DT.Teeth',
     this.showVersion = false,
     this.showSystemBadge = false,
     this.showSystemSeparator = false,
@@ -252,13 +254,13 @@ class AppSidebar extends StatelessWidget {
       ),
       child: collapsed
           ? Center(child: _buildCollapsedLogo())
-          : _buildExpandedLogo(isLight),
+          : _buildExpandedLogo(context, isLight),
     );
   }
 
   /// اللوغو في الوضع الكامل — دائرة navy كبيرة في المنتصف + اسم تحتها.
   /// مطابق لديزاين سايدبار الطبيب: دائرة بيضاء/داكنة كبيرة مع أيقونة السن.
-  Widget _buildExpandedLogo(bool isLight) {
+  Widget _buildExpandedLogo(BuildContext context, bool isLight) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -300,7 +302,7 @@ class AppSidebar extends StatelessWidget {
         const SizedBox(height: 8),
         // اسم النظام كـ subtitle رمادي تحت اللوغو
         Text(
-          system.shortLabel,
+          system.shortLabel(context),
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 12,
@@ -407,7 +409,7 @@ class AppSidebar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              AppStrings.sectionSystem,
+              context.l10n.sectionSystem,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 12,
