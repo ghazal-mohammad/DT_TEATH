@@ -128,7 +128,12 @@ class EmployeeUser {
   final String token;
   final String tokenType;
 
-  /// بناء من JSON. ياخد إما الـ root response أو الـ`user` فقط.
+  /// بناء من JSON. يدعم شكلَي الباك:
+  ///   • login        → التوكن **داخل** `user`: {user:{...,token,token_type}}
+  ///   • setPassword  → التوكن على **الجذر** بجانب user بلا توكن:
+  ///                     {user:{id,name,email,role}, token, token_type}
+  /// لذلك نقرأ بيانات الموظف من `user` (أو الجذر)، والتوكن من `user`
+  /// ثمّ نرجع للجذر إن لم يوجد — وإلا بقي المستخدم عالقاً رغم تفعيل الحساب.
   factory EmployeeUser.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> u = json['user'] is Map<String, dynamic>
         ? json['user'] as Map<String, dynamic>
@@ -139,9 +144,9 @@ class EmployeeUser {
       name: (u['name'] ?? '') as String,
       email: (u['email'] ?? '') as String,
       role: EmployeeRole.fromApi(u['role']),
-      isActive: (u['is_active'] ?? true) as bool,
-      token: (u['token'] ?? '') as String,
-      tokenType: (u['token_type'] ?? 'Bearer') as String,
+      isActive: (u['is_active'] ?? json['is_active'] ?? true) as bool,
+      token: (u['token'] ?? json['token'] ?? '') as String,
+      tokenType: (u['token_type'] ?? json['token_type'] ?? 'Bearer') as String,
     );
   }
 
