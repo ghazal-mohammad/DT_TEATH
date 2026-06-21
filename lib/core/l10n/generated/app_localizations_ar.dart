@@ -1276,6 +1276,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsThemeLight => 'فاتح';
 
   @override
+  String get settingsThemeSystem => 'افتراضي النظام';
+
+  @override
   String get settingsLanguageDesc => 'لغة عرض النظام';
 
   @override

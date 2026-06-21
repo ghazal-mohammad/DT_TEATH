@@ -2558,6 +2558,12 @@ abstract class AppLocalizations {
   /// **'Light'**
   String get settingsThemeLight;
 
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get settingsThemeSystem;
+
   /// No description provided for @settingsLanguageDesc.
   ///
   /// In en, this message translates to:

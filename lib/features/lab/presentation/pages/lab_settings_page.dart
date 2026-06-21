@@ -53,7 +53,8 @@ class _LabSettingsPageState extends State<LabSettingsPage> {
       sections: LabSidebarSections.build(context),
       pageTitle: context.l10n.settings,
       pageSubtitle: null,
-      searchPlaceholder: context.l10n.settingsSearchHint,
+      // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
+      showSearch: false,
       userRole: context.l10n.roleLabManager,
       notificationCount: 2,
       body: _LabSettingsBody(

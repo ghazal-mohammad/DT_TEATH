@@ -52,7 +52,7 @@ class AppSizes {
   static const double topbarPadding = 22.0; // padding:0 22px
   static const double topbarGap = 11.0; // gap:11px
   static const double topbarActionSize = 36.0; // .tb-ib 36×36
-  static const double topbarSearchWidth = 240.0; // .tb-srch width:240px
+  static const double topbarSearchWidth = 180.0; // حقل بحث مدمج (كان 240px)
   static const double topbarSearchHeight = 36.0;
 
   // ── أبعاد الأزرار والحقول ───────────────────────────────────────────────

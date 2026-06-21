@@ -503,6 +503,7 @@
   "settingsThemeDesc": "Choose the system appearance",
   "settingsThemeDark": "Dark",
   "settingsThemeLight": "Light",
+  "settingsThemeSystem": "System default",
   "settingsLanguageDesc": "System display language",
   "settingsLangArabicHint": "RTL · Default",
   "settingsLangEnglishHint": "LTR",

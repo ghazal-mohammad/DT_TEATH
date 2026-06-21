@@ -19,6 +19,7 @@ dependencies:
   # --- إدارة الحالة ---
   flutter_bloc: ^9.1.0
   equatable: ^2.0.7
+  characters: ^1.4.0 # للتعامل الآمن مع graphemes خارج طبقة الـ widgets
 
   # --- التنقل ---
   go_router: ^14.8.1

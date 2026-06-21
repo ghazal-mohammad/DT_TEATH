@@ -10,12 +10,13 @@ part of 'warehouse_settings_content.dart';
 //  TAB 3 — التفضيلات
 // ══════════════════════════════════════════════════════════════════════════
 
-enum _ThemeChoice { dark, light }
+enum _ThemeChoice { system, light, dark }
 
 extension on _ThemeChoice {
   String label(BuildContext context) => switch (this) {
-        _ThemeChoice.dark => context.l10n.settingsThemeDark,
+        _ThemeChoice.system => context.l10n.settingsThemeSystem,
         _ThemeChoice.light => context.l10n.settingsThemeLight,
+        _ThemeChoice.dark => context.l10n.settingsThemeDark,
       };
 }
 
@@ -30,8 +31,9 @@ class _PreferencesTabContent extends StatefulWidget {
 class _PreferencesTabContentState extends State<_PreferencesTabContent> {
   /// يحوّل خيار السمة المحلي إلى [ThemeMode] الخاص بـ Flutter.
   ThemeMode _flutterMode(_ThemeChoice c) => switch (c) {
-        _ThemeChoice.dark => ThemeMode.dark,
+        _ThemeChoice.system => ThemeMode.system,
         _ThemeChoice.light => ThemeMode.light,
+        _ThemeChoice.dark => ThemeMode.dark,
       };
   bool _compactView = false;
   bool _autoSave = true;

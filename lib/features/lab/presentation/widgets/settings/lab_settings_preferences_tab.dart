@@ -44,8 +44,9 @@ class _PreferencesTabState extends State<_PreferencesTab> {
             final currentMode = context.watch<ThemeCubit>().state;
             final widgets = [
               for (final (label, mode) in [
-                (context.l10n.settingsThemeDark, ThemeMode.dark),
+                (context.l10n.settingsThemeSystem, ThemeMode.system),
                 (context.l10n.settingsThemeLight, ThemeMode.light),
+                (context.l10n.settingsThemeDark, ThemeMode.dark),
               ])
                 AppThemeOption(
                   label: label,

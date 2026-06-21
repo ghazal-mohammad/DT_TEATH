@@ -56,7 +56,6 @@ import 'app_topbar_search.dart';
 ///   subtitle: 'مرحباً بك في نظام المخبر',
 ///   showSearch: true,
 ///   onSearchChanged: (q) => bloc.search(q),
-///   onThemeToggle: () => themeCubit.toggle(),
 ///   onNotificationTap: () => context.go(RouteNames.labNotifications),
 ///   notificationCount: 3,
 /// )
@@ -69,13 +68,11 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
     this.showSearch = true,
     this.onSearchChanged,
     this.searchPlaceholder,
-    this.onThemeToggle,
     this.onNotificationTap,
     this.notificationCount = 0,
     this.onProfileTap,
     this.onMenuTap,
     this.showMenuButton = false,
-    this.currentThemeMode,
   });
 
   /// عنوان الصفحة الرئيسي — يعرض بخط كبير.
@@ -93,9 +90,6 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
   /// نص الـ placeholder لحقل البحث (null → يُحلّ عبر context.l10n.search).
   final String? searchPlaceholder;
 
-  /// callback لتبديل الثيم (Dark ↔ Light).
-  final VoidCallback? onThemeToggle;
-
   /// callback لفتح صفحة الإشعارات.
   final VoidCallback? onNotificationTap;
 
@@ -110,9 +104,6 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
 
   /// هل يُعرض زر القائمة (للموبايل)؟
   final bool showMenuButton;
-
-  /// الوضع الحالي للثيم — يحدد أيقونة زر التبديل.
-  final ThemeMode? currentThemeMode;
 
   @override
   Size get preferredSize => const Size.fromHeight(AppSizes.topbarHeight);
@@ -166,8 +157,8 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
                   // من CSS: .tb-r { margin-right:auto }
                   const Spacer(),
 
-                  // ── الأدوات (Search + Actions) ────────────────────────
-                  _buildActions(context, isLight),
+                  // ── الأدوات (البحث فقط) ───────────────────────────────
+                  _buildActions(context),
                 ],
               ),
 
@@ -239,28 +230,17 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   /// بناء مجموعة الإجراءات (Search + Actions).
-  Widget _buildActions(BuildContext context, bool isLight) {
+  Widget _buildActions(BuildContext context) {
+    // البحث فقط. أزرار الثيم/اللغة ليست هنا (مكانها صفحة الإعدادات حصراً)،
+    // والإشعارات/البروفايل صفحات في السايدبار — فلا نكرّر الوصول لنفس الفيتشر.
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (showSearch && MediaQuery.of(context).size.width > 900) ...[
+        if (showSearch && MediaQuery.of(context).size.width > 900)
           AppTopbarSearch(
             onChanged: onSearchChanged,
             placeholder: searchPlaceholder,
           ),
-          const SizedBox(width: 7), // gap:7px في .tb-r
-        ],
-
-        // زر الثيم (اختصار سريع — مش صفحة بالسايدبار)
-        if (onThemeToggle != null)
-          AppTopbarAction(
-            icon: isLight ? AppIcons.darkMode : AppIcons.lightMode,
-            onPressed: onThemeToggle,
-            tooltip: isLight ? context.l10n.darkMode : context.l10n.lightMode,
-          ),
-
-        // ملاحظة: أزرار الإشعارات والبروفايل انحذفت من التوب-بار عمداً —
-        // الاثنين موجودين كصفحات بالسايدبار، فما منكرّر الوصول لنفس الفيتشر.
       ],
     );
   }

@@ -34,9 +34,9 @@ class WarehouseProfilePage extends StatelessWidget {
       pageSubtitle: context.l10n.profilePageSubtitle,
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
-      // صفحة الملف الشخصي: حقل البحث وحده في التوب بار بلا أيقونات جانبية.
+      // صفحة الملف الشخصي: بلا حقل بحث وبلا أيقونات جانبية في التوب بار.
       showTopbarActions: false,
-      searchPlaceholder: context.l10n.settingsSearchHint,
+      showSearch: false,
       // المحتوى يدير السكرول داخلياً ليتمكّن العمود الجانبي من البقاء ثابتاً (sticky).
       body: const EmployeeProfileContent(),
     );

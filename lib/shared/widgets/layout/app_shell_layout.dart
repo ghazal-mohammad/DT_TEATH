@@ -182,11 +182,6 @@ class AppShellLayout extends StatelessWidget {
     final bool isCollapsed = width < kShellCollapsedBreakpoint && !isMobile;
     final bool isLight = Theme.of(context).brightness == Brightness.light;
 
-    // ── نراقب الـ ThemeCubit مرة واحدة فقط هنا في build() ────────────────
-    // (يجب ألّا نستدعي context.watch داخل sub-builders لأن ذلك يُسبّب
-    // subscriptions متعدّدة لنفس Cubit.)
-    final ThemeMode currentTheme = context.watch<ThemeCubit>().state;
-
     return Scaffold(
       backgroundColor: isLight ? AppColors.lightBg : AppColors.darkBg,
 
@@ -247,7 +242,6 @@ class AppShellLayout extends StatelessWidget {
                           child: _buildTopbar(
                             scaffoldContext,
                             isMobile: isMobile,
-                            currentTheme: currentTheme,
                           ),
                         ),
                       ],
@@ -303,18 +297,16 @@ class AppShellLayout extends StatelessWidget {
 
   /// بناء AppTopbar مع كل الـ callbacks المربوطة بالـ Cubits.
   ///
-  /// [currentTheme] يأتي من build() مباشرة لتجنّب multiple watches.
   Widget _buildTopbar(
     BuildContext context, {
     required bool isMobile,
-    required ThemeMode currentTheme,
   }) {
     // معاملات مشتركة — نُعرّفها مرة واحدة لتجنّب التكرار.
-    void onThemeToggle() => context.read<ThemeCubit>().toggle();
     void onMenuTap() => Scaffold.of(context).openDrawer();
     void onNotificationTap() => _handleNotificationTap(context);
     void onProfileTap() => _handleProfileTap(context);
 
+    // البحث وزرّا الإشعارات/البروفايل فقط. الثيم واللغة في صفحة الإعدادات حصراً.
     // نمرّر الـ placeholder كما هو (قد يكون null)؛ AppTopbar يحلّ الافتراضي
     // عبر context.l10n.search عند العرض.
     return AppTopbar(
@@ -326,10 +318,6 @@ class AppShellLayout extends StatelessWidget {
       notificationCount: notificationCount,
       onMenuTap: isMobile ? onMenuTap : null,
       showMenuButton: isMobile,
-      onThemeToggle:
-          (showTopbarActions && showThemeToggle) ? onThemeToggle : null,
-      currentThemeMode:
-          (showTopbarActions && showThemeToggle) ? currentTheme : null,
       onNotificationTap: showTopbarActions ? onNotificationTap : null,
       onProfileTap: showTopbarActions ? onProfileTap : null,
     );

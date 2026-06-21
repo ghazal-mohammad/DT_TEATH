@@ -123,11 +123,18 @@ class AppThemeOption extends StatelessWidget {
           ],
         );
       case ThemeMode.light:
-      case ThemeMode.system:
         return Row(
           children: [
             Expanded(child: Container(color: const Color(0xFFE9ECFB))),
             Expanded(child: Container(color: const Color(0xFFF8F9FF))),
+          ],
+        );
+      case ThemeMode.system:
+        // "افتراضي النظام": نصف فاتح + نصف غامق ليدل أنه يتبع الجهاز.
+        return Row(
+          children: [
+            Expanded(child: Container(color: const Color(0xFFE9ECFB))),
+            Expanded(child: Container(color: AppColors.darkBg)),
           ],
         );
     }

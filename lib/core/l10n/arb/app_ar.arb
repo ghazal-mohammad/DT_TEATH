@@ -451,6 +451,7 @@
   "settingsThemeDesc": "اختر مظهر النظام",
   "settingsThemeDark": "داكن",
   "settingsThemeLight": "فاتح",
+  "settingsThemeSystem": "افتراضي النظام",
   "settingsLanguageDesc": "لغة عرض النظام",
   "settingsLangArabicHint": "RTL · الافتراضي",
   "settingsLangEnglishHint": "LTR",
