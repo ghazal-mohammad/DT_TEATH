@@ -60,4 +60,87 @@ class ApiEndpoints {
   /// ملاحظة: ما في حقول دوام/عدد مخابر بالباك — غير متوفّرة بالداتا.
   static const String labManagerShowAllTechnicians =
       '/api/labManager/showAllTechnicians';
+
+  // ════════════════════════════════════════════════════════════════════════
+  //  Lab Manager — كامل سطح الـ API (تحت /api/labManager، محمي Bearer + active)
+  //  مرجع كامل مطابق لـ routes/api.php؛ المسارات بمعرّف تُبنى عبر دوال.
+  // ════════════════════════════════════════════════════════════════════════
+
+  // ── لوحة التحكم (عدّادات) ──────────────────────────────────────────────
+  static const String labManagerCountOrders = '/api/labManager/countOrders';
+  static const String labManagerCountTechnicians =
+      '/api/labManager/countTechnicians';
+  static const String labManagerCountStock = '/api/labManager/countStock';
+
+  // ── فئات الأصناف ───────────────────────────────────────────────────────
+  static const String labManagerShowAllItemsCategories =
+      '/api/labManager/showAllItemsCategories';
+
+  // ── أصناف المخبر (= منتجات المخبر / lab items) ─────────────────────────
+  static const String labManagerShowAllLabItems =
+      '/api/labManager/showAllLabItems';
+  static const String labManagerAddLabItem = '/api/labManager/addLabItem';
+  static String labManagerUpdateLabItem(Object id) =>
+      '/api/labManager/updateLabItem/$id';
+  static String labManagerDeleteLabItem(Object id) =>
+      '/api/labManager/deleteLabItem/$id';
+  static String labManagerUpdateLabItemStatus(Object id) =>
+      '/api/labManager/updateLabItemStatus/$id';
+
+  // ── طلبات المخبر ───────────────────────────────────────────────────────
+  static const String labManagerShowAllLabOrders =
+      '/api/labManager/showAllLabOrders';
+  static const String labManagerShowAllTodayLabOrders =
+      '/api/labManager/showAllTodayLabOrders';
+  static String labManagerShowLabOrder(Object id) =>
+      '/api/labManager/showLabOrder/$id';
+  static String labManagerSetOrderInProgress(Object id) =>
+      '/api/labManager/setStatusInProgress/$id';
+  static String labManagerSetOrderCompleted(Object id) =>
+      '/api/labManager/setStatusCompleted/$id';
+  static String labManagerSetOrderCancelled(Object id) =>
+      '/api/labManager/setStatusCancelled/$id';
+
+  // ── الفنّيون (showAllTechnicians معرّف أعلاه) ──────────────────────────
+  static const String labManagerShowTechniciansPerformance =
+      '/api/labManager/showTechniciansPerformance';
+  static String labManagerShowTechnician(Object id) =>
+      '/api/labManager/showTechnician/$id';
+  static String labManagerUpdateTechnicianWorkSchedule(Object id) =>
+      '/api/labManager/updateTechnicianWorkSchedule/$id';
+
+  // ── مخزون المخبر ───────────────────────────────────────────────────────
+  static const String labManagerShowLabStock = '/api/labManager/showLabStock';
+  static const String labManagerShowLabStockLogs =
+      '/api/labManager/showLabStockLogs';
+  static String labManagerShowStock(Object id) =>
+      '/api/labManager/showStock/$id';
+  static String labManagerAddToStock(Object id) =>
+      '/api/labManager/addToStock/$id';
+  static String labManagerSubtractFromStock(Object id) =>
+      '/api/labManager/subtractFromStock/$id';
+  static const String labManagerNotifyLowStock =
+      '/api/labManager/notifyLowStock';
+
+  // ── مواد المستودع (قراءة فقط من جهة المخبر) ────────────────────────────
+  static const String labManagerShowAllWarehouseMaterials =
+      '/api/labManager/showAllWarehouseMaterials';
+  static String labManagerShowWarehouseMaterial(Object id) =>
+      '/api/labManager/showWarehouseMaterial/$id';
+
+  // ── طلبات المواد ───────────────────────────────────────────────────────
+  static const String labManagerShowAllMaterialRequests =
+      '/api/labManager/showAllMaterialRequests';
+  static String labManagerShowMaterialRequest(Object id) =>
+      '/api/labManager/showMaterialRequest/$id';
+  static const String labManagerAddMaterialRequest =
+      '/api/labManager/addMaterialRequest';
+  static String labManagerDeleteMaterialRequest(Object id) =>
+      '/api/labManager/deleteMaterialRequest/$id';
+
+  // ── الإشعارات ──────────────────────────────────────────────────────────
+  static const String labManagerNotifications =
+      '/api/labManager/notifications';
+  static String labManagerMarkNotificationRead(Object id) =>
+      '/api/labManager/notifications/$id/read';
 }

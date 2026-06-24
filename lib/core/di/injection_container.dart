@@ -29,8 +29,11 @@ import '../../features/profile/presentation/bloc/profile_cubit.dart';
 
 // ── Lab feature ────────────────────────────────────────────────────────────
 import '../../features/lab/data/datasources/lab_remote_datasource.dart';
+import '../../features/lab/data/datasources/lab_products_remote_datasource.dart';
 import '../../features/lab/data/repositories/lab_repository_impl.dart';
+import '../../features/lab/data/repositories/remote_lab_products_repository.dart';
 import '../../features/lab/domain/repositories/lab_repository.dart';
+import '../../features/lab/domain/repositories/lab_products_repository.dart';
 
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
@@ -83,6 +86,14 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<LabRepository>(
     () => LabRepositoryImpl(sl<LabRemoteDataSource>()),
+  );
+
+  // ── Lab Products (كتالوج الأصناف) — Remote عبر labManager/showAllLabItems ──
+  sl.registerLazySingleton<LabProductsRemoteDataSource>(
+    () => LabProductsRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<LabProductsRepository>(
+    () => RemoteLabProductsRepository(sl<LabProductsRemoteDataSource>()),
   );
 }
 

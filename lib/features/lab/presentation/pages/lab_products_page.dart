@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -21,8 +22,8 @@ import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
-import '../../data/repositories/mock_lab_products_repository.dart';
 import '../../domain/entities/lab_product.dart';
+import '../../domain/repositories/lab_products_repository.dart';
 import '../bloc/lab_products_cubit.dart';
 import '../bloc/lab_products_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -31,7 +32,7 @@ import '../widgets/products/lab_products_stats.dart';
 import '../widgets/products/lab_products_table.dart';
 
 /// صفحة منتجات المخبر — تُنشئ [LabProductsCubit] محلياً وتزوّده للـ subtree.
-/// عند الانتقال للباك، نستبدل MockLabProductsRepository بـ Remote.
+/// الـ repository يأتي من الـ DI (RemoteLabProductsRepository → الباك).
 class LabProductsPage extends StatelessWidget {
   const LabProductsPage({super.key});
 
@@ -39,7 +40,7 @@ class LabProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          LabProductsCubit(repository: MockLabProductsRepository())..load(),
+          LabProductsCubit(repository: sl<LabProductsRepository>())..load(),
       child: Builder(
         builder: (context) {
           final l10n = context.l10n;
