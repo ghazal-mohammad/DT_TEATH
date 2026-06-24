@@ -99,7 +99,7 @@ class PasswordStrengthMeter extends StatelessWidget {
   Widget _buildRequirementsList(BuildContext context, String pwd) {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     // أخضر للشروط المحققة — كحلي فاتح للشروط الناقصة
-    final Color metColor = AppColors.success;
+    const Color metColor = AppColors.success;
     final Color unmetColor = isLight
         ? AppColors.primary.withValues(alpha: 0.30)
         : AppColors.darkText3.withValues(alpha: 0.40);

@@ -142,10 +142,10 @@ class _AppSidebarItemState extends State<AppSidebarItem> {
             : const BoxDecoration();
 
     // خلفية الأيقونة شفافة — نعتمد على لون النص نفسو للأيقونة
-    final Color iconBgColor = Colors.transparent;
+    const Color iconBgColor = Colors.transparent;
 
     // ── محتوى العنصر ─────────────────────────────────────────────────────
-    Widget content = AnimatedContainer(
+    final Widget content = AnimatedContainer(
       duration: AppSizes.animationMedium,
       curve: Curves.easeOut,
       // مسافة أكبر بين العناصر (مثل الصورة — مسافة واضحة بين كل تبويب)

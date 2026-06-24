@@ -93,7 +93,7 @@ class _ChoiceCard extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -104,7 +104,7 @@ class _ChoiceCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -146,11 +146,11 @@ class _AddMaterialButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.add_rounded, size: 16, color: AppColors.primary),
+              const Icon(Icons.add_rounded, size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
               Text(
                 context.l10n.labProcessAddMaterial,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
@@ -217,7 +217,7 @@ class _OutlineButton extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w700,

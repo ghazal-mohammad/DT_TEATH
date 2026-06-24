@@ -104,7 +104,6 @@ class AppFormField extends StatefulWidget {
 
 class _AppFormFieldState extends State<AppFormField> {
   late FocusNode _focusNode;
-  bool _isFocused = false;
 
   @override
   void initState() {
@@ -121,7 +120,7 @@ class _AppFormFieldState extends State<AppFormField> {
   }
 
   void _onFocusChange() {
-    if (mounted) setState(() => _isFocused = _focusNode.hasFocus);
+    if (mounted) setState(() {});
   }
 
   @override

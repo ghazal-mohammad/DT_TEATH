@@ -28,24 +28,24 @@ NotificationStyle notificationStyleOf(NotificationKind k, bool isLight) {
     case NotificationKind.urgent:
       return isLight
           ? const NotificationStyle(AppColors.statusWarnBg, AppColors.statusWarn)
-          : NotificationStyle(
+          : const NotificationStyle(
               AppColors.darkChipOrangeBg, AppColors.darkChipOrangeText);
     case NotificationKind.order:
       return isLight
           ? const NotificationStyle(AppColors.statusInfoBg, AppColors.statusInfo)
-          : NotificationStyle(
+          : const NotificationStyle(
               AppColors.darkChipBlueBg, AppColors.darkChipBlueText);
     case NotificationKind.material:
       return isLight
           ? const NotificationStyle(
               AppColors.statusProgressBg, AppColors.statusProgress)
-          : NotificationStyle(
+          : const NotificationStyle(
               AppColors.darkChipVioletBg, AppColors.darkChipVioletText);
     case NotificationKind.system:
       return isLight
           ? const NotificationStyle(
               AppColors.statusSuccessBg, AppColors.statusSuccess)
-          : NotificationStyle(
+          : const NotificationStyle(
               AppColors.darkChipGreenBg, AppColors.darkChipGreenText);
   }
 }

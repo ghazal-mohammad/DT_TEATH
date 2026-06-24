@@ -85,7 +85,7 @@ class EmployeeProfile {
     List<T> parseList<T>(Object? raw, T Function(Map<String, dynamic>) fromMap) {
       if (raw is! List) return <T>[];
       return raw
-          .whereType<Map>()
+          .whereType<Map<dynamic, dynamic>>()
           .map((e) => fromMap(Map<String, dynamic>.from(e)))
           .toList();
     }

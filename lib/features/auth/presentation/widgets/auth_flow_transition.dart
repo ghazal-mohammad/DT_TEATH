@@ -170,7 +170,7 @@ class _AuthFlowTransition extends StatelessWidget {
               Opacity(
                 opacity: const Interval(0.10, 0.32, curve: Curves.easeOut)
                     .transform(u),
-                child: DecoratedBox(
+                child: const DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: AppColors.authNavyGradient,
                   ),

@@ -201,8 +201,9 @@ class _QuickActionButtonState extends State<_QuickActionButton> {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           transform: Matrix4.identity()
-            ..translate(0.0, _hovered ? -3.0 : 0.0, 0.0)
-            ..scale(_hovered ? 1.03 : 1.0),
+            ..translateByDouble(0.0, _hovered ? -3.0 : 0.0, 0.0, 1.0)
+            ..scaleByDouble(_hovered ? 1.03 : 1.0, _hovered ? 1.03 : 1.0,
+                _hovered ? 1.03 : 1.0, 1.0),
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
           decoration: BoxDecoration(

@@ -48,9 +48,9 @@ class WarehouseSettingsPage extends StatelessWidget {
       notificationCount: 5,
       // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
       showSearch: false,
-      body: Padding(
-        padding: const EdgeInsets.all(AppSizes.spaceLG),
-        child: const WarehouseSettingsContent(),
+      body: const Padding(
+        padding: EdgeInsets.all(AppSizes.spaceLG),
+        child: WarehouseSettingsContent(),
       ),
     );
   }

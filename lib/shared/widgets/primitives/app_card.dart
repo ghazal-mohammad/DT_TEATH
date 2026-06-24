@@ -116,7 +116,7 @@ class _AppCardState extends State<AppCard> {
           ),
           if (_isHovered)
             const BoxShadow(
-              color: const Color(0x149EFBEC), // 0.08 glow
+              color: Color(0x149EFBEC), // 0.08 glow
               blurRadius: 0,
               spreadRadius: 1,
             ),

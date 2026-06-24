@@ -399,7 +399,7 @@ class _AlertBoxItemTileState extends State<_AlertBoxItemTile> {
           margin: const EdgeInsets.only(bottom: 5),
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
           transform: _isHovered
-              ? (Matrix4.identity()..translate(-3.0, 0.0, 0.0))
+              ? (Matrix4.identity()..translateByDouble(-3.0, 0.0, 0.0, 1.0))
               : Matrix4.identity(),
           decoration: BoxDecoration(
             color: _isHovered

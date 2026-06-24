@@ -159,8 +159,8 @@ class _AppStatCardState extends State<AppStatCard>
           curve: const Cubic(0.34, 1.2, 0.64, 1),
           transform: _isHovered
               ? (Matrix4.identity()
-                  ..translate(0.0, -5.0, 0.0) // translateY(-5px)
-                  ..scale(1.02)) // scale(1.02)
+                  ..translateByDouble(0.0, -5.0, 0.0, 1.0) // translateY(-5px)
+                  ..scaleByDouble(1.02, 1.02, 1.02, 1.0)) // scale(1.02)
               : Matrix4.identity(),
           transformAlignment: Alignment.center,
           decoration: BoxDecoration(

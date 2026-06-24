@@ -360,7 +360,7 @@ class _LanguageOption extends StatelessWidget {
                 ),
                 child: Text(
                   badge,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 13,
                     fontWeight: FontWeight.w900,

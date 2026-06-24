@@ -65,7 +65,7 @@ class AppDataColumn<T> {
   final bool sortable;
 
   /// دالّة استخراج القيمة للفرز (مطلوبة عند sortable=true).
-  final Comparable Function(T item)? sortValue;
+  final Comparable<dynamic> Function(T item)? sortValue;
 
   /// محاذاة النص في الخلية (الافتراضي يمين للـ RTL).
   final Alignment alignment;

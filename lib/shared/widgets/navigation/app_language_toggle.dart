@@ -143,7 +143,7 @@ class _AppLanguageToggleState extends State<AppLanguageToggle> {
         width: 36,
         height: 36,
         transform: _isHovered
-            ? (Matrix4.identity()..scale(1.06))
+            ? (Matrix4.identity()..scaleByDouble(1.06, 1.06, 1.06, 1.0))
             : Matrix4.identity(),
         transformAlignment: Alignment.center,
         decoration: BoxDecoration(
@@ -248,7 +248,7 @@ class _AppLanguageToggleState extends State<AppLanguageToggle> {
         width: 36,
         height: 36,
         transform: _isHovered
-            ? (Matrix4.identity()..scale(1.06))
+            ? (Matrix4.identity()..scaleByDouble(1.06, 1.06, 1.06, 1.0))
             : Matrix4.identity(),
         transformAlignment: Alignment.center,
         decoration: BoxDecoration(

@@ -320,7 +320,7 @@ class _AlertItemState extends State<_AlertItem> {
           curve: Curves.easeOut,
           // hover: translate -3px (في RTL: + لليمين بصرياً)
           transform: Matrix4.identity()
-            ..translate(_hovered ? -3.0 : 0.0, 0.0, 0.0),
+            ..translateByDouble(_hovered ? -3.0 : 0.0, 0.0, 0.0, 1.0),
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
           margin: EdgeInsets.only(bottom: widget.isLast ? 0 : 5),
           decoration: BoxDecoration(

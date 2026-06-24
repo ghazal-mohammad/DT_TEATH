@@ -135,7 +135,7 @@ class MockWarehouseMaterialsRepository
         price: 250.0,
         expiryDate: daysFromNow(180),
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_002',
         name: 'أكواب بلاستيكية',
         category: MaterialCategory.consumables,
@@ -156,7 +156,7 @@ class MockWarehouseMaterialsRepository
         price: 800.0,
         expiryDate: daysFromNow(540),
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_004',
         name: 'ماسكات طبية',
         category: MaterialCategory.consumables,
@@ -166,7 +166,7 @@ class MockWarehouseMaterialsRepository
         supplier: 'مؤسسة النهضة',
         price: 1200.0,
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_005',
         name: 'مناديل معقّمة',
         category: MaterialCategory.consumables,
@@ -244,7 +244,7 @@ class MockWarehouseMaterialsRepository
         price: 5500.0,
         expiryDate: daysFromNow(30),
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_012',
         name: 'جبص أسنان',
         category: MaterialCategory.medical,
@@ -267,7 +267,7 @@ class MockWarehouseMaterialsRepository
       ),
 
       // ── معدات (equipment) ───────────────────────────────────────────
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_014',
         name: 'مرايا فحص',
         category: MaterialCategory.equipment,
@@ -277,7 +277,7 @@ class MockWarehouseMaterialsRepository
         supplier: 'تجهيزات شام',
         price: 6500.0,
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_015',
         name: 'مسبار نخر',
         category: MaterialCategory.equipment,
@@ -287,7 +287,7 @@ class MockWarehouseMaterialsRepository
         supplier: 'تجهيزات شام',
         price: 9500.0,
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_016',
         name: 'كماشة قلع',
         category: MaterialCategory.equipment,
@@ -297,7 +297,7 @@ class MockWarehouseMaterialsRepository
         supplier: 'تجهيزات شام',
         price: 25000.0,
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_017',
         name: 'قاطعة جبص',
         category: MaterialCategory.equipment,
@@ -306,7 +306,7 @@ class MockWarehouseMaterialsRepository
         minStock: 2,
         price: 18000.0,
       ),
-      WarehouseMaterial(
+      const WarehouseMaterial(
         id: 'mat_018',
         name: 'مولّد ضوء',
         category: MaterialCategory.equipment,

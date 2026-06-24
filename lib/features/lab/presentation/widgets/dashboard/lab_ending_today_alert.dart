@@ -41,7 +41,7 @@ class LabEndingTodayAlert extends StatelessWidget {
                   color: accent.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.local_fire_department_rounded,
                   size: 20,
                   color: accent,
@@ -57,7 +57,7 @@ class LabEndingTodayAlert extends StatelessWidget {
                     children: [
                       Text(
                         context.l10n.labOrdersDueToday,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
                           fontSize: 14,
                           fontWeight: FontWeight.w800,

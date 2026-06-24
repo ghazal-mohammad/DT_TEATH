@@ -147,7 +147,7 @@ class ScanLinePainter extends CustomPainter {
     // ═══════════════════════════════════════════════════════════════
     final Paint coreLine = Paint()
       ..strokeWidth = 2.0
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         colors: [
           Colors.transparent,
           AppColors.accent,
@@ -155,7 +155,7 @@ class ScanLinePainter extends CustomPainter {
           AppColors.accent,
           Colors.transparent,
         ],
-        stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+        stops: [0.0, 0.2, 0.5, 0.8, 1.0],
       ).createShader(
         Rect.fromLTWH(0, beamCenterY - 1, size.width, 2),
       );

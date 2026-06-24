@@ -20,7 +20,6 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../data/mock/lab_dashboard_mock_data.dart';
 import 'lab_order_models.dart';
 
 part 'order_details/lab_order_details_parts.dart';

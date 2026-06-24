@@ -121,7 +121,7 @@ class LabReportCalendarGrid extends StatelessWidget {
   }
 
   List<Widget> _buildWeeks() {
-    final data = LabReportsMockData.calendarData;
+    const data = LabReportsMockData.calendarData;
     final weeks = <Widget>[];
     for (int week = 0; week < 5; week++) {
       final cells = <Widget>[];

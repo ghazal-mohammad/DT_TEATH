@@ -301,7 +301,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
           child: Center(
             child: Text(
               _arWeekdayShort[i],
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -434,7 +434,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
             ),
             decoration: InputDecoration(
               hintText: 'يوم/شهر/سنة',
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 color: AppColors.lightText4,
               ),
@@ -458,7 +458,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
+          const Text(
             'الصيغة: DD/MM/YYYY  (مثال: 16/06/2026)',
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
@@ -475,7 +475,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
   Widget _buildFooter() {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 6, 14, 12),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: AppColors.lightBorder)),
       ),
       child: Row(
@@ -483,7 +483,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
         children: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(
+            child: const Text(
               'إلغاء',
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,

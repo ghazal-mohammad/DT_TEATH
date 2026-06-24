@@ -238,19 +238,19 @@ class _AppBadgeState extends State<AppBadge>
         );
       case AppBadgeVariant.violet:
         // .bv: rgba(237,139,250,0.25) bg, #7c3aed color, rgba(237,139,250,0.45) border
-        return _BadgeColors(
-          background: const Color(0x40ED8BFA), // 0.25
-          border: const Color(0x73ED8BFA), // 0.45
-          text: const Color(0xFF7C3AED),
-          dot: const Color(0xFF7C3AED),
+        return const _BadgeColors(
+          background: Color(0x40ED8BFA), // 0.25
+          border: Color(0x73ED8BFA), // 0.45
+          text: Color(0xFF7C3AED),
+          dot: Color(0xFF7C3AED),
         );
       case AppBadgeVariant.green:
         // .bg: rgba(13,189,127,0.30) bg, #1a6b3c color, rgba(13,189,127,0.5) border
-        return _BadgeColors(
-          background: const Color(0x4D0DBD7F), // 0.30
-          border: const Color(0x800DBD7F), // 0.5
-          text: const Color(0xFF1A6B3C),
-          dot: const Color(0xFF1A6B3C),
+        return const _BadgeColors(
+          background: Color(0x4D0DBD7F), // 0.30
+          border: Color(0x800DBD7F), // 0.5
+          text: Color(0xFF1A6B3C),
+          dot: Color(0xFF1A6B3C),
         );
       case AppBadgeVariant.gold:
         // .bo: rgba(237,251,158,0.20) bg, #ECFB9E color, rgba(158,251,236,0.40) border
@@ -265,11 +265,11 @@ class _AppBadgeState extends State<AppBadge>
         // ملاحظة: HTML يستخدم الوردي للـ .br (ليس الأحمر الصريح)، ولكن
         // الـ alertPulse يستخدم rgba(239,68,68,...) — وهذه ملاحظة موثّقة
         // للمطوّر: الـ box-shadow فقط باللون الأحمر بينما الحدود وردية.
-        return _BadgeColors(
-          background: const Color(0x33ED8BFA), // 0.20
-          border: const Color(0x66ED8BFA), // 0.40
-          text: const Color(0xFF9333EA),
-          dot: const Color(0xFF9333EA),
+        return const _BadgeColors(
+          background: Color(0x33ED8BFA), // 0.20
+          border: Color(0x66ED8BFA), // 0.40
+          text: Color(0xFF9333EA),
+          dot: Color(0xFF9333EA),
         );
     }
   }

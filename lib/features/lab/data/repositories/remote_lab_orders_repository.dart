@@ -107,7 +107,7 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
   // ── تحويل JSON → entity ──────────────────────────────────────────────────
 
   LabOrderFull _fromJson(Map<String, dynamic> j) {
-    final items = (j['items'] is List) ? j['items'] as List : const [];
+    final items = (j['items'] is List) ? j['items'] as List : const <dynamic>[];
     final first = items.isNotEmpty && items.first is Map
         ? Map<String, dynamic>.from(items.first as Map)
         : const <String, dynamic>{};

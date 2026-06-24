@@ -331,7 +331,7 @@ class _EmailFormFieldState extends State<EmailFormField> {
                       Expanded(
                         child: Text(
                           widget.errorText!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -391,15 +391,15 @@ class _EmailFormFieldState extends State<EmailFormField> {
                   ),
                 ),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.lightbulb_outline_rounded,
                     size: 14,
                     color: AppColors.primary,
                   ),
-                  const SizedBox(width: 6),
-                  const Text(
+                  SizedBox(width: 6),
+                  Text(
                     'اقتراحات',
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,

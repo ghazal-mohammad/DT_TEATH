@@ -118,7 +118,7 @@ class _AppTopbarActionState extends State<AppTopbarAction>
       width: AppSizes.topbarActionSize, // 36×36
       height: AppSizes.topbarActionSize,
       transform: _isHovered && isEnabled
-          ? (Matrix4.identity()..scale(1.06)) // من CSS: transform:scale(1.06)
+          ? (Matrix4.identity()..scaleByDouble(1.06, 1.06, 1.06, 1.0))
           : Matrix4.identity(),
       transformAlignment: Alignment.center,
       decoration: BoxDecoration(

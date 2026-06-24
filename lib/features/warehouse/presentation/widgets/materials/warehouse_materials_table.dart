@@ -395,7 +395,7 @@ class _MovementButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.swap_vert_rounded,
+                const Icon(Icons.swap_vert_rounded,
                     size: 15, color: AppColors.primary),
                 const SizedBox(width: 4),
                 Text(

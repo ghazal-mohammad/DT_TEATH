@@ -155,8 +155,8 @@ class AppShimmerList extends StatelessWidget {
 
   /// header البحث (اختياري).
   Widget _buildSearchHeader() {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(
           child: AppShimmerBox(
             width: double.infinity,
@@ -217,10 +217,10 @@ class AppShimmerList extends StatelessWidget {
         child: AppShimmerBox(width: 160, height: 14),
       );
     }
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
+      children: [
         AppShimmerBox(width: 180, height: 14),
         SizedBox(height: 6),
         AppShimmerBox(width: 120, height: 11),

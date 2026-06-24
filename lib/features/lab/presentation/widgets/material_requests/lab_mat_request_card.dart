@@ -206,7 +206,7 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
                   ),
                   child: Row(
                     children: [
-                      Icon(AppIcons.warning, size: 12, color: AppColors.error),
+                      const Icon(AppIcons.warning, size: 12, color: AppColors.error),
                       const SizedBox(width: AppSizes.spaceXS),
                       Text(
                         r.note!,

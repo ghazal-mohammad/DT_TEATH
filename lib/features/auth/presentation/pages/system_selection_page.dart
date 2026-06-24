@@ -193,7 +193,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
                     AuthEntryAnimator(
                       controller: _entryCtrl,
                       delay: AuthStaggerDelays.field1,
-                      child: _SystemCard(
+                      child: const _SystemCard(
                         role: SystemRole.lab,
                         icon: Icons.science_outlined,
                         color: AppColors.labSystem,
@@ -209,7 +209,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
                     AuthEntryAnimator(
                       controller: _entryCtrl,
                       delay: AuthStaggerDelays.field2,
-                      child: _SystemCard(
+                      child: const _SystemCard(
                         role: SystemRole.warehouse,
                         icon: Icons.inventory_2_outlined,
                         color: AppColors.warehouseSystem,
@@ -385,7 +385,7 @@ class _CardsPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.field1,
-            child: _SystemCard(
+            child: const _SystemCard(
               role: SystemRole.lab,
               icon: Icons.science_outlined,
               color: AppColors.labSystem,
@@ -401,7 +401,7 @@ class _CardsPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.field2,
-            child: _SystemCard(
+            child: const _SystemCard(
               role: SystemRole.warehouse,
               icon: Icons.inventory_2_outlined,
               color: AppColors.warehouseSystem,
@@ -477,7 +477,7 @@ class _SystemCardState extends State<_SystemCard> {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           transform: Matrix4.identity()
-            ..translate(0.0, _hovered ? -4.0 : 0.0, 0.0),
+            ..translateByDouble(0.0, _hovered ? -4.0 : 0.0, 0.0, 1.0),
           padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
             color: cardBg,

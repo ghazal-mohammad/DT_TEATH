@@ -480,7 +480,7 @@ class _WarehouseMaterialFormDialogState
                 ),
                 filled: true,
                 fillColor: AppColors.surfaceTintCool2,
-                suffixIcon: Icon(Icons.search,
+                suffixIcon: const Icon(Icons.search,
                     size: 18, color: AppColors.lightText3),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 11),

@@ -122,9 +122,9 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
 
   Widget _header() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surfaceTintIndigo,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: const EdgeInsetsDirectional.fromSTEB(22, 16, 16, 16),
       child: Row(
@@ -135,7 +135,7 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
             children: [
               Text(
                 context.l10n.labAssignTitle,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -145,7 +145,7 @@ class _AssignOrderDialogState extends State<AssignOrderDialog> {
               const SizedBox(height: 2),
               Text(
                 context.l10n.labAssignSubtitle(widget.technicianName),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -214,7 +214,7 @@ class _OrderRow extends StatelessWidget {
                 children: [
                   Text(
                     '${order.id} — ${order.type}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
@@ -275,7 +275,7 @@ class _OrderRow extends StatelessWidget {
 
   Widget _meta(String t) => Text(
         t,
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: AppTextStyles.fontFamily,
           fontSize: 12,
           fontWeight: FontWeight.w500,
@@ -283,7 +283,7 @@ class _OrderRow extends StatelessWidget {
         ),
       );
 
-  Widget _dot() => Text(
+  Widget _dot() => const Text(
         '•',
         style: TextStyle(color: AppColors.lightText4, fontSize: 12),
       );
@@ -354,7 +354,7 @@ class _OutlineBtn extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w700,

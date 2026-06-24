@@ -87,7 +87,7 @@ class _AppIconButtonState extends State<AppIconButton> {
       width: widget.size,
       height: widget.size,
       transform: _isHovered && isEnabled
-          ? (Matrix4.identity()..scale(1.12)) // scale(1.12) مطابق
+          ? (Matrix4.identity()..scaleByDouble(1.12, 1.12, 1.12, 1.0))
           : Matrix4.identity(),
       transformAlignment: Alignment.center,
       decoration: _buildDecoration(context),

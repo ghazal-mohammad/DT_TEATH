@@ -55,7 +55,6 @@ import '../../../core/theme/app_colors.dart';
 import '../core/mock_user_data.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../bloc/mock_system_cubit.dart';
-import '../../bloc/theme_cubit.dart';
 import '../core/app_system_type.dart';
 import '../navigation/app_sidebar.dart';
 import '../navigation/app_topbar.dart';

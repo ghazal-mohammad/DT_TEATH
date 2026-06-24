@@ -302,18 +302,18 @@ class AppShimmerTable extends StatelessWidget {
       case AppShimmerColumnType.number:
         return const AppShimmerBox(width: 50, height: 12);
       case AppShimmerColumnType.avatar:
-        return Row(
+        return const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             AppShimmerBox(width: 28, height: 28, borderRadius: 14),
             SizedBox(width: AppSizes.spaceSM),
             AppShimmerBox(width: 90, height: 12),
           ],
         );
       case AppShimmerColumnType.iconAction:
-        return Row(
+        return const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             AppShimmerBox(width: 28, height: 28, borderRadius: 8),
             SizedBox(width: 6),
             AppShimmerBox(width: 28, height: 28, borderRadius: 8),
@@ -335,8 +335,8 @@ class AppShimmerTable extends StatelessWidget {
           ),
         ),
       ),
-      child: Row(
-        children: const [
+      child: const Row(
+        children: [
           AppShimmerBox(width: 100, height: 12),
           Spacer(),
           AppShimmerBox(width: 28, height: 28, borderRadius: 8),

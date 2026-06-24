@@ -463,11 +463,11 @@ class _FormContent extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.logo,
-            child: Align(
+            child: const Align(
               alignment: AlignmentDirectional.topEnd,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: AppSizes.space2XL),
-                child: const AppLanguageToggle(
+                padding: EdgeInsets.only(bottom: AppSizes.space2XL),
+                child: AppLanguageToggle(
                   variant: AppLanguageToggleVariant.compact,
                 ),
               ),

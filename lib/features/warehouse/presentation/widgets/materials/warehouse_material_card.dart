@@ -136,7 +136,7 @@ class _WarehouseMaterialCardState extends State<WarehouseMaterialCard>
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutCubic,
           transform: Matrix4.identity()
-            ..translate(0.0, _hovered ? -5.0 : 0.0, 0.0),
+            ..translateByDouble(0.0, _hovered ? -5.0 : 0.0, 0.0, 1.0),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             // dark gradient في dark mode، sterile في light

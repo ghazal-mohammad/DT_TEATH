@@ -16,7 +16,7 @@ class AuthRemoteDataSource {
 
   /// POST /api/employee/sendVerification
   Future<Map<String, dynamic>> sendVerification({required String email}) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.employeeSendVerification,
       data: FormData.fromMap({'email': email}),
     );
@@ -28,7 +28,7 @@ class AuthRemoteDataSource {
     required String email,
     required String verificationCode,
   }) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.employeeVerifyCode,
       data: FormData.fromMap({
         'email': email,
@@ -44,7 +44,7 @@ class AuthRemoteDataSource {
     required String verificationCode,
     required String password,
   }) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.employeeSetPassword,
       data: FormData.fromMap({
         'email': email,
@@ -60,7 +60,7 @@ class AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.employeeLogin,
       data: FormData.fromMap({
         'email': email,
@@ -72,14 +72,14 @@ class AuthRemoteDataSource {
 
   /// POST /api/employee/logout (محمي بـ Bearer)
   Future<void> logout() async {
-    await _dio.post(ApiEndpoints.employeeLogout);
+    await _dio.post<dynamic>(ApiEndpoints.employeeLogout);
   }
 
   // ── Forgot Password (إعادة تعيين كلمة سر لحساب مُفعَّل) ──────────────────
 
   /// POST /api/forgotPassword/sendCode
   Future<Map<String, dynamic>> sendResetCode({required String email}) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.forgotPasswordSendCode,
       data: FormData.fromMap({'email': email}),
     );
@@ -91,7 +91,7 @@ class AuthRemoteDataSource {
     required String email,
     required String verificationCode,
   }) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.forgotPasswordVerifyCode,
       data: FormData.fromMap({
         'email': email,
@@ -106,7 +106,7 @@ class AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    final response = await _dio.post(
+    final response = await _dio.post<dynamic>(
       ApiEndpoints.forgotPasswordReset,
       data: FormData.fromMap({
         'email': email,

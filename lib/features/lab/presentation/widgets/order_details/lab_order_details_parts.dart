@@ -47,7 +47,7 @@ class _Header extends StatelessWidget {
                   children: [
                     Text(
                       context.l10n.orderDetailsHeading,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -57,7 +57,7 @@ class _Header extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       orderId,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -69,7 +69,7 @@ class _Header extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   context.l10n.orderDetailsSubtitleLab,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -128,7 +128,7 @@ class _StatusBanner extends StatelessWidget {
               children: [
                 Text(
                   context.l10n.orderDetailsStatusLabel,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -170,7 +170,7 @@ class _StatusBanner extends StatelessWidget {
               children: [
                 Text(
                   context.l10n.orderDetailsExpectedDelivery,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -180,7 +180,7 @@ class _StatusBanner extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   order.date,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
@@ -214,7 +214,7 @@ class _SectionHeader extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 14,
               fontWeight: FontWeight.w800,
@@ -332,7 +332,7 @@ class _InfoCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
@@ -352,7 +352,7 @@ class _InfoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Divider(height: 1, color: AppColors.lightBorder),
+          const Divider(height: 1, color: AppColors.lightBorder),
           for (final r in rows) ...[
             const SizedBox(height: 8),
             _InfoRow(label: r.label, value: r.value, pillColor: r.pillColor),
@@ -403,7 +403,7 @@ class _InfoRow extends StatelessWidget {
           else
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
@@ -414,7 +414,7 @@ class _InfoRow extends StatelessWidget {
           // label (يسار)
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -523,7 +523,7 @@ class _TimelineStep extends StatelessWidget {
                   ? Container(
                       width: 10,
                       height: 10,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
@@ -544,7 +544,7 @@ class _TimelineStep extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             date!,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 11,
               fontWeight: FontWeight.w500,
@@ -577,7 +577,7 @@ class _NotesBox extends StatelessWidget {
       ),
       child: Text(
         notes,
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: AppTextStyles.fontFamily,
           fontSize: 13,
           fontWeight: FontWeight.w600,
@@ -613,7 +613,7 @@ class _CloseButton extends StatelessWidget {
           ),
           child: Text(
             context.l10n.close,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w700,

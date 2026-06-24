@@ -30,7 +30,7 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
   String _activeFilter = 'all';
 
   List<LabOrderItem> get _filtered {
-    final all = LabDashboardMockData.todayOrders;
+    const all = LabDashboardMockData.todayOrders;
     switch (_activeFilter) {
       case 'new':
         return all
@@ -53,7 +53,7 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
 
   @override
   Widget build(BuildContext context) {
-    final all = LabDashboardMockData.todayOrders;
+    const all = LabDashboardMockData.todayOrders;
     final counts = {
       'new': all
           .where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder)

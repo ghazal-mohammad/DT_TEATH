@@ -301,7 +301,7 @@ class _LabReportsBody extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('📅 الطلبات حسب التاريخ',
+                const Text('📅 الطلبات حسب التاريخ',
                     style: AppTextStyles.headlineSmall),
                 TextButton(
                   onPressed: () {},
@@ -343,7 +343,7 @@ class _LabReportsBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'الطلبات حسب النوع',
             style: AppTextStyles.headlineSmall,
           ),
@@ -355,7 +355,7 @@ class _LabReportsBody extends StatelessWidget {
                 width: 86,
                 height: 86,
                 child: CustomPaint(
-                  painter: LabReportDonutPainter(
+                  painter: const LabReportDonutPainter(
                     segments: LabReportsMockData.chartSegments,
                   ),
                   child: Center(
@@ -453,7 +453,7 @@ class _LabReportsBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'أداء الفريق',
             style: AppTextStyles.headlineSmall,
           ),

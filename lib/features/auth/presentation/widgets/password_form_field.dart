@@ -183,7 +183,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
                       Expanded(
                         child: Text(
                           widget.errorText!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
