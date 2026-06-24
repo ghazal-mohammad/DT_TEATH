@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# أدوات التطوير المحلية — لا تخصّ المشروع ولا تُرفَع.
+.claude/
+.github/copilot-instructions.md
