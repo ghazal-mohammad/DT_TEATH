@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -24,7 +25,7 @@ import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../shared/widgets/primitives/app_filter_chip.dart';
-import '../../data/repositories/mock_lab_material_requests_repository.dart';
+import '../../domain/repositories/lab_material_requests_repository.dart';
 import '../bloc/lab_material_requests_cubit.dart';
 import '../bloc/lab_material_requests_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -40,7 +41,7 @@ class LabMaterialRequestsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => LabMaterialRequestsCubit(
-        repository: MockLabMaterialRequestsRepository(),
+        repository: sl<LabMaterialRequestsRepository>(),
       )..load(),
       child: BlocBuilder<LabMaterialRequestsCubit, LabMaterialRequestsState>(
         builder: (context, state) {

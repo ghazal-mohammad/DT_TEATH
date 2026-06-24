@@ -15,9 +15,11 @@ import 'package:dio/dio.dart';
 
 import 'package:dt_teeth/features/lab/data/datasources/lab_products_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/datasources/lab_orders_remote_datasource.dart';
+import 'package:dt_teeth/features/lab/data/datasources/lab_material_requests_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/datasources/lab_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/repositories/remote_lab_products_repository.dart';
 import 'package:dt_teeth/features/lab/data/repositories/remote_lab_orders_repository.dart';
+import 'package:dt_teeth/features/lab/data/repositories/remote_lab_material_requests_repository.dart';
 import 'package:dt_teeth/features/lab/data/repositories/lab_repository_impl.dart';
 import 'package:dt_teeth/features/lab/domain/entities/lab_product.dart';
 
@@ -75,6 +77,17 @@ Future<void> main(List<String> args) async {
     print('  • #${o.id} ${o.doctor} | ${o.type}/${o.material} '
         '${o.tooth} | ${o.statusVariant.name} | ${o.cost} ل.س '
         '| فنّي: ${o.assignedTechnician ?? "—"}');
+  }
+
+  print('\n── getAll() عبر LabMaterialRequestsRepository ──────────────────');
+  final mrRepo = RemoteLabMaterialRequestsRepository(
+    LabMaterialRequestsRemoteDataSource(dio),
+  );
+  final reqs = await mrRepo.getAll();
+  print('عدد طلبات المواد: ${reqs.length}');
+  for (final r in reqs.take(4)) {
+    print('  • #${r.id} ${r.material} ×${r.quantity} ${r.unit} '
+        '| ${r.status.name} | شركة: ${r.company ?? "—"}');
   }
 
   print('\n✅ مسار الفرونت يطابق الباك الحي.');

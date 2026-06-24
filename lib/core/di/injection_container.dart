@@ -31,12 +31,15 @@ import '../../features/profile/presentation/bloc/profile_cubit.dart';
 import '../../features/lab/data/datasources/lab_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_products_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_orders_remote_datasource.dart';
+import '../../features/lab/data/datasources/lab_material_requests_remote_datasource.dart';
 import '../../features/lab/data/repositories/lab_repository_impl.dart';
 import '../../features/lab/data/repositories/remote_lab_products_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_orders_repository.dart';
+import '../../features/lab/data/repositories/remote_lab_material_requests_repository.dart';
 import '../../features/lab/domain/repositories/lab_repository.dart';
 import '../../features/lab/domain/repositories/lab_products_repository.dart';
 import '../../features/lab/domain/repositories/lab_orders_repository.dart';
+import '../../features/lab/domain/repositories/lab_material_requests_repository.dart';
 
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
@@ -107,6 +110,16 @@ Future<void> initDependencies() async {
     () => RemoteLabOrdersRepository(
       sl<LabOrdersRemoteDataSource>(),
       sl<LabRepository>(),
+    ),
+  );
+
+  // ── Lab Material Requests — Remote عبر labManager/showAllMaterialRequests ──
+  sl.registerLazySingleton<LabMaterialRequestsRemoteDataSource>(
+    () => LabMaterialRequestsRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<LabMaterialRequestsRepository>(
+    () => RemoteLabMaterialRequestsRepository(
+      sl<LabMaterialRequestsRemoteDataSource>(),
     ),
   );
 }
