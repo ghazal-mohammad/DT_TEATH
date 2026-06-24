@@ -1,47 +1,61 @@
 // ════════════════════════════════════════════════════════════════════════════
 // lab_technician.dart
 //
-// نموذج فني المخبر — مطابق لرد GET /api/labManager/showAllTechnicians.
-// الحقول المتوفّرة من الباك فقط: id (employee.id), user_id, name, email,
-// role, profile_picture. (لا يوجد دوام/عدد مخابر بالباك.)
+// نموذج فني المخبر — مطابق لرد GET /api/labManager/showAllTechnicians
+// (تحقّق فعلي 2026-06-24 عبر TechnicianResource الجديد).
+//
+// الحقول المتوفّرة من الباك: id, name, email, phone, is_active (نص عربي
+// "يعمل"/"لا يعمل")، schedule[] (مواعيد الدوام — قد تكون فارغة).
+// أُزيلت user_id/role/profile_picture (لم يعد الباك يرجّعها).
 // ════════════════════════════════════════════════════════════════════════════
 
 class LabTechnician {
   const LabTechnician({
     required this.id,
-    required this.userId,
     required this.name,
     required this.email,
-    required this.role,
-    this.profilePicture,
+    required this.phone,
+    required this.isActive,
+    this.schedule = const [],
   });
 
-  /// معرّف سجل الموظف (employee.id) — هذا اللي نستعملو عند توكيل طلبية.
+  /// معرّف سجل الموظف (employee.id).
   final int id;
-
-  /// معرّف المستخدم (users.id).
-  final int userId;
 
   final String name;
   final String email;
+  final String phone;
 
-  /// رقم الدور (7 = فني) — كما يرجّعه الباك.
-  final int role;
+  /// هل المخبري على رأس عمله؟ (مشتق من نص is_active العربي).
+  final bool isActive;
 
-  /// رابط صورة البروفايل (قد يكون null أو صورة افتراضية من الباك).
-  final String? profilePicture;
+  /// مواعيد الدوام كما يرجّعها الباك (قد تكون فارغة — جدول جديد).
+  final List<Map<String, dynamic>> schedule;
 
   factory LabTechnician.fromJson(Map<String, dynamic> json) {
-    int asInt(Object? v) =>
-        v is int ? v : int.tryParse('${v ?? ''}') ?? 0;
+    int asInt(Object? v) => v is int ? v : int.tryParse('${v ?? ''}') ?? 0;
+
+    // الباك يرجّع is_active كنص عربي ("يعمل"/"لا يعمل") أو bool احتياطاً.
+    final rawActive = json['is_active'];
+    final bool active = rawActive is bool
+        ? rawActive
+        : '${rawActive ?? ''}'.trim() == 'يعمل';
+
+    final rawSchedule = json['schedule'];
+    final schedule = rawSchedule is List
+        ? rawSchedule
+            .whereType<Map<dynamic, dynamic>>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList()
+        : <Map<String, dynamic>>[];
 
     return LabTechnician(
       id: asInt(json['id']),
-      userId: asInt(json['user_id']),
       name: (json['name'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
-      role: asInt(json['role']),
-      profilePicture: json['profile_picture']?.toString(),
+      phone: (json['phone'] ?? '').toString(),
+      isActive: active,
+      schedule: schedule,
     );
   }
 }
