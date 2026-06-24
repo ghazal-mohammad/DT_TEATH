@@ -32,14 +32,17 @@ import '../../features/lab/data/datasources/lab_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_products_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_orders_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_material_requests_remote_datasource.dart';
+import '../../features/lab/data/datasources/lab_stock_remote_datasource.dart';
 import '../../features/lab/data/repositories/lab_repository_impl.dart';
 import '../../features/lab/data/repositories/remote_lab_products_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_orders_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_material_requests_repository.dart';
+import '../../features/lab/data/repositories/remote_lab_stock_repository.dart';
 import '../../features/lab/domain/repositories/lab_repository.dart';
 import '../../features/lab/domain/repositories/lab_products_repository.dart';
 import '../../features/lab/domain/repositories/lab_orders_repository.dart';
 import '../../features/lab/domain/repositories/lab_material_requests_repository.dart';
+import '../../features/lab/domain/repositories/lab_stock_repository.dart';
 
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
@@ -121,6 +124,14 @@ Future<void> initDependencies() async {
     () => RemoteLabMaterialRequestsRepository(
       sl<LabMaterialRequestsRemoteDataSource>(),
     ),
+  );
+
+  // ── Lab Stock (مخزون المخبر) — Remote عبر labManager/showLabStock ──────────
+  sl.registerLazySingleton<LabStockRemoteDataSource>(
+    () => LabStockRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<LabStockRepository>(
+    () => RemoteLabStockRepository(sl<LabStockRemoteDataSource>()),
   );
 }
 

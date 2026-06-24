@@ -16,10 +16,12 @@ import 'package:dio/dio.dart';
 import 'package:dt_teeth/features/lab/data/datasources/lab_products_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/datasources/lab_orders_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/datasources/lab_material_requests_remote_datasource.dart';
+import 'package:dt_teeth/features/lab/data/datasources/lab_stock_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/datasources/lab_remote_datasource.dart';
 import 'package:dt_teeth/features/lab/data/repositories/remote_lab_products_repository.dart';
 import 'package:dt_teeth/features/lab/data/repositories/remote_lab_orders_repository.dart';
 import 'package:dt_teeth/features/lab/data/repositories/remote_lab_material_requests_repository.dart';
+import 'package:dt_teeth/features/lab/data/repositories/remote_lab_stock_repository.dart';
 import 'package:dt_teeth/features/lab/data/repositories/lab_repository_impl.dart';
 import 'package:dt_teeth/features/lab/domain/entities/lab_product.dart';
 
@@ -88,6 +90,15 @@ Future<void> main(List<String> args) async {
   for (final r in reqs.take(4)) {
     print('  • #${r.id} ${r.material} ×${r.quantity} ${r.unit} '
         '| ${r.status.name} | شركة: ${r.company ?? "—"}');
+  }
+
+  print('\n── getAll() عبر LabStockRepository ─────────────────────────────');
+  final stockRepo = RemoteLabStockRepository(LabStockRemoteDataSource(dio));
+  final stock = await stockRepo.getAll();
+  print('عدد مواد المخزون: ${stock.length}');
+  for (final s in stock.take(4)) {
+    print('  • #${s.id} ${s.material} | ${s.quantity} ${s.unit} '
+        '| ${s.status.name}${s.isLow ? " (منخفض)" : ""}');
   }
 
   print('\n✅ مسار الفرونت يطابق الباك الحي.');
