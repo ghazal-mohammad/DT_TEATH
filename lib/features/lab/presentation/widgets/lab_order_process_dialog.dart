@@ -138,9 +138,10 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
       _rows.any((r) => _qtyError(r) != null);
 
   void _save() {
-    // الحالة لا تتغير من "جديد" إلا بتوكيل مخبري (قرار الفريق 2026-06-12):
-    // قيد التصنيع/جاهز ⇒ اسم المخبري المنفّذ إلزامي.
-    if (_technician == null) {
+    // المخبري المنفّذ إلزامي فقط لحالة "قيد التصنيع" — هي الوحيدة التي تعيّن
+    // فنّياً في الباك (setInProgress يتطلّب technician_id). أما "جاهز للتسليم"
+    // و"غير موجود" فلا تحتاج اختيار فنّي.
+    if (_status == LabOrderBadgeVariant.manufacturing && _technician == null) {
       setState(() => _technicianError = true);
       return;
     }

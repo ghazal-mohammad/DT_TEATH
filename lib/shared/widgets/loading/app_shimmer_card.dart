@@ -126,7 +126,9 @@ class AppShimmerCard extends StatelessWidget {
       case AppShimmerCardLayout.basic:
         return 140;
       case AppShimmerCardLayout.statCard:
-        return 120;
+        // 124 لا 120: محتوى التخطيط يملأ الارتفاع تماماً، فنترك 4px لاستيعاب
+        // الـ border (~1px لكل جهة) وتفادي تجاوز سفلي 2px.
+        return 124;
       case AppShimmerCardLayout.dashboard:
         return 180;
     }
@@ -138,21 +140,21 @@ class AppShimmerCard extends StatelessWidget {
 
   /// تخطيط عام: عنوان + سطرين + شريط سفلي.
   Widget _buildBasicLayout() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // عنوان
-        const AppShimmerBox(width: 140, height: 16),
-        const SizedBox(height: AppSizes.spaceMD),
+        AppShimmerBox(width: 140, height: 16),
+        SizedBox(height: AppSizes.spaceMD),
         // سطر نص أول
-        const AppShimmerBox(width: double.infinity, height: 12),
-        const SizedBox(height: AppSizes.spaceSM),
+        AppShimmerBox(width: double.infinity, height: 12),
+        SizedBox(height: AppSizes.spaceSM),
         // سطر نص ثاني (أقصر)
-        const AppShimmerBox(width: 200, height: 12),
-        const Spacer(),
+        AppShimmerBox(width: 200, height: 12),
+        Spacer(),
         // شريط سفلي (مثل progress أو meta)
-        const Row(
-          children: const [
+        Row(
+          children: [
             AppShimmerBox(width: 80, height: 10),
             Spacer(),
             AppShimmerBox(width: 60, height: 10),
@@ -164,24 +166,24 @@ class AppShimmerCard extends StatelessWidget {
 
   /// تخطيط StatCard: أيقونة + قيمة + label + trend.
   Widget _buildStatCardLayout() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // أيقونة دائرية + label
-        const Row(
-          children: const [
+        Row(
+          children: [
             AppShimmerBox(width: 36, height: 36, borderRadius: 10),
             SizedBox(width: AppSizes.spaceSM),
             AppShimmerBox(width: 100, height: 12),
           ],
         ),
-        const Spacer(),
+        Spacer(),
         // القيمة الكبيرة
-        const AppShimmerBox(width: 120, height: 28, borderRadius: 6),
-        const SizedBox(height: AppSizes.spaceSM),
+        AppShimmerBox(width: 120, height: 28, borderRadius: 6),
+        SizedBox(height: AppSizes.spaceSM),
         // Trend indicator
-        const Row(
-          children: const [
+        Row(
+          children: [
             AppShimmerBox(width: 16, height: 16, borderRadius: 4),
             SizedBox(width: 6),
             AppShimmerBox(width: 70, height: 11),
@@ -193,20 +195,20 @@ class AppShimmerCard extends StatelessWidget {
 
   /// تخطيط Dashboard: عنوان كبير + subtitle + زرّين.
   Widget _buildDashboardLayout() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // عنوان كبير
-        const AppShimmerBox(width: 220, height: 22, borderRadius: 6),
-        const SizedBox(height: AppSizes.spaceSM),
+        AppShimmerBox(width: 220, height: 22, borderRadius: 6),
+        SizedBox(height: AppSizes.spaceSM),
         // Subtitle
-        const AppShimmerBox(width: 300, height: 14),
-        const SizedBox(height: AppSizes.spaceXS),
-        const AppShimmerBox(width: 260, height: 14),
-        const Spacer(),
+        AppShimmerBox(width: 300, height: 14),
+        SizedBox(height: AppSizes.spaceXS),
+        AppShimmerBox(width: 260, height: 14),
+        Spacer(),
         // زرّين
-        const Row(
-          children: const [
+        Row(
+          children: [
             AppShimmerBox(width: 120, height: 36, borderRadius: 10),
             SizedBox(width: AppSizes.spaceSM),
             AppShimmerBox(width: 100, height: 36, borderRadius: 10),

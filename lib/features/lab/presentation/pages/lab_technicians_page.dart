@@ -45,12 +45,13 @@ class LabTechniciansPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // نحسب التسميات المترجمة هنا (context صالح للقراءة)، ونمرّرها للـ create
+    // كقيم ملتقطة — ممنوع قراءة Localizations داخل callback الـ create نفسه.
+    final roleLabel = _roleLabel(context);
+    final pendingLabel = context.l10n.labTechPendingAssign;
     return BlocProvider(
-      create: (ctx) => LabTechniciansCubit(repository: sl<LabRepository>())
-        ..load(
-          roleLabel: _roleLabel(ctx),
-          pendingLabel: ctx.l10n.labTechPendingAssign,
-        ),
+      create: (_) => LabTechniciansCubit(repository: sl<LabRepository>())
+        ..load(roleLabel: roleLabel, pendingLabel: pendingLabel),
       child: BlocBuilder<LabTechniciansCubit, LabTechniciansState>(
         builder: (context, state) {
           return AppShellLayout(
@@ -77,13 +78,13 @@ class LabTechniciansPage extends StatelessWidget {
   Widget _buildBody(BuildContext context, LabTechniciansState state) {
     if (state.status == LabTechniciansStatus.loading) {
       // Skeleton فوري بدل spinner يحجب الصفحة (أول طلب Laravel بطيء).
-      return SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.spaceLG),
+      return const SingleChildScrollView(
+        padding: EdgeInsets.all(AppSizes.spaceLG),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              children: const [
+              children: [
                 Expanded(
                     child: AppShimmerCard(
                         layout: AppShimmerCardLayout.statCard)),
@@ -97,8 +98,8 @@ class LabTechniciansPage extends StatelessWidget {
                         layout: AppShimmerCardLayout.statCard)),
               ],
             ),
-            const SizedBox(height: AppSizes.spaceLG),
-            const AppShimmerTable(
+            SizedBox(height: AppSizes.spaceLG),
+            AppShimmerTable(
               columns: [
                 AppShimmerTableColumn.wide,
                 AppShimmerTableColumn.text,
