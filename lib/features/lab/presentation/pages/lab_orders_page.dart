@@ -16,14 +16,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../data/lab_inventory_store.dart';
-import '../../data/repositories/mock_lab_orders_repository.dart';
 import '../../domain/entities/lab_order.dart';
+import '../../domain/repositories/lab_orders_repository.dart';
 import '../bloc/lab_orders_cubit.dart';
 import '../bloc/lab_orders_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -41,7 +42,7 @@ class LabOrdersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          LabOrdersCubit(repository: MockLabOrdersRepository())..load(),
+          LabOrdersCubit(repository: sl<LabOrdersRepository>())..load(),
       child: BlocBuilder<LabOrdersCubit, LabOrdersState>(
         builder: (context, state) {
           return AppShellLayout(
