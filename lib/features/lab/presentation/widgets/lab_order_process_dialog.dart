@@ -16,7 +16,6 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/forms/app_form_select.dart';
 import '../../data/lab_inventory_store.dart';
-import '../../data/mock/lab_dashboard_mock_data.dart';
 import 'lab_order_models.dart';
 
 part 'order_process/lab_order_process_parts.dart';
@@ -175,7 +174,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
           alignment: AlignmentDirectional.centerStart,
           child: Text(
             context.l10n.labProcessNoMaterials,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 12,
               color: AppColors.lightText4,
@@ -277,7 +276,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
         children: [
           Text(
             context.l10n.labProcessMaterialsCost,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -287,7 +286,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
           const Spacer(),
           Text(
             '${_formatMoney(total)} ل.س',
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 14,
               fontWeight: FontWeight.w900,
@@ -433,7 +432,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             context.l10n.labProcessConsumedHint,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
                               fontSize: 11,
                               color: AppColors.lightText3,
@@ -540,7 +539,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
           children: [
             Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
@@ -567,7 +566,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -591,7 +590,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             children: [
               Text(
                 context.l10n.labProcessTitle,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -601,7 +600,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
               const SizedBox(height: 2),
               Text(
                 '${order.id} — ${order.doctor}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -666,7 +665,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -676,7 +675,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
         const SizedBox(height: 2),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 13,
             fontWeight: FontWeight.w800,
