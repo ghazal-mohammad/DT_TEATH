@@ -75,6 +75,7 @@ class LabStockCubit extends Cubit<LabStockState> {
           id: id, quantity: quantity, notes: notes));
 
   /// يشغّل عملية كتابة ويحوّل الفشل لرسالة عرضية دون كسر الـ state.
+  /// يرجّع null عند النجاح، أو رسالة الخطأ عند الفشل.
   Future<String?> _run(Future<void> Function() action) async {
     try {
       await action();
@@ -82,7 +83,7 @@ class LabStockCubit extends Cubit<LabStockState> {
     } on Failure catch (f) {
       return f.message;
     } catch (_) {
-      return null; // الـ UI يعرض رسالة عامة عند null+فشل.
+      return 'تعذّر إتمام العملية — حاول مجدداً';
     }
   }
 

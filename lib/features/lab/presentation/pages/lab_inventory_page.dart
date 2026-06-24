@@ -1,118 +1,186 @@
 // ════════════════════════════════════════════════════════════════════════════
 // lab_inventory_page.dart  — مخزون المخبر (Lab Internal Inventory)
 //
-// الفجوة #1 من تدقيق التقرير (UC72 / UC73 / UC75):
-//   - عرض المواد المتبقّية داخل المخبر (مخزون داخلي مستقل عن المستودع).
-//   - فلترة حسب الفئة + بحث محلي.
-//   - "تسجيل استهلاك" (إنقاص كمية مادة) — يطابق UC75.
+// المعمارية (يطابق بقية شاشات المخبر): UI → LabStockCubit → LabStockRepository.
+//   - الكيان    : domain/entities/lab_stock.dart
+//   - العقد     : domain/repositories/lab_stock_repository.dart
+//   - Remote    : data/repositories/remote_lab_stock_repository.dart
+//                 (GET showLabStock · POST addToStock/subtractFromStock)
 //
-// ملاحظة: بيانات mock حالياً — تُستبدل بـ API في مرحلة الربط
-//          (GET /api/lab/inventory · POST /api/lab/inventory/{id}/consume).
+// مطابقة الباك: مخزون المخبر بلا فئات/حدّ أدنى/سعر — لذلك الفلترة بالحالة
+// (الكل/منخفض/نافد) لا بالفئة، والأعمدة: المادة/الكمية/الحالة/استهلاك.
+// "تسجيل استهلاك" = subtractFromStock (UC75) ويُحدِّث القائمة من الباك.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
-import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/data/app_data_table.dart';
+import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../../shared/widgets/loading/app_shimmer_card.dart';
+import '../../../../shared/widgets/loading/app_shimmer_table.dart';
 import '../../../../shared/widgets/primitives/app_badge.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../shared/widgets/primitives/app_filter_chip.dart';
-import '../../data/lab_inventory_store.dart';
+import '../../domain/entities/lab_stock.dart';
+import '../../domain/repositories/lab_stock_repository.dart';
+import '../bloc/lab_stock_cubit.dart';
+import '../bloc/lab_stock_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
-//  CATEGORY LABEL — البيانات نفسها في LabInventoryStore (مصدر مشترك)
+//  PAGE — تُنشئ LabStockCubit محلياً وتزوّده للـ subtree.
 // ══════════════════════════════════════════════════════════════════════════
 
-extension LabCatLabel on LabMaterialCategory {
-  String label(AppLocalizations l10n) => switch (this) {
-        LabMaterialCategory.medical => l10n.whCategoryMedical,
-        LabMaterialCategory.consumables => l10n.whCategoryConsumables,
-        LabMaterialCategory.medicines => l10n.whCategoryMedicines,
-        LabMaterialCategory.metals => l10n.whCategoryEquipment,
-      };
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//  PAGE
-// ══════════════════════════════════════════════════════════════════════════
-
-class LabInventoryPage extends StatefulWidget {
+class LabInventoryPage extends StatelessWidget {
   const LabInventoryPage({super.key});
 
   @override
-  State<LabInventoryPage> createState() => _LabInventoryPageState();
-}
-
-class _LabInventoryPageState extends State<LabInventoryPage> {
-  final LabInventoryStore _store = LabInventoryStore.instance;
-  int _catIndex = 0; // 0 = الكل، ثم حسب ترتيب LabMaterialCategory
-  String _query = '';
-
-  List<LabMaterial> get _filtered {
-    Iterable<LabMaterial> list = _store.items;
-    if (_catIndex > 0) {
-      final cat = LabMaterialCategory.values[_catIndex - 1];
-      list = list.where((m) => m.category == cat);
-    }
-    final q = _query.trim();
-    if (q.isNotEmpty) {
-      list = list.where((m) => m.name.contains(q));
-    }
-    return list.toList();
-  }
-
-  Future<void> _onConsume(LabMaterial m) async {
-    final amount = await _ConsumeDialog.show(context, m);
-    if (amount == null) return;
-    _store.consume(m.id, amount);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return AppShellLayout(
-      system: AppSystemType.lab,
-      currentRoute: RouteNames.labInventory,
-      sections: LabSidebarSections.build(context),
-      pageTitle: l10n.labInventory,
-      pageSubtitle: l10n.labTopbarSubtitle,
-      searchPlaceholder: l10n.labInvSearchHint,
-      onSearchChanged: (v) => setState(() => _query = v),
-      userRole: l10n.roleLabManager,
-      // يعيد البناء تلقائياً عند نقص المخزون من أي مكان (مثل إنجاز طلبية).
-      body: ListenableBuilder(
-        listenable: _store,
-        builder: (context, _) {
-          final low =
-              _store.items.where((m) => m.status == LabStockStatus.low).length;
-          final out =
-              _store.items.where((m) => m.status == LabStockStatus.out).length;
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSizes.spaceLG),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _StatsRow(total: _store.items.length, low: low, out: out),
-                const SizedBox(height: AppSizes.spaceLG),
-                _InventoryCard(
-                  catIndex: _catIndex,
-                  onCatChanged: (i) => setState(() => _catIndex = i),
-                  materials: _filtered,
-                  onConsume: _onConsume,
-                ),
-              ],
+    return BlocProvider(
+      create: (_) => LabStockCubit(repository: sl<LabStockRepository>())..load(),
+      child: Builder(
+        builder: (context) {
+          final l10n = context.l10n;
+          return AppShellLayout(
+            system: AppSystemType.lab,
+            currentRoute: RouteNames.labInventory,
+            sections: LabSidebarSections.build(context),
+            pageTitle: l10n.labInventory,
+            pageSubtitle: l10n.labTopbarSubtitle,
+            searchPlaceholder: l10n.labInvSearchHint,
+            onSearchChanged: (v) =>
+                context.read<LabStockCubit>().setSearchQuery(v),
+            userRole: l10n.roleLabManager,
+            body: BlocBuilder<LabStockCubit, LabStockState>(
+              builder: (context, state) => _buildBody(context, state),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, LabStockState state) {
+    if (state.isInitialLoading) return const _InventoryLoading();
+    if (state.status == LabStockStatusPhase.error) {
+      return _InventoryError(
+        message: state.errorMessage ?? context.l10n.error,
+        onRetry: () => context.read<LabStockCubit>().load(),
+      );
+    }
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSizes.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _StatsRow(total: state.total, low: state.lowCount, out: state.outCount),
+          const SizedBox(height: AppSizes.spaceLG),
+          _InventoryCard(
+            filter: state.filter,
+            onFilterChanged: (f) =>
+                context.read<LabStockCubit>().setFilter(f),
+            items: state.filtered,
+            onConsume: (s) => _onConsume(context, s),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _onConsume(BuildContext context, LabStock stock) async {
+    final cubit = context.read<LabStockCubit>();
+    final amount = await _ConsumeDialog.show(context, stock);
+    if (amount == null) return;
+    final error = await cubit.subtractQuantity(stock.id, amount);
+    if (error != null && context.mounted) {
+      GlassToast.show(context, message: error);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  LOADING / ERROR
+// ══════════════════════════════════════════════════════════════════════════
+
+class _InventoryLoading extends StatelessWidget {
+  const _InventoryLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(AppSizes.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                  child: AppShimmerCard(layout: AppShimmerCardLayout.statCard)),
+              SizedBox(width: AppSizes.spaceMD),
+              Expanded(
+                  child: AppShimmerCard(layout: AppShimmerCardLayout.statCard)),
+              SizedBox(width: AppSizes.spaceMD),
+              Expanded(
+                  child: AppShimmerCard(layout: AppShimmerCardLayout.statCard)),
+            ],
+          ),
+          SizedBox(height: AppSizes.spaceLG),
+          AppShimmerTable(
+            columns: [
+              AppShimmerTableColumn.wide,
+              AppShimmerTableColumn.text,
+              AppShimmerTableColumn.badge,
+              AppShimmerTableColumn.actions,
+            ],
+            rowCount: 6,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InventoryError extends StatelessWidget {
+  const _InventoryError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.cloud_off_rounded,
+              size: 42,
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+            ),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: Text(context.l10n.retry),
+          ),
+        ],
       ),
     );
   }
@@ -264,21 +332,27 @@ class _StatCard extends StatelessWidget {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  INVENTORY CARD (filter chips + table)
+//  INVENTORY CARD (status filter chips + table)
 // ══════════════════════════════════════════════════════════════════════════
 
 class _InventoryCard extends StatelessWidget {
   const _InventoryCard({
-    required this.catIndex,
-    required this.onCatChanged,
-    required this.materials,
+    required this.filter,
+    required this.onFilterChanged,
+    required this.items,
     required this.onConsume,
   });
 
-  final int catIndex;
-  final ValueChanged<int> onCatChanged;
-  final List<LabMaterial> materials;
-  final void Function(LabMaterial) onConsume;
+  final LabStockFilter filter;
+  final ValueChanged<LabStockFilter> onFilterChanged;
+  final List<LabStock> items;
+  final void Function(LabStock) onConsume;
+
+  static const _filterOrder = [
+    LabStockFilter.all,
+    LabStockFilter.low,
+    LabStockFilter.out,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +368,6 @@ class _InventoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header: عنوان + chips الفئات
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSizes.spaceLG,
@@ -319,19 +392,16 @@ class _InventoryCard extends StatelessWidget {
                   child: AppFilterChipRow(
                     options: [
                       l10n.labOrdersFilterAll,
-                      l10n.whCategoryMedical,
-                      l10n.whCategoryConsumables,
-                      l10n.whCategoryMedicines,
-                      l10n.whCategoryEquipment,
+                      l10n.labInvLow,
+                      l10n.labInvOut,
                     ],
-                    selectedIndex: catIndex,
-                    onChanged: onCatChanged,
+                    selectedIndex: _filterOrder.indexOf(filter),
+                    onChanged: (i) => onFilterChanged(_filterOrder[i]),
                   ),
                 ),
               ],
             ),
           ),
-          // Table
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSizes.spaceLG,
@@ -339,18 +409,18 @@ class _InventoryCard extends StatelessWidget {
               AppSizes.spaceLG,
               AppSizes.spaceLG,
             ),
-            child: AppDataTable<LabMaterial>(
-              data: materials,
+            child: AppDataTable<LabStock>(
+              data: items,
               headerBackground:
                   isLight ? AppColors.tableHeader : AppColors.darkBg2,
               emptyMessage: l10n.labInvEmpty,
               emptyIcon: Icons.inventory_2_outlined,
               columns: [
-                AppDataColumn<LabMaterial>(
+                AppDataColumn<LabStock>(
                   label: l10n.colMaterial,
                   flex: 3,
-                  cellBuilder: (m) => Text(
-                    m.name,
+                  cellBuilder: (s) => Text(
+                    s.material,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 13,
@@ -360,19 +430,11 @@ class _InventoryCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                AppDataColumn<LabMaterial>(
-                  label: l10n.labInvColCategory,
-                  flex: 2,
-                  cellBuilder: (m) => Text(
-                    m.category.label(l10n),
-                    style: AppTextStyles.bodyMedium,
-                  ),
-                ),
-                AppDataColumn<LabMaterial>(
+                AppDataColumn<LabStock>(
                   label: l10n.whColStock,
                   flex: 2,
-                  cellBuilder: (m) => Text(
-                    '${m.quantity} ${m.unit}',
+                  cellBuilder: (s) => Text(
+                    '${_fmtQty(s.quantity)} ${s.unit}',
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 13,
@@ -382,31 +444,23 @@ class _InventoryCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                AppDataColumn<LabMaterial>(
-                  label: l10n.whColMinStock,
-                  flex: 2,
-                  cellBuilder: (m) => Text(
-                    '${m.minStock} ${m.unit}',
-                    style: AppTextStyles.bodySmall,
-                  ),
-                ),
-                AppDataColumn<LabMaterial>(
+                AppDataColumn<LabStock>(
                   label: l10n.colStatus,
                   flex: 2,
-                  cellBuilder: (m) => Align(
+                  cellBuilder: (s) => Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: _statusBadge(context, m.status),
+                    child: _statusBadge(context, s.status),
                   ),
                 ),
-                AppDataColumn<LabMaterial>(
+                AppDataColumn<LabStock>(
                   label: '',
                   flex: 2,
-                  cellBuilder: (m) => Align(
+                  cellBuilder: (s) => Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: AppButton.secondary(
                       label: l10n.labInvConsume,
                       icon: Icons.remove_circle_outline_rounded,
-                      onPressed: m.quantity <= 0 ? null : () => onConsume(m),
+                      onPressed: s.quantity <= 0 ? null : () => onConsume(s),
                       size: AppButtonSize.small,
                     ),
                   ),
@@ -423,7 +477,8 @@ class _InventoryCard extends StatelessWidget {
     final l10n = context.l10n;
     switch (s) {
       case LabStockStatus.available:
-        return AppBadge(text: l10n.whStatusAvailable, variant: AppBadgeVariant.green);
+        return AppBadge(
+            text: l10n.whStatusAvailable, variant: AppBadgeVariant.green);
       case LabStockStatus.low:
         return AppBadge(text: l10n.whStatusLow, variant: AppBadgeVariant.gold);
       case LabStockStatus.out:
@@ -431,21 +486,25 @@ class _InventoryCard extends StatelessWidget {
             text: l10n.whStatusOut, variant: AppBadgeVariant.redAnimated);
     }
   }
+
+  /// كمية بلا كسر زائد: 6.0 → "6"، 6.5 → "6.5".
+  static String _fmtQty(double q) =>
+      q == q.roundToDouble() ? q.toInt().toString() : q.toString();
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  CONSUME DIALOG — تسجيل استهلاك (إنقاص كمية)
+//  CONSUME DIALOG — تسجيل استهلاك (subtractFromStock)
 // ══════════════════════════════════════════════════════════════════════════
 
 class _ConsumeDialog extends StatefulWidget {
-  const _ConsumeDialog({required this.material});
-  final LabMaterial material;
+  const _ConsumeDialog({required this.stock});
+  final LabStock stock;
 
-  static Future<int?> show(BuildContext context, LabMaterial material) {
-    return showDialog<int>(
+  static Future<double?> show(BuildContext context, LabStock stock) {
+    return showDialog<double>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.35),
-      builder: (_) => _ConsumeDialog(material: material),
+      builder: (_) => _ConsumeDialog(stock: stock),
     );
   }
 
@@ -465,28 +524,26 @@ class _ConsumeDialogState extends State<_ConsumeDialog> {
 
   void _submit() {
     final l10n = context.l10n;
-    final raw = _controller.text.trim();
-    final value = int.tryParse(raw);
+    final value = int.tryParse(_controller.text.trim());
     if (value == null || value <= 0) {
       setState(() => _error = l10n.labInvConsumeInvalid);
       return;
     }
-    if (value > widget.material.quantity) {
+    if (value > widget.stock.quantity) {
       setState(() => _error = l10n.labInvConsumeExceeds);
       return;
     }
-    Navigator.of(context).pop(value);
+    Navigator.of(context).pop(value.toDouble());
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final m = widget.material;
+    final s = widget.stock;
     return Dialog(
       backgroundColor: isLight ? Colors.white : AppColors.darkSurface,
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       insetPadding: const EdgeInsets.all(20),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
@@ -504,7 +561,8 @@ class _ConsumeDialogState extends State<_ConsumeDialog> {
               ),
               const SizedBox(height: 6),
               Text(
-                '${m.name} — ${l10n.labInvCurrentQty}: ${m.quantity} ${m.unit}',
+                '${s.material} — ${l10n.labInvCurrentQty}: '
+                '${_InventoryCard._fmtQty(s.quantity)} ${s.unit}',
                 style: AppTextStyles.bodySmall.copyWith(
                   color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                 ),
@@ -527,7 +585,7 @@ class _ConsumeDialogState extends State<_ConsumeDialog> {
                 decoration: InputDecoration(
                   hintText: l10n.labInvConsumeHint,
                   errorText: _error,
-                  suffixText: m.unit,
+                  suffixText: s.unit,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSizes.radiusSM),
                   ),
