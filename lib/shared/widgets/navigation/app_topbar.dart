@@ -21,9 +21,10 @@
 //   .tb-sub { font-size:12px; color:var(--t3); margin-top:2px }
 //   .tb-r { margin-right:auto; display:flex; align-items:center; gap:7px }
 //
-// ملاحظة RTL:
-//   - في CSS `.tb-r { margin-right:auto }` يدفع العناصر إلى اليسار (LTR).
-//   - في RTL، نستخدم Spacer للحصول على نفس السلوك المرئي.
+// ملاحظة التخطيط:
+//   - العنوان داخل Expanded يملأ المساحة ويُحاذى للبداية (يمين في RTL)، فيُدفع
+//     البحث إلى الطرف الآخر (يسار) — يطابق `.tb-r { margin-right:auto }`.
+//   - المحتوى موسَّط عمودياً عبر Stack(alignment: center).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:ui' as ui;
@@ -136,6 +137,9 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           child: Stack(
+            // توسيط المحتوى عمودياً داخل ارتفاع التوب بار (64px) بدل التصاقه
+            // بالأعلى (الافتراضي topStart) — يبقى خط التوهّج السفلي Positioned.
+            alignment: Alignment.center,
             children: [
               // ── المحتوى الرئيسي ────────────────────────────────────────
               Row(
@@ -151,11 +155,10 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
                   ],
 
                   // ── العنوان + العنوان الفرعي ─────────────────────────
-                  Flexible(child: _buildTitle(isLight)),
-
-                  // ── Spacer لدفع الأزرار إلى الطرف الآخر ─────────────
-                  // من CSS: .tb-r { margin-right:auto }
-                  const Spacer(),
+                  // Expanded (لا Flexible+Spacer): العنوان يملأ المساحة ويُحاذى
+                  // للبداية (يمين في RTL)، فيُدفع البحث لأقصى الجهة الأخرى
+                  // (يسار) بدل أن يطفو في الوسط.
+                  Expanded(child: _buildTitle(isLight)),
 
                   // ── الأدوات (البحث فقط) ───────────────────────────────
                   _buildActions(context),
