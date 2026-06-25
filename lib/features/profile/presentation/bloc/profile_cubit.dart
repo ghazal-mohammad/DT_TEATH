@@ -54,17 +54,34 @@ class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepository _repo;
 
   Future<void> load() async {
-    emit(state.copyWith(status: ProfileStatus.loading, clearError: true));
+    // عرض فوري من الكاش (زيارة لاحقة للصفحة) ثم تحديث صامت من الباك — يلغي
+    // وميض الشيمر في كل زيارة. أول زيارة (بلا كاش) تُظهر شيمر التحميل المعتاد.
+    final cached = _repo.cachedProfile;
+    if (cached != null) {
+      // تأجيل بإطار واحد حتى يشترك BlocConsumer في الصفحة، فيلتقط listenerها
+      // حالة "المُحمَّل من الكاش" ويدمجها (الاشتراك يحدث بعد إنشاء الـ Cubit).
+      await Future<void>.delayed(Duration.zero);
+      emit(state.copyWith(
+          status: ProfileStatus.loaded, profile: cached, clearError: true));
+    } else {
+      emit(state.copyWith(status: ProfileStatus.loading, clearError: true));
+    }
     try {
       final profile = await _repo.getProfile();
       emit(state.copyWith(status: ProfileStatus.loaded, profile: profile));
     } on Failure catch (f) {
-      emit(state.copyWith(status: ProfileStatus.error, errorMessage: f.message));
+      // لا نُظهر خطأ فوق بيانات كاش صالحة — نُبقي العرض ونتجاهل فشل التحديث.
+      if (cached == null) {
+        emit(state.copyWith(
+            status: ProfileStatus.error, errorMessage: f.message));
+      }
     } catch (_) {
-      emit(state.copyWith(
-        status: ProfileStatus.error,
-        errorMessage: 'خطأ غير متوقع أثناء تحميل الملف الشخصي',
-      ));
+      if (cached == null) {
+        emit(state.copyWith(
+          status: ProfileStatus.error,
+          errorMessage: 'خطأ غير متوقع أثناء تحميل الملف الشخصي',
+        ));
+      }
     }
   }
 

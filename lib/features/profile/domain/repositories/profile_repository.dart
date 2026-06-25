@@ -9,9 +9,13 @@ import '../entities/edit_profile_payload.dart';
 import '../entities/employee_profile.dart';
 
 abstract class ProfileRepository {
-  /// جلب ملف الموظف الحالي (يعتمد على التوكن المحفوظ).
+  /// آخر ملف مُحمَّل للمستخدم الحالي إن وُجد (للعرض الفوري عند إعادة زيارة
+  /// الصفحة)، أو null إن لم يُحمَّل بعد أو تغيّر المستخدم.
+  EmployeeProfile? get cachedProfile;
+
+  /// جلب ملف الموظف الحالي من الباك (يعتمد على التوكن المحفوظ) ويحدّث الكاش.
   Future<EmployeeProfile> getProfile();
 
-  /// تعديل ملف الموظف الحالي وإرجاع النسخة المحدّثة.
+  /// تعديل ملف الموظف الحالي وإرجاع النسخة المحدّثة (يحدّث الكاش).
   Future<EmployeeProfile> updateProfile(EditProfilePayload payload);
 }

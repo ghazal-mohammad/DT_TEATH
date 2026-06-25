@@ -7,6 +7,7 @@
 
 import 'package:dio/dio.dart';
 
+import '../../../../core/auth/current_user.dart';
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/edit_profile_payload.dart';
 import '../../domain/entities/employee_profile.dart';
@@ -18,11 +19,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   final ProfileRemoteDataSource _remote;
 
+  /// كاش بالذاكرة لآخر ملف + معرّف صاحبه، ليُعرَض فوراً عند إعادة زيارة الصفحة
+  /// (هذا الـ repository singleton فالكاش يحيا طوال الجلسة).
+  EmployeeProfile? _cache;
+  int? _cacheOwnerId;
+
+  @override
+  EmployeeProfile? get cachedProfile =>
+      _cacheOwnerId == CurrentUser.instance.user?.id ? _cache : null;
+
   @override
   Future<EmployeeProfile> getProfile() async {
     try {
       final json = await _remote.showProfile();
-      return EmployeeProfile.fromJson(json);
+      final profile = EmployeeProfile.fromJson(json);
+      _store(profile);
+      return profile;
     } on DioException catch (e) {
       throw _mapDioError(e);
     }
@@ -32,10 +44,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<EmployeeProfile> updateProfile(EditProfilePayload payload) async {
     try {
       final json = await _remote.editProfile(payload);
-      return EmployeeProfile.fromJson(json);
+      final profile = EmployeeProfile.fromJson(json);
+      _store(profile);
+      return profile;
     } on DioException catch (e) {
       throw _mapDioError(e);
     }
+  }
+
+  /// يحفظ الملف في الكاش ويربطه بالمستخدم الحالي (لإبطاله تلقائياً عند تبدّله).
+  void _store(EmployeeProfile profile) {
+    _cache = profile;
+    _cacheOwnerId = CurrentUser.instance.user?.id;
   }
 
   /// تحويل DioException لـ Failure مناسب.
