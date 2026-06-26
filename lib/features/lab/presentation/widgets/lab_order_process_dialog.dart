@@ -136,6 +136,16 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
       _status == LabOrderBadgeVariant.ready &&
       _rows.any((r) => _qtyError(r) != null);
 
+  /// أسماء الفنّيين للقائمة، مع ضمّ المنفّذ الحالي إن كان خارج القائمة الثابتة
+  /// (اسم قادم من الباك) — وإلا ينهار DropdownButtonFormField (value not in items).
+  List<String> get _techNames {
+    final t = _technician;
+    if (t != null && t.isNotEmpty && !kLabTechnicianNames.contains(t)) {
+      return [t, ...kLabTechnicianNames];
+    }
+    return kLabTechnicianNames;
+  }
+
   void _save() {
     // المخبري المنفّذ إلزامي فقط لحالة "قيد التصنيع" — هي الوحيدة التي تعيّن
     // فنّياً في الباك (setInProgress يتطلّب technician_id). أما "جاهز للتسليم"
@@ -410,7 +420,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                             ),
                           ),
                           items: [
-                            for (final name in kLabTechnicianNames)
+                            for (final name in _techNames)
                               DropdownMenuItem<String?>(
                                 value: name,
                                 child: Text(name),

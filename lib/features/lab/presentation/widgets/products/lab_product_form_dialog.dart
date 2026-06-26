@@ -248,6 +248,11 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
   }) {
     final bool isLight =
         Theme.of(context).brightness == Brightness.light;
+    // قيم النوع/المادة في الباك حرّة وقد تكون خارج القائمة الثابتة. نضمّ القيمة
+    // الحالية للخيارات إن لم تكن موجودة، وإلا ينهار DropdownButtonFormField
+    // (يشترط وجود عنصر واحد بالضبط يطابق value).
+    final List<String> menuItems =
+        items.contains(value) ? items : <String>[value, ...items];
     return AppDropdownMenuTheme(
       child: DropdownButtonFormField<String>(
         initialValue: value,
@@ -256,7 +261,7 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
         dropdownColor: isLight ? Colors.white : AppColors.darkBg1,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         items: [
-          for (final item in items)
+          for (final item in menuItems)
             DropdownMenuItem(value: item, child: Text(item)),
         ],
         onChanged: onChanged,
