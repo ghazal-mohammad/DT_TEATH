@@ -28,6 +28,7 @@ import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../../data/lab_inventory_store.dart';
 import '../../domain/entities/lab_order.dart';
 import '../../domain/repositories/lab_orders_repository.dart';
+import '../../domain/repositories/lab_repository.dart';
 import '../bloc/lab_orders_cubit.dart';
 import '../bloc/lab_orders_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -142,7 +143,14 @@ class _OrdersBody extends StatelessWidget {
 
   Future<void> _process(BuildContext context, LabOrderFull order) async {
     final cubit = context.read<LabOrdersCubit>();
-    final choice = await LabOrderProcessDialog.show(context, order);
+    // نجلب الفنّيين الحقيقيين لقائمة التعيين، وإلا يفشل التعيين بـ"الفنّي غير موجود".
+    final names = await _technicianNames();
+    if (!context.mounted) return;
+    final choice = await LabOrderProcessDialog.show(
+      context,
+      order,
+      technicianNames: names,
+    );
     if (choice == null) return;
     // تحديث الطلب عبر الـ Cubit/Repository.
     await cubit.processOrder(
@@ -154,6 +162,16 @@ class _OrdersBody extends StatelessWidget {
     // إنجاز الطلب → إنقاص المواد المستهلكة من مخزون المخبر (UC75) — side-effect.
     if (choice.consumption.isNotEmpty) {
       LabInventoryStore.instance.applyConsumption(choice.consumption);
+    }
+  }
+
+  /// أسماء الفنّيين الحقيقيين من الباك (قائمة فارغة عند الفشل — المودال يعمل بلا تعيين).
+  Future<List<String>> _technicianNames() async {
+    try {
+      final techs = await sl<LabRepository>().getTechnicians();
+      return techs.map((t) => t.name).toList();
+    } catch (_) {
+      return const [];
     }
   }
 }

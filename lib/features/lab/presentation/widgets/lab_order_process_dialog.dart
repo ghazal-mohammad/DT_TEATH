@@ -50,18 +50,29 @@ class _ConsumeRow {
 }
 
 class LabOrderProcessDialog extends StatefulWidget {
-  const LabOrderProcessDialog({super.key, required this.order});
+  const LabOrderProcessDialog({
+    super.key,
+    required this.order,
+    this.technicianNames = const [],
+  });
 
   final LabOrderFull order;
 
+  /// أسماء الفنّيين الحقيقيين (من الباك) لقائمة التعيين. فارغة ⇒ بلا تعيين.
+  final List<String> technicianNames;
+
   static Future<LabProcessResult?> show(
     BuildContext context,
-    LabOrderFull order,
-  ) {
+    LabOrderFull order, {
+    List<String> technicianNames = const [],
+  }) {
     return showDialog<LabProcessResult>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.35),
-      builder: (_) => LabOrderProcessDialog(order: order),
+      builder: (_) => LabOrderProcessDialog(
+        order: order,
+        technicianNames: technicianNames,
+      ),
     );
   }
 
@@ -136,14 +147,14 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
       _status == LabOrderBadgeVariant.ready &&
       _rows.any((r) => _qtyError(r) != null);
 
-  /// أسماء الفنّيين للقائمة، مع ضمّ المنفّذ الحالي إن كان خارج القائمة الثابتة
-  /// (اسم قادم من الباك) — وإلا ينهار DropdownButtonFormField (value not in items).
+  /// أسماء الفنّيين الحقيقيين للقائمة، مع ضمّ المنفّذ الحالي إن كان خارجها (اسم
+  /// قادم من الباك) — وإلا ينهار DropdownButtonFormField (value not in items).
   List<String> get _techNames {
     final t = _technician;
-    if (t != null && t.isNotEmpty && !kLabTechnicianNames.contains(t)) {
-      return [t, ...kLabTechnicianNames];
+    if (t != null && t.isNotEmpty && !widget.technicianNames.contains(t)) {
+      return [t, ...widget.technicianNames];
     }
-    return kLabTechnicianNames;
+    return widget.technicianNames;
   }
 
   void _save() {

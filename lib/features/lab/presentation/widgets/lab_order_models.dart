@@ -16,15 +16,6 @@ import '../../domain/entities/lab_order.dart';
 export '../../domain/entities/lab_order.dart'
     show LabOrderFull, LabOrderBadgeVariant;
 
-/// أسماء المخبريين (الفنيين) المتاحين — مرجع موحّد للتوكيل وتسجيل المنفّذ.
-/// تُستبدل بقائمة من API لاحقاً (GET /api/lab/technicians).
-const List<String> kLabTechnicianNames = [
-  'محمد علي',
-  'سامر حسن',
-  'ليلى كريم',
-  'يوسف ناصر',
-];
-
 /// ألوان الـ status badge (نقطة + نص) — مطابقة لتصميم الجدول بالـ Dashboard.
 class LabStatusColors {
   const LabStatusColors._(this.bg, this.fg);
