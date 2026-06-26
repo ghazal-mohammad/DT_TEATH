@@ -608,6 +608,12 @@ abstract class AppLocalizations {
   /// **'Ready'**
   String get statusReady;
 
+  /// No description provided for @statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
+
   /// No description provided for @statusDelivered.
   ///
   /// In en, this message translates to:

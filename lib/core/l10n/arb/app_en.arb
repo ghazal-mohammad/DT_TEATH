@@ -136,6 +136,7 @@
   "statusPendingMaterials": "Pending Materials",
   "statusManufacturing": "Manufacturing",
   "statusReady": "Ready",
+  "statusCancelled": "Cancelled",
   "statusDelivered": "Delivered",
   "statusRejected": "Rejected",
 

@@ -272,6 +272,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusReady => 'Ready';
 
   @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
   String get statusDelivered => 'Delivered';
 
   @override

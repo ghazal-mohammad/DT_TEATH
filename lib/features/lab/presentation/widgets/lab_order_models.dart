@@ -43,6 +43,11 @@ class LabStatusColors {
     AppColors.statusSuccessBg,
     AppColors.statusSuccess,
   );
+  // ملغى — رمادي محايد (لا أحمر حتى لا يلتبس مع urgent).
+  static const cancelled = LabStatusColors._(
+    AppColors.borderNeutralLight,
+    AppColors.categoryGrey,
+  );
   static LabStatusColors of(LabOrderBadgeVariant variant) {
     switch (variant) {
       case LabOrderBadgeVariant.newOrder:
@@ -51,6 +56,8 @@ class LabStatusColors {
         return manufacturing;
       case LabOrderBadgeVariant.ready:
         return ready;
+      case LabOrderBadgeVariant.cancelled:
+        return cancelled;
     }
   }
 }
@@ -65,6 +72,8 @@ String labStatusLabel(BuildContext context, LabOrderBadgeVariant variant) {
       return l10n.statusManufacturing;
     case LabOrderBadgeVariant.ready:
       return l10n.statusReady;
+    case LabOrderBadgeVariant.cancelled:
+      return l10n.statusCancelled;
   }
 }
 

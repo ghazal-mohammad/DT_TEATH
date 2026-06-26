@@ -337,6 +337,11 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
           text: isLight ? AppColors.statusSuccess : AppColors.darkChipGreenText,
           label: l10n.statusReady,
         ),
+      LabOrderBadgeVariant.cancelled => (
+          bg: isLight ? AppColors.borderNeutralLight : AppColors.darkBg2,
+          text: isLight ? AppColors.categoryGrey : AppColors.darkText3,
+          label: l10n.statusCancelled,
+        ),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),

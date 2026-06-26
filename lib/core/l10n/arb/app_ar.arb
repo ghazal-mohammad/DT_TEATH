@@ -96,6 +96,7 @@
   "statusPendingMaterials": "معلّق — بانتظار مواد",
   "statusManufacturing": "قيد التصنيع",
   "statusReady": "جاهز",
+  "statusCancelled": "ملغى",
   "statusDelivered": "تم التسليم",
   "statusRejected": "مرفوض",
 

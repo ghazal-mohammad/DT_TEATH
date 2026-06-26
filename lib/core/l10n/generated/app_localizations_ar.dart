@@ -271,6 +271,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get statusReady => 'جاهز';
 
   @override
+  String get statusCancelled => 'ملغى';
+
+  @override
   String get statusDelivered => 'تم التسليم';
 
   @override

@@ -16,6 +16,7 @@ enum LabOrderBadgeVariant {
   newOrder,
   manufacturing,
   ready,
+  cancelled,
 }
 
 /// نموذج كامل لطلب المخبر — يُستخدم بصفحة الطلبات والمودالات.

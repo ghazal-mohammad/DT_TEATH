@@ -77,6 +77,8 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
           await _remote.setInProgress(id, techId);
         case LabOrderBadgeVariant.ready:
           await _remote.setCompleted(id);
+        case LabOrderBadgeVariant.cancelled:
+          await _remote.setCancelled(id);
         case LabOrderBadgeVariant.newOrder:
           // لا يوجد انتقال للوراء إلى "جديد" في الباك — تجاهل بهدوء.
           return;
@@ -137,14 +139,15 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
     );
   }
 
-  /// خريطة حالة الباك → شارة الفرونت (cancelled تُعرض ضمن ready مؤقّتاً).
+  /// خريطة حالة الباك → شارة الفرونت.
   LabOrderBadgeVariant _mapStatus(String s) {
     switch (s) {
       case 'in_progress':
         return LabOrderBadgeVariant.manufacturing;
       case 'completed':
-      case 'cancelled':
         return LabOrderBadgeVariant.ready;
+      case 'cancelled':
+        return LabOrderBadgeVariant.cancelled;
       case 'new':
       default:
         return LabOrderBadgeVariant.newOrder;

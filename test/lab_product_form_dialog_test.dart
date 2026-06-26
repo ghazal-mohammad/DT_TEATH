@@ -22,11 +22,11 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('ar'),
+      const MaterialApp(
+        locale: Locale('ar'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const Scaffold(
+        home: Scaffold(
           body: LabProductFormDialog(existing: product),
         ),
       ),
