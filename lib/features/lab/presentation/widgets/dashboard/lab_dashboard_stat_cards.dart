@@ -13,8 +13,29 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 
 /// صف بطاقات الإحصاء الأربع في أعلى لوحة تحكم المخبر.
+///
+/// القيم محسوبة من الطلبات الحقيقية (LabDashboardCubit). نصوص الـ trend تبقى
+/// إرشادية مؤقّتاً (الباك لا يوفّر بيانات تاريخية لحساب نِسَب حقيقية).
 class LabDashboardStatCards extends StatelessWidget {
-  const LabDashboardStatCards({super.key});
+  const LabDashboardStatCards({
+    super.key,
+    required this.dueToday,
+    required this.ready,
+    required this.manufacturing,
+    required this.newOrders,
+  });
+
+  /// طلبات تنتهي اليوم.
+  final int dueToday;
+
+  /// طلبات جاهزة للتسليم.
+  final int ready;
+
+  /// طلبات قيد التصنيع.
+  final int manufacturing;
+
+  /// طلبات جديدة.
+  final int newOrders;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +46,7 @@ class LabDashboardStatCards extends StatelessWidget {
         chipColor: AppColors.statusUrgent,
         accentColor: AppColors.statusUrgent,
         icon: Icons.local_fire_department_rounded,
-        value: '2',
+        value: '$dueToday',
         label: l10n.labStatUrgentToday,
         trendIcon: Icons.arrow_downward_rounded,
         trendText: l10n.labStatNeedsFollowup,
@@ -36,7 +57,7 @@ class LabDashboardStatCards extends StatelessWidget {
         chipColor: AppColors.statusSuccess,
         accentColor: AppColors.statusSuccess,
         icon: Icons.check_circle_rounded,
-        value: '23',
+        value: '$ready',
         label: l10n.labStatReadyOrders,
         trendIcon: Icons.arrow_upward_rounded,
         trendText: l10n.labTrendFromLastMonth('+18%'),
@@ -47,7 +68,7 @@ class LabDashboardStatCards extends StatelessWidget {
         chipColor: AppColors.statusProgress,
         accentColor: AppColors.statusProgress,
         icon: Icons.adjust_rounded,
-        value: '7',
+        value: '$manufacturing',
         label: l10n.labStatManufacturing,
         trendIcon: Icons.arrow_upward_rounded,
         trendText: l10n.labTrendFromYesterday('+1'),
@@ -58,7 +79,7 @@ class LabDashboardStatCards extends StatelessWidget {
         chipColor: AppColors.statusInfo,
         accentColor: AppColors.statusInfo,
         icon: Icons.add_rounded,
-        value: '4',
+        value: '$newOrders',
         label: l10n.labStatNewOrders,
         trendIcon: Icons.arrow_upward_rounded,
         trendText: l10n.labTrendFromYesterday('+2'),
