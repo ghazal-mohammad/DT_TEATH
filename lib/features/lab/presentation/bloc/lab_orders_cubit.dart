@@ -25,9 +25,16 @@ class LabOrdersCubit extends Cubit<LabOrdersState> {
   final LabOrdersRepository _repository;
   StreamSubscription<List<LabOrderFull>>? _subscription;
 
-  /// يبدأ تحميل الطلبات ويشترك بالـ stream للتحديث التلقائي.
+  /// يبدأ تحميل الطلبات. عند إعادة الزيارة يعرض الكاش فوراً (بلا شيمر) ثم يحدّث
+  /// صامتاً (stale-while-revalidate)، ويشترك بالـ stream للتحديث التلقائي.
   Future<void> load() async {
-    emit(state.copyWith(status: LabOrdersStatus.loading, clearError: true));
+    final cached = _repository.cached;
+    if (cached != null) {
+      emit(state.copyWith(
+          status: LabOrdersStatus.loaded, orders: cached, clearError: true));
+    } else {
+      emit(state.copyWith(status: LabOrdersStatus.loading, clearError: true));
+    }
     try {
       final orders = await _repository.getAll();
       emit(state.copyWith(
@@ -35,20 +42,23 @@ class LabOrdersCubit extends Cubit<LabOrdersState> {
         orders: orders,
         clearError: true,
       ));
-      _subscription?.cancel();
-      _subscription = _repository.watchAll().listen(
-        (list) => emit(state.copyWith(orders: list)),
-        onError: (Object e) => emit(state.copyWith(
+    } catch (e) {
+      // لا نُظهر خطأ فوق بيانات كاش صالحة.
+      if (cached == null) {
+        emit(state.copyWith(
           status: LabOrdersStatus.error,
           errorMessage: e.toString(),
-        )),
-      );
-    } catch (e) {
-      emit(state.copyWith(
+        ));
+      }
+    }
+    _subscription?.cancel();
+    _subscription = _repository.watchAll().listen(
+      (list) => emit(state.copyWith(orders: list)),
+      onError: (Object e) => emit(state.copyWith(
         status: LabOrdersStatus.error,
         errorMessage: e.toString(),
-      ));
-    }
+      )),
+    );
   }
 
   /// تغيير الفلتر النشط.

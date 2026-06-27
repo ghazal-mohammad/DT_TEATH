@@ -11,6 +11,10 @@ import '../entities/lab_order.dart';
 
 /// عقد الوصول لطلبات الأطباء.
 abstract class LabOrdersRepository {
+  /// آخر قائمة مُحمَّلة (للعرض الفوري عند إعادة زيارة الصفحة)، أو null إن لم
+  /// تُحمَّل بعد. تُمكّن نمط stale-while-revalidate في الـ Cubit.
+  List<LabOrderFull>? get cached;
+
   /// يجلب كل الطلبات.
   Future<List<LabOrderFull>> getAll();
 

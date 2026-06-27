@@ -31,6 +31,9 @@ class MockLabOrdersRepository implements LabOrdersRepository {
   }
 
   @override
+  List<LabOrderFull>? get cached => List.unmodifiable(_orders);
+
+  @override
   Future<List<LabOrderFull>> getAll() async {
     await Future<void>.delayed(_mockLatency);
     return List.unmodifiable(_orders);
