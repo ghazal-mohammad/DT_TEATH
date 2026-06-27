@@ -17,11 +17,19 @@ class LabRepositoryImpl implements LabRepository {
 
   final LabRemoteDataSource _remote;
 
+  /// كاش بالذاكرة لآخر قائمة فنّيين (null = لم تُحمَّل بعد).
+  List<LabTechnician>? _cache;
+
+  @override
+  List<LabTechnician>? get cachedTechnicians => _cache;
+
   @override
   Future<List<LabTechnician>> getTechnicians() async {
     try {
       final raw = await _remote.showAllTechnicians();
-      return raw.map(LabTechnician.fromJson).toList();
+      final list = raw.map(LabTechnician.fromJson).toList();
+      _cache = list;
+      return list;
     } on DioException catch (e) {
       throw _mapDioError(e);
     }

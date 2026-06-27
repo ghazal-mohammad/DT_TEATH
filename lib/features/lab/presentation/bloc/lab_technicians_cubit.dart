@@ -12,6 +12,7 @@ import 'package:characters/characters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../data/models/lab_technician.dart';
 import '../../domain/entities/lab_order.dart';
 import '../../domain/repositories/lab_repository.dart';
 import '../widgets/technicians/lab_technician_view_data.dart';
@@ -34,34 +35,57 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
     required String roleLabel,
     required String pendingLabel,
   }) async {
-    emit(state.copyWith(
-        status: LabTechniciansStatus.loading, clearError: true));
-    try {
-      final techs = await _repository.getTechnicians();
-      final items = techs
-          .map((t) => TechnicianItem(
-                name: t.name,
-                role: roleLabel,
-                shift: '—', // غير متوفّر بالباك
-                currentTask: pendingLabel,
-                taskCount: 0,
-                status: TechnicianStatus.available,
-                initials: _computeInitials(t.name),
-              ))
-          .toList();
+    // عند إعادة الزيارة نعرض الكاش فوراً (بلا شيمر) ثم نحدّث صامتاً (SWR).
+    final cachedTechs = _repository.cachedTechnicians;
+    if (cachedTechs != null) {
       emit(state.copyWith(
         status: LabTechniciansStatus.loaded,
-        technicians: items,
+        technicians: _mapTechnicians(cachedTechs, roleLabel, pendingLabel),
+        orders: _orders,
+        clearError: true,
+      ));
+    } else {
+      emit(state.copyWith(
+          status: LabTechniciansStatus.loading, clearError: true));
+    }
+    try {
+      final techs = await _repository.getTechnicians();
+      emit(state.copyWith(
+        status: LabTechniciansStatus.loaded,
+        technicians: _mapTechnicians(techs, roleLabel, pendingLabel),
         orders: _orders,
         clearError: true,
       ));
     } on Failure catch (f) {
-      emit(state.copyWith(
-          status: LabTechniciansStatus.error, errorMessage: f.message));
+      // لا نُظهر خطأ فوق بيانات كاش صالحة.
+      if (cachedTechs == null) {
+        emit(state.copyWith(
+            status: LabTechniciansStatus.error, errorMessage: f.message));
+      }
     } catch (_) {
-      // رسالة عامة — الـ UI يعرض l10n.error عند errorMessage == null.
-      emit(state.copyWith(status: LabTechniciansStatus.error));
+      if (cachedTechs == null) {
+        emit(state.copyWith(status: LabTechniciansStatus.error));
+      }
     }
+  }
+
+  /// يحوّل فنّيي الباك إلى نماذج عرض (التسميات المترجمة تُمرَّر من الـ UI).
+  List<TechnicianItem> _mapTechnicians(
+    List<LabTechnician> techs,
+    String roleLabel,
+    String pendingLabel,
+  ) {
+    return techs
+        .map((t) => TechnicianItem(
+              name: t.name,
+              role: roleLabel,
+              shift: '—', // غير متوفّر بالباك
+              currentTask: pendingLabel,
+              taskCount: 0,
+              status: TechnicianStatus.available,
+              initials: _computeInitials(t.name),
+            ))
+        .toList();
   }
 
   /// توكيل طلبية لمخبري: تسجيل المنفّذ على الطلب + نقله لقيد التصنيع +
