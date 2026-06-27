@@ -25,7 +25,14 @@ class LabStockCubit extends Cubit<LabStockState> {
 
   /// تحميل المخزون والاشتراك بالـ stream للتحديث التلقائي.
   Future<void> load() async {
-    emit(state.copyWith(status: LabStockStatusPhase.loading, clearError: true));
+    final cached = _repository.cached;
+    if (cached != null) {
+      emit(state.copyWith(
+          status: LabStockStatusPhase.loaded, items: cached, clearError: true));
+    } else {
+      emit(state.copyWith(
+          status: LabStockStatusPhase.loading, clearError: true));
+    }
     try {
       final items = await _repository.getAll();
       emit(state.copyWith(
@@ -33,21 +40,25 @@ class LabStockCubit extends Cubit<LabStockState> {
         items: items,
         clearError: true,
       ));
-      _subscription?.cancel();
-      _subscription = _repository.watchAll().listen(
-        (list) => emit(state.copyWith(items: list)),
-        onError: (Object e) => emit(state.copyWith(
-          status: LabStockStatusPhase.error,
-          errorMessage: e.toString(),
-        )),
-      );
     } on Failure catch (f) {
-      emit(state.copyWith(
-          status: LabStockStatusPhase.error, errorMessage: f.message));
+      if (cached == null) {
+        emit(state.copyWith(
+            status: LabStockStatusPhase.error, errorMessage: f.message));
+      }
     } catch (e) {
-      emit(state.copyWith(
-          status: LabStockStatusPhase.error, errorMessage: e.toString()));
+      if (cached == null) {
+        emit(state.copyWith(
+            status: LabStockStatusPhase.error, errorMessage: e.toString()));
+      }
     }
+    _subscription?.cancel();
+    _subscription = _repository.watchAll().listen(
+      (list) => emit(state.copyWith(items: list)),
+      onError: (Object e) => emit(state.copyWith(
+        status: LabStockStatusPhase.error,
+        errorMessage: e.toString(),
+      )),
+    );
   }
 
   /// تغيير فلتر الحالة.

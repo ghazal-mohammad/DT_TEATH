@@ -22,10 +22,19 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
   final LabMaterialRequestsRepository _repository;
   StreamSubscription<List<MatRequest>>? _subscription;
 
-  /// تحميل الطلبات والاشتراك بالـ stream.
+  /// تحميل الطلبات. عند إعادة الزيارة يعرض الكاش فوراً (بلا شيمر) ثم يحدّث
+  /// صامتاً (stale-while-revalidate)، ويشترك بالـ stream للتحديث التلقائي.
   Future<void> load() async {
-    emit(state.copyWith(
-        status: LabMatRequestsStatus.loading, clearError: true));
+    final cached = _repository.cached;
+    if (cached != null) {
+      emit(state.copyWith(
+          status: LabMatRequestsStatus.loaded,
+          requests: cached,
+          clearError: true));
+    } else {
+      emit(state.copyWith(
+          status: LabMatRequestsStatus.loading, clearError: true));
+    }
     try {
       final requests = await _repository.getAll();
       emit(state.copyWith(
@@ -33,20 +42,22 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
         requests: requests,
         clearError: true,
       ));
-      _subscription?.cancel();
-      _subscription = _repository.watchAll().listen(
-            (list) => emit(state.copyWith(requests: list)),
-            onError: (Object e) => emit(state.copyWith(
-              status: LabMatRequestsStatus.error,
-              errorMessage: e.toString(),
-            )),
-          );
     } catch (e) {
-      emit(state.copyWith(
+      if (cached == null) {
+        emit(state.copyWith(
+          status: LabMatRequestsStatus.error,
+          errorMessage: e.toString(),
+        ));
+      }
+    }
+    _subscription?.cancel();
+    _subscription = _repository.watchAll().listen(
+      (list) => emit(state.copyWith(requests: list)),
+      onError: (Object e) => emit(state.copyWith(
         status: LabMatRequestsStatus.error,
         errorMessage: e.toString(),
-      ));
-    }
+      )),
+    );
   }
 
   /// تغيير الفلتر النشط (0=الكل 1=جديد 2=تم التسليم 3=غير متوفر).

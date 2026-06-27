@@ -9,6 +9,10 @@ import '../entities/lab_material_request.dart';
 
 /// عقد الوصول لطلبات المواد.
 abstract class LabMaterialRequestsRepository {
+  /// آخر قائمة مُحمَّلة (للعرض الفوري عند إعادة زيارة الصفحة)، أو null إن لم
+  /// تُحمَّل بعد. يُمكّن نمط stale-while-revalidate في الـ Cubit.
+  List<MatRequest>? get cached;
+
   /// يجلب كل الطلبات.
   Future<List<MatRequest>> getAll();
 

@@ -14,6 +14,10 @@ import '../entities/lab_product.dart';
 
 /// عقد الوصول لبيانات منتجات المخبر.
 abstract class LabProductsRepository {
+  /// آخر كتالوج مُحمَّل (للعرض الفوري عند إعادة زيارة الصفحة)، أو null إن لم
+  /// يُحمَّل بعد. يُمكّن نمط stale-while-revalidate في الـ Cubit.
+  List<LabProduct>? get cached;
+
   /// يجلب كل المنتجات.
   Future<List<LabProduct>> getAll();
 

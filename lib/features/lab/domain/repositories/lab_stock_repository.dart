@@ -9,6 +9,10 @@ import '../entities/lab_stock.dart';
 
 /// عقد الوصول لمخزون المخبر.
 abstract class LabStockRepository {
+  /// آخر قائمة مخزون مُحمَّلة (للعرض الفوري عند إعادة زيارة الصفحة)، أو null
+  /// إن لم تُحمَّل بعد. يُمكّن نمط stale-while-revalidate في الـ Cubit.
+  List<LabStock>? get cached;
+
   /// يجلب كل مواد مخزون المخبر.
   Future<List<LabStock>> getAll();
 

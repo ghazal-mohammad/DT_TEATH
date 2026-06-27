@@ -30,6 +30,9 @@ class MockLabMaterialRequestsRepository
   }
 
   @override
+  List<MatRequest>? get cached => List.unmodifiable(_requests);
+
+  @override
   Future<List<MatRequest>> getAll() async {
     await Future<void>.delayed(_mockLatency);
     return List.unmodifiable(_requests);

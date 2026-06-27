@@ -36,6 +36,12 @@ class RemoteLabProductsRepository implements LabProductsRepository {
   /// نسخة بالذاكرة من الكتالوج — مصدر التحديثات للـ stream بعد كل عملية.
   List<LabProduct> _cache = const [];
 
+  /// هل جُلب الكتالوج مرة على الأقل؟ (لتمييز "لم يُحمَّل" عن "مُحمَّل وفارغ").
+  bool _loaded = false;
+
+  @override
+  List<LabProduct>? get cached => _loaded ? List.unmodifiable(_cache) : null;
+
   void _emit() {
     if (!_controller.isClosed) {
       _controller.add(List.unmodifiable(_cache));
@@ -47,6 +53,7 @@ class RemoteLabProductsRepository implements LabProductsRepository {
     try {
       final raw = await _remote.getAll();
       _cache = raw.map(_fromJson).toList();
+      _loaded = true;
       _emit();
       return List.unmodifiable(_cache);
     } on DioException catch (e) {
