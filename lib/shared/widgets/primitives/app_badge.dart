@@ -100,46 +100,45 @@ class AppBadge extends StatefulWidget {
 
 class _AppBadgeState extends State<AppBadge>
     with SingleTickerProviderStateMixin {
-  AnimationController? _pulseController;
-  Animation<double>? _pulseAnimation;
+  // مُتحكّم واحد طوال عمر الـ State (تيكر واحد). نشغّله/نوقفه حسب النوع بدل
+  // إعادة إنشائه — SingleTickerProviderStateMixin يسجّل أول تيكر دائماً ويرمي
+  // "multiple tickers were created" عند إنشاء تيكر ثانٍ ولو بعد dispose.
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3), // alertPulse 3s infinite
+    );
+    _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
     // الأنيميشن مطلوب فقط لـ redAnimated (يطابق animation:alertPulse في CSS).
     if (widget.variant == AppBadgeVariant.redAnimated) {
-      _pulseController = AnimationController(
-        vsync: this,
-        duration: const Duration(seconds: 3), // alertPulse 3s infinite
-      )..repeat();
-      _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _pulseController!, curve: Curves.easeInOut),
-      );
+      _pulseController.repeat();
     }
   }
 
   @override
   void didUpdateWidget(covariant AppBadge oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // عند تغيير النوع أثناء runtime، نُعيد ضبط الأنيميشن.
+    // عند تغيير النوع أثناء runtime، نشغّل/نوقف نفس المُتحكّم (بلا إعادة إنشاء).
     if (oldWidget.variant != widget.variant) {
-      _pulseController?.dispose();
-      _pulseController = null;
       if (widget.variant == AppBadgeVariant.redAnimated) {
-        _pulseController = AnimationController(
-          vsync: this,
-          duration: const Duration(seconds: 3),
-        )..repeat();
-        _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(parent: _pulseController!, curve: Curves.easeInOut),
-        );
+        if (!_pulseController.isAnimating) _pulseController.repeat();
+      } else {
+        _pulseController.stop();
+        _pulseController.value = 0;
       }
     }
   }
 
   @override
   void dispose() {
-    _pulseController?.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -148,13 +147,13 @@ class _AppBadgeState extends State<AppBadge>
     final Widget badge = _buildBadge(context);
 
     // تطبيق أنيميشن النبض (box-shadow pulse) فقط على النوع الأحمر.
-    if (_pulseAnimation != null) {
+    if (widget.variant == AppBadgeVariant.redAnimated) {
       return AnimatedBuilder(
-        animation: _pulseAnimation!,
+        animation: _pulseAnimation,
         builder: (context, child) {
           // alertPulse الأصلي: 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}
           //                     50%{box-shadow:0 0 0 6px rgba(239,68,68,0.08)}
-          final t = (_pulseAnimation!.value * 2 - 1).abs(); // 0→1→0
+          final t = (_pulseAnimation.value * 2 - 1).abs(); // 0→1→0
           final spread = (1 - t) * 6.0;
           final alpha = ((1 - t) * 0.08 * 255).round();
           return Container(
