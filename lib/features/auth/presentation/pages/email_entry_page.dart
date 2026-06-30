@@ -82,11 +82,9 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
     _playExitAndNavigate(email);
   }
 
-  Future<void> _playExitAndNavigate(String email) async {
+  void _playExitAndNavigate(String email) {
     if (!mounted) return;
-    await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
-    if (!mounted) return;
-    // ✅ FIX 2: استخدم context مباشرة من State (مضمون صالح ما دام mounted)
+    // الخروج السلس يتكفّل به انتقال الراوت (لا حاجة لعكس أنيميشن الدخول يدوياً).
     context.go(
       RouteNames.authVerifyCode,
       extra: {'email': email.trim(), 'mode': widget.mode},

@@ -156,14 +156,11 @@ class _SetPasswordPageState extends State<SetPasswordPage>
               ? 'تم تغيير كلمة المرور — سجّل دخولك بكلمتك الجديدة'
               : 'Password changed — sign in with your new password',
         );
-        await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
-        if (!mounted) return;
+        // الخروج السلس يتكفّل به انتقال الراوت.
         context.go(RouteNames.login);
         return;
       }
 
-      await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
-      if (!mounted) return;
       // الباك بيرجع توكن جاهز + role — ندخّل المستخدم مباشرة لنظامه.
       context.go(_dashboardForRole(state.user?.role));
     } else {

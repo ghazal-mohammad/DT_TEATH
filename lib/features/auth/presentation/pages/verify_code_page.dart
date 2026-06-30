@@ -165,8 +165,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
     if (!mounted) return;
     setState(() => _verifying = false);
 
-    await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
-    if (!mounted) return;
+    // الخروج السلس يتكفّل به انتقال الراوت.
     context.go(
       RouteNames.authSetPassword,
       extra: {'email': widget.email, 'code': _code, 'mode': widget.mode},

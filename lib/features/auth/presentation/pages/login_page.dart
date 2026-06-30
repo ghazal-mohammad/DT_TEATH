@@ -121,12 +121,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     setState(() => _loading = false);
 
     if (state.status == LoginStatus.success) {
-      // 🔍 DEBUG: نطبع المستخدم لنشوف الـ role الفعلي.
-      // ignore: avoid_print
-      print('[DT.Teeth][login] user=${state.user} role=${state.user?.role}');
-
-      await Future.wait([_entryCtrl.reverse(), _shapeCtrl.reverse()]);
-      if (!mounted) return;
+      // الخروج السلس يتكفّل به انتقال الراوت.
       context.go(_dashboardForRole(state.user?.role));
     } else {
       setState(() => _error = state.errorMessage ?? (isAr
