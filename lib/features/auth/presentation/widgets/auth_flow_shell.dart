@@ -138,13 +138,21 @@ class AuthRotatingBackground extends StatelessWidget {
     // زاوية الفاصل: تبدأ بالميل الأساسي وتزيد π (نصف دورة) مع التقدّم.
     final double theta = _kDiagLean + progress * math.pi;
 
-    return CustomPaint(
-      painter: _RotatingDividerPainter(
-        theta: theta,
-        glowPhase: glowPhase,
-        glowColor: AppColors.accent,
-      ),
-      child: const SizedBox.expand(),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // الخلفية الكحلية المتدرّجة (نفس authNavyGradient الأصلي) — أساس دائم
+        // تحت النصف الأبيض الدوّار. بدونها يظهر darkBg المسطّح فيبدو الكحلي مختلفاً.
+        const AuthNavyBackground(),
+        CustomPaint(
+          painter: _RotatingDividerPainter(
+            theta: theta,
+            glowPhase: glowPhase,
+            glowColor: AppColors.accent,
+          ),
+          child: const SizedBox.expand(),
+        ),
+      ],
     );
   }
 }
