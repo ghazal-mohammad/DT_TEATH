@@ -57,6 +57,15 @@ class LabProductsCubit extends Cubit<LabProductsState> {
         errorMessage: e.toString(),
       )),
     );
+
+    // جلب فئات الأصناف (مرة) لقائمة الفئة في النموذج — لا يحجب عرض المنتجات،
+    // وفشله لا يكسر الصفحة (النموذج يعمل بلا فئات).
+    if (state.categories.isEmpty) {
+      try {
+        final cats = await _repository.getCategories();
+        emit(state.copyWith(categories: cats));
+      } catch (_) {/* تجاهل بصمت */}
+    }
   }
 
   /// تحديث نص البحث.

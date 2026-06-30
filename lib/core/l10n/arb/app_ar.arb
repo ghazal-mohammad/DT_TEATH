@@ -753,6 +753,8 @@
   "labProdFieldMaterial": "المادة",
   "labProdFieldPrice": "السعر بالليرة السورية",
   "labProdFieldDuration": "مدة التصنيع (أيام)",
+  "labProdFieldCategory": "الفئة",
+  "labProdNoCategory": "بلا فئة",
   "labProdEmpty": "لا توجد منتجات",
   "labProdNameRequired": "اسم المنتج مطلوب",
   "labProcessCost": "تكلفة الطلبية (ل.س)",

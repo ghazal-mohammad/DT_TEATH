@@ -16,6 +16,7 @@ class LabProductsState {
     required this.status,
     required this.products,
     required this.searchQuery,
+    this.categories = const [],
     this.errorMessage,
   });
 
@@ -23,11 +24,16 @@ class LabProductsState {
       : status = LabProductsStatus.initial,
         products = const [],
         searchQuery = '',
+        categories = const [],
         errorMessage = null;
 
   final LabProductsStatus status;
   final List<LabProduct> products;
   final String searchQuery;
+
+  /// فئات الأصناف من الباك (لقائمة الفئة في نموذج الإضافة/التعديل).
+  final List<LabProductCategory> categories;
+
   final String? errorMessage;
 
   /// الكتالوج بعد تطبيق البحث (يطابق الاسم أو النوع).
@@ -46,6 +52,7 @@ class LabProductsState {
     LabProductsStatus? status,
     List<LabProduct>? products,
     String? searchQuery,
+    List<LabProductCategory>? categories,
     String? errorMessage,
     bool clearError = false,
   }) {
@@ -53,6 +60,7 @@ class LabProductsState {
       status: status ?? this.status,
       products: products ?? this.products,
       searchQuery: searchQuery ?? this.searchQuery,
+      categories: categories ?? this.categories,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }

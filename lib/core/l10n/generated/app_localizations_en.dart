@@ -2199,6 +2199,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProdFieldDuration => 'Production time (days)';
 
   @override
+  String get labProdFieldCategory => 'Category';
+
+  @override
+  String get labProdNoCategory => 'No category';
+
+  @override
   String get labProdEmpty => 'No products';
 
   @override

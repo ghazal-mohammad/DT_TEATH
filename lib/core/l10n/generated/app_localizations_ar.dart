@@ -2181,6 +2181,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labProdFieldDuration => 'مدة التصنيع (أيام)';
 
   @override
+  String get labProdFieldCategory => 'الفئة';
+
+  @override
+  String get labProdNoCategory => 'بلا فئة';
+
+  @override
   String get labProdEmpty => 'لا توجد منتجات';
 
   @override

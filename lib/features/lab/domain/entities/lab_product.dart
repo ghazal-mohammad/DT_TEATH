@@ -20,7 +20,15 @@ const List<String> kProductMaterials = [
   'Acrylic',
 ];
 
-/// منتج واحد في كتالوج المخبر (اسم + نوع + مادة + سعر + مدة تصنيع).
+/// فئة صنف المخبر (من showAllItemsCategories) — تُرسَل كـ category_id للباك.
+class LabProductCategory {
+  const LabProductCategory({required this.id, required this.name});
+
+  final int id;
+  final String name;
+}
+
+/// منتج واحد في كتالوج المخبر (اسم + فئة + نوع + مادة + سعر + مدة تصنيع).
 class LabProduct {
   const LabProduct({
     required this.id,
@@ -29,6 +37,8 @@ class LabProduct {
     required this.material,
     required this.price,
     required this.productionDays,
+    this.categoryId,
+    this.categoryName,
   });
 
   final String id;
@@ -38,6 +48,12 @@ class LabProduct {
   final int price;
   final int productionDays;
 
+  /// معرّف الفئة (category_id بالباك) — null إن لم تُسنَد فئة.
+  final int? categoryId;
+
+  /// اسم الفئة للعرض (يأتي من الباك مع الصنف).
+  final String? categoryName;
+
   /// ينتج نسخة جديدة مع تحديث بعض الحقول (الكيان immutable).
   LabProduct copyWith({
     String? id,
@@ -46,6 +62,9 @@ class LabProduct {
     String? material,
     int? price,
     int? productionDays,
+    int? categoryId,
+    String? categoryName,
+    bool clearCategory = false,
   }) {
     return LabProduct(
       id: id ?? this.id,
@@ -54,6 +73,8 @@ class LabProduct {
       material: material ?? this.material,
       price: price ?? this.price,
       productionDays: productionDays ?? this.productionDays,
+      categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
+      categoryName: clearCategory ? null : (categoryName ?? this.categoryName),
     );
   }
 }

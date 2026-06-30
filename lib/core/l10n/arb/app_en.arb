@@ -821,6 +821,8 @@
   "labProdFieldMaterial": "Material",
   "labProdFieldPrice": "Price in Syrian Pounds",
   "labProdFieldDuration": "Production time (days)",
+  "labProdFieldCategory": "Category",
+  "labProdNoCategory": "No category",
   "labProdEmpty": "No products",
   "labProdNameRequired": "Product name is required",
   "labProcessCost": "Order cost (SYP)",

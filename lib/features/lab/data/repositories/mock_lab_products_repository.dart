@@ -41,6 +41,18 @@ class MockLabProductsRepository implements LabProductsRepository {
   }
 
   @override
+  Future<List<LabProductCategory>> getCategories() async {
+    await Future<void>.delayed(_mockLatency);
+    return const [
+      LabProductCategory(id: 1, name: 'تيجان'),
+      LabProductCategory(id: 2, name: 'جسور'),
+      LabProductCategory(id: 3, name: 'طواقم'),
+      LabProductCategory(id: 4, name: 'تقويم'),
+      LabProductCategory(id: 5, name: 'أخرى'),
+    ];
+  }
+
+  @override
   Future<LabProduct> create(LabProduct product) async {
     await Future<void>.delayed(_mockLatency);
     final id = product.id.isEmpty

@@ -4298,6 +4298,18 @@ abstract class AppLocalizations {
   /// **'Production time (days)'**
   String get labProdFieldDuration;
 
+  /// No description provided for @labProdFieldCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get labProdFieldCategory;
+
+  /// No description provided for @labProdNoCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No category'**
+  String get labProdNoCategory;
+
   /// No description provided for @labProdEmpty.
   ///
   /// In en, this message translates to:

@@ -62,6 +62,21 @@ class RemoteLabProductsRepository implements LabProductsRepository {
   }
 
   @override
+  Future<List<LabProductCategory>> getCategories() async {
+    try {
+      final raw = await _remote.getCategories();
+      return raw
+          .map((c) => LabProductCategory(
+                id: _toInt(c['id']),
+                name: (c['name'] ?? '').toString(),
+              ))
+          .toList();
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Future<LabProduct> create(LabProduct product) async {
     try {
       final json = await _remote.create(_toBody(product));
@@ -95,14 +110,21 @@ class RemoteLabProductsRepository implements LabProductsRepository {
   // ── تحويل JSON ↔ entity ──────────────────────────────────────────────────
 
   /// يحوّل صنف الباك إلى [LabProduct]. price/duration قد يرجعان نصوصاً.
-  LabProduct _fromJson(Map<String, dynamic> j) => LabProduct(
-        id: '${j['id'] ?? ''}',
-        name: (j['name'] ?? '').toString(),
-        type: (j['type'] ?? '').toString(),
-        material: (j['material'] ?? '').toString(),
-        price: _toInt(j['price']),
-        productionDays: _toInt(j['duration']),
-      );
+  LabProduct _fromJson(Map<String, dynamic> j) {
+    final cat = j['category'] is Map
+        ? Map<String, dynamic>.from(j['category'] as Map)
+        : null;
+    return LabProduct(
+      id: '${j['id'] ?? ''}',
+      name: (j['name'] ?? '').toString(),
+      type: (j['type'] ?? '').toString(),
+      material: (j['material'] ?? '').toString(),
+      price: _toInt(j['price']),
+      productionDays: _toInt(j['duration']),
+      categoryId: cat != null ? _toInt(cat['id']) : null,
+      categoryName: cat?['name']?.toString(),
+    );
+  }
 
   /// جسم الطلب للإنشاء/التحديث (الحقول التي يقبلها الباك من نموذجنا).
   Map<String, dynamic> _toBody(LabProduct p) => {
@@ -111,6 +133,7 @@ class RemoteLabProductsRepository implements LabProductsRepository {
         'material': p.material,
         'price': p.price,
         'duration': p.productionDays,
+        if (p.categoryId != null) 'category_id': p.categoryId,
       };
 
   static int _toInt(Object? v) {

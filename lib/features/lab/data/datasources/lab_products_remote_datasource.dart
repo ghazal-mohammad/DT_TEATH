@@ -21,6 +21,13 @@ class LabProductsRemoteDataSource {
     return _asList(res.data);
   }
 
+  /// GET /api/labManager/showAllItemsCategories → فئات الأصناف الخام.
+  Future<List<Map<String, dynamic>>> getCategories() async {
+    final res = await _dio
+        .get<dynamic>(ApiEndpoints.labManagerShowAllItemsCategories);
+    return _asList(res.data);
+  }
+
   /// POST /api/labManager/addLabItem → الصنف المُنشأ (data).
   Future<Map<String, dynamic>> create(Map<String, dynamic> body) async {
     final res = await _dio.post<dynamic>(

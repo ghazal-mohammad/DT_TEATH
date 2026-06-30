@@ -91,7 +91,11 @@ class LabProductsPage extends StatelessWidget {
 
   Future<void> _onAdd(BuildContext context) async {
     final cubit = context.read<LabProductsCubit>();
-    final result = await LabProductFormDialog.show(context, null);
+    final result = await LabProductFormDialog.show(
+      context,
+      null,
+      categories: cubit.state.categories,
+    );
     if (result == null) return;
     cubit.create(LabProduct(
       id: '',
@@ -100,12 +104,17 @@ class LabProductsPage extends StatelessWidget {
       material: result.material,
       price: result.price,
       productionDays: result.productionDays,
+      categoryId: result.categoryId,
     ));
   }
 
   Future<void> _onEdit(BuildContext context, LabProduct product) async {
     final cubit = context.read<LabProductsCubit>();
-    final result = await LabProductFormDialog.show(context, product);
+    final result = await LabProductFormDialog.show(
+      context,
+      product,
+      categories: cubit.state.categories,
+    );
     if (result == null) return;
     cubit.update(product.copyWith(
       name: result.name,
@@ -113,6 +122,8 @@ class LabProductsPage extends StatelessWidget {
       material: result.material,
       price: result.price,
       productionDays: result.productionDays,
+      categoryId: result.categoryId,
+      clearCategory: result.categoryId == null,
     ));
   }
 }

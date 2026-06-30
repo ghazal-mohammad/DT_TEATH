@@ -24,6 +24,7 @@ class LabProductFormResult {
     required this.material,
     required this.price,
     required this.productionDays,
+    this.categoryId,
   });
 
   final String name;
@@ -31,21 +32,34 @@ class LabProductFormResult {
   final String material;
   final int price;
   final int productionDays;
+
+  /// فئة الصنف (category_id بالباك) — null = بلا فئة.
+  final int? categoryId;
 }
 
-/// مودال إضافة/تعديل منتج. مرّر [existing] للتعديل أو null للإضافة.
+/// مودال إضافة/تعديل منتج. مرّر [existing] للتعديل أو null للإضافة، و[categories]
+/// لقائمة الفئة (من الباك).
 class LabProductFormDialog extends StatefulWidget {
-  const LabProductFormDialog({super.key, this.existing});
+  const LabProductFormDialog({
+    super.key,
+    this.existing,
+    this.categories = const [],
+  });
   final LabProduct? existing;
+  final List<LabProductCategory> categories;
 
   static Future<LabProductFormResult?> show(
     BuildContext context,
-    LabProduct? existing,
-  ) {
+    LabProduct? existing, {
+    List<LabProductCategory> categories = const [],
+  }) {
     return showDialog<LabProductFormResult>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.35),
-      builder: (_) => LabProductFormDialog(existing: existing),
+      builder: (_) => LabProductFormDialog(
+        existing: existing,
+        categories: categories,
+      ),
     );
   }
 
@@ -59,6 +73,7 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
   late final TextEditingController _days;
   late String _type;
   late String _material;
+  int? _categoryId;
   String? _nameError;
 
   @override
@@ -70,6 +85,11 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
     _days = TextEditingController(text: e?.productionDays.toString() ?? '');
     _type = e?.type ?? kProductTypes.first;
     _material = e?.material ?? kProductMaterials.first;
+    // الفئة الحالية فقط إن كانت ضمن الفئات المتاحة (وإلا "بلا فئة").
+    final ids = widget.categories.map((c) => c.id).toSet();
+    _categoryId = (e?.categoryId != null && ids.contains(e!.categoryId))
+        ? e.categoryId
+        : null;
   }
 
   @override
@@ -92,6 +112,7 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
       material: _material,
       price: int.tryParse(_price.text.trim()) ?? 0,
       productionDays: int.tryParse(_days.text.trim()) ?? 0,
+      categoryId: _categoryId,
     ));
   }
 
@@ -128,6 +149,13 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
                 decoration: _decoration(errorText: _nameError),
               ),
               const SizedBox(height: AppSizes.spaceMD),
+              // الفئة — قائمة من الباك (category_id). تظهر فقط عند توفّر فئات.
+              if (widget.categories.isNotEmpty) ...[
+                _label(l10n.labProdFieldCategory, isLight),
+                const SizedBox(height: 6),
+                _categoryDropdown(isLight),
+                const SizedBox(height: AppSizes.spaceMD),
+              ],
               Row(
                 children: [
                   Expanded(
@@ -240,6 +268,28 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
           borderRadius: BorderRadius.circular(AppSizes.radiusSM),
         ),
       );
+
+  /// قائمة الفئة (category_id) — من الباك، مع خيار "بلا فئة".
+  Widget _categoryDropdown(bool isLight) {
+    return AppDropdownMenuTheme(
+      child: DropdownButtonFormField<int?>(
+        initialValue: _categoryId,
+        isExpanded: true,
+        decoration: _decoration(),
+        dropdownColor: isLight ? Colors.white : AppColors.darkBg1,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        items: [
+          DropdownMenuItem<int?>(
+            value: null,
+            child: Text(context.l10n.labProdNoCategory),
+          ),
+          for (final c in widget.categories)
+            DropdownMenuItem<int?>(value: c.id, child: Text(c.name)),
+        ],
+        onChanged: (v) => setState(() => _categoryId = v),
+      ),
+    );
+  }
 
   Widget _dropdown({
     required String value,

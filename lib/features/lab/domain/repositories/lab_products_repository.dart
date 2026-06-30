@@ -21,6 +21,9 @@ abstract class LabProductsRepository {
   /// يجلب كل المنتجات.
   Future<List<LabProduct>> getAll();
 
+  /// يجلب فئات الأصناف من الباك (showAllItemsCategories) لقائمة الفئة بالنموذج.
+  Future<List<LabProductCategory>> getCategories();
+
   /// يضيف منتجاً جديداً. يرجع الـ entity مع id مولّد.
   Future<LabProduct> create(LabProduct product);
 
