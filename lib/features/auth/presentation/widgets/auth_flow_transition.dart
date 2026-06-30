@@ -12,9 +12,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// مدّة الانتقال للأمام/للخلف — سريعة وأنيقة.
-const Duration _kForward = Duration(milliseconds: 420);
-const Duration _kReverse = Duration(milliseconds: 360);
+/// مدّة الانتقال للأمام/للخلف — مُزامَنة مع دوران الخلفية (AuthFlowShell ~1100ms)
+/// ليتحرّك المحتوى والخلفية كحركة واحدة موقّرة (مطابقة لإيقاع المرجع).
+const Duration _kForward = Duration(milliseconds: 900);
+const Duration _kReverse = Duration(milliseconds: 760);
 
 /// إنشاء CustomTransitionPage بانتقال الـ auth flow.
 ///

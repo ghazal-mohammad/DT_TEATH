@@ -16,14 +16,11 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 
-/// قائمة الـ domains الشائعة للاقتراحات.
+/// نطاقات الاقتراحات — نطاقات النظام الداخلي للموظّفين (لا بريد عام مثل gmail
+/// لأن الدخول لموظّفي العيادة/المخبر فقط؛ بريدهم على نطاق العيادة).
 const List<String> _commonDomains = [
-  'gmail.com',
-  'yahoo.com',
-  'hotmail.com',
-  'outlook.com',
+  'clinic.com',
   'dtteeth.com',
-  'icloud.com',
 ];
 
 /// حقل إدخال إيميل مع اقتراحات وanimations.

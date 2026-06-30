@@ -21,8 +21,9 @@ import 'auth_layout_painters.dart';
 /// سالبة = ميل مطابق لاتجاه القطر في التصميم الأصلي.
 const double _kDiagLean = -0.18;
 
-/// مدّة دوران الخلفية بين الخطوات — مُزامَنة تقريباً مع انتقال المحتوى (~420ms).
-const Duration _kRotationDuration = Duration(milliseconds: 560);
+/// مدّة دوران الخلفية بين الخطوات — مطابِقة لمرجع AuthScreen تماماً:
+/// `.background-shape { transition: 1.5s ease }`. مُزامَنة مع انتقال المحتوى.
+const Duration _kRotationDuration = Duration(milliseconds: 1500);
 
 /// الشِل الدائم لخطوات الدخول. [flipped] = true يعني الأبيض على اليسار
 /// (شاشة التحقق)، false = الأبيض على اليمين (email/login/setPassword).
@@ -93,7 +94,9 @@ class _AuthFlowShellState extends State<AuthFlowShell>
                     : AnimatedBuilder(
                         animation: Listenable.merge([_rot, _glow]),
                         builder: (_, __) => AuthRotatingBackground(
-                          progress: Curves.easeInOutCubic.transform(_rot.value),
+                          // Curves.ease = cubic-bezier(0.25,0.1,0.25,1) = CSS `ease`
+                          // (نفس منحنى انتقال المرجع تماماً).
+                          progress: Curves.ease.transform(_rot.value),
                           glowPhase: _glow.value * 2 * math.pi,
                         ),
                       ),
