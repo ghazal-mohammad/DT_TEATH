@@ -17,8 +17,6 @@ import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../../domain/auth_flow_mode.dart';
 import '../bloc/email_entry_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_layout_painters.dart';
-import '../widgets/auth_page_transition.dart';
 import '../widgets/auth_submit_button.dart';
 import '../widgets/email_form_field.dart';
 
@@ -46,21 +44,13 @@ class _View extends StatefulWidget {
 
 class _ViewState extends State<_View> with TickerProviderStateMixin {
   final TextEditingController _emailCtrl = TextEditingController();
-  late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
-  late final AnimationController _shapeCtrl;
 
   @override
   void initState() {
     super.initState();
-    _glowCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-    _shapeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 650),
-    )..forward();
+    // الخلفية القطرية والتوهّج يوفّرهما AuthFlowShell (دائمان عبر ShellRoute)؛
+    // هنا فقط أنيميشن دخول المحتوى المتدرّج.
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
@@ -70,8 +60,6 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
   @override
   void dispose() {
     _emailCtrl.dispose();
-    _glowCtrl.dispose();
-    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -109,6 +97,7 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: LayoutBuilder(
           builder: (_, box) => box.maxWidth < 750
               ? _buildMobile()
@@ -119,82 +108,61 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
   }
 
   Widget _buildDesktop(double W, double H) {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          // 1-3: خلفية متحركة (navy + diagonal + glow) — الانيميشن من الـ HTML
-          Positioned.fill(
-            child: AuthShapeBackground(
-              shapeCtrl: _shapeCtrl,
-              glowCtrl: _glowCtrl,
+    // الخلفية القطرية الدوّارة يوفّرها AuthFlowShell — هنا المحتوى فقط.
+    return Stack(
+      children: [
+        // Branding panel — على اليسار (فوق الكحلي)
+        Positioned(
+          left: 0, width: W * 0.40,
+          top: 0, bottom: 0,
+          child: _BrandingPanel(entryCtrl: _entryCtrl),
+        ),
+
+        // Form panel — على اليمين (فوق الأبيض)
+        Positioned(
+          left: W * 0.67, right: 0,
+          top: 0, bottom: 0,
+          child: _DesktopForm(
+            emailCtrl: _emailCtrl,
+            entryCtrl: _entryCtrl,
+            mode: widget.mode,
+            onSubmit: _submit,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobile() {
+    // الخلفية الكحلية يوفّرها AuthFlowShell — هنا المحتوى فقط.
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.space3XL,
+          vertical: 56,
+        ),
+        child: Column(
+          children: [
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.logo,
+              child: Text(
+                'WELCOME!',
+                textDirection: TextDirection.ltr,
+                style: AppTextStyles.authHeroTitleMobile.copyWith(
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ),
-
-          // Branding panel — shifted left away from diagonal
-          Positioned(
-            left: 0, width: W * 0.40,
-            top: 0, bottom: 0,
-            child: _BrandingPanel(entryCtrl: _entryCtrl),
-          ),
-
-          // Form panel
-          Positioned(
-            left: W * 0.67, right: 0,
-            top: 0, bottom: 0,
-            child: _DesktopForm(
+            const SizedBox(height: 48),
+            _MobileForm(
               emailCtrl: _emailCtrl,
               entryCtrl: _entryCtrl,
               mode: widget.mode,
               onSubmit: _submit,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMobile() {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          const AuthNavyBackground(),
-          Positioned.fill(
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.space3XL,
-                  vertical: 56,
-                ),
-                child: Column(
-                  children: [
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.logo,
-                      child: Text(
-                        'WELCOME!',
-                        textDirection: TextDirection.ltr,
-                        style: AppTextStyles.authHeroTitleMobile.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-                    _MobileForm(
-                      emailCtrl: _emailCtrl,
-                      entryCtrl: _entryCtrl,
-                      mode: widget.mode,
-                      onSubmit: _submit,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

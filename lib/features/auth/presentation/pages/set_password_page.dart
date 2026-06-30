@@ -34,8 +34,6 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_layout_painters.dart';
-import '../widgets/auth_page_transition.dart';
 import '../widgets/auth_submit_button.dart';
 import '../widgets/password_form_field.dart';
 import '../widgets/password_strength_meter.dart';
@@ -67,9 +65,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   final TextEditingController _pwdCtrl = TextEditingController();
   final TextEditingController _cfmCtrl = TextEditingController();
 
-  late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
-  late final AnimationController _shapeCtrl;
 
   String _pwd = '', _cfm = '';
   bool _submitting = false;
@@ -81,16 +77,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   @override
   void initState() {
     super.initState();
-    _glowCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-
-    _shapeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 650),
-    )..forward();
-
+    // الخلفية القطرية والتوهّج يوفّرهما AuthFlowShell — هنا فقط دخول المحتوى.
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
@@ -101,8 +88,6 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   void dispose() {
     _pwdCtrl.dispose();
     _cfmCtrl.dispose();
-    _glowCtrl.dispose();
-    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -189,6 +174,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: LayoutBuilder(
         builder: (ctx, box) => box.maxWidth < 750
             ? _buildMobile()
@@ -198,149 +184,128 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   }
 
   // ── DESKTOP ──────────────────────────────────────────────────────────────
+  // الخلفية القطرية الدوّارة (الأبيض على اليمين) يوفّرها AuthFlowShell.
 
   Widget _buildDesktop(double W, double H) {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          // 1-3: خلفية متحركة (navy + diagonal + glow) — الانيميشن من الـ HTML
-          Positioned.fill(
-            child: AuthShapeBackground(
-              shapeCtrl: _shapeCtrl,
-              glowCtrl: _glowCtrl,
-            ),
-          ),
+    return Stack(
+      children: [
+        // Branding (يسار — فوق الكحلي)
+        Positioned(
+          left: 0, width: W * 0.40,
+          top: 0, bottom: 0,
+          child: _BrandingPanel(entryCtrl: _entryCtrl),
+        ),
 
-          // 4 ─ Branding (يسار داكن)
-          Positioned(
-            left: 0, width: W * 0.40,
-            top: 0, bottom: 0,
-            child: _BrandingPanel(entryCtrl: _entryCtrl),
-          ),
-
-          // 5 ─ Form (يمين أبيض)
-          Positioned(
-            left: W * 0.67, right: 0,
-            top: 0, bottom: 0,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSizes.space3XL + AppSizes.spaceMD,
-                    vertical: AppSizes.space3XL + AppSizes.spaceMD,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 340),
-                          child: _FormContent(
-                            pwdCtrl: _pwdCtrl,
-                            cfmCtrl: _cfmCtrl,
-                            pwd: _pwd,
-                            mode: widget.mode,
-                            valid: _valid,
-                            submitting: _submitting,
-                            errPwd: _errPwd,
-                            errCfm: _errCfm,
-                            isMobile: false,
-                            entryCtrl: _entryCtrl,
-                            onPwdChanged: (v) => setState(() {
-                              _pwd = v; _errPwd = null;
-                            }),
-                            onCfmChanged: (v) => setState(() {
-                              _cfm = v; _errCfm = null;
-                            }),
-                            onSubmit: _submit,
-                          ),
+        // Form (يمين — فوق الأبيض)
+        Positioned(
+          left: W * 0.67, right: 0,
+          top: 0, bottom: 0,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.space3XL + AppSizes.spaceMD,
+                  vertical: AppSizes.space3XL + AppSizes.spaceMD,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 340),
+                        child: _FormContent(
+                          pwdCtrl: _pwdCtrl,
+                          cfmCtrl: _cfmCtrl,
+                          pwd: _pwd,
+                          mode: widget.mode,
+                          valid: _valid,
+                          submitting: _submitting,
+                          errPwd: _errPwd,
+                          errCfm: _errCfm,
+                          isMobile: false,
+                          entryCtrl: _entryCtrl,
+                          onPwdChanged: (v) => setState(() {
+                            _pwd = v; _errPwd = null;
+                          }),
+                          onCfmChanged: (v) => setState(() {
+                            _cfm = v; _errCfm = null;
+                          }),
+                          onSubmit: _submit,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   // ── MOBILE ────────────────────────────────────────────────────────────────
 
   Widget _buildMobile() {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          const AuthNavyBackground(),
-          Positioned.fill(
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.space3XL,
-                  vertical: 56,
-                ),
-                child: Column(
-                  children: [
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.logo,
-                      child: const AppLogo(
-                        size: 140,
-                        variant: AppLogoVariant.darkTheme,
-                        showText: true,
-                        semanticLabel: 'DT.Teeth',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.title,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'ALMOST THERE!',
-                          textDirection: TextDirection.ltr,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: AppTextStyles.authHeroTitleMobile.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    _FormContent(
-                      pwdCtrl: _pwdCtrl,
-                      cfmCtrl: _cfmCtrl,
-                      pwd: _pwd,
-                      mode: widget.mode,
-                      valid: _valid,
-                      submitting: _submitting,
-                      errPwd: _errPwd,
-                      errCfm: _errCfm,
-                      isMobile: true,
-                      entryCtrl: _entryCtrl,
-                      onPwdChanged: (v) => setState(() {
-                        _pwd = v; _errPwd = null;
-                      }),
-                      onCfmChanged: (v) => setState(() {
-                        _cfm = v; _errCfm = null;
-                      }),
-                      onSubmit: _submit,
-                    ),
-                  ],
+    // الخلفية الكحلية يوفّرها AuthFlowShell — هنا المحتوى فقط.
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.space3XL,
+          vertical: 56,
+        ),
+        child: Column(
+          children: [
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.logo,
+              child: const AppLogo(
+                size: 140,
+                variant: AppLogoVariant.darkTheme,
+                showText: true,
+                semanticLabel: 'DT.Teeth',
+              ),
+            ),
+            const SizedBox(height: 16),
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.title,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'ALMOST THERE!',
+                  textDirection: TextDirection.ltr,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppTextStyles.authHeroTitleMobile.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 32),
+            _FormContent(
+              pwdCtrl: _pwdCtrl,
+              cfmCtrl: _cfmCtrl,
+              pwd: _pwd,
+              mode: widget.mode,
+              valid: _valid,
+              submitting: _submitting,
+              errPwd: _errPwd,
+              errCfm: _errCfm,
+              isMobile: true,
+              entryCtrl: _entryCtrl,
+              onPwdChanged: (v) => setState(() {
+                _pwd = v; _errPwd = null;
+              }),
+              onCfmChanged: (v) => setState(() {
+                _cfm = v; _errCfm = null;
+              }),
+              onSubmit: _submit,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -37,8 +37,6 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_layout_painters.dart';
-import '../widgets/auth_page_transition.dart';
 import '../widgets/auth_submit_button.dart';
 import '../widgets/otp_input.dart';
 
@@ -66,9 +64,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
     with TickerProviderStateMixin {
   final GlobalKey<OtpInputState> _otpKey = GlobalKey<OtpInputState>();
 
-  late final AnimationController _glowCtrl;
   late final AnimationController _entryCtrl;
-  late final AnimationController _shapeCtrl;
 
   final AuthRepository _repo = sl<AuthRepository>();
 
@@ -81,16 +77,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   @override
   void initState() {
     super.initState();
-    _glowCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-
-    _shapeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 650),
-    )..forward();
-
+    // الخلفية القطرية والتوهّج يوفّرهما AuthFlowShell — هنا فقط دخول المحتوى.
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
@@ -102,8 +89,6 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   @override
   void dispose() {
     _timer?.cancel();
-    _glowCtrl.dispose();
-    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -186,6 +171,7 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: LayoutBuilder(
         builder: (ctx, box) => box.maxWidth < 750
             ? _buildMobile()
@@ -195,147 +181,126 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   }
 
   // ── DESKTOP — layout معكوس (form يسار، branding يمين) ────────────────────
+  // الخلفية القطرية الدوّارة (الأبيض على اليسار هنا) يوفّرها AuthFlowShell.
 
   Widget _buildDesktop(double W, double H) {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          // 1-3: خلفية متحركة — layout معكوس (white على اليسار)
-          Positioned.fill(
-            child: AuthShapeBackground(
-              shapeCtrl: _shapeCtrl,
-              glowCtrl: _glowCtrl,
-              whiteOnRight: false,
-            ),
-          ),
-          // 4 ─ Branding (يمين — داكن)
-          Positioned(
-            right: 0, width: W * 0.40,
-            top: 0, bottom: 0,
-            child: _BrandingPanel(entryCtrl: _entryCtrl),
-          ),
+    return Stack(
+      children: [
+        // Branding (يمين — فوق الكحلي)
+        Positioned(
+          right: 0, width: W * 0.40,
+          top: 0, bottom: 0,
+          child: _BrandingPanel(entryCtrl: _entryCtrl),
+        ),
 
-          // 5 ─ Form (يسار — أبيض)
-          Positioned(
-            left: 0, right: W * 0.67,
-            top: 0, bottom: 0,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSizes.space3XL + AppSizes.spaceMD,
-                    vertical: AppSizes.space3XL + AppSizes.spaceMD,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 340),
-                          child: _FormContent(
-                            otpKey: _otpKey,
-                            email: widget.email,
-                            mode: widget.mode,
-                            code: _code,
-                            verifying: _verifying,
-                            hasError: _hasError,
-                            errMsg: _errMsg,
-                            secs: _secs,
-                            isMobile: false,
-                            entryCtrl: _entryCtrl,
-                            onCodeChanged: (v) => setState(() {
-                              _code = v;
-                              if (_hasError) _hasError = false;
-                            }),
-                            onVerify: _verify,
-                            onResend: _resend,
-                          ),
+        // Form (يسار — فوق الأبيض)
+        Positioned(
+          left: 0, right: W * 0.67,
+          top: 0, bottom: 0,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.space3XL + AppSizes.spaceMD,
+                  vertical: AppSizes.space3XL + AppSizes.spaceMD,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 340),
+                        child: _FormContent(
+                          otpKey: _otpKey,
+                          email: widget.email,
+                          mode: widget.mode,
+                          code: _code,
+                          verifying: _verifying,
+                          hasError: _hasError,
+                          errMsg: _errMsg,
+                          secs: _secs,
+                          isMobile: false,
+                          entryCtrl: _entryCtrl,
+                          onCodeChanged: (v) => setState(() {
+                            _code = v;
+                            if (_hasError) _hasError = false;
+                          }),
+                          onVerify: _verify,
+                          onResend: _resend,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   // ── MOBILE ────────────────────────────────────────────────────────────────
 
   Widget _buildMobile() {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          const AuthNavyBackground(),
-          Positioned.fill(
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.space3XL,
-                  vertical: 56,
-                ),
-                child: Column(
-                  children: [
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.logo,
-                      child: const AppLogo(
-                        size: 140,
-                        variant: AppLogoVariant.darkTheme,
-                        showText: true,
-                        semanticLabel: 'DT.Teeth',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.title,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'WELCOME BACK!',
-                          textDirection: TextDirection.ltr,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: AppTextStyles.authHeroTitleMobile.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    _FormContent(
-                      otpKey: _otpKey,
-                      email: widget.email,
-                      mode: widget.mode,
-                      code: _code,
-                      verifying: _verifying,
-                      hasError: _hasError,
-                      errMsg: _errMsg,
-                      secs: _secs,
-                      isMobile: true,
-                      entryCtrl: _entryCtrl,
-                      onCodeChanged: (v) => setState(() {
-                        _code = v;
-                        if (_hasError) _hasError = false;
-                      }),
-                      onVerify: _verify,
-                      onResend: _resend,
-                    ),
-                  ],
+    // الخلفية الكحلية يوفّرها AuthFlowShell — هنا المحتوى فقط.
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.space3XL,
+          vertical: 56,
+        ),
+        child: Column(
+          children: [
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.logo,
+              child: const AppLogo(
+                size: 140,
+                variant: AppLogoVariant.darkTheme,
+                showText: true,
+                semanticLabel: 'DT.Teeth',
+              ),
+            ),
+            const SizedBox(height: 16),
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.title,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'WELCOME BACK!',
+                  textDirection: TextDirection.ltr,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppTextStyles.authHeroTitleMobile.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 32),
+            _FormContent(
+              otpKey: _otpKey,
+              email: widget.email,
+              mode: widget.mode,
+              code: _code,
+              verifying: _verifying,
+              hasError: _hasError,
+              errMsg: _errMsg,
+              secs: _secs,
+              isMobile: true,
+              entryCtrl: _entryCtrl,
+              onCodeChanged: (v) => setState(() {
+                _code = v;
+                if (_hasError) _hasError = false;
+              }),
+              onVerify: _verify,
+              onResend: _resend,
+            ),
+          ],
+        ),
       ),
     );
   }

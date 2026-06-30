@@ -34,8 +34,6 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../bloc/login_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_layout_painters.dart';
-import '../widgets/auth_page_transition.dart';
 import '../widgets/auth_submit_button.dart';
 
 part '../widgets/login/login_branding_panel.dart';
@@ -56,14 +54,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passCtrl  = TextEditingController();
 
-  /// Glow Line pulse — تكرار لا نهائي
-  late final AnimationController _glowCtrl;
-
   /// Entry stagger — مرة واحدة عند mount
   late final AnimationController _entryCtrl;
-
-  /// Shape entry — الـ diagonal يبرز من الحافة عند تحميل الصفحة
-  late final AnimationController _shapeCtrl;
 
   bool _loading  = false;
   bool _obscure  = true;
@@ -74,16 +66,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _glowCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-
-    _shapeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 650),
-    )..forward();
-
+    // الخلفية القطرية والتوهّج يوفّرهما AuthFlowShell — هنا فقط دخول المحتوى.
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 650),
@@ -94,8 +77,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void dispose() {
     _emailCtrl.dispose();
     _passCtrl.dispose();
-    _glowCtrl.dispose();
-    _shapeCtrl.dispose();
     _entryCtrl.dispose();
     super.dispose();
   }
@@ -148,6 +129,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: LayoutBuilder(
         builder: (ctx, box) => box.maxWidth < 750
             ? _buildMobile()
@@ -157,112 +139,91 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   // ── DESKTOP ──────────────────────────────────────────────────────────────
+  // الخلفية القطرية الدوّارة (الأبيض على اليمين) يوفّرها AuthFlowShell.
 
   Widget _buildDesktop(BuildContext ctx, double W, double H) {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          // 1-3: خلفية متحركة (navy + diagonal + glow) — الانيميشن من الـ HTML
-          Positioned.fill(
-            child: AuthShapeBackground(
-              shapeCtrl: _shapeCtrl,
-              glowCtrl: _glowCtrl,
-            ),
-          ),
+    return Stack(
+      children: [
+        // Branding (يسار — فوق الكحلي)
+        Positioned(
+          left: 0, width: W * 0.40,
+          top: 0, bottom: 0,
+          child: _BrandingPanel(entryCtrl: _entryCtrl),
+        ),
 
-          // 4 ─ Branding (يسار داكن)
-          Positioned(
-            left: 0, width: W * 0.40,
-            top: 0, bottom: 0,
-            child: _BrandingPanel(entryCtrl: _entryCtrl),
+        // Form (يمين — فوق الأبيض)
+        Positioned(
+          left: W * 0.67, right: 0,
+          top: 0, bottom: 0,
+          child: _FormSide(
+            emailCtrl: _emailCtrl,
+            passCtrl:  _passCtrl,
+            obscure:   _obscure,
+            loading:   _loading,
+            error:     _error,
+            isMobile:  false,
+            entryCtrl: _entryCtrl,
+            onToggleObscure: () => setState(() => _obscure = !_obscure),
+            onSubmit: _submit,
           ),
-
-          // 5 ─ Form (يمين أبيض)
-          Positioned(
-            left: W * 0.67, right: 0,
-            top: 0, bottom: 0,
-            child: _FormSide(
-              emailCtrl: _emailCtrl,
-              passCtrl:  _passCtrl,
-              obscure:   _obscure,
-              loading:   _loading,
-              error:     _error,
-              isMobile:  false,
-              entryCtrl: _entryCtrl,
-              onToggleObscure: () => setState(() => _obscure = !_obscure),
-              onSubmit: _submit,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   // ── MOBILE ────────────────────────────────────────────────────────────────
 
   Widget _buildMobile() {
-    return AuthCardGlowBorder(
-      glowColor: AppColors.accent,
-      borderRadius: 0,
-      child: Stack(
-        children: [
-          const AuthNavyBackground(),
-          Positioned.fill(
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.space3XL,
-                  vertical: 48,
-                ),
-                child: Column(
-                  children: [
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.logo,
-                      child: const AppLogo(
-                        size: 140,
-                        variant: AppLogoVariant.darkTheme,
-                        showText: true,
-                        semanticLabel: 'DT.Teeth',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    AuthEntryAnimator(
-                      controller: _entryCtrl,
-                      delay: AuthStaggerDelays.title,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'WELCOME BACK!',
-                          textDirection: TextDirection.ltr,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: AppTextStyles.authHeroTitleMobile.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    _FormContent(
-                      emailCtrl: _emailCtrl,
-                      passCtrl:  _passCtrl,
-                      obscure:   _obscure,
-                      loading:   _loading,
-                      error:     _error,
-                      isMobile:  true,
-                      entryCtrl: _entryCtrl,
-                      onToggleObscure: () => setState(() => _obscure = !_obscure),
-                      onSubmit: _submit,
-                    ),
-                  ],
+    // الخلفية الكحلية يوفّرها AuthFlowShell — هنا المحتوى فقط.
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.space3XL,
+          vertical: 48,
+        ),
+        child: Column(
+          children: [
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.logo,
+              child: const AppLogo(
+                size: 140,
+                variant: AppLogoVariant.darkTheme,
+                showText: true,
+                semanticLabel: 'DT.Teeth',
+              ),
+            ),
+            const SizedBox(height: 16),
+            AuthEntryAnimator(
+              controller: _entryCtrl,
+              delay: AuthStaggerDelays.title,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'WELCOME BACK!',
+                  textDirection: TextDirection.ltr,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppTextStyles.authHeroTitleMobile.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 40),
+            _FormContent(
+              emailCtrl: _emailCtrl,
+              passCtrl:  _passCtrl,
+              obscure:   _obscure,
+              loading:   _loading,
+              error:     _error,
+              isMobile:  true,
+              entryCtrl: _entryCtrl,
+              onToggleObscure: () => setState(() => _obscure = !_obscure),
+              onSubmit: _submit,
+            ),
+          ],
+        ),
       ),
     );
   }

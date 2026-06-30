@@ -12,6 +12,7 @@ import '../../features/auth/presentation/pages/set_password_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pages/system_selection_page.dart';
 import '../../features/auth/presentation/pages/verify_code_page.dart';
+import '../../features/auth/presentation/widgets/auth_flow_shell.dart';
 import '../../features/auth/presentation/widgets/auth_flow_transition.dart';
 import '../../features/lab/presentation/pages/lab_pages.dart';
 import '../../features/warehouse/presentation/pages/warehouse_pages.dart';
@@ -130,76 +131,95 @@ class AppRouter {
       ),
 
       // ── Auth Flow ─────────────────────────────────────────────────────
-      GoRoute(
-        path: RouteNames.authEmail,
-        name: 'authEmail',
-        pageBuilder: (context, state) {
-          // extra اختياري: {mode} — لتمييز تدفّق "نسيت كلمة السر".
-          final extra = state.extra;
-          final mode = (extra is Map && extra['mode'] is AuthFlowMode)
-              ? extra['mode'] as AuthFlowMode
-              : AuthFlowMode.activation;
-          // authFlowPage (وليس _authSlide) ليشمل انتقال الشكل القطري الدوّار
-          // كل مسارات الدخول: login ↔ email ↔ verify ↔ password.
-          return authFlowPage(
-            key: state.pageKey,
-            child: EmailEntryPage(mode: mode),
-            direction: 1,
-          );
+      // ShellRoute يوفّر خلفية قطرية **دائمة** تدور بين الخطوات (الشِل الواحد).
+      // الأبيض على اليسار في شاشة التحقق فقط (flipped)، وعلى اليمين في البقية.
+      ShellRoute(
+        builder: (context, state, child) {
+          final bool flipped =
+              state.matchedLocation == RouteNames.authVerifyCode;
+          return AuthFlowShell(flipped: flipped, child: child);
         },
-      ),
+        routes: [
+          GoRoute(
+            path: RouteNames.authEmail,
+            name: 'authEmail',
+            pageBuilder: (context, state) {
+              // extra اختياري: {mode} — لتمييز تدفّق "نسيت كلمة السر".
+              final extra = state.extra;
+              final mode = (extra is Map && extra['mode'] is AuthFlowMode)
+                  ? extra['mode'] as AuthFlowMode
+                  : AuthFlowMode.activation;
+              return authFlowPage(
+                key: state.pageKey,
+                child: EmailEntryPage(mode: mode),
+                direction: 1,
+              );
+            },
+          ),
 
-      GoRoute(
-        path: RouteNames.authVerifyCode,
-        name: 'authVerifyCode',
-        pageBuilder: (context, state) {
-          // extra: {email, mode} — أو String (توافق رجعي) = email فقط.
-          String email = '';
-          AuthFlowMode mode = AuthFlowMode.activation;
-          final extra = state.extra;
-          if (extra is Map) {
-            email = (extra['email'] ?? '') as String;
-            if (extra['mode'] is AuthFlowMode) {
-              mode = extra['mode'] as AuthFlowMode;
-            }
-          } else if (extra is String) {
-            email = extra;
-          }
-          return authFlowPage(
-            key: state.pageKey,
-            direction: 1,
-            child: VerifyCodePage(email: email, mode: mode),
-          );
-        },
-      ),
+          GoRoute(
+            path: RouteNames.authVerifyCode,
+            name: 'authVerifyCode',
+            pageBuilder: (context, state) {
+              // extra: {email, mode} — أو String (توافق رجعي) = email فقط.
+              String email = '';
+              AuthFlowMode mode = AuthFlowMode.activation;
+              final extra = state.extra;
+              if (extra is Map) {
+                email = (extra['email'] ?? '') as String;
+                if (extra['mode'] is AuthFlowMode) {
+                  mode = extra['mode'] as AuthFlowMode;
+                }
+              } else if (extra is String) {
+                email = extra;
+              }
+              return authFlowPage(
+                key: state.pageKey,
+                direction: 1,
+                child: VerifyCodePage(email: email, mode: mode),
+              );
+            },
+          ),
 
-      GoRoute(
-        path: RouteNames.authSetPassword,
-        name: 'authSetPassword',
-        pageBuilder: (context, state) {
-          String email = '';
-          String code = '';
-          AuthFlowMode mode = AuthFlowMode.activation;
-          final extra = state.extra;
-          if (extra is Map) {
-            email = (extra['email'] ?? '') as String;
-            code = (extra['code'] ?? '') as String;
-            if (extra['mode'] is AuthFlowMode) {
-              mode = extra['mode'] as AuthFlowMode;
-            }
-          } else if (extra is String) {
-            email = extra; // توافق رجعي
-          }
-          return authFlowPage(
-            key: state.pageKey,
-            direction: 1,
-            child: SetPasswordPage(
-              email: email,
-              verificationCode: code,
-              mode: mode,
+          GoRoute(
+            path: RouteNames.authSetPassword,
+            name: 'authSetPassword',
+            pageBuilder: (context, state) {
+              String email = '';
+              String code = '';
+              AuthFlowMode mode = AuthFlowMode.activation;
+              final extra = state.extra;
+              if (extra is Map) {
+                email = (extra['email'] ?? '') as String;
+                code = (extra['code'] ?? '') as String;
+                if (extra['mode'] is AuthFlowMode) {
+                  mode = extra['mode'] as AuthFlowMode;
+                }
+              } else if (extra is String) {
+                email = extra; // توافق رجعي
+              }
+              return authFlowPage(
+                key: state.pageKey,
+                direction: 1,
+                child: SetPasswordPage(
+                  email: email,
+                  verificationCode: code,
+                  mode: mode,
+                ),
+              );
+            },
+          ),
+
+          GoRoute(
+            path: RouteNames.login,
+            name: 'login',
+            pageBuilder: (context, state) => authFlowPage(
+              key: state.pageKey,
+              child: const LoginPage(),
+              direction: -1,
             ),
-          );
-        },
+          ),
+        ],
       ),
 
       GoRoute(
@@ -209,16 +229,6 @@ class AppRouter {
           key: state.pageKey,
           child: const SystemSelectionPage(),
           direction: 1,
-        ),
-      ),
-
-      GoRoute(
-        path: RouteNames.login,
-        name: 'login',
-        pageBuilder: (context, state) => authFlowPage(
-          key: state.pageKey,
-          child: const LoginPage(),
-          direction: -1,
         ),
       ),
 
