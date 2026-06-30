@@ -94,6 +94,14 @@ class LabOrderDetailsDialog extends StatelessWidget {
                           ],
                         );
                       }),
+                      // عناصر الطلب — تُعرض كاملةً عند تعدّد القطع (الباك يرجّع
+                      // items متعددة؛ البطاقة تلخّص الأولى فقط).
+                      if (order.parts.length > 1) ...[
+                        const SizedBox(height: 18),
+                        _SectionHeader(label: context.l10n.orderDetailsItems),
+                        const SizedBox(height: 10),
+                        _OrderPartsList(parts: order.parts),
+                      ],
                       const SizedBox(height: 18),
                       _SectionHeader(label: context.l10n.orderDetailsProgress),
                       const SizedBox(height: 14),
@@ -122,5 +130,118 @@ class LabOrderDetailsDialog extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  ORDER PARTS LIST — كل قطع الطلب (سن/نوع/مادة/سعر) عند تعدّدها
+// ══════════════════════════════════════════════════════════════════════════
+
+class _OrderPartsList extends StatelessWidget {
+  const _OrderPartsList({required this.parts});
+
+  final List<LabOrderPart> parts;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.tableHeader.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lightBorder),
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < parts.length; i++) ...[
+            if (i > 0) const Divider(height: 1, color: AppColors.lightBorder),
+            _PartRow(index: i + 1, part: parts[i]),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PartRow extends StatelessWidget {
+  const _PartRow({required this.index, required this.part});
+
+  final int index;
+  final LabOrderPart part;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final subtitle = [
+      if (part.material.isNotEmpty) part.material,
+      if (part.tooth.isNotEmpty) '${l10n.colTooth} ${part.tooth}',
+    ].join(' · ');
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$index',
+              style: AppTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  part.type.isEmpty ? '—' : part.type,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.lightText1,
+                  ),
+                ),
+                if (subtitle.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.lightText3,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (part.price > 0) ...[
+            const SizedBox(width: 10),
+            Text(
+              '${_formatPartPrice(part.price)} ل.س',
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.lightText1,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// تنسيق السعر بفواصل آلاف.
+  static String _formatPartPrice(int v) {
+    final s = v.toString();
+    final buf = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+      buf.write(s[i]);
+    }
+    return buf.toString();
   }
 }

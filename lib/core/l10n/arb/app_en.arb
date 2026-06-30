@@ -608,6 +608,7 @@
 ,
   "orderDetailsSubtitle": "Details of the materials order sent to the warehouse",
   "orderDetailsInfoSection": "Order Information",
+  "orderDetailsItems": "Order Items",
   "orderDetailsProgressSection": "Supply Progress",
   "orderDetailsNotes": "Notes",
   "orderDetailsStatusLabel": "Order Status",

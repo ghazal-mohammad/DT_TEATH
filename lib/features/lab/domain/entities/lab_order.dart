@@ -19,6 +19,24 @@ enum LabOrderBadgeVariant {
   cancelled,
 }
 
+/// قطعة واحدة ضمن طلب الطبيب (سن + نوع + مادة + سعر). الطلب قد يحوي عدّة قطع
+/// (items في الباك)؛ النموذج المسطّح يلخّص الأولى، وهذه القائمة تعرض الكل.
+class LabOrderPart {
+  const LabOrderPart({
+    required this.tooth,
+    required this.type,
+    required this.material,
+    this.price = 0,
+    this.notes = '',
+  });
+
+  final String tooth;
+  final String type;
+  final String material;
+  final int price;
+  final String notes;
+}
+
 /// نموذج كامل لطلب المخبر — يُستخدم بصفحة الطلبات والمودالات.
 ///
 /// الحقول القابلة للتغيير (statusVariant/cost/assignedTechnician) تُحدَّث عند
@@ -36,6 +54,7 @@ class LabOrderFull {
     this.notes = '',
     this.cost,
     this.assignedTechnician,
+    this.parts = const [],
   });
 
   final String id;
@@ -47,6 +66,10 @@ class LabOrderFull {
   LabOrderBadgeVariant statusVariant;
   final bool isUrgent;
   final String notes;
+
+  /// كل قطع الطلب (للعرض الكامل في مودال التفاصيل). الحقول المسطّحة
+  /// (type/material/tooth) تلخّص أول قطعة للبطاقة.
+  final List<LabOrderPart> parts;
 
   /// تكلفة تصنيع الطلبية بالليرة السورية (تُسجَّل عند المعالجة) — UC69.
   int? cost;

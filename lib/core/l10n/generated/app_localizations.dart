@@ -3122,6 +3122,12 @@ abstract class AppLocalizations {
   /// **'Order Information'**
   String get orderDetailsInfoSection;
 
+  /// No description provided for @orderDetailsItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Items'**
+  String get orderDetailsItems;
+
   /// No description provided for @orderDetailsProgressSection.
   ///
   /// In en, this message translates to:

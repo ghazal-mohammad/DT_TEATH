@@ -1566,6 +1566,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orderDetailsInfoSection => 'معلومات الطلبية';
 
   @override
+  String get orderDetailsItems => 'عناصر الطلب';
+
+  @override
   String get orderDetailsProgressSection => 'تقدم التوريد';
 
   @override

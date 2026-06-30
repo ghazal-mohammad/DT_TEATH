@@ -553,6 +553,7 @@
 ,
   "orderDetailsSubtitle": "تفاصيل طلبية المواد المرسلة إلى المستودع",
   "orderDetailsInfoSection": "معلومات الطلبية",
+  "orderDetailsItems": "عناصر الطلب",
   "orderDetailsProgressSection": "تقدم التوريد",
   "orderDetailsNotes": "ملاحظات",
   "orderDetailsStatusLabel": "حالة الطلبية",

@@ -132,6 +132,22 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
 
     final tooth = first['tooth_number'];
 
+    // كل قطع الطلب (لعرضها كاملةً في مودال التفاصيل).
+    final parts = items.whereType<Map<dynamic, dynamic>>().map((raw) {
+      final it = Map<String, dynamic>.from(raw);
+      final t = it['type'] is Map
+          ? Map<String, dynamic>.from(it['type'] as Map)
+          : const <String, dynamic>{};
+      final tn = it['tooth_number'];
+      return LabOrderPart(
+        tooth: tn == null ? '' : '#$tn',
+        type: (t['name'] ?? '').toString(),
+        material: (t['material'] ?? '').toString(),
+        price: _toInt(it['price']),
+        notes: (it['notes'] ?? '').toString(),
+      );
+    }).toList();
+
     return LabOrderFull(
       id: '${j['id'] ?? ''}',
       doctor: (dentist['name'] ?? '').toString(),
@@ -143,6 +159,7 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
       notes: (j['notes'] ?? '').toString(),
       cost: _toInt(j['total_cost']),
       assignedTechnician: tech?['name']?.toString(),
+      parts: parts,
     );
   }
 

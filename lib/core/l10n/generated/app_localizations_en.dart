@@ -1579,6 +1579,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderDetailsInfoSection => 'Order Information';
 
   @override
+  String get orderDetailsItems => 'Order Items';
+
+  @override
   String get orderDetailsProgressSection => 'Supply Progress';
 
   @override
