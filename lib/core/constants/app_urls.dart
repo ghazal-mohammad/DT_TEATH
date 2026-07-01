@@ -2,7 +2,15 @@
 // app_urls.dart
 //
 // إعدادات الـ Base URL والبيئات (Development / Staging / Production).
-// يُستخدم في Dio Client.
+// تُحدَّد البيئة **وقت البناء** عبر --dart-define (لا تعديل يدوي على الكود):
+//
+//   flutter run                                         → development (افتراضي)
+//   flutter build web --dart-define=APP_ENV=staging     → staging
+//   flutter build web --dart-define=APP_ENV=production   → production
+//   flutter build web --dart-define=API_BASE_URL=https://api.x.com  (تجاوز صريح)
+//
+// الفائدة الأمنية: بناء الإنتاج لا يشحن أبداً عنوان localhost/http، ولا يعتمد
+// على تذكّر تبديل ثابت يدوي قبل النشر.
 // ════════════════════════════════════════════════════════════════════════════
 
 enum Environment { development, staging, production }
@@ -10,15 +18,30 @@ enum Environment { development, staging, production }
 class AppUrls {
   AppUrls._();
 
-  /// البيئة الحالية — تُغيَّر يدوياً عند النشر.
-  static const Environment current = Environment.development;
+  /// اسم البيئة وقت البناء (APP_ENV). القيم: development | staging | production.
+  static const String _envName =
+      String.fromEnvironment('APP_ENV', defaultValue: 'development');
 
-  /// Base URL حسب البيئة.
-  static String get baseUrl => switch (current) {
-        Environment.development => 'http://localhost:8000',
-        Environment.staging => 'https://staging.dt-teeth.example.com',
-        Environment.production => 'https://api.dt-teeth.example.com',
+  /// تجاوز اختياري صريح لعنوان الـ API وقت البناء — يتقدّم على اختيار البيئة.
+  static const String _baseUrlOverride =
+      String.fromEnvironment('API_BASE_URL');
+
+  /// البيئة الحالية — مشتقّة من APP_ENV (الافتراضي development).
+  static Environment get current => switch (_envName) {
+        'production' => Environment.production,
+        'staging' => Environment.staging,
+        _ => Environment.development,
       };
+
+  /// Base URL حسب البيئة، أو التجاوز الصريح (API_BASE_URL) إن وُجد.
+  static String get baseUrl {
+    if (_baseUrlOverride.isNotEmpty) return _baseUrlOverride;
+    return switch (current) {
+      Environment.development => 'http://localhost:8000',
+      Environment.staging => 'https://staging.dt-teeth.example.com',
+      Environment.production => 'https://api.dt-teeth.example.com',
+    };
+  }
 
   /// مهلة الاتصال القصوى (ثواني).
   static const Duration connectTimeout = Duration(seconds: 15);
