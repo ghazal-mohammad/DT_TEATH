@@ -21,8 +21,8 @@ import 'auth_layout_painters.dart';
 /// الفرق بينهما = حدّة ميل القطر. المرجع ~40° (skewY(40deg))؛ نستخدم ميلًا قويًا
 /// (~30°، فرق 0.34w) يبقي الكحلي مغطّيًا شعار DT.Teeth دون قصّه.
 /// زيدي الفرق لميل أحدّ (أقرب للمرجع) إن سمح المحتوى.
-const double _kSeamLeanHi = 0.70; // الطرف العلوي (الأبعد عن المنتصف)
-const double _kSeamLeanLo = 0.36; // الطرف السفلي (الأقرب للمنتصف)
+const double _kSeamLeanHi = 0.75; // الطرف العلوي — نفس topRatio الأصلي
+const double _kSeamLeanLo = 0.25; // الطرف السفلي — نفس botRatio الأصلي
 
 /// مدّة دوران الخلفية بين الخطوات — مطابِقة لمرجع AuthScreen تماماً:
 /// `.background-shape { transition: 1.5s ease }`. مُزامَنة مع انتقال المحتوى.
