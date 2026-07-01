@@ -17,9 +17,10 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'auth_layout_painters.dart';
 
-/// زاوية الميل القطري للفاصل (راديان) — الحالة الأساسية (الأبيض على اليمين).
-/// سالبة = ميل مطابق لاتجاه القطر في التصميم الأصلي.
-const double _kDiagLean = -0.18;
+/// موضعا طرفي الفاصل القطري (كنسبة من العرض): الطرف الأبعد والأقرب للمنتصف.
+/// الفرق بينهما = حدّة ميل القطر (~0.20w) — يبقى مائلًا بحدّة قريبًا من العمودي.
+const double _kSeamLeanHi = 0.60; // الطرف المائل بعيدًا عن المنتصف
+const double _kSeamLeanLo = 0.40; // الطرف المائل نحو المنتصف
 
 /// مدّة دوران الخلفية بين الخطوات — مطابِقة لمرجع AuthScreen تماماً:
 /// `.background-shape { transition: 1.5s ease }`. مُزامَنة مع انتقال المحتوى.
@@ -112,14 +113,17 @@ class _AuthFlowShellState extends State<AuthFlowShell>
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//   ROTATING BACKGROUND — نصف مستوٍ أبيض يدور حول مركز الشاشة
+//   ROTATING BACKGROUND — قطر مائل ينزلق (skew sweep) لا يدور كالمروحة
 // ══════════════════════════════════════════════════════════════════════════
 
-/// خلفية الدخول الدائرة: خلفية كحلية + نصف مستوٍ أبيض يدور حول مركز الشاشة.
+/// خلفية الدخول: كحلي متدرّج + لوحة بيضاء بقطر **مائل بحدّة** ينزلق أفقياً
+/// وينعكس ميله بين الخطوتين — مطابقةً لحركة مرجع AuthScreen (skewY على الأشكال)
+/// لا دورانًا كاملاً يمرّ بالوضع الأفقي (windmill) الذي كان يبدو خاطئاً.
 ///
-/// [progress] 0→1: الفاصل يدور نصف دورة (π) فيتبادل الأبيض جانبه من اليمين
-/// لليسار. لأن الفاصل يمرّ دائماً بمركز الشاشة، تبقى النسبة ~50/50 طوال الدوران
-/// (لا غسيل ولا تغطية كاملة في المنتصف).
+/// [progress] 0 = الأبيض على اليمين (email/login/setPassword)،
+///            1 = الأبيض على اليسار (verify).
+/// القطر يبقى قريبًا من العمودي طوال الحركة (لا يصبح أفقيًا أبدًا)، والأبيض
+/// يتبادل جهته عبر تلاشٍ متقاطع قصير عند المنتصف حيث يكون الفاصل عموديًا.
 class AuthRotatingBackground extends StatelessWidget {
   const AuthRotatingBackground({
     super.key,
@@ -127,84 +131,70 @@ class AuthRotatingBackground extends StatelessWidget {
     required this.glowPhase,
   });
 
-  /// 0 = الأبيض على اليمين، 1 = الأبيض على اليسار.
   final double progress;
-
-  /// طور نبض خط التوهج (value * 2π).
   final double glowPhase;
 
   @override
   Widget build(BuildContext context) {
-    // زاوية الفاصل: تبدأ بالميل الأساسي وتزيد π (نصف دورة) مع التقدّم.
-    final double theta = _kDiagLean + progress * math.pi;
+    return LayoutBuilder(
+      builder: (_, box) {
+        final double w = box.maxWidth, h = box.maxHeight;
+        final double p = progress;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // الخلفية الكحلية المتدرّجة (نفس authNavyGradient الأصلي) — أساس دائم
-        // تحت النصف الأبيض الدوّار. بدونها يظهر darkBg المسطّح فيبدو الكحلي مختلفاً.
-        const AuthNavyBackground(),
-        CustomPaint(
-          painter: _RotatingDividerPainter(
-            theta: theta,
-            glowPhase: glowPhase,
-            glowColor: AppColors.accent,
-          ),
-          child: const SizedBox.expand(),
-        ),
-      ],
+        // طرفا الفاصل ينزلقان أفقيًا مع انعكاس الميل (top ↔ bottom) — القطر
+        // يبقى مائلًا بحدّة (±0.10w حول المنتصف) ولا يمرّ بالوضع الأفقي.
+        final double topX = _lerp(w * _kSeamLeanHi, w * _kSeamLeanLo, p);
+        final double botX = _lerp(w * _kSeamLeanLo, w * _kSeamLeanHi, p);
+
+        // تبديل جهة الأبيض بتلاشٍ متقاطع قصير حول المنتصف (نافذة 0.42→0.58).
+        final double rightOp =
+            (1 - (p - 0.42) / 0.16).clamp(0.0, 1.0);
+        final double leftOp = ((p - 0.42) / 0.16).clamp(0.0, 1.0);
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // الكحلي المتدرّج الأصلي — أساس دائم.
+            const AuthNavyBackground(),
+
+            // الأبيض على اليمين (يتلاشى قرب المنتصف).
+            if (rightOp > 0.001)
+              Opacity(
+                opacity: rightOp,
+                child: ClipPath(
+                  clipper:
+                      AuthDiagRightClipper(topX: topX, botX: botX, W: w, H: h),
+                  child: const ColoredBox(color: Colors.white),
+                ),
+              ),
+
+            // الأبيض على اليسار (يظهر بعد المنتصف).
+            if (leftOp > 0.001)
+              Opacity(
+                opacity: leftOp,
+                child: ClipPath(
+                  clipper:
+                      AuthDiagLeftClipper(topX: topX, botX: botX, W: w, H: h),
+                  child: const ColoredBox(color: Colors.white),
+                ),
+              ),
+
+            // خط التوهج النابض على الفاصل.
+            Positioned.fill(
+              child: CustomPaint(
+                painter: AuthGlowLinePainter(
+                  start: Offset(topX, 0),
+                  end: Offset(botX, h),
+                  phase: glowPhase,
+                  glowColor: AppColors.accent,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
-}
 
-/// يرسم النصف المستوي الأبيض (مقصوصاً نصف-مستوٍ يدور حول المركز) + خط التوهج
-/// النابض على الفاصل. يعيد استخدام طبقات التوهج عبر [AuthGlowLinePainter].
-class _RotatingDividerPainter extends CustomPainter {
-  const _RotatingDividerPainter({
-    required this.theta,
-    required this.glowPhase,
-    required this.glowColor,
-  });
-
-  final double theta;
-  final double glowPhase;
-  final Color glowColor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Offset c = Offset(size.width / 2, size.height / 2);
-    // أبعد من قطر الشاشة لضمان تغطية النصف بالكامل بعد الدوران.
-    final double big = (size.width + size.height) * 2;
-
-    // ── النصف المستوي الأبيض ───────────────────────────────────────────────
-    canvas.save();
-    canvas.translate(c.dx, c.dy);
-    canvas.rotate(theta);
-    // في الإطار المُدوَّر: النصف x ≥ 0 (يمين المركز) أبيض. عند theta=0 = يمين
-    // الشاشة؛ عند theta=π = يسارها.
-    final Rect half = Rect.fromLTWH(0, -big, big, 2 * big);
-    canvas.clipRect(half);
-    canvas.drawRect(half, Paint()..color = Colors.white);
-    canvas.restore();
-
-    // ── خط التوهج على الفاصل (x=0 في الإطار المُدوَّر) ──────────────────────
-    // نقطتا طرفه على بُعد كبير على جانبي المركز.
-    final double s = math.sin(theta), co = math.cos(theta);
-    final double L = size.width + size.height;
-    final Offset p1 = Offset(c.dx - L * s, c.dy + L * co);
-    final Offset p2 = Offset(c.dx + L * s, c.dy - L * co);
-
-    AuthGlowLinePainter(
-      start: p1,
-      end: p2,
-      phase: glowPhase,
-      glowColor: glowColor,
-    ).paint(canvas, size);
-  }
-
-  @override
-  bool shouldRepaint(covariant _RotatingDividerPainter old) =>
-      old.theta != theta ||
-      old.glowPhase != glowPhase ||
-      old.glowColor != glowColor;
+  static double _lerp(double a, double b, double t) => a + (b - a) * t;
 }
