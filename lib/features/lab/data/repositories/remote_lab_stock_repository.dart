@@ -19,11 +19,20 @@ import 'package:dio/dio.dart';
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/lab_stock.dart';
 import '../../domain/repositories/lab_stock_repository.dart';
+import '../../../../core/session/session_cache_registry.dart';
 import '../datasources/lab_stock_remote_datasource.dart';
 
 class RemoteLabStockRepository implements LabStockRepository {
   RemoteLabStockRepository(this._remote) {
     _controller = StreamController<List<LabStock>>.broadcast(onListen: _emit);
+    SessionCacheRegistry.instance.register(_clearCache);
+  }
+
+  /// يمسح كاش الجلسة (يُستدعى عند تسجيل الخروج) — منعًا لتسريب بيانات مستخدم لآخر.
+  void _clearCache() {
+    _cache = const [];
+    _loaded = false;
+    _emit();
   }
 
   final LabStockRemoteDataSource _remote;

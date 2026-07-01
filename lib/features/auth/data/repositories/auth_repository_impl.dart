@@ -11,6 +11,7 @@ import '../../../../core/auth/auth_models.dart';
 import '../../../../core/auth/current_user.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/failure.dart';
+import '../../../../core/session/session_cache_registry.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 
@@ -106,6 +107,9 @@ class AuthRepositoryImpl implements AuthRepository {
     } finally {
       await DioClient.clearToken();
       CurrentUser.instance.clear();
+      // مسح كواش الجلسة (SWR) لكل المستودعات — منعًا لتسريب بيانات مستخدم لآخر
+      // على نفس الجهاز.
+      SessionCacheRegistry.instance.clearAll();
     }
   }
 

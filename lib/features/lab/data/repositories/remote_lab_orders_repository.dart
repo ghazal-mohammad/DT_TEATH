@@ -28,6 +28,7 @@ import '../../../../core/network/failure.dart';
 import '../../domain/entities/lab_order.dart';
 import '../../domain/repositories/lab_orders_repository.dart';
 import '../../domain/repositories/lab_repository.dart';
+import '../../../../core/session/session_cache_registry.dart';
 import '../datasources/lab_orders_remote_datasource.dart';
 
 class RemoteLabOrdersRepository implements LabOrdersRepository {
@@ -35,6 +36,14 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
     _controller = StreamController<List<LabOrderFull>>.broadcast(
       onListen: _emit,
     );
+    SessionCacheRegistry.instance.register(_clearCache);
+  }
+
+  /// يمسح كاش الجلسة (يُستدعى عند تسجيل الخروج) — منعًا لتسريب بيانات مستخدم لآخر.
+  void _clearCache() {
+    _cache = const [];
+    _loaded = false;
+    _emit();
   }
 
   final LabOrdersRemoteDataSource _remote;

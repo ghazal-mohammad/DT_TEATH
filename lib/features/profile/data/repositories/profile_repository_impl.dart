@@ -9,13 +9,20 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/auth/current_user.dart';
 import '../../../../core/network/failure.dart';
+import '../../../../core/session/session_cache_registry.dart';
 import '../../domain/entities/edit_profile_payload.dart';
 import '../../domain/entities/employee_profile.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasources/profile_remote_datasource.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
-  ProfileRepositoryImpl(this._remote);
+  ProfileRepositoryImpl(this._remote) {
+    // دفاع في العمق: الكاش مربوط أصلاً بمعرّف المالك، لكن نمسحه صراحةً عند الخروج.
+    SessionCacheRegistry.instance.register(() {
+      _cache = null;
+      _cacheOwnerId = null;
+    });
+  }
 
   final ProfileRemoteDataSource _remote;
 

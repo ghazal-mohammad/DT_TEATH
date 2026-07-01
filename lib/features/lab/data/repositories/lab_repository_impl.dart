@@ -8,12 +8,15 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../../../core/session/session_cache_registry.dart';
 import '../../domain/repositories/lab_repository.dart';
 import '../datasources/lab_remote_datasource.dart';
 import '../models/lab_technician.dart';
 
 class LabRepositoryImpl implements LabRepository {
-  LabRepositoryImpl(this._remote);
+  LabRepositoryImpl(this._remote) {
+    SessionCacheRegistry.instance.register(() => _cache = null);
+  }
 
   final LabRemoteDataSource _remote;
 
