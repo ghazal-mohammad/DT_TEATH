@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../domain/entities/lab_notification.dart';
 import '../../domain/repositories/lab_notifications_repository.dart';
 import 'lab_notifications_state.dart';
@@ -37,13 +38,13 @@ class LabNotificationsCubit extends Cubit<LabNotificationsState> {
             (list) => emit(state.copyWith(items: list)),
             onError: (Object e) => emit(state.copyWith(
               status: LabNotificationsStatus.error,
-              errorMessage: e.toString(),
+              errorMessage: userMessageFromError(e),
             )),
           );
     } catch (e) {
       emit(state.copyWith(
         status: LabNotificationsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }

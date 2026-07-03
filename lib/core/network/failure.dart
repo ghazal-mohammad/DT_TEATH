@@ -28,6 +28,14 @@ abstract class Failure extends Equatable {
   String toString() => 'Failure($code): $message';
 }
 
+/// يستخرج رسالة عربية **نظيفة** من أي خطأ لعرضها للمستخدم — بلا بادئة تقنية.
+///
+/// [Failure] تحمل رسالتها الجاهزة (message)، فنعيدها كما هي. أي خطأ آخر (استثناء
+/// غير متوقّع) يعود لرسالة عامّة آمنة بدل تسريب `toString()` التقني للمستخدم.
+/// تُستخدم في الـ Cubits بدل `e.toString()` (الذي كان يطبع "Failure(422): ...").
+String userMessageFromError(Object error) =>
+    error is Failure ? error.message : 'حدث خطأ غير متوقع — حاول مجدداً';
+
 /// أخطاء السيرفر — تُبنى من status code.
 class ServerFailure extends Failure {
   const ServerFailure(super.message, {super.code});

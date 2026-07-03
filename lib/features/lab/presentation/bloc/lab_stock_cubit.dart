@@ -48,7 +48,7 @@ class LabStockCubit extends Cubit<LabStockState> {
     } catch (e) {
       if (cached == null) {
         emit(state.copyWith(
-            status: LabStockStatusPhase.error, errorMessage: e.toString()));
+            status: LabStockStatusPhase.error, errorMessage: userMessageFromError(e)));
       }
     }
     _subscription?.cancel();
@@ -56,7 +56,7 @@ class LabStockCubit extends Cubit<LabStockState> {
       (list) => emit(state.copyWith(items: list)),
       onError: (Object e) => emit(state.copyWith(
         status: LabStockStatusPhase.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       )),
     );
   }

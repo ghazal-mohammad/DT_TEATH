@@ -24,6 +24,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../domain/entities/material_filter.dart';
 import '../../domain/entities/warehouse_material.dart';
 import '../../domain/repositories/warehouse_materials_repository.dart';
@@ -68,7 +69,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
     } catch (e) {
       emit(state.copyWith(
         status: MaterialsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }
@@ -109,7 +110,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
     } catch (e) {
       emit(state.copyWith(
         status: MaterialsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }
@@ -121,7 +122,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
     } catch (e) {
       emit(state.copyWith(
         status: MaterialsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }
@@ -133,7 +134,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
     } catch (e) {
       emit(state.copyWith(
         status: MaterialsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }

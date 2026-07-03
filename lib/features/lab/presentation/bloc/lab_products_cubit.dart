@@ -9,6 +9,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../domain/entities/lab_product.dart';
 import '../../domain/repositories/lab_products_repository.dart';
 import 'lab_products_state.dart';
@@ -45,7 +46,7 @@ class LabProductsCubit extends Cubit<LabProductsState> {
       if (cached == null) {
         emit(state.copyWith(
           status: LabProductsStatus.error,
-          errorMessage: e.toString(),
+          errorMessage: userMessageFromError(e),
         ));
       }
     }
@@ -54,7 +55,7 @@ class LabProductsCubit extends Cubit<LabProductsState> {
       (list) => emit(state.copyWith(products: list)),
       onError: (Object e) => emit(state.copyWith(
         status: LabProductsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       )),
     );
 
@@ -81,7 +82,7 @@ class LabProductsCubit extends Cubit<LabProductsState> {
     } catch (e) {
       emit(state.copyWith(
         status: LabProductsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }
@@ -93,7 +94,7 @@ class LabProductsCubit extends Cubit<LabProductsState> {
     } catch (e) {
       emit(state.copyWith(
         status: LabProductsStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: userMessageFromError(e),
       ));
     }
   }
