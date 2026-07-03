@@ -25,6 +25,14 @@ class DioClient {
   /// إرفاق التوكن لكل طلب بشكل حتمي.
   static String? _cachedToken;
 
+  /// يُستدعى عند انتهاء الجلسة (401 على طلب مُصادَق) — يضبطه [main] ليمسح
+  /// الجلسة محلياً ويوجّه لشاشة الدخول. null قبل ضبطه = لا إجراء.
+  static void Function()? onUnauthenticated;
+
+  /// حارس ضد التكرار: عدّة طلبات مُصادَقة قد ترجع 401 معاً بعد انتهاء التوكن،
+  /// فنعالج انتهاء الجلسة مرّة واحدة فقط (يُعاد ضبطه عند تسجيل دخول جديد).
+  static bool _sessionExpiredHandled = false;
+
   /// Dio instance جاهزة للاستخدام.
   /// تُبنى مرة واحدة عند بدء التطبيق وتُسجّل في GetIt.
   static Dio build() {
@@ -57,8 +65,21 @@ class DioClient {
           }
           handler.next(options);
         },
-        // ملاحظة: لا نمسح التوكن تلقائياً عند 401 — كان أي 401 عابر يهدم
-        // الجلسة كلها. تسجيل الخروج الصريح هو اللي يمسح التوكن.
+        onError: (e, handler) {
+          // 401 على طلب حمل توكن (Authorization) = التوكن منتهٍ/ملغى → انتهت
+          // الجلسة. نستثني طلبات الدخول/التفعيل (لا تحمل توكن) فيبقى خطؤها
+          // ظاهراً في النموذج. ومع تسخين التوكن في الذاكرة لم يعُد الـ 401
+          // عابراً (سبب الحجب السابق للمعالجة التلقائية زال).
+          final bool authed =
+              e.requestOptions.headers.containsKey('Authorization');
+          if (e.response?.statusCode == 401 &&
+              authed &&
+              !_sessionExpiredHandled) {
+            _sessionExpiredHandled = true;
+            onUnauthenticated?.call();
+          }
+          handler.next(e);
+        },
       ),
     );
 
@@ -75,6 +96,7 @@ class DioClient {
   /// حفظ التوكن بعد تسجيل الدخول (ذاكرة + storage).
   static Future<void> saveToken(String token) {
     _cachedToken = token;
+    _sessionExpiredHandled = false; // جلسة جديدة → إعادة تسليح حارس الانتهاء.
     return _storage.write(key: _tokenKey, value: token);
   }
 

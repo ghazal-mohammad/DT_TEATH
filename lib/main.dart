@@ -19,9 +19,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/auth/current_user.dart';
 import 'core/di/injection_container.dart' as di;
 import 'core/l10n/generated/app_localizations.dart';
+import 'core/network/dio_client.dart';
 import 'core/router/app_router.dart';
+import 'core/router/route_names.dart';
+import 'core/session/session_cache_registry.dart';
 import 'core/theme/app_theme.dart';
 import 'shared/bloc/locale_cubit.dart';
 import 'shared/bloc/mock_system_cubit.dart';
@@ -40,6 +44,16 @@ Future<void> main() async {
 
   // تهيئة الـ DI قبل runApp.
   await di.initDependencies();
+
+  // معالجة انتهاء الجلسة (401 على طلب مُصادَق): امسح الجلسة محلياً — التوكن
+  // والمستخدم وكواش الـ SWR — ووجّه لشاشة الدخول. يُستدعى مرّة واحدة عبر حارس
+  // DioClient (لا حلقات إعادة توجيه من طلبات 401 متزامنة).
+  DioClient.onUnauthenticated = () {
+    DioClient.clearToken();
+    CurrentUser.instance.clear();
+    SessionCacheRegistry.instance.clearAll();
+    AppRouter.router.go(RouteNames.login);
+  };
 
   // تحميل التفضيلات المحفوظة (تشغيل متوازي لتسريع الإقلاع).
   await Future.wait([
