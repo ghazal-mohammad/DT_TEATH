@@ -27,10 +27,22 @@ import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 import 'core/session/session_cache_registry.dart';
 import 'core/theme/app_theme.dart';
+import 'features/auth/domain/repositories/auth_repository.dart';
 import 'shared/bloc/locale_cubit.dart';
 import 'shared/bloc/mock_system_cubit.dart';
 import 'shared/bloc/text_scale_cubit.dart';
 import 'shared/bloc/theme_cubit.dart';
+import 'shared/widgets/session/idle_timeout_watcher.dart';
+
+/// مدّة الخمول قبل قفل الجلسة تلقائياً (أمان الأجهزة المشتركة).
+const Duration _kIdleTimeout = Duration(minutes: 15);
+
+/// قفل الجلسة عند الخمول: تسجيل خروج صامت (يُبطل التوكن في الباك ويمسح محلياً)
+/// ثم توجيه لشاشة الدخول. صامت (بلا نافذة تأكيد) لأنه تلقائي.
+void _onIdleTimeout() {
+  di.sl<AuthRepository>().logout();
+  AppRouter.router.go(RouteNames.login);
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -113,15 +125,23 @@ class DtTeethApp extends StatelessWidget {
                     // التنقل
                     routerConfig: AppRouter.router,
 
-                    // حجم الخط (وصولية): يُطبَّق هنا عبر MediaQuery.textScaler
-                    // على كل الصفحات — بلا مسّ أي ودجت أو تصميم.
+                    // غلاف الصفحات: (1) قفل الجلسة بالخمول (أمان)، (2) حجم الخط
+                    // (وصولية) عبر MediaQuery.textScaler — كلاهما بلا مسّ أي ودجت
+                    // أو تصميم.
                     builder: (context, child) {
                       final scale =
                           context.watch<TextScaleCubit>().state.factor;
                       final mq = MediaQuery.of(context);
-                      return MediaQuery(
-                        data: mq.copyWith(textScaler: TextScaler.linear(scale)),
-                        child: child ?? const SizedBox.shrink(),
+                      return IdleTimeoutWatcher(
+                        timeout: _kIdleTimeout,
+                        sessionListenable: CurrentUser.instance,
+                        isActive: () => CurrentUser.instance.isLoggedIn,
+                        onTimeout: _onIdleTimeout,
+                        child: MediaQuery(
+                          data:
+                              mq.copyWith(textScaler: TextScaler.linear(scale)),
+                          child: child ?? const SizedBox.shrink(),
+                        ),
                       );
                     },
 
