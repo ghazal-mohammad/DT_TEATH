@@ -382,32 +382,39 @@ class _MovementButton extends StatelessWidget {
       message: context.l10n.whMovementTitle,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: isLight ? Colors.white : AppColors.darkBg1,
-              border: Border.all(
-                  color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.swap_vert_rounded,
-                    size: 15, color: AppColors.primary),
-                const SizedBox(width: 4),
-                Text(
-                  context.l10n.whMovementColumn,
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+        child: Semantics(
+          button: true,
+          label: context.l10n.whMovementTitle,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: isLight ? Colors.white : AppColors.darkBg1,
+                border: Border.all(
+                    color:
+                        isLight ? AppColors.lightBorder : AppColors.darkBorder),
+                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.swap_vert_rounded,
+                      size: 15, color: AppColors.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    context.l10n.whMovementColumn,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color:
+                          isLight ? AppColors.lightText1 : AppColors.darkText1,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

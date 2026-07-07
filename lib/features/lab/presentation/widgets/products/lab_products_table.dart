@@ -137,22 +137,27 @@ class _IconAction extends StatelessWidget {
       message: tooltip,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: 32,
-            height: 30,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isLight ? Colors.white : AppColors.darkBg1,
-              border: Border.all(
-                  color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-            ),
-            child: Icon(
-              icon,
-              size: 17,
-              color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+        child: Semantics(
+          button: true,
+          label: tooltip,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              width: 32,
+              height: 30,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isLight ? Colors.white : AppColors.darkBg1,
+                border: Border.all(
+                    color:
+                        isLight ? AppColors.lightBorder : AppColors.darkBorder),
+                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+              ),
+              child: Icon(
+                icon,
+                size: 17,
+                color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+              ),
             ),
           ),
         ),
