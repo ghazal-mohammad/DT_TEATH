@@ -20,10 +20,12 @@ class LabProductsTable extends StatelessWidget {
     super.key,
     required this.products,
     required this.onEdit,
+    required this.onDelete,
   });
 
   final List<LabProduct> products;
   final void Function(LabProduct) onEdit;
+  final void Function(LabProduct) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +95,23 @@ class LabProductsTable extends StatelessWidget {
             AppDataColumn<LabProduct>(
               label: '',
               flex: 2,
-              cellBuilder: (p) => Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: _IconAction(
-                  icon: Icons.edit_outlined,
-                  tooltip: l10n.labProdEditTitle,
-                  onTap: () => onEdit(p),
-                ),
+              cellBuilder: (p) => Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _IconAction(
+                    icon: Icons.edit_outlined,
+                    tooltip: l10n.labProdEditTitle,
+                    onTap: () => onEdit(p),
+                  ),
+                  const SizedBox(width: AppSizes.spaceSM),
+                  _IconAction(
+                    icon: Icons.delete_outline_rounded,
+                    tooltip: l10n.delete,
+                    danger: true,
+                    onTap: () => onDelete(p),
+                  ),
+                ],
               ),
             ),
           ],
@@ -124,11 +136,15 @@ class _IconAction extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.onTap,
+    this.danger = false,
   });
 
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
+
+  /// نمط الحذف — لون أحمر للأيقونة (إجراء حذر).
+  final bool danger;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +172,9 @@ class _IconAction extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 17,
-                color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+                color: danger
+                    ? AppColors.alertRed
+                    : (isLight ? AppColors.lightText2 : AppColors.darkText2),
               ),
             ),
           ),

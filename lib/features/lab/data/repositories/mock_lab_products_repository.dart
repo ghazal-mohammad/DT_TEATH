@@ -77,6 +77,13 @@ class MockLabProductsRepository implements LabProductsRepository {
   }
 
   @override
+  Future<void> delete(String id) async {
+    await Future<void>.delayed(_mockLatency);
+    _products.removeWhere((p) => p.id == id);
+    _emit();
+  }
+
+  @override
   Stream<List<LabProduct>> watchAll() => _controller.stream;
 
   // ── بذرة الكتالوج (مؤقّتة حتى ربط GET /api/lab/products) ──────────────────

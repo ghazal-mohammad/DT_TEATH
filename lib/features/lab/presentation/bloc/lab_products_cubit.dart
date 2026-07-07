@@ -99,6 +99,18 @@ class LabProductsCubit extends Cubit<LabProductsState> {
     }
   }
 
+  /// حذف منتج (الـ stream يحدّث القائمة تلقائياً).
+  Future<void> delete(String id) async {
+    try {
+      await _repository.delete(id);
+    } catch (e) {
+      emit(state.copyWith(
+        status: LabProductsStatus.error,
+        errorMessage: userMessageFromError(e),
+      ));
+    }
+  }
+
   @override
   Future<void> close() async {
     await _subscription?.cancel();

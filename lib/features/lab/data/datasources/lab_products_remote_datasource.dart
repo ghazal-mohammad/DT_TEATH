@@ -49,6 +49,11 @@ class LabProductsRemoteDataSource {
     return _asData(res.data);
   }
 
+  /// POST /api/labManager/deleteLabItem/{id} → حذف صنف.
+  Future<void> delete(Object id) async {
+    await _dio.post<dynamic>(ApiEndpoints.labManagerDeleteLabItem(id));
+  }
+
   // ── مساعدات استخراج ──────────────────────────────────────────────────────
 
   /// يستخرج `data` كقائمة من ردّ `{success, data:[...]}`.

@@ -2169,6 +2169,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labProdEditTitle => 'تعديل منتج';
 
   @override
+  String get labProdDeleteTitle => 'حذف المنتج';
+
+  @override
+  String labProdDeleteConfirm(String name) {
+    return 'هل تريد حذف «$name»؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
   String get labProdColType => 'النوع';
 
   @override

@@ -30,6 +30,9 @@ abstract class LabProductsRepository {
   /// يحدّث منتجاً موجوداً. يرجع الـ entity المحدّث.
   Future<LabProduct> update(LabProduct product);
 
+  /// يحذف منتجاً بالمعرّف.
+  Future<void> delete(String id);
+
   /// stream للمنتجات — لتحديث الـ UI تلقائياً عند أي تغيير.
   Stream<List<LabProduct>> watchAll();
 }

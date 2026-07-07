@@ -77,6 +77,7 @@ class LabProductsPage extends StatelessWidget {
                       LabProductsTable(
                         products: state.filtered,
                         onEdit: (p) => _onEdit(context, p),
+                        onDelete: (p) => _onDelete(context, p),
                       ),
                     ],
                   ),
@@ -125,5 +126,31 @@ class LabProductsPage extends StatelessWidget {
       categoryId: result.categoryId,
       clearCategory: result.categoryId == null,
     ));
+  }
+
+  Future<void> _onDelete(BuildContext context, LabProduct product) async {
+    final cubit = context.read<LabProductsCubit>();
+    final l10n = context.l10n;
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.labProdDeleteTitle),
+        content: Text(l10n.labProdDeleteConfirm(product.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) cubit.delete(product.id);
   }
 }

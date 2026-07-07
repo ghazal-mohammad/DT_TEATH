@@ -4274,6 +4274,18 @@ abstract class AppLocalizations {
   /// **'Edit product'**
   String get labProdEditTitle;
 
+  /// No description provided for @labProdDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete product'**
+  String get labProdDeleteTitle;
+
+  /// No description provided for @labProdDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"? This action cannot be undone.'**
+  String labProdDeleteConfirm(String name);
+
   /// No description provided for @labProdColType.
   ///
   /// In en, this message translates to:

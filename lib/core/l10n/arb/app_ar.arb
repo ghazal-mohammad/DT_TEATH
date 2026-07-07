@@ -749,6 +749,11 @@
   "labProdAdd": "منتج جديد",
   "labProdAddTitle": "إضافة منتج",
   "labProdEditTitle": "تعديل منتج",
+  "labProdDeleteTitle": "حذف المنتج",
+  "labProdDeleteConfirm": "هل تريد حذف «{name}»؟ لا يمكن التراجع عن هذا الإجراء.",
+  "@labProdDeleteConfirm": {
+    "placeholders": { "name": { "type": "String" } }
+  },
   "labProdColType": "النوع",
   "labProdColPrice": "السعر (ل.س)",
   "labProdColDuration": "مدة التصنيع",

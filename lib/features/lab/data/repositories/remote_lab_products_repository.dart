@@ -114,6 +114,17 @@ class RemoteLabProductsRepository implements LabProductsRepository {
   }
 
   @override
+  Future<void> delete(String id) async {
+    try {
+      await _remote.delete(id);
+      _cache = _cache.where((p) => p.id != id).toList(growable: false);
+      _emit();
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Stream<List<LabProduct>> watchAll() => _controller.stream;
 
   // ── تحويل JSON ↔ entity ──────────────────────────────────────────────────

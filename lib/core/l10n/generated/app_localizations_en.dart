@@ -2188,6 +2188,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProdEditTitle => 'Edit product';
 
   @override
+  String get labProdDeleteTitle => 'Delete product';
+
+  @override
+  String labProdDeleteConfirm(String name) {
+    return 'Delete \"$name\"? This action cannot be undone.';
+  }
+
+  @override
   String get labProdColType => 'Type';
 
   @override

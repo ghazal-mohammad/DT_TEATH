@@ -817,6 +817,11 @@
   "labProdAdd": "New product",
   "labProdAddTitle": "Add product",
   "labProdEditTitle": "Edit product",
+  "labProdDeleteTitle": "Delete product",
+  "labProdDeleteConfirm": "Delete \"{name}\"? This action cannot be undone.",
+  "@labProdDeleteConfirm": {
+    "placeholders": { "name": { "type": "String" } }
+  },
   "labProdColType": "Type",
   "labProdColPrice": "Price (SYP)",
   "labProdColDuration": "Production time",
