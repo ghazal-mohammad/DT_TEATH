@@ -117,6 +117,7 @@ class _LabMaterialRequestDialogState extends State<LabMaterialRequestDialog> {
               TextField(
                 controller: _material,
                 autofocus: true,
+                inputFormatters: [LengthLimitingTextInputFormatter(120)],
                 decoration: _decoration(errorText: _materialError),
               ),
               const SizedBox(height: AppSizes.spaceMD),
@@ -133,7 +134,8 @@ class _LabMaterialRequestDialogState extends State<LabMaterialRequestDialog> {
                           controller: _quantity,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(9),
                           ],
                           decoration: _decoration(errorText: _quantityError),
                         ),
@@ -174,6 +176,7 @@ class _LabMaterialRequestDialogState extends State<LabMaterialRequestDialog> {
               const SizedBox(height: 6),
               TextField(
                 controller: _company,
+                inputFormatters: [LengthLimitingTextInputFormatter(120)],
                 decoration: _decoration(),
               ),
               const SizedBox(height: AppSizes.spaceMD),
@@ -182,6 +185,7 @@ class _LabMaterialRequestDialogState extends State<LabMaterialRequestDialog> {
               TextField(
                 controller: _reason,
                 maxLines: 2,
+                inputFormatters: [LengthLimitingTextInputFormatter(300)],
                 decoration: _decoration(hintText: l10n.labReqReasonHint),
               ),
               const SizedBox(height: AppSizes.spaceLG),

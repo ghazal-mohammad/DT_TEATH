@@ -146,6 +146,7 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
               TextField(
                 controller: _name,
                 autofocus: true,
+                inputFormatters: [LengthLimitingTextInputFormatter(120)],
                 decoration: _decoration(errorText: _nameError),
               ),
               const SizedBox(height: AppSizes.spaceMD),
@@ -202,7 +203,8 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
                           controller: _price,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(9),
                           ],
                           decoration: _decoration(),
                         ),
@@ -220,7 +222,8 @@ class _LabProductFormDialogState extends State<LabProductFormDialog> {
                           controller: _days,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(4),
                           ],
                           decoration: _decoration(),
                         ),

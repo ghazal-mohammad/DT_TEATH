@@ -254,7 +254,10 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                 child: TextField(
                   controller: r.qty,
                   keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(6),
+                  ],
                   textAlign: TextAlign.center,
                   onChanged: (_) {
                     setState(() {});
@@ -510,7 +513,8 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                             controller: _cost,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(9),
                             ],
                             onChanged: (_) => _costEdited = true,
                             decoration: InputDecoration(

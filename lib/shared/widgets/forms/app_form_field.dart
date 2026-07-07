@@ -30,6 +30,10 @@ import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 
+/// حدّ أقصى افتراضي لطول أي حقل (دفاع-في-العمق) — يمنع لصق نصوص ضخمة تُجمّد
+/// الواجهة. الباك يبقى مرجع التحقّق؛ هذا حماية أمامية. يُتجاوَز بتمرير [maxLength].
+const int _kDefaultMaxInputLength = 500;
+
 /// حقل إدخال نصّي موحّد مع label وسلوك validation.
 ///
 /// يغلّف TextFormField الأصلي بستايل النظام ويضيف طبقة من الأمان:
@@ -123,6 +127,14 @@ class _AppFormFieldState extends State<AppFormField> {
     if (mounted) setState(() {});
   }
 
+  /// مُنسّقات الإدخال الفعلية: مُنسّقات المستدعي + حدّ طول افتراضي إن لم يُحدَّد
+  /// [maxLength] صراحةً (TextFormField يفرض maxLength وحده عند تمريره).
+  List<TextInputFormatter> get _effectiveFormatters => [
+        ...?widget.inputFormatters,
+        if (widget.maxLength == null)
+          LengthLimitingTextInputFormatter(_kDefaultMaxInputLength),
+      ];
+
   @override
   Widget build(BuildContext context) {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
@@ -201,7 +213,7 @@ class _AppFormFieldState extends State<AppFormField> {
         minLines: widget.minLines,
         maxLength: widget.maxLength,
         keyboardType: widget.keyboardType,
-        inputFormatters: widget.inputFormatters,
+        inputFormatters: _effectiveFormatters,
         onTap: widget.onTap,
         textInputAction: widget.textInputAction,
         autofocus: widget.autofocus,
