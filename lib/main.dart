@@ -32,6 +32,7 @@ import 'shared/bloc/locale_cubit.dart';
 import 'shared/bloc/mock_system_cubit.dart';
 import 'shared/bloc/text_scale_cubit.dart';
 import 'shared/bloc/theme_cubit.dart';
+import 'shared/widgets/feedback/offline_banner.dart';
 import 'shared/widgets/session/idle_timeout_watcher.dart';
 
 /// مدّة الخمول قبل قفل الجلسة تلقائياً (أمان الأجهزة المشتركة).
@@ -132,15 +133,18 @@ class DtTeethApp extends StatelessWidget {
                       final scale =
                           context.watch<TextScaleCubit>().state.factor;
                       final mq = MediaQuery.of(context);
-                      return IdleTimeoutWatcher(
-                        timeout: _kIdleTimeout,
-                        sessionListenable: CurrentUser.instance,
-                        isActive: () => CurrentUser.instance.isLoggedIn,
-                        onTimeout: _onIdleTimeout,
-                        child: MediaQuery(
-                          data:
-                              mq.copyWith(textScaler: TextScaler.linear(scale)),
-                          child: child ?? const SizedBox.shrink(),
+                      // شريط انقطاع الاتصال (أعلى) + قفل الخمول + حجم الخط.
+                      return OfflineBanner(
+                        child: IdleTimeoutWatcher(
+                          timeout: _kIdleTimeout,
+                          sessionListenable: CurrentUser.instance,
+                          isActive: () => CurrentUser.instance.isLoggedIn,
+                          onTimeout: _onIdleTimeout,
+                          child: MediaQuery(
+                            data: mq.copyWith(
+                                textScaler: TextScaler.linear(scale)),
+                            child: child ?? const SizedBox.shrink(),
+                          ),
                         ),
                       );
                     },

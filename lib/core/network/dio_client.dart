@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../constants/app_urls.dart';
+import 'network_status.dart';
 
 class DioClient {
   DioClient._();
@@ -65,7 +66,24 @@ class DioClient {
           }
           handler.next(options);
         },
+        onResponse: (response, handler) {
+          // وصل ردّ من الخادم ⇒ الاتصال متاح.
+          NetworkStatus.instance.markOnline();
+          handler.next(response);
+        },
         onError: (e, handler) {
+          // خطأ اتصال/مهلة بلا ردّ ⇒ غير متصل. وجود ردّ (حتى خطأ) ⇒ متصل.
+          const offlineTypes = {
+            DioExceptionType.connectionError,
+            DioExceptionType.connectionTimeout,
+            DioExceptionType.receiveTimeout,
+            DioExceptionType.sendTimeout,
+          };
+          if (e.response == null && offlineTypes.contains(e.type)) {
+            NetworkStatus.instance.markOffline();
+          } else if (e.response != null) {
+            NetworkStatus.instance.markOnline();
+          }
           // 401 على طلب حمل توكن (Authorization) = التوكن منتهٍ/ملغى → انتهت
           // الجلسة. نستثني طلبات الدخول/التفعيل (لا تحمل توكن) فيبقى خطؤها
           // ظاهراً في النموذج. ومع تسخين التوكن في الذاكرة لم يعُد الـ 401

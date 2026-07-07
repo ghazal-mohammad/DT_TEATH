@@ -146,6 +146,7 @@
   "statusMaintenance": "Maintenance",
 
   "errorNetwork": "No internet connection — check your network",
+  "networkOfflineBanner": "No internet connection",
   "errorServer": "Server error — try again in a moment",
   "errorTimeout": "Request timed out — server not responding",
   "errorUnauthorized": "Session expired — please sign in again",

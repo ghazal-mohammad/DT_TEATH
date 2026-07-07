@@ -296,6 +296,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorNetwork => 'No internet connection — check your network';
 
   @override
+  String get networkOfflineBanner => 'No internet connection';
+
+  @override
   String get errorServer => 'Server error — try again in a moment';
 
   @override

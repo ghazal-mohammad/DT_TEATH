@@ -295,6 +295,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorNetwork => 'لا يوجد اتصال بالإنترنت — تحقق من الشبكة';
 
   @override
+  String get networkOfflineBanner => 'لا يوجد اتصال بالإنترنت';
+
+  @override
   String get errorServer => 'خطأ في السيرفر — حاول مرة أخرى بعد قليل';
 
   @override

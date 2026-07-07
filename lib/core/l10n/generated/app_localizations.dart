@@ -656,6 +656,12 @@ abstract class AppLocalizations {
   /// **'No internet connection — check your network'**
   String get errorNetwork;
 
+  /// No description provided for @networkOfflineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get networkOfflineBanner;
+
   /// No description provided for @errorServer.
   ///
   /// In en, this message translates to:
