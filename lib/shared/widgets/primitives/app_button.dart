@@ -120,8 +120,23 @@ class AppButton extends StatefulWidget {
   State<AppButton> createState() => _AppButtonState();
 }
 
+/// نافذة تجاهل النقرات المكرّرة (leading-edge): النقرة الأولى تُنفَّذ فورًا،
+/// وأي نقرة خلالها تُتجاهَل — يمنع الإرسال/الإضافة المزدوجة قبل ظهور حالة التحميل.
+const Duration _kTapCooldown = Duration(milliseconds: 600);
+
 class _AppButtonState extends State<AppButton> {
   bool _isHovered = false;
+  DateTime? _lastTapAt;
+
+  /// ينفّذ onPressed مع منع النقر المزدوج المتسارع.
+  void _handleTap() {
+    final now = DateTime.now();
+    if (_lastTapAt != null && now.difference(_lastTapAt!) < _kTapCooldown) {
+      return; // نقرة مكرّرة سريعة → تُتجاهَل.
+    }
+    _lastTapAt = now;
+    widget.onPressed?.call();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +174,7 @@ class _AppButtonState extends State<AppButton> {
         enabled: isEnabled,
         label: widget.label,
         child: GestureDetector(
-          onTap: isEnabled ? widget.onPressed : null,
+          onTap: isEnabled ? _handleTap : null,
           child: widget.expanded
               ? SizedBox(width: double.infinity, child: button)
               : button,

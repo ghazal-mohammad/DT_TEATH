@@ -61,12 +61,27 @@ class AuthSubmitButton extends StatefulWidget {
   State<AuthSubmitButton> createState() => _AuthSubmitButtonState();
 }
 
+/// نافذة تجاهل النقر المزدوج المتسارع (leading-edge) — يمنع دخولًا/إرسالًا مكرّرًا.
+const Duration _kAuthTapCooldown = Duration(milliseconds: 600);
+
 class _AuthSubmitButtonState extends State<AuthSubmitButton>
     with SingleTickerProviderStateMixin {
   bool _hovered = false;
+  DateTime? _lastTapAt;
 
   late final AnimationController _pulseCtrl;
   late final Animation<double> _pulseAnim;
+
+  /// ينفّذ onPressed مع منع النقر المزدوج المتسارع.
+  void _handleTap() {
+    final now = DateTime.now();
+    if (_lastTapAt != null &&
+        now.difference(_lastTapAt!) < _kAuthTapCooldown) {
+      return;
+    }
+    _lastTapAt = now;
+    widget.onPressed();
+  }
 
   @override
   void initState() {
@@ -125,7 +140,7 @@ class _AuthSubmitButtonState extends State<AuthSubmitButton>
           onEnter: (_) => setState(() => _hovered = true),
           onExit: (_) => setState(() => _hovered = false),
           child: GestureDetector(
-            onTap: active ? widget.onPressed : null,
+            onTap: active ? _handleTap : null,
             child: AnimatedContainer(
               duration: AppSizes.animationFast,
               height: 50,
