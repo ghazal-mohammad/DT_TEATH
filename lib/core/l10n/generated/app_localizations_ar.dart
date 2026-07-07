@@ -1282,6 +1282,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsThemeSystem => 'افتراضي النظام';
 
   @override
+  String get settingsTextSize => 'حجم الخط';
+
+  @override
+  String get settingsTextSizeDesc => 'كبّر أو صغّر خط الواجهة كما يناسبك';
+
+  @override
+  String get settingsTextSizeSmall => 'صغير';
+
+  @override
+  String get settingsTextSizeNormal => 'عادي';
+
+  @override
+  String get settingsTextSizeLarge => 'كبير';
+
+  @override
+  String get settingsTextSizeXLarge => 'أكبر';
+
+  @override
   String get settingsLanguageDesc => 'لغة عرض النظام';
 
   @override

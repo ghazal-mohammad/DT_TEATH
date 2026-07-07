@@ -2570,6 +2570,42 @@ abstract class AppLocalizations {
   /// **'System default'**
   String get settingsThemeSystem;
 
+  /// No description provided for @settingsTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get settingsTextSize;
+
+  /// No description provided for @settingsTextSizeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enlarge or reduce the interface font to your comfort'**
+  String get settingsTextSizeDesc;
+
+  /// No description provided for @settingsTextSizeSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get settingsTextSizeSmall;
+
+  /// No description provided for @settingsTextSizeNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get settingsTextSizeNormal;
+
+  /// No description provided for @settingsTextSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get settingsTextSizeLarge;
+
+  /// No description provided for @settingsTextSizeXLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Larger'**
+  String get settingsTextSizeXLarge;
+
   /// No description provided for @settingsLanguageDesc.
   ///
   /// In en, this message translates to:

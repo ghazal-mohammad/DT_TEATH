@@ -30,6 +30,7 @@ class AuthGlowLinePainter extends CustomPainter {
     required this.start,
     required this.end,
     required this.phase,
+
     this.glowColor = AppColors.reservedBg,
     this.glowClipPath,
   });
@@ -180,7 +181,7 @@ class AuthNavyBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned.fill(
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: AppColors.authNavyGradient,
         ),
       ),

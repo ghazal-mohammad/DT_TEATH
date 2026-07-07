@@ -40,7 +40,7 @@ class _ProfileSidebar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: _Palette.cardBorder),
+        border: Border.all(color: _Palette.of(context).cardBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -80,11 +80,11 @@ class _ProfileSidebar extends StatelessWidget {
           Text(
             data.email,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: _Palette.pinkAccent,
+              color: _Palette.of(context).pinkAccent,
             ),
           ),
           const SizedBox(height: 18),
@@ -128,20 +128,24 @@ class _SectionLabelDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(height: 1, color: _Palette.cardBorder)),
+        Expanded(
+          child: Divider(height: 1, color: _Palette.of(context).cardBorder),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: _Palette.label,
+              color: _Palette.of(context).label,
             ),
           ),
         ),
-        const Expanded(child: Divider(height: 1, color: _Palette.cardBorder)),
+        Expanded(
+          child: Divider(height: 1, color: _Palette.of(context).cardBorder),
+        ),
       ],
     );
   }
@@ -178,11 +182,11 @@ class _SideMetaCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: _Palette.label,
+                    color: _Palette.of(context).label,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -207,7 +211,7 @@ class _SideMetaCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(9),
             ),
-            child: Icon(icon, size: 17, color: _Palette.accent),
+            child: Icon(icon, size: 17, color: _Palette.of(context).accent),
           ),
         ],
       ),
@@ -243,7 +247,9 @@ class _SidebarActions extends StatelessWidget {
     return Column(
       children: [
         _WideButton(
-          label: saving ? context.l10n.profileSaving : context.l10n.profileSaveChanges,
+          label: saving
+              ? context.l10n.profileSaving
+              : context.l10n.profileSaveChanges,
           icon: Icons.check_rounded,
           primary: true,
           onTap: saving ? null : onSaveEdit,
@@ -275,9 +281,11 @@ class _WideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = primary ? _Palette.accent : Colors.white;
+    final bg = primary ? _Palette.of(context).accent : Colors.white;
     final fg = primary ? Colors.white : AppColors.lightText1;
-    final border = primary ? _Palette.accent : _Palette.cardBorder;
+    final border = primary
+        ? _Palette.of(context).accent
+        : _Palette.of(context).cardBorder;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusMD),
@@ -342,25 +350,25 @@ class _AvatarState extends State<_Avatar> {
 
   /// خلفية متدرّجة + الحرف الأول — تُعرض لما ما في صورة (أو فشل تحميلها).
   Widget _fallbackLetter() => Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: _Palette.avatarGradient,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: _Palette.avatarGradient,
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+    child: Center(
+      child: Text(
+        initial,
+        style: const TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 56,
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
         ),
-        child: Center(
-          child: Text(
-            initial,
-            style: const TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 56,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -373,38 +381,44 @@ class _AvatarState extends State<_Avatar> {
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
-          GestureDetector(
-            onTap: onChangePhoto,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: Container(
-                width: 132,
-                height: 132,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _Palette.accent.withValues(alpha: 0.24),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+          Semantics(
+            button: true,
+            image: true,
+            label: 'تغيير الصورة الشخصية',
+            child: GestureDetector(
+              onTap: onChangePhoto,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(
+                  width: 132,
+                  height: 132,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _Palette.of(
+                          context,
+                        ).accent.withValues(alpha: 0.24),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: hasLocal
+                      ? Image.memory(bytes!, fit: BoxFit.cover)
+                      : hasNetwork
+                      // webHtmlElementStrategy.fallback: لو حجب الـ CORS جلب
+                      // الصورة، تُعرض عبر <img> مباشرة (الويب فقط) بدل الفشل.
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          webHtmlElementStrategy:
+                              WebHtmlElementStrategy.fallback,
+                          errorBuilder: (_, __, ___) => _fallbackLetter(),
+                        )
+                      : _fallbackLetter(),
                 ),
-                child: hasLocal
-                    ? Image.memory(bytes!, fit: BoxFit.cover)
-                    : hasNetwork
-                        // webHtmlElementStrategy.fallback: لو حجب الـ CORS جلب
-                        // الصورة، تُعرض عبر <img> مباشرة (الويب فقط) بدل الفشل.
-                        ? Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
-                            webHtmlElementStrategy:
-                                WebHtmlElementStrategy.fallback,
-                            errorBuilder: (_, __, ___) =>
-                                _fallbackLetter(),
-                          )
-                        : _fallbackLetter(),
               ),
             ),
           ),
@@ -430,11 +444,7 @@ class _AvatarState extends State<_Avatar> {
               ),
             ),
           // النقطة الخضراء (متصل) أعلى يسار الصورة.
-          const Positioned(
-            top: 10,
-            left: 10,
-            child: _OnlineDot(),
-          ),
+          const Positioned(top: 10, left: 10, child: _OnlineDot()),
           // زر "تغيير الصورة" أسفل وسط الصورة.
           Positioned(
             bottom: 4,
@@ -442,16 +452,23 @@ class _AvatarState extends State<_Avatar> {
               onTap: loading ? null : onChangePhoto,
               borderRadius: BorderRadius.circular(AppSizes.radiusFull),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
-                  color: _Palette.accent,
+                  color: _Palette.of(context).accent,
                   borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                   border: Border.all(color: Colors.white, width: 2),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.edit_outlined, size: 13, color: Colors.white),
+                    const Icon(
+                      Icons.edit_outlined,
+                      size: 13,
+                      color: Colors.white,
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       context.l10n.profileChangePhoto,
@@ -516,4 +533,3 @@ class _RoleBadge extends StatelessWidget {
     );
   }
 }
-

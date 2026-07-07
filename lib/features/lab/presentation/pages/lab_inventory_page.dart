@@ -47,7 +47,8 @@ class LabInventoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LabStockCubit(repository: sl<LabStockRepository>())..load(),
+      create: (_) =>
+          LabStockCubit(repository: sl<LabStockRepository>())..load(),
       child: Builder(
         builder: (context) {
           final l10n = context.l10n;
@@ -83,12 +84,15 @@ class LabInventoryPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _StatsRow(total: state.total, low: state.lowCount, out: state.outCount),
+          _StatsRow(
+            total: state.total,
+            low: state.lowCount,
+            out: state.outCount,
+          ),
           const SizedBox(height: AppSizes.spaceLG),
           _InventoryCard(
             filter: state.filter,
-            onFilterChanged: (f) =>
-                context.read<LabStockCubit>().setFilter(f),
+            onFilterChanged: (f) => context.read<LabStockCubit>().setFilter(f),
             items: state.filtered,
             onConsume: (s) => _onConsume(context, s),
           ),
@@ -125,13 +129,16 @@ class _InventoryLoading extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: AppShimmerCard(layout: AppShimmerCardLayout.statCard)),
+                child: AppShimmerCard(layout: AppShimmerCardLayout.statCard),
+              ),
               SizedBox(width: AppSizes.spaceMD),
               Expanded(
-                  child: AppShimmerCard(layout: AppShimmerCardLayout.statCard)),
+                child: AppShimmerCard(layout: AppShimmerCardLayout.statCard),
+              ),
               SizedBox(width: AppSizes.spaceMD),
               Expanded(
-                  child: AppShimmerCard(layout: AppShimmerCardLayout.statCard)),
+                child: AppShimmerCard(layout: AppShimmerCardLayout.statCard),
+              ),
             ],
           ),
           SizedBox(height: AppSizes.spaceLG),
@@ -163,9 +170,11 @@ class _InventoryError extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.cloud_off_rounded,
-              size: 42,
-              color: isLight ? AppColors.lightText3 : AppColors.darkText3),
+          Icon(
+            Icons.cloud_off_rounded,
+            size: 42,
+            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+          ),
           const SizedBox(height: 12),
           Text(
             message,
@@ -267,7 +276,8 @@ class _StatCard extends StatelessWidget {
         color: isLight ? Colors.white : AppColors.darkBg1,
         borderRadius: radius,
         border: Border.all(
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+        ),
       ),
       child: ClipRRect(
         borderRadius: radius,
@@ -294,32 +304,39 @@ class _StatCard extends StatelessWidget {
                     child: Icon(icon, size: 20, color: accent),
                   ),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        value,
-                        style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w900,
-                          height: 1.0,
-                          color:
-                              isLight ? AppColors.lightText1 : AppColors.darkText1,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w900,
+                            height: 1.0,
+                            color: isLight
+                                ? AppColors.lightText1
+                                : AppColors.darkText1,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        label,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: isLight
-                              ? AppColors.lightText3
-                              : AppColors.darkText3,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 4),
+                        Text(
+                          label,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: isLight
+                                ? AppColors.lightText3
+                                : AppColors.darkText3,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -363,7 +380,8 @@ class _InventoryCard extends StatelessWidget {
         color: isLight ? Colors.white : AppColors.darkBg1,
         borderRadius: BorderRadius.circular(AppSizes.radiusXL),
         border: Border.all(
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -377,9 +395,11 @@ class _InventoryCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.inventory_2_outlined,
-                    size: 20,
-                    color: isLight ? AppColors.primary : AppColors.darkText1),
+                Icon(
+                  Icons.inventory_2_outlined,
+                  size: 20,
+                  color: isLight ? AppColors.primary : AppColors.darkText1,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   l10n.labInventory,
@@ -411,8 +431,9 @@ class _InventoryCard extends StatelessWidget {
             ),
             child: AppDataTable<LabStock>(
               data: items,
-              headerBackground:
-                  isLight ? AppColors.tableHeader : AppColors.darkBg2,
+              headerBackground: isLight
+                  ? AppColors.tableHeader
+                  : AppColors.darkBg2,
               emptyMessage: l10n.labInvEmpty,
               emptyIcon: Icons.inventory_2_outlined,
               columns: [
@@ -425,8 +446,9 @@ class _InventoryCard extends StatelessWidget {
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
-                      color:
-                          isLight ? AppColors.lightText1 : AppColors.darkText1,
+                      color: isLight
+                          ? AppColors.lightText1
+                          : AppColors.darkText1,
                     ),
                   ),
                 ),
@@ -439,8 +461,9 @@ class _InventoryCard extends StatelessWidget {
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color:
-                          isLight ? AppColors.lightText1 : AppColors.darkText1,
+                      color: isLight
+                          ? AppColors.lightText1
+                          : AppColors.darkText1,
                     ),
                   ),
                 ),
@@ -478,12 +501,16 @@ class _InventoryCard extends StatelessWidget {
     switch (s) {
       case LabStockStatus.available:
         return AppBadge(
-            text: l10n.whStatusAvailable, variant: AppBadgeVariant.green);
+          text: l10n.whStatusAvailable,
+          variant: AppBadgeVariant.green,
+        );
       case LabStockStatus.low:
         return AppBadge(text: l10n.whStatusLow, variant: AppBadgeVariant.gold);
       case LabStockStatus.out:
         return AppBadge(
-            text: l10n.whStatusOut, variant: AppBadgeVariant.redAnimated);
+          text: l10n.whStatusOut,
+          variant: AppBadgeVariant.redAnimated,
+        );
     }
   }
 

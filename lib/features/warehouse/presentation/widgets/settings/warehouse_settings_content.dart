@@ -21,6 +21,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../shared/bloc/theme_cubit.dart';
 import '../../../../../shared/widgets/primitives/app_theme_option.dart';
+import '../../../../../shared/widgets/settings/app_text_size_selector.dart';
 import '../../../../../shared/bloc/locale_cubit.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/forms/app_form_field.dart';

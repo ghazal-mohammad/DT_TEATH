@@ -17,6 +17,7 @@ import '../../../../core/router/route_names.dart';
 import '../../../auth/presentation/logout_action.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/bloc/theme_cubit.dart';
+import '../../../../shared/widgets/settings/app_text_size_selector.dart';
 import '../../../../shared/widgets/primitives/app_theme_option.dart';
 import '../../../../shared/bloc/locale_cubit.dart';
 import '../../../../core/theme/app_sizes.dart';

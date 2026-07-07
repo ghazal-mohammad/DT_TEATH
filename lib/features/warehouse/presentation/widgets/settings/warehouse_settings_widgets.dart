@@ -29,6 +29,8 @@ class _CardHeader extends StatelessWidget {
       children: [
         Text(
           title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 16,
@@ -81,6 +83,8 @@ class _TogglePref extends StatelessWidget {
               children: [
                 Text(
                   label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 14,
@@ -91,6 +95,8 @@ class _TogglePref extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 13,
@@ -119,11 +125,12 @@ class _PrefDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Divider(
-        height: 1,
-        thickness: 1,
-        color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-      );
+    height: 1,
+    thickness: 1,
+    color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+  );
 }
+
 /// بطاقة اختيار اللغة.
 class _LangOptionCard extends StatelessWidget {
   const _LangOptionCard({
@@ -184,6 +191,8 @@ class _LangOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 14,
@@ -196,6 +205,8 @@ class _LangOptionCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     sub,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12,

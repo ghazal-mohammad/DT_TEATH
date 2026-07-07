@@ -45,21 +45,61 @@ part 'employee_profile_info_stats.dart';
 //                         نظام الألوان الخاص بالمخبر
 // ══════════════════════════════════════════════════════════════════════════
 
+/// باليتة الملف الشخصي — واعية بالوضع (فاتح/غامق).
+/// تُجلب عبر `_Palette.of(isLight)`؛ الوضع الغامق يستخدم توكنات AppColors
+/// الموحّدة (نفس باليتة باقي النظام) فيتّسق الملف الشخصي مع كل الشاشات.
 class _Palette {
-  static const Color accent = AppColors.primary; // navy
-  static const List<Color> avatarGradient = [AppColors.profileAvatarGradTop, AppColors.profileAvatarGradBottom];
+  const _Palette._({
+    required this.accent,
+    required this.blueIconBg,
+    required this.blueAccent,
+    required this.pinkBg,
+    required this.pinkIconBg,
+    required this.pinkAccent,
+    required this.cardBorder,
+    required this.label,
+  });
 
-  // حبّتا البطاقات الملوّنة (تتبادل أزرق/وردي كل صفّين).
-  static const Color blueIconBg = AppColors.profileBlueIconBg;
-  static const Color blueAccent = AppColors.profileBlueAccent;
+  final Color accent;
+  final Color blueIconBg;
+  final Color blueAccent;
+  final Color pinkBg;
+  final Color pinkIconBg;
+  final Color pinkAccent;
+  final Color cardBorder;
+  final Color label;
 
-  static const Color pinkBg = AppColors.profilePinkBg;
-  static const Color pinkIconBg = AppColors.profilePinkIconBg;
-  static const Color pinkAccent = AppColors.profilePinkAccent;
+  /// تدرّج الأفاتار (كحلي — يصلح للوضعين، لا يتبدّل).
+  static const List<Color> avatarGradient = [
+    AppColors.profileAvatarGradTop,
+    AppColors.profileAvatarGradBottom,
+  ];
 
-  // ألوان محايدة.
-  static const Color cardBorder = AppColors.profileCardBorder;
-  static const Color label = AppColors.profileLabel;
+  static const _Palette _light = _Palette._(
+    accent: AppColors.primary, // navy
+    blueIconBg: AppColors.profileBlueIconBg,
+    blueAccent: AppColors.profileBlueAccent,
+    pinkBg: AppColors.profilePinkBg,
+    pinkIconBg: AppColors.profilePinkIconBg,
+    pinkAccent: AppColors.profilePinkAccent,
+    cardBorder: AppColors.profileCardBorder,
+    label: AppColors.profileLabel,
+  );
+
+  static const _Palette _dark = _Palette._(
+    accent: AppColors.brand, // إندِغو البراند للوضع الغامق
+    blueIconBg: AppColors.darkChipBlueBg,
+    blueAccent: AppColors.darkChipBlueText,
+    pinkBg: AppColors.darkChipVioletBg,
+    pinkIconBg: AppColors.darkChipVioletBg,
+    pinkAccent: AppColors.darkChipVioletText,
+    cardBorder: AppColors.darkBorder,
+    label: AppColors.darkText3,
+  );
+
+  /// تُرجع الباليتة المناسبة حسب سطوع الثيم الحالي.
+  static _Palette of(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.light ? _light : _dark;
 }
 
 // ══════════════════════════════════════════════════════════════════════════

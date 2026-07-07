@@ -149,14 +149,21 @@ class _AppButtonState extends State<AppButton> {
     );
 
     return MouseRegion(
-      cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
+      cursor: isEnabled
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.forbidden,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: isEnabled ? widget.onPressed : null,
-        child: widget.expanded
-            ? SizedBox(width: double.infinity, child: button)
-            : button,
+      child: Semantics(
+        button: true,
+        enabled: isEnabled,
+        label: widget.label,
+        child: GestureDetector(
+          onTap: isEnabled ? widget.onPressed : null,
+          child: widget.expanded
+              ? SizedBox(width: double.infinity, child: button)
+              : button,
+        ),
       ),
     );
   }
@@ -228,9 +235,9 @@ class _AppButtonState extends State<AppButton> {
           boxShadow: isEnabled
               ? [
                   BoxShadow(
-                    color: const Color(0xFF1A1C4E).withValues(
-                      alpha: shadowOpacity,
-                    ),
+                    color: const Color(
+                      0xFF1A1C4E,
+                    ).withValues(alpha: shadowOpacity),
                     blurRadius: shadowBlur,
                     offset: Offset(0, shadowY),
                   ),
@@ -246,9 +253,7 @@ class _AppButtonState extends State<AppButton> {
               : const Color(0x0AFFFFFF), // 0.04 on dark
           borderRadius: radius,
           border: Border.all(
-            color: isLight
-                ? AppColors.lightBorder
-                : AppColors.darkBorder,
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
           ),
         );
 

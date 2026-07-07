@@ -52,7 +52,8 @@ class _StatCard extends StatelessWidget {
         color: isLight ? Colors.white : AppColors.darkBg1,
         borderRadius: radius,
         border: Border.all(
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+        ),
       ),
       child: ClipRRect(
         borderRadius: radius,
@@ -85,6 +86,8 @@ class _StatCard extends StatelessWidget {
                     children: [
                       Text(
                         value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
                           fontSize: 26,
@@ -98,6 +101,8 @@ class _StatCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         label,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: isLight
                               ? AppColors.lightText3

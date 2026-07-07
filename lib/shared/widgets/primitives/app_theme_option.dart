@@ -45,67 +45,74 @@ class AppThemeOption extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.all(AppSizes.spaceSM),
-          decoration: BoxDecoration(
-            color: selected
-                ? AppColors.primary.withValues(alpha: 0.08)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-            border: Border.all(
+        child: Semantics(
+          button: true,
+          selected: selected,
+          label: label,
+          value: selected ? 'محدّد' : 'غير محدّد',
+          onTapHint: 'اختر هذا الخيار',
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            padding: const EdgeInsets.all(AppSizes.spaceSM),
+            decoration: BoxDecoration(
               color: selected
-                  ? (isLight ? AppColors.primary : AppColors.brand)
-                  : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
-              width: selected ? 2 : 1,
+                  ? AppColors.primary.withValues(alpha: 0.08)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+              border: Border.all(
+                color: selected
+                    ? (isLight ? AppColors.primary : AppColors.brand)
+                    : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
+                width: selected ? 2 : 1,
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              // Preview swatch
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-                    child: SizedBox(
-                      height: 60,
-                      width: double.infinity,
-                      child: _buildPreview(),
-                    ),
-                  ),
-                  if (selected)
-                    PositionedDirectional(
-                      top: 6,
-                      end: 6,
-                      child: Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          color:
-                              isLight ? AppColors.primary : AppColors.brand,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.check_rounded,
-                          size: 12,
-                          color: Colors.white,
-                        ),
+            child: Column(
+              children: [
+                // Preview swatch
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                      child: SizedBox(
+                        height: 60,
+                        width: double.infinity,
+                        child: _buildPreview(),
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color:
-                      isLight ? AppColors.lightText1 : AppColors.darkText1,
+                    if (selected)
+                      PositionedDirectional(
+                        top: 6,
+                        end: 6,
+                        child: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: isLight
+                                ? AppColors.primary
+                                : AppColors.brand,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.check_rounded,
+                            size: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

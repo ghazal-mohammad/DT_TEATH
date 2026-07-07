@@ -34,7 +34,8 @@ class LabTechnicianTeamTable extends StatelessWidget {
         color: isLight ? Colors.white : AppColors.darkBg1,
         borderRadius: BorderRadius.circular(AppSizes.radiusXL),
         border: Border.all(
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -42,24 +43,38 @@ class LabTechnicianTeamTable extends StatelessWidget {
           // Header row: عنوان (يمين بـ RTL) + زر إضافة (يسار بـ RTL)
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(
-                AppSizes.spaceLG, AppSizes.spaceLG, AppSizes.spaceLG, 12),
+              AppSizes.spaceLG,
+              AppSizes.spaceLG,
+              AppSizes.spaceLG,
+              12,
+            ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // المجموعة الأولى → start side (RIGHT in RTL) — مطابق للمحاكاة
-                Icon(Icons.groups_outlined,
-                    size: 20,
-                    color: isLight ? AppColors.primary : AppColors.darkText1),
+                Icon(
+                  Icons.groups_outlined,
+                  size: 20,
+                  color: isLight ? AppColors.primary : AppColors.darkText1,
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  context.l10n.labTeamSectionTitle,
-                  style: AppTextStyles.headlineSmall.copyWith(
-                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                Expanded(
+                  child: Text(
+                    context.l10n.labTeamSectionTitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.headlineSmall.copyWith(
+                      color: isLight
+                          ? AppColors.lightText1
+                          : AppColors.darkText1,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: isLight
                         ? AppColors.statusProgressBg
@@ -105,36 +120,42 @@ class _TableHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-              flex: 3,
-              child: _headerCell(context.l10n.labTeamColumnName, isLight)),
+            flex: 3,
+            child: _headerCell(context.l10n.labTeamColumnName, isLight),
+          ),
           Expanded(
-              flex: 2,
-              child: _headerCell(context.l10n.labTeamColumnShift, isLight)),
+            flex: 2,
+            child: _headerCell(context.l10n.labTeamColumnShift, isLight),
+          ),
           Expanded(
-              flex: 3,
-              child:
-                  _headerCell(context.l10n.labTeamColumnCurrentTask, isLight)),
+            flex: 3,
+            child: _headerCell(context.l10n.labTeamColumnCurrentTask, isLight),
+          ),
           Expanded(
-              flex: 2,
-              child: _headerCell(context.l10n.labTeamColumnStatus, isLight)),
+            flex: 2,
+            child: _headerCell(context.l10n.labTeamColumnStatus, isLight),
+          ),
           Expanded(
-              flex: 2,
-              child: _headerCell(context.l10n.labTeamColumnAction, isLight)),
+            flex: 2,
+            child: _headerCell(context.l10n.labTeamColumnAction, isLight),
+          ),
         ],
       ),
     );
   }
 
   Widget _headerCell(String text, bool isLight) => Text(
-        text,
-        style: TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          color: isLight ? AppColors.lightText2 : AppColors.darkText2,
-          letterSpacing: 0.4,
-        ),
-      );
+    text,
+    maxLines: 1,
+    overflow: TextOverflow.ellipsis,
+    style: TextStyle(
+      fontFamily: AppTextStyles.fontFamily,
+      fontSize: 12,
+      fontWeight: FontWeight.w800,
+      color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+      letterSpacing: 0.4,
+    ),
+  );
 }
 
 class _TableRow extends StatelessWidget {
@@ -159,17 +180,21 @@ class _TableRow extends StatelessWidget {
             ? null
             : Border(
                 bottom: BorderSide(
-                    color:
-                        isLight ? AppColors.lightBorder : AppColors.darkBorder)),
+                  color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+                ),
+              ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(flex: 3, child: _NameCell(tech: tech)),
           Expanded(
             flex: 2,
             child: Text(
               tech.shift,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 13,
@@ -182,15 +207,16 @@ class _TableRow extends StatelessWidget {
           Expanded(flex: 2, child: _StatusPill(status: tech.status)),
           Expanded(
             flex: 2,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
               children: [
                 _PauseToggle(
-                  isPaused: tech.status == TechnicianStatus.onBreak ||
+                  isPaused:
+                      tech.status == TechnicianStatus.onBreak ||
                       tech.status == TechnicianStatus.available,
                   onTap: onTogglePause,
                 ),
-                const SizedBox(width: 6),
                 _AssignBtn(onTap: onAssign),
               ],
             ),
@@ -232,30 +258,36 @@ class _NameCell extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         // الاسم والدور — يظهروا على يسار الـ avatar بـ RTL
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              tech.name,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                tech.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              tech.role,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+              const SizedBox(height: 2),
+              Text(
+                tech.role,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -301,13 +333,17 @@ class _TaskPill extends StatelessWidget {
               ),
               const SizedBox(width: 6),
             ],
-            Text(
-              tech.currentTask,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+            Flexible(
+              child: Text(
+                tech.currentTask,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+                ),
               ),
             ),
           ],
@@ -340,7 +376,9 @@ class _StatusPill extends StatelessWidget {
         break;
       case TechnicianStatus.onBreak:
         bg = isLight ? AppColors.chipAmberBgLight : AppColors.darkChipOrangeBg;
-        fg = isLight ? AppColors.chipAmberTextLight : AppColors.darkChipOrangeText;
+        fg = isLight
+            ? AppColors.chipAmberTextLight
+            : AppColors.darkChipOrangeText;
         label = context.l10n.techStatusBreak;
         break;
     }
@@ -356,13 +394,17 @@ class _StatusPill extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: fg,
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: fg,
+                ),
               ),
             ),
             const SizedBox(width: 6),
@@ -397,7 +439,8 @@ class _PauseToggle extends StatelessWidget {
           decoration: BoxDecoration(
             color: isLight ? Colors.white : AppColors.darkBg1,
             border: Border.all(
-                color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+            ),
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
           ),
           child: Icon(
@@ -427,15 +470,18 @@ class _AssignBtn extends StatelessWidget {
           decoration: BoxDecoration(
             color: isLight ? Colors.white : AppColors.darkBg1,
             border: Border.all(
-                color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+            ),
             borderRadius: BorderRadius.circular(AppSizes.radiusSM),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.add_rounded,
-                  size: 14,
-                  color: isLight ? AppColors.lightText2 : AppColors.darkText2),
+              Icon(
+                Icons.add_rounded,
+                size: 14,
+                color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+              ),
               const SizedBox(width: 4),
               Text(
                 context.l10n.labTeamAssign,

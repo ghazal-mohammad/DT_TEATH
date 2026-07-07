@@ -103,54 +103,59 @@ class AppEmptyState extends StatelessWidget {
 
     return Padding(
       padding: padding,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ── الأيقونة داخل دائرة ──────────────────────────────────────
-          _buildIconBox(iconBoxSize, iconSize, accentColor, isLight),
-          SizedBox(height: compact ? AppSizes.spaceLG : AppSizes.space2XL),
+      child: Semantics(
+        container: true,
+        label: title,
+        hint: message,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── الأيقونة داخل دائرة ──────────────────────────────────────
+            _buildIconBox(iconBoxSize, iconSize, accentColor, isLight),
+            SizedBox(height: compact ? AppSizes.spaceLG : AppSizes.space2XL),
 
-          // ── العنوان ─────────────────────────────────────────────────
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: compact ? 16 : 18,
-              fontWeight: FontWeight.w800,
-              height: 1.3,
-              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-            ),
-          ),
-
-          // ── الرسالة الفرعية ─────────────────────────────────────────
-          if (message != null) ...[
-            const SizedBox(height: AppSizes.spaceSM),
+            // ── العنوان ─────────────────────────────────────────────────
             Text(
-              message!,
+              title,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
-                fontSize: compact ? 13 : 14,
-                fontWeight: FontWeight.w500,
-                height: 1.5,
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+                fontSize: compact ? 16 : 18,
+                fontWeight: FontWeight.w800,
+                height: 1.3,
+                color: isLight ? AppColors.lightText1 : AppColors.darkText1,
               ),
             ),
-          ],
 
-          // ── زر الإجراء (اختياري) ────────────────────────────────────
-          if (actionLabel != null && onActionTap != null) ...[
-            SizedBox(height: compact ? AppSizes.spaceLG : AppSizes.space2XL),
-            AppButton(
-              label: actionLabel!,
-              onPressed: onActionTap,
-              variant: _resolveButtonVariant(),
-              size: compact ? AppButtonSize.small : AppButtonSize.regular,
-            ),
+            // ── الرسالة الفرعية ─────────────────────────────────────────
+            if (message != null) ...[
+              const SizedBox(height: AppSizes.spaceSM),
+              Text(
+                message!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: compact ? 13 : 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                  color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+                ),
+              ),
+            ],
+
+            // ── زر الإجراء (اختياري) ────────────────────────────────────
+            if (actionLabel != null && onActionTap != null) ...[
+              SizedBox(height: compact ? AppSizes.spaceLG : AppSizes.space2XL),
+              AppButton(
+                label: actionLabel!,
+                onPressed: onActionTap,
+                variant: _resolveButtonVariant(),
+                size: compact ? AppButtonSize.small : AppButtonSize.regular,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

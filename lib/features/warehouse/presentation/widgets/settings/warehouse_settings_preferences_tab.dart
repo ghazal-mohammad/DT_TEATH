@@ -98,6 +98,25 @@ class _PreferencesTabContentState extends State<_PreferencesTabContent> {
 
         const SizedBox(height: _kCardGap),
 
+        // ── حجم الخط (وصولية) ───────────────────────────────────────
+        _SettingsCard(
+          isLight: widget.isLight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _CardHeader(
+                isLight: widget.isLight,
+                title: context.l10n.settingsTextSize,
+                subtitle: context.l10n.settingsTextSizeDesc,
+              ),
+              const SizedBox(height: 18),
+              AppTextSizeSelector(isLight: widget.isLight),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: _kCardGap),
+
         // ── اللغة ───────────────────────────────────────────────────
         _SettingsCard(
           isLight: widget.isLight,

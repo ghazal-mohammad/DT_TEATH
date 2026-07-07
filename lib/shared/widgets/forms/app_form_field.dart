@@ -185,64 +185,71 @@ class _AppFormFieldState extends State<AppFormField> {
     bool isLight,
   ) {
     // التصميم مطابق تماماً لـ .fi مع تحويل حالات focus/error
-    return TextFormField(
-      controller: widget.controller,
-      focusNode: _focusNode,
-      obscureText: widget.obscureText,
+    return Semantics(
+      textField: true,
+      label: widget.required ? '${widget.label} (مطلوب)' : widget.label,
+      hint: widget.hint,
+      focused: _focusNode.hasFocus,
       enabled: widget.enabled,
-      readOnly: widget.readOnly,
-      maxLines: widget.obscureText ? 1 : widget.maxLines,
-      minLines: widget.minLines,
-      maxLength: widget.maxLength,
-      keyboardType: widget.keyboardType,
-      inputFormatters: widget.inputFormatters,
-      onTap: widget.onTap,
-      textInputAction: widget.textInputAction,
-      autofocus: widget.autofocus,
-      onChanged: widget.onChanged,
-      onFieldSubmitted: widget.onSubmitted,
-      validator: widget.validator,
-      style: TextStyle(
-        fontFamily: AppTextStyles.fontFamily,
-        fontSize: 15, // .fi font-size:15px
-        color: text1,
-        height: 1.3,
-      ),
-      textDirection: _detectDirection(),
-      decoration: InputDecoration(
-        hintText: widget.hint,
-        hintStyle: TextStyle(
+      child: TextFormField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        obscureText: widget.obscureText,
+        enabled: widget.enabled,
+        readOnly: widget.readOnly,
+        maxLines: widget.obscureText ? 1 : widget.maxLines,
+        minLines: widget.minLines,
+        maxLength: widget.maxLength,
+        keyboardType: widget.keyboardType,
+        inputFormatters: widget.inputFormatters,
+        onTap: widget.onTap,
+        textInputAction: widget.textInputAction,
+        autofocus: widget.autofocus,
+        onChanged: widget.onChanged,
+        onFieldSubmitted: widget.onSubmitted,
+        validator: widget.validator,
+        style: TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          fontSize: 15,
-          color: text4,
-          fontWeight: FontWeight.w400,
+          fontSize: 15, // .fi font-size:15px
+          color: text1,
+          height: 1.3,
         ),
-        filled: true,
-        // ستايل نظيف: خلفية رمادية فاتحة جداً + حواف رمادية + فوكس كحلي.
-        fillColor: const Color(0xFFF8F9FC),
-        prefixIcon: widget.prefixIcon,
-        suffixIcon: widget.suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 11,
-        ),
-        border: _outlineBorder(AppColors.lightBorder),
-        enabledBorder: _outlineBorder(AppColors.lightBorder),
-        focusedBorder: _outlineBorder(AppColors.primary, width: 1.6),
-        errorBorder: _outlineBorder(const Color(0xFFEF4444)),
-        focusedErrorBorder: _outlineBorder(const Color(0xFFEF4444), width: 2),
-        disabledBorder: _outlineBorder(
-          (isLight ? AppColors.lightBorder : AppColors.darkBorder).withValues(
-            alpha: 0.5,
+        textDirection: _detectDirection(),
+        decoration: InputDecoration(
+          hintText: widget.hint,
+          hintStyle: TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 15,
+            color: text4,
+            fontWeight: FontWeight.w400,
           ),
+          filled: true,
+          // ستايل نظيف: خلفية رمادية فاتحة جداً + حواف رمادية + فوكس كحلي.
+          fillColor: const Color(0xFFF8F9FC),
+          prefixIcon: widget.prefixIcon,
+          suffixIcon: widget.suffixIcon,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 11,
+          ),
+          border: _outlineBorder(AppColors.lightBorder),
+          enabledBorder: _outlineBorder(AppColors.lightBorder),
+          focusedBorder: _outlineBorder(AppColors.primary, width: 1.6),
+          errorBorder: _outlineBorder(const Color(0xFFEF4444)),
+          focusedErrorBorder: _outlineBorder(const Color(0xFFEF4444), width: 2),
+          disabledBorder: _outlineBorder(
+            (isLight ? AppColors.lightBorder : AppColors.darkBorder).withValues(
+              alpha: 0.5,
+            ),
+          ),
+          errorStyle: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFEF4444),
+          ),
+          counterText: widget.maxLength != null ? null : '',
         ),
-        errorStyle: const TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFFEF4444),
-        ),
-        counterText: widget.maxLength != null ? null : '',
       ),
     );
   }

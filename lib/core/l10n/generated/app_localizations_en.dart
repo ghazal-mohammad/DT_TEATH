@@ -1294,6 +1294,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsThemeSystem => 'System default';
 
   @override
+  String get settingsTextSize => 'Font Size';
+
+  @override
+  String get settingsTextSizeDesc =>
+      'Enlarge or reduce the interface font to your comfort';
+
+  @override
+  String get settingsTextSizeSmall => 'Small';
+
+  @override
+  String get settingsTextSizeNormal => 'Normal';
+
+  @override
+  String get settingsTextSizeLarge => 'Large';
+
+  @override
+  String get settingsTextSizeXLarge => 'Larger';
+
+  @override
   String get settingsLanguageDesc => 'System display language';
 
   @override

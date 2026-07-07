@@ -253,7 +253,7 @@ class _RelationSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: _Palette.cardBorder),
+        border: Border.all(color: _Palette.of(context).cardBorder),
       ),
       padding: const EdgeInsets.all(18),
       child: Column(
@@ -266,10 +266,10 @@ class _RelationSection extends StatelessWidget {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: _Palette.blueIconBg,
+                  color: _Palette.of(context).blueIconBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, size: 19, color: _Palette.blueAccent),
+                child: Icon(icon, size: 19, color: _Palette.of(context).blueAccent),
               ),
               const SizedBox(width: 10),
               Text(
@@ -286,16 +286,16 @@ class _RelationSection extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _Palette.blueIconBg,
+                  color: _Palette.of(context).blueIconBg,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   '${items.length}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: _Palette.blueAccent,
+                    color: _Palette.of(context).blueAccent,
                   ),
                 ),
               ),
@@ -323,7 +323,7 @@ class _RelationRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.profileSurface,
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(color: _Palette.cardBorder),
+        border: Border.all(color: _Palette.of(context).cardBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,8 +332,8 @@ class _RelationRow extends StatelessWidget {
             margin: const EdgeInsets.only(top: 4),
             width: 7,
             height: 7,
-            decoration: const BoxDecoration(
-              color: _Palette.blueAccent,
+            decoration: BoxDecoration(
+              color: _Palette.of(context).blueAccent,
               shape: BoxShape.circle,
             ),
           ),
@@ -355,11 +355,11 @@ class _RelationRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     item.secondary,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: _Palette.label,
+                      color: _Palette.of(context).label,
                     ),
                   ),
                 ],
@@ -370,11 +370,11 @@ class _RelationRow extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               item.trailing,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: _Palette.blueAccent,
+                color: _Palette.of(context).blueAccent,
               ),
             ),
           ],
@@ -394,7 +394,7 @@ class _SkillsSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: _Palette.cardBorder),
+        border: Border.all(color: _Palette.of(context).cardBorder),
       ),
       padding: const EdgeInsets.all(18),
       child: Column(
@@ -407,11 +407,11 @@ class _SkillsSection extends StatelessWidget {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: _Palette.pinkBg,
+                  color: _Palette.of(context).pinkBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.auto_awesome_outlined,
-                    size: 19, color: _Palette.pinkAccent),
+                child: Icon(Icons.auto_awesome_outlined,
+                    size: 19, color: _Palette.of(context).pinkAccent),
               ),
               const SizedBox(width: 10),
               const Text(
@@ -435,18 +435,18 @@ class _SkillsSection extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 7),
                   decoration: BoxDecoration(
-                    color: _Palette.pinkBg,
+                    color: _Palette.of(context).pinkBg,
                     borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                     border: Border.all(
-                        color: _Palette.pinkAccent.withValues(alpha: 0.25)),
+                        color: _Palette.of(context).pinkAccent.withValues(alpha: 0.25)),
                   ),
                   child: Text(
                     s,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTextStyles.fontFamily,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: _Palette.pinkAccent,
+                      color: _Palette.of(context).pinkAccent,
                     ),
                   ),
                 ),

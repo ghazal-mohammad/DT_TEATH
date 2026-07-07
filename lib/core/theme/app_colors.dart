@@ -152,22 +152,6 @@ class AppColors {
   /// من CSS: background:linear-gradient(180deg, #1A1C4E, #0F1035)
   static const Color sidebarGradientBottom = Color(0xFF0F1035);
 
-  // ══════════════════════════════════════════════════════════════════════
-  //   OFFICIAL DESIGN GUIDE PALETTE (مرجعي — مطابق 100% للـ Design Guide)
-  // ══════════════════════════════════════════════════════════════════════
-  // الباليت الرسمية المستخرجة من ملف Design Guide الموحّد (Selection Colors).
-  // هاي القيم لازم تطابق الـ design system بدون تعديل.
-  //
-  //   #1A1C4E    NavBar Items/text       (=AppColors.primary)
-  //   #E9ECFB    BG Color @ 68%          (=AppColors.bgGeneral)
-  //   #BED8FA    Table Header / BG text  (=AppColors.tableHeader)
-  //   #FFFFFF    Base Component          (=AppColors.baseComponent)
-  //   #F1DAFE    2nd Component @ 100%    (=AppColors.secondaryComponent)
-  //   #F1DAFE    2nd Component @ 55%     (=AppColors.secondaryComponentSoft)
-  //   #E2EDFF    Empty status            (=AppColors.emptyBg)
-  //   #D0FBD7    Reserved status         (=AppColors.reservedBg)
-  //   #353535    Selection — secondary text (=AppColors.guideSecondaryText)
-  //   #000000    Selection — primary text   (=AppColors.guidePrimaryText)
 
   /// خلفية header الجداول والحقول النصية.
   /// من Design Guide: "Table Header/BGtext fields" #BED8FA.

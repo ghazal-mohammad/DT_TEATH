@@ -74,6 +74,16 @@ class _PreferencesTabState extends State<_PreferencesTab> {
 
         const SizedBox(height: AppSizes.spaceLG),
 
+        // ── حجم الخط (وصولية) ──────────────────────────────────
+        _SettingCard(
+          isLight: widget.isLight,
+          title: context.l10n.settingsTextSize,
+          subtitle: context.l10n.settingsTextSizeDesc,
+          child: AppTextSizeSelector(isLight: widget.isLight),
+        ),
+
+        const SizedBox(height: AppSizes.spaceLG),
+
         // ── اللغة ──────────────────────────────────────────────
         _SettingCard(
           isLight: widget.isLight,

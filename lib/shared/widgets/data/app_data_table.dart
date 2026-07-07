@@ -33,6 +33,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../feedback/app_empty_state.dart';
 
 /// تعريف عمود في الجدول.
 class AppDataColumn<T> {
@@ -114,6 +115,7 @@ class AppDataTable<T> extends StatefulWidget {
     required this.columns,
     this.isLoading = false,
     this.emptyMessage = 'لا توجد بيانات',
+    this.emptySubMessage,
     this.emptyIcon = Icons.inbox_outlined,
     this.onRowTap,
     this.rowHeight,
@@ -124,6 +126,7 @@ class AppDataTable<T> extends StatefulWidget {
   final List<AppDataColumn<T>> columns;
   final bool isLoading;
   final String emptyMessage;
+  final String? emptySubMessage;
   final IconData emptyIcon;
   final ValueChanged<T>? onRowTap;
   final double? rowHeight;
@@ -215,7 +218,8 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
     return Container(
       decoration: BoxDecoration(
         // افتراضي موحّد: أزرق المستودع (tableHeader) بالفاتح، slate بالغامق.
-        color: widget.headerBackground ??
+        color:
+            widget.headerBackground ??
             (isLight ? AppColors.tableHeader : AppColors.darkBg2),
         border: Border(
           bottom: BorderSide(
@@ -230,49 +234,56 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
 
           return _wrapColumn(
             col,
-            InkWell(
-              onTap: col.sortable ? () => _onHeaderTap(i) : null,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-                alignment: col.alignment,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        col.label.toUpperCase(),
-                        style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.8,
-                          color: isLight
-                              ? AppColors.lightText4
-                              : AppColors.darkText4,
-                          height: 1.2,
+            Semantics(
+              button: col.sortable,
+              label: col.label,
+              hint: col.sortable ? 'اضغط للفرز' : null,
+              child: InkWell(
+                onTap: col.sortable ? () => _onHeaderTap(i) : null,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 12,
+                  ),
+                  alignment: col.alignment,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          col.label.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.8,
+                            color: isLight
+                                ? AppColors.lightText4
+                                : AppColors.darkText4,
+                            height: 1.2,
+                          ),
                         ),
                       ),
-                    ),
-                    if (col.sortable) ...[
-                      const SizedBox(width: 4),
-                      Icon(
-                        isSorted
-                            ? (_sortState!.ascending
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward)
-                            : Icons.unfold_more,
-                        size: 12,
-                        color: isSorted
-                            ? AppColors.accent
-                            : (isLight
-                                  ? AppColors.lightText4
-                                  : AppColors.darkText4),
-                      ),
+                      if (col.sortable) ...[
+                        const SizedBox(width: 4),
+                        Icon(
+                          isSorted
+                              ? (_sortState!.ascending
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward)
+                              : Icons.unfold_more,
+                          size: 12,
+                          color: isSorted
+                              ? AppColors.accent
+                              : (isLight
+                                    ? AppColors.lightText4
+                                    : AppColors.darkText4),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -302,31 +313,15 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
   }
 
   Widget _buildEmptyState() {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 12),
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              widget.emptyIcon,
-              size: 56,
-              color: isLight
-                  ? AppColors.lightText4.withValues(alpha: 0.5)
-                  : AppColors.darkText4.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              widget.emptyMessage,
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-              ),
-            ),
-          ],
+        child: AppEmptyState(
+          icon: widget.emptyIcon,
+          title: widget.emptyMessage,
+          message: widget.emptySubMessage,
+          compact: true,
+          variant: AppEmptyStateVariant.neutral,
         ),
       ),
     );
@@ -411,14 +406,12 @@ class _DataTableRowState<T> extends State<_DataTableRow<T>> {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: widget.columns.map((col) {
           return widget.wrapColumn(
             col,
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 14,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               alignment: col.alignment,
               child: col.cellBuilder(widget.item),
             ),
@@ -436,7 +429,12 @@ class _DataTableRowState<T> extends State<_DataTableRow<T>> {
       child: GestureDetector(
         onTap: widget.onTap != null ? () => widget.onTap!(widget.item) : null,
         behavior: HitTestBehavior.opaque,
-        child: row,
+        child: Semantics(
+          container: true,
+          button: widget.onTap != null,
+          hint: widget.onTap != null ? 'اضغط لفتح التفاصيل' : null,
+          child: row,
+        ),
       ),
     );
   }

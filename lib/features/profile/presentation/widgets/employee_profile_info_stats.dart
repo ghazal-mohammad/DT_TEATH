@@ -197,11 +197,11 @@ class _StatCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   spec.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: _Palette.label,
+                    color: _Palette.of(context).label,
                   ),
                 ),
               ],
@@ -239,14 +239,14 @@ class _InfoSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(color: _Palette.cardBorder),
+        border: Border.all(color: _Palette.of(context).cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: _Palette.accent),
+              Icon(icon, size: 20, color: _Palette.of(context).accent),
               const SizedBox(width: 9),
               Expanded(
                 child: Column(
@@ -265,11 +265,11 @@ class _InfoSection extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: _Palette.label,
+                        color: _Palette.of(context).label,
                       ),
                     ),
                   ],
@@ -315,7 +315,6 @@ class _RowSpec {
     required this.value,
     required this.onChanged,
     this.options,
-    this.isDate = false,
     this.editable = true,
   });
 
@@ -328,7 +327,7 @@ class _RowSpec {
   final List<String>? options;
 
   /// لو true، يُعرض كحقل تاريخ يفتح Date Picker عند الضغط (بدل إدخال حر).
-  final bool isDate;
+  final bool isDate = false;
 
   /// لو false، الحقل للقراءة فقط (يديره الأدمن/السكرتيرة أو ثابت) — لا يُعدَّل
   /// من الموظف حتى بوضع التعديل. يطابق عقد editProfile بالباك.
@@ -401,8 +400,8 @@ class _FieldPillState extends State<_FieldPill> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = widget.pink ? _Palette.pinkAccent : _Palette.blueAccent;
-    final iconBg = widget.pink ? _Palette.pinkIconBg : _Palette.blueIconBg;
+    final accent = widget.pink ? _Palette.of(context).pinkAccent : _Palette.of(context).blueAccent;
+    final iconBg = widget.pink ? _Palette.of(context).pinkIconBg : _Palette.of(context).blueIconBg;
 
     // نستخدم Stack بدلاً من IntrinsicHeight: الشريط اللوني يتمدّد عمودياً عبر
     // Positioned (top/bottom:0) فيأخذ ارتفاع المحتوى تلقائياً — وهذا يتفادى
@@ -412,7 +411,7 @@ class _FieldPillState extends State<_FieldPill> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(color: _Palette.cardBorder),
+        border: Border.all(color: _Palette.of(context).cardBorder),
       ),
       child: Stack(
         children: [
@@ -448,18 +447,18 @@ class _FieldPillState extends State<_FieldPill> {
                         children: [
                           Text(
                             widget.spec.label,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: _Palette.label,
+                              color: _Palette.of(context).label,
                             ),
                           ),
                           // قفل صغير للحقول غير القابلة للتعديل (عند وضع التعديل).
                           if (widget.editing && !widget.spec.editable) ...[
                             const SizedBox(width: 5),
-                            const Icon(Icons.lock_outline_rounded,
-                                size: 11, color: _Palette.label),
+                            Icon(Icons.lock_outline_rounded,
+                                size: 11, color: _Palette.of(context).label),
                           ],
                         ],
                       ),
@@ -477,7 +476,7 @@ class _FieldPillState extends State<_FieldPill> {
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
                               border:
-                                  Border.all(color: _Palette.cardBorder),
+                                  Border.all(color: _Palette.of(context).cardBorder),
                             ),
                             child: Row(
                               children: [
@@ -495,7 +494,7 @@ class _FieldPillState extends State<_FieldPill> {
                                       color: (_dateDisplay ?? widget.spec.value)
                                               .trim()
                                               .isEmpty
-                                          ? _Palette.label
+                                          ? _Palette.of(context).label
                                           : AppColors.lightText1,
                                     ),
                                   ),
@@ -556,7 +555,7 @@ class _FieldPillState extends State<_FieldPill> {
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
                               borderSide:
-                                  const BorderSide(color: _Palette.cardBorder),
+                                  BorderSide(color: _Palette.of(context).cardBorder),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius:
@@ -586,7 +585,7 @@ class _FieldPillState extends State<_FieldPill> {
                               borderRadius:
                                   BorderRadius.circular(AppSizes.radiusSM),
                               borderSide:
-                                  const BorderSide(color: _Palette.cardBorder),
+                                  BorderSide(color: _Palette.of(context).cardBorder),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius:

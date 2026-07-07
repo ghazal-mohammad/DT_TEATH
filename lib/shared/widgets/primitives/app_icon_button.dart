@@ -108,7 +108,12 @@ class _AppIconButtonState extends State<AppIconButton> {
           : SystemMouseCursors.forbidden,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(onTap: widget.onPressed, child: button),
+      child: Semantics(
+        button: true,
+        enabled: isEnabled,
+        label: widget.tooltip,
+        child: GestureDetector(onTap: widget.onPressed, child: button),
+      ),
     );
   }
 

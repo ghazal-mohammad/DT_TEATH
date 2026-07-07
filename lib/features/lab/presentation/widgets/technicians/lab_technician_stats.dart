@@ -118,7 +118,8 @@ class _TechStatCardState extends State<_TechStatCard> {
           color: isLight ? Colors.white : AppColors.darkBg1,
           borderRadius: radius,
           border: Border.all(
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: _hover ? 0.07 : 0.03),
@@ -143,25 +144,32 @@ class _TechStatCardState extends State<_TechStatCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: widget.chipColor.withValues(alpha: 0.14),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            widget.chipLabel,
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              color: widget.chipColor,
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: widget.chipColor.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              widget.chipLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.fontFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: widget.chipColor,
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Container(
                           width: 32,
                           height: 32,
@@ -169,27 +177,38 @@ class _TechStatCardState extends State<_TechStatCard> {
                             color: widget.accentColor.withValues(alpha: 0.10),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(widget.icon,
-                              size: 18, color: widget.accentColor),
+                          child: Icon(
+                            widget.icon,
+                            size: 18,
+                            color: widget.accentColor,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 14),
                     Text(
                       widget.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
                         height: 1.0,
-                        color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                        color: isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       widget.label,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+                        color: isLight
+                            ? AppColors.lightText3
+                            : AppColors.darkText3,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

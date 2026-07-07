@@ -11,6 +11,7 @@ import 'package:get_it/get_it.dart';
 import '../network/dio_client.dart';
 import '../../shared/bloc/locale_cubit.dart';
 import '../../shared/bloc/mock_system_cubit.dart';
+import '../../shared/bloc/text_scale_cubit.dart';
 import '../../shared/bloc/theme_cubit.dart';
 
 // ── Auth feature ──────────────────────────────────────────────────────────
@@ -54,6 +55,7 @@ Future<void> initDependencies() async {
 
   // ── Cubits / BLoCs مشتركة ──────────────────────────────────────────────
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
+  sl.registerLazySingleton<TextScaleCubit>(() => TextScaleCubit());
   sl.registerLazySingleton<LocaleCubit>(() => LocaleCubit());
   sl.registerLazySingleton<MockSystemCubit>(() => MockSystemCubit());
 

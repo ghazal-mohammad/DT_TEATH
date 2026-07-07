@@ -29,6 +29,7 @@ import 'core/session/session_cache_registry.dart';
 import 'core/theme/app_theme.dart';
 import 'shared/bloc/locale_cubit.dart';
 import 'shared/bloc/mock_system_cubit.dart';
+import 'shared/bloc/text_scale_cubit.dart';
 import 'shared/bloc/theme_cubit.dart';
 
 Future<void> main() async {
@@ -58,6 +59,7 @@ Future<void> main() async {
   // تحميل التفضيلات المحفوظة (تشغيل متوازي لتسريع الإقلاع).
   await Future.wait([
     di.sl<ThemeCubit>().loadSavedTheme(),
+    di.sl<TextScaleCubit>().loadSaved(),
     di.sl<LocaleCubit>().loadSaved(),
     di.sl<MockSystemCubit>().loadSaved(),
   ]);
@@ -76,6 +78,7 @@ class DtTeethApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>.value(value: di.sl<ThemeCubit>()),
+        BlocProvider<TextScaleCubit>.value(value: di.sl<TextScaleCubit>()),
         BlocProvider<LocaleCubit>.value(value: di.sl<LocaleCubit>()),
         BlocProvider<MockSystemCubit>.value(value: di.sl<MockSystemCubit>()),
       ],
@@ -109,6 +112,18 @@ class DtTeethApp extends StatelessWidget {
 
                     // التنقل
                     routerConfig: AppRouter.router,
+
+                    // حجم الخط (وصولية): يُطبَّق هنا عبر MediaQuery.textScaler
+                    // على كل الصفحات — بلا مسّ أي ودجت أو تصميم.
+                    builder: (context, child) {
+                      final scale =
+                          context.watch<TextScaleCubit>().state.factor;
+                      final mq = MediaQuery.of(context);
+                      return MediaQuery(
+                        data: mq.copyWith(textScaler: TextScaler.linear(scale)),
+                        child: child ?? const SizedBox.shrink(),
+                      );
+                    },
 
                     // ملاحظة: إزالة Directionality اليدوي — Flutter الآن يحدد
                     // الـ textDirection تلقائياً من الـ locale (ar → RTL، en → LTR).
