@@ -14,6 +14,7 @@
 //   - أي Cubit جديد (Auth, User...) يُضاف هنا
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +33,7 @@ import 'shared/bloc/locale_cubit.dart';
 import 'shared/bloc/mock_system_cubit.dart';
 import 'shared/bloc/text_scale_cubit.dart';
 import 'shared/bloc/theme_cubit.dart';
+import 'shared/widgets/feedback/app_error_view.dart';
 import 'shared/widgets/feedback/offline_banner.dart';
 import 'shared/widgets/session/idle_timeout_watcher.dart';
 
@@ -55,6 +57,16 @@ Future<void> main() async {
       systemNavigationBarColor: Colors.transparent,
     ),
   );
+
+  // تدهور رشيق في الإنتاج: واجهة خطأ لطيفة بدل المربّع الأحمر عند فشل بناء ودجت،
+  // ومنع انهيار التطبيق من استثناءات غير ملتقَطة. في التطوير نُبقي التشخيص الكامل.
+  if (kReleaseMode) {
+    ErrorWidget.builder = (details) => const AppErrorView();
+    WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+      debugPrint('Uncaught (release): $error');
+      return true; // معالَج — لا ينهار التطبيق.
+    };
+  }
 
   // تهيئة الـ DI قبل runApp.
   await di.initDependencies();
