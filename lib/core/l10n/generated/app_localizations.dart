@@ -3914,6 +3914,18 @@ abstract class AppLocalizations {
   /// **'New material request'**
   String get labReqNewRequest;
 
+  /// No description provided for @labReqDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete material request'**
+  String get labReqDeleteTitle;
+
+  /// No description provided for @labReqDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the \"{material}\" request? This cannot be undone.'**
+  String labReqDeleteConfirm(String material);
+
   /// No description provided for @labReqFieldMaterial.
   ///
   /// In en, this message translates to:

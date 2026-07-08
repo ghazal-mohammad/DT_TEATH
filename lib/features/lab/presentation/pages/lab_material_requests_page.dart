@@ -25,6 +25,7 @@ import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../shared/widgets/primitives/app_filter_chip.dart';
+import '../../domain/entities/lab_material_request.dart';
 import '../../domain/repositories/lab_material_requests_repository.dart';
 import '../bloc/lab_material_requests_cubit.dart';
 import '../bloc/lab_material_requests_state.dart';
@@ -103,7 +104,10 @@ class _MaterialRequestsBody extends StatelessWidget {
             const LabMatRequestsEmpty()
           else
             for (final req in requests) ...[
-              LabMatRequestCard(request: req),
+              LabMatRequestCard(
+                request: req,
+                onDelete: () => _onDelete(context, req),
+              ),
               const SizedBox(height: AppSizes.spaceMD),
             ],
         ],
@@ -127,5 +131,32 @@ class _MaterialRequestsBody extends StatelessWidget {
       reason: r.reason,
     );
     messenger.showSnackBar(SnackBar(content: Text(successText)));
+  }
+
+  /// تأكيد ثم حذف طلب مواد عبر الـ Cubit.
+  Future<void> _onDelete(BuildContext context, MatRequest req) async {
+    final cubit = context.read<LabMaterialRequestsCubit>();
+    final l10n = context.l10n;
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.labReqDeleteTitle),
+        content: Text(l10n.labReqDeleteConfirm(req.material)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) cubit.delete(req.id);
   }
 }

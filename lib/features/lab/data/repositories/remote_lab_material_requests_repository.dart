@@ -96,6 +96,17 @@ class RemoteLabMaterialRequestsRepository
   }
 
   @override
+  Future<void> delete(String id) async {
+    try {
+      await _remote.delete(id);
+      _cache = _cache.where((r) => r.id != id).toList(growable: false);
+      _emit();
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Stream<List<MatRequest>> watchAll() => _controller.stream;
 
   // ── تحويل JSON → entity ──────────────────────────────────────────────────

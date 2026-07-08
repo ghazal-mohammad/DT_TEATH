@@ -64,6 +64,13 @@ class MockLabMaterialRequestsRepository
   }
 
   @override
+  Future<void> delete(String id) async {
+    await Future<void>.delayed(_mockLatency);
+    _requests = _requests.where((r) => r.id != id).toList();
+    _emit();
+  }
+
+  @override
   Stream<List<MatRequest>> watchAll() => _controller.stream;
 
   // ── بذرة الطلبات (مؤقّتة حتى ربط الـ API) ─────────────────────────────────

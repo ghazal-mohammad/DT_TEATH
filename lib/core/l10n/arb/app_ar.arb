@@ -689,6 +689,11 @@
   "labReqLabOrder": "طلبية المخبر",
   "labReqEmptyCategory": "لا توجد طلبيات مواد في هذه الفئة",
   "labReqNewRequest": "طلب مادة جديدة",
+  "labReqDeleteTitle": "حذف طلب المواد",
+  "labReqDeleteConfirm": "هل تريد حذف طلب «{material}»؟ لا يمكن التراجع.",
+  "@labReqDeleteConfirm": {
+    "placeholders": { "material": { "type": "String" } }
+  },
   "labReqFieldMaterial": "اسم المادة",
   "labReqFieldUnit": "الوحدة",
   "labReqFieldCompany": "اسم الشركة",

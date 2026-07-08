@@ -18,8 +18,11 @@ import 'lab_mat_request_data.dart';
 
 /// بطاقة طلب مادة واحدة في قائمة طلبات المخبر من المستودع.
 class LabMatRequestCard extends StatefulWidget {
-  const LabMatRequestCard({super.key, required this.request});
+  const LabMatRequestCard({super.key, required this.request, this.onDelete});
   final MatRequest request;
+
+  /// عند تمريره يظهر زر حذف في رأس البطاقة (null = بلا حذف).
+  final VoidCallback? onDelete;
 
   @override
   State<LabMatRequestCard> createState() => _LabMatRequestCardState();
@@ -130,6 +133,28 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
                     ),
                   ),
                   AppBadge(text: _badgeText(context), variant: _badgeVariant),
+                  if (widget.onDelete != null) ...[
+                    const SizedBox(width: AppSizes.spaceSM),
+                    Tooltip(
+                      message: context.l10n.delete,
+                      child: Semantics(
+                        button: true,
+                        label: context.l10n.delete,
+                        child: InkResponse(
+                          onTap: widget.onDelete,
+                          radius: 18,
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              Icons.delete_outline_rounded,
+                              size: 18,
+                              color: AppColors.error,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: AppSizes.spaceMD),

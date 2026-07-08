@@ -26,6 +26,9 @@ abstract class LabMaterialRequestsRepository {
     String? reason,
   });
 
+  /// يحذف طلب مادة بالمعرّف.
+  Future<void> delete(String id);
+
   /// stream للطلبات — لتحديث الـ UI تلقائياً.
   Stream<List<MatRequest>> watchAll();
 }

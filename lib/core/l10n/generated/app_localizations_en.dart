@@ -2002,6 +2002,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqNewRequest => 'New material request';
 
   @override
+  String get labReqDeleteTitle => 'Delete material request';
+
+  @override
+  String labReqDeleteConfirm(String material) {
+    return 'Delete the \"$material\" request? This cannot be undone.';
+  }
+
+  @override
   String get labReqFieldMaterial => 'Material name';
 
   @override

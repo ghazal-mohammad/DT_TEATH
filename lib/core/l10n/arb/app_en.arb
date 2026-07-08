@@ -756,6 +756,11 @@
   "labReqLabOrder": "Lab order",
   "labReqEmptyCategory": "No material requests in this category",
   "labReqNewRequest": "New material request",
+  "labReqDeleteTitle": "Delete material request",
+  "labReqDeleteConfirm": "Delete the \"{material}\" request? This cannot be undone.",
+  "@labReqDeleteConfirm": {
+    "placeholders": { "material": { "type": "String" } }
+  },
   "labReqFieldMaterial": "Material name",
   "labReqFieldUnit": "Unit",
   "labReqFieldCompany": "Company name",

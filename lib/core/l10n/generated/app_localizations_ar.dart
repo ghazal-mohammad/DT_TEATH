@@ -1986,6 +1986,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqNewRequest => 'طلب مادة جديدة';
 
   @override
+  String get labReqDeleteTitle => 'حذف طلب المواد';
+
+  @override
+  String labReqDeleteConfirm(String material) {
+    return 'هل تريد حذف طلب «$material»؟ لا يمكن التراجع.';
+  }
+
+  @override
   String get labReqFieldMaterial => 'اسم المادة';
 
   @override

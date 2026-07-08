@@ -30,6 +30,12 @@ class LabMaterialRequestsRemoteDataSource {
     );
   }
 
+  /// POST /api/labManager/deleteMaterialRequest/{id} → حذف طلب مواد.
+  Future<void> delete(Object id) async {
+    await _dio
+        .post<dynamic>(ApiEndpoints.labManagerDeleteMaterialRequest(id));
+  }
+
   List<Map<String, dynamic>> _asList(Object? data) {
     final list = (data is Map) ? data['data'] : null;
     if (list is! List) return <Map<String, dynamic>>[];
