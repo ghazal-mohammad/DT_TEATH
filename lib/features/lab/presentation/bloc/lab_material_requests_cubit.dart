@@ -59,6 +59,15 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
         errorMessage: userMessageFromError(e),
       )),
     );
+
+    // كتالوج مواد المستودع (مرة) لاقتراحات النموذج — لا يحجب عرض الطلبات،
+    // وفشله لا يكسر الصفحة (النموذج يعمل بالإدخال الحر بلا كتالوج).
+    if (state.catalog.isEmpty) {
+      try {
+        final catalog = await _repository.getWarehouseMaterials();
+        emit(state.copyWith(catalog: catalog));
+      } catch (_) {/* تجاهل بصمت */}
+    }
   }
 
   /// تغيير الفلتر النشط (0=الكل 1=جديد 2=تم التسليم 3=غير متوفر).
@@ -73,6 +82,7 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
     required String quantity,
     required String unit,
     required String requestedBy,
+    int? materialId,
     String? company,
     String? reason,
   }) async {
@@ -81,6 +91,7 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
       quantity: quantity,
       unit: unit,
       requestedBy: requestedBy,
+      materialId: materialId,
       company: company,
       reason: reason,
     );

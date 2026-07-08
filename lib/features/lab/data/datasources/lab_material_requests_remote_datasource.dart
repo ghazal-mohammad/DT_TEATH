@@ -36,6 +36,13 @@ class LabMaterialRequestsRemoteDataSource {
         .post<dynamic>(ApiEndpoints.labManagerDeleteMaterialRequest(id));
   }
 
+  /// GET /api/labManager/showAllWarehouseMaterials → كتالوج مواد المستودع الخام.
+  Future<List<Map<String, dynamic>>> getWarehouseMaterials() async {
+    final res = await _dio
+        .get<dynamic>(ApiEndpoints.labManagerShowAllWarehouseMaterials);
+    return _asList(res.data);
+  }
+
   List<Map<String, dynamic>> _asList(Object? data) {
     final list = (data is Map) ? data['data'] : null;
     if (list is! List) return <Map<String, dynamic>>[];

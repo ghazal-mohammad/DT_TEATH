@@ -689,6 +689,7 @@
   "labReqLabOrder": "طلبية المخبر",
   "labReqEmptyCategory": "لا توجد طلبيات مواد في هذه الفئة",
   "labReqNewRequest": "طلب مادة جديدة",
+  "labReqMaterialPickHint": "اكتب للبحث في مواد المستودع أو أدخل مادة جديدة",
   "labReqDeleteTitle": "حذف طلب المواد",
   "labReqDeleteConfirm": "هل تريد حذف طلب «{material}»؟ لا يمكن التراجع.",
   "@labReqDeleteConfirm": {

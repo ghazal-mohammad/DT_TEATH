@@ -3914,6 +3914,12 @@ abstract class AppLocalizations {
   /// **'New material request'**
   String get labReqNewRequest;
 
+  /// No description provided for @labReqMaterialPickHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type to search warehouse materials or enter a new one'**
+  String get labReqMaterialPickHint;
+
   /// No description provided for @labReqDeleteTitle.
   ///
   /// In en, this message translates to:

@@ -6,6 +6,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/lab_material_request.dart';
+import '../entities/warehouse_material_ref.dart';
 
 /// عقد الوصول لطلبات المواد.
 abstract class LabMaterialRequestsRepository {
@@ -16,12 +17,19 @@ abstract class LabMaterialRequestsRepository {
   /// يجلب كل الطلبات.
   Future<List<MatRequest>> getAll();
 
-  /// يضيف طلب مادة جديد (يولّد المعرّف والتاريخ) ويُدرجه بأعلى القائمة.
+  /// يجلب كتالوج مواد المستودع (لاختيار مادة موجودة في النموذج).
+  Future<List<WarehouseMaterialRef>> getWarehouseMaterials();
+
+  /// يضيف طلب مادة جديد ويُدرجه بأعلى القائمة.
+  ///
+  /// [materialId] غير null ⇒ مادة موجودة من الكتالوج (مسار items بـ material_id).
+  /// null ⇒ مادة جديدة بالاسم الحر (مسار new_items).
   Future<void> addRequest({
     required String material,
     required String quantity,
     required String unit,
     required String requestedBy,
+    int? materialId,
     String? company,
     String? reason,
   });

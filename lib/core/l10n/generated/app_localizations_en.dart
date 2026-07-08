@@ -2002,6 +2002,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqNewRequest => 'New material request';
 
   @override
+  String get labReqMaterialPickHint =>
+      'Type to search warehouse materials or enter a new one';
+
+  @override
   String get labReqDeleteTitle => 'Delete material request';
 
   @override

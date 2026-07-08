@@ -19,6 +19,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/lab_material_request.dart';
+import '../../domain/entities/warehouse_material_ref.dart';
 import '../../domain/repositories/lab_material_requests_repository.dart';
 import '../../../../core/session/session_cache_registry.dart';
 import '../datasources/lab_material_requests_remote_datasource.dart';
@@ -67,28 +68,57 @@ class RemoteLabMaterialRequestsRepository
   }
 
   @override
+  Future<List<WarehouseMaterialRef>> getWarehouseMaterials() async {
+    try {
+      final raw = await _remote.getWarehouseMaterials();
+      return raw
+          .map((m) => WarehouseMaterialRef(
+                materialId: int.tryParse('${m['material_id'] ?? ''}') ?? 0,
+                name: '${m['material'] ?? ''}'.trim(),
+                unit: '${m['unit'] ?? ''}'.trim(),
+              ))
+          .where((m) => m.materialId > 0 && m.name.isNotEmpty)
+          .toList(growable: false);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Future<void> addRequest({
     required String material,
     required String quantity,
     required String unit,
     required String requestedBy,
+    int? materialId,
     String? company,
     String? reason,
   }) async {
     try {
-      // requestedBy لا يُرسَل — الباك يعتمد المستخدم المُصادَق. المادة بلا
-      // material_id ⇒ مسار "مادة جديدة" (new_items).
-      await _remote.create({
-        'new_items': [
-          {
-            'material_name': material,
-            'quantity': quantity,
-            if (unit.isNotEmpty) 'unit': unit,
-            if (company != null && company.isNotEmpty) 'company_name': company,
-            if (reason != null && reason.isNotEmpty) 'reason': reason,
-          },
-        ],
-      });
+      // requestedBy لا يُرسَل — الباك يعتمد المستخدم المُصادَق.
+      // مادة موجودة (materialId) ⇒ مسار items؛ وإلا مادة جديدة ⇒ new_items.
+      final Map<String, dynamic> body = materialId != null
+          ? {
+              'items': [
+                {
+                  'material_id': materialId,
+                  'quantity_requested': quantity,
+                },
+              ],
+            }
+          : {
+              'new_items': [
+                {
+                  'material_name': material,
+                  'quantity': quantity,
+                  if (unit.isNotEmpty) 'unit': unit,
+                  if (company != null && company.isNotEmpty)
+                    'company_name': company,
+                  if (reason != null && reason.isNotEmpty) 'reason': reason,
+                },
+              ],
+            };
+      await _remote.create(body);
       await getAll(); // إعادة الجلب ليعكس الـ stream القائمة بعد الإضافة.
     } on DioException catch (e) {
       throw _mapDioError(e);

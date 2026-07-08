@@ -8,6 +8,7 @@
 import 'dart:async';
 
 import '../../domain/entities/lab_material_request.dart';
+import '../../domain/entities/warehouse_material_ref.dart';
 import '../../domain/repositories/lab_material_requests_repository.dart';
 
 /// تنفيذ mock للـ repository — يخزّن الطلبات في الذاكرة (تضيع عند restart).
@@ -39,11 +40,23 @@ class MockLabMaterialRequestsRepository
   }
 
   @override
+  Future<List<WarehouseMaterialRef>> getWarehouseMaterials() async {
+    await Future<void>.delayed(_mockLatency);
+    return const [
+      WarehouseMaterialRef(materialId: 1, name: 'زركون بلوك A3', unit: 'بلوك'),
+      WarehouseMaterialRef(materialId: 2, name: 'غراء طبي أبيض', unit: 'عبوة'),
+      WarehouseMaterialRef(materialId: 3, name: 'جبس أخضر', unit: 'كغ'),
+      WarehouseMaterialRef(materialId: 4, name: 'إيماكس بلوك', unit: 'بلوك'),
+    ];
+  }
+
+  @override
   Future<void> addRequest({
     required String material,
     required String quantity,
     required String unit,
     required String requestedBy,
+    int? materialId,
     String? company,
     String? reason,
   }) async {

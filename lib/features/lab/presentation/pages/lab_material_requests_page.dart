@@ -120,13 +120,17 @@ class _MaterialRequestsBody extends StatelessWidget {
     final cubit = context.read<LabMaterialRequestsCubit>();
     final messenger = ScaffoldMessenger.of(context);
     final successText = context.l10n.labReqSentSuccess;
-    final r = await LabMaterialRequestDialog.show(context);
+    final r = await LabMaterialRequestDialog.show(
+      context,
+      catalog: cubit.state.catalog,
+    );
     if (r == null) return;
     await cubit.addRequest(
       material: r.material,
       quantity: r.quantity,
       unit: r.unit,
       requestedBy: MockUserData.labUserName,
+      materialId: r.materialId,
       company: r.company,
       reason: r.reason,
     );

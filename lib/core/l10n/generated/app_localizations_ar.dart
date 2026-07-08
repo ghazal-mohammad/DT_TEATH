@@ -1986,6 +1986,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqNewRequest => 'طلب مادة جديدة';
 
   @override
+  String get labReqMaterialPickHint =>
+      'اكتب للبحث في مواد المستودع أو أدخل مادة جديدة';
+
+  @override
   String get labReqDeleteTitle => 'حذف طلب المواد';
 
   @override
