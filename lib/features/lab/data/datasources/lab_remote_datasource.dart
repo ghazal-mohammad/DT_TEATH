@@ -27,4 +27,29 @@ class LabRemoteDataSource {
         .map((e) => Map<String, dynamic>.from(e))
         .toList();
   }
+
+  /// GET /api/labManager/showTechnician/{id} → فنّي واحد كامل (مع الجدول).
+  Future<Map<String, dynamic>> showTechnician(Object id) async {
+    final res =
+        await _dio.get<dynamic>(ApiEndpoints.labManagerShowTechnician(id));
+    final inner = (res.data is Map) ? res.data['data'] : null;
+    return inner is Map ? Map<String, dynamic>.from(inner) : {};
+  }
+
+  /// POST /api/labManager/updateTechnicianWorkSchedule/{id}
+  /// [schedule] عناصرها {day_of_week, start_time (H:i), end_time (H:i)}.
+  Future<void> updateTechnicianWorkSchedule(
+    Object id,
+    List<Map<String, String>> schedule,
+  ) async {
+    // FormData يرمّز schedule[i][key] تلقائياً — يطابق توقّع الباك (array).
+    final form = <String, dynamic>{};
+    for (var i = 0; i < schedule.length; i++) {
+      schedule[i].forEach((k, v) => form['schedule[$i][$k]'] = v);
+    }
+    await _dio.post<dynamic>(
+      ApiEndpoints.labManagerUpdateTechnicianWorkSchedule(id),
+      data: FormData.fromMap(form),
+    );
+  }
 }

@@ -14,4 +14,14 @@ abstract class LabRepository {
 
   /// جلب كل فنيي المخبر من الباك (لتوكيل الطلبيات).
   Future<List<LabTechnician>> getTechnicians();
+
+  /// جلب فنّي واحد كامل (مع جدول الدوام) — showTechnician.
+  Future<LabTechnician> getTechnician(int id);
+
+  /// تحديث جدول دوام الفنّي — updateTechnicianWorkSchedule.
+  /// [schedule] عناصرها {day_of_week, start_time (H:i), end_time (H:i)}.
+  Future<void> updateTechnicianSchedule(
+    int id,
+    List<Map<String, String>> schedule,
+  );
 }

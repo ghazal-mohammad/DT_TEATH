@@ -20,11 +20,13 @@ class LabTechnicianTeamTable extends StatelessWidget {
     required this.technicians,
     required this.onAssign,
     required this.onTogglePause,
+    required this.onEditSchedule,
   });
 
   final List<TechnicianItem> technicians;
   final void Function(TechnicianItem) onAssign;
   final void Function(TechnicianItem) onTogglePause;
+  final void Function(TechnicianItem) onEditSchedule;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +105,7 @@ class LabTechnicianTeamTable extends StatelessWidget {
               isLast: i == technicians.length - 1,
               onAssign: () => onAssign(technicians[i]),
               onTogglePause: () => onTogglePause(technicians[i]),
+              onEditSchedule: () => onEditSchedule(technicians[i]),
             ),
         ],
       ),
@@ -164,12 +167,14 @@ class _TableRow extends StatelessWidget {
     required this.isLast,
     required this.onAssign,
     required this.onTogglePause,
+    required this.onEditSchedule,
   });
 
   final TechnicianItem tech;
   final bool isLast;
   final VoidCallback onAssign;
   final VoidCallback onTogglePause;
+  final VoidCallback onEditSchedule;
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +222,7 @@ class _TableRow extends StatelessWidget {
                       tech.status == TechnicianStatus.available,
                   onTap: onTogglePause,
                 ),
+                _ScheduleBtn(onTap: onEditSchedule),
                 _AssignBtn(onTap: onAssign),
               ],
             ),
@@ -493,6 +499,55 @@ class _AssignBtn extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// زر تعديل جدول دوام الفنّي — بنفس نمط أزرار الصف (يحترم الثيمين).
+class _ScheduleBtn extends StatelessWidget {
+  const _ScheduleBtn({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final Color accent = isLight ? AppColors.primary : AppColors.brand;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Tooltip(
+          message: context.l10n.techScheduleEdit,
+          child: Semantics(
+            button: true,
+            label: context.l10n.techScheduleEdit,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.08),
+                border: Border.all(color: accent.withValues(alpha: 0.35)),
+                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.schedule_rounded, size: 14, color: accent),
+                  const SizedBox(width: 4),
+                  Text(
+                    context.l10n.techScheduleEdit,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: accent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

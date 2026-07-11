@@ -2726,6 +2726,84 @@ abstract class AppLocalizations {
   /// **'Lab Team'**
   String get labTeamSectionTitle;
 
+  /// No description provided for @techScheduleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work schedule'**
+  String get techScheduleTitle;
+
+  /// No description provided for @techScheduleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit schedule'**
+  String get techScheduleEdit;
+
+  /// No description provided for @techScheduleDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get techScheduleDayOff;
+
+  /// No description provided for @techScheduleNeedOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one working day'**
+  String get techScheduleNeedOne;
+
+  /// No description provided for @techScheduleEndAfterStart.
+  ///
+  /// In en, this message translates to:
+  /// **'End time must be after start time'**
+  String get techScheduleEndAfterStart;
+
+  /// No description provided for @techScheduleSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Work schedule saved'**
+  String get techScheduleSaved;
+
+  /// No description provided for @daySaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get daySaturday;
+
+  /// No description provided for @daySunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get daySunday;
+
+  /// No description provided for @dayMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get dayMonday;
+
+  /// No description provided for @dayTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get dayTuesday;
+
+  /// No description provided for @dayWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get dayWednesday;
+
+  /// No description provided for @dayThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get dayThursday;
+
+  /// No description provided for @dayFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get dayFriday;
+
   /// No description provided for @labTeamTotalChip.
   ///
   /// In en, this message translates to:

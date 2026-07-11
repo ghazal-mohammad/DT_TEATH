@@ -1361,6 +1361,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labTeamSectionTitle => 'فريق المخبر';
 
   @override
+  String get techScheduleTitle => 'جدول الدوام';
+
+  @override
+  String get techScheduleEdit => 'تعديل الجدول';
+
+  @override
+  String get techScheduleDayOff => 'إجازة';
+
+  @override
+  String get techScheduleNeedOne => 'اختر يوم عمل واحدًا على الأقل';
+
+  @override
+  String get techScheduleEndAfterStart => 'وقت النهاية يجب أن يكون بعد البداية';
+
+  @override
+  String get techScheduleSaved => 'تم حفظ جدول الدوام';
+
+  @override
+  String get daySaturday => 'السبت';
+
+  @override
+  String get daySunday => 'الأحد';
+
+  @override
+  String get dayMonday => 'الاثنين';
+
+  @override
+  String get dayTuesday => 'الثلاثاء';
+
+  @override
+  String get dayWednesday => 'الأربعاء';
+
+  @override
+  String get dayThursday => 'الخميس';
+
+  @override
+  String get dayFriday => 'الجمعة';
+
+  @override
   String get labTeamTotalChip => 'الإجمالي';
 
   @override

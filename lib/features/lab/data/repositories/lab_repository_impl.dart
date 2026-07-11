@@ -38,6 +38,30 @@ class LabRepositoryImpl implements LabRepository {
     }
   }
 
+  @override
+  Future<LabTechnician> getTechnician(int id) async {
+    try {
+      final raw = await _remote.showTechnician(id);
+      return LabTechnician.fromJson(raw);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<void> updateTechnicianSchedule(
+    int id,
+    List<Map<String, String>> schedule,
+  ) async {
+    try {
+      await _remote.updateTechnicianWorkSchedule(id, schedule);
+      // نُبطل كاش الفنّيين ليعاد جلبه بجدول محدّث عند العرض التالي.
+      _cache = null;
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
   /// تحويل DioException لـ Failure مناسب (نفس منطق طبقة الـ auth).
   Failure _mapDioError(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||

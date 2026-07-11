@@ -13,6 +13,7 @@ enum TechnicianStatus { active, available, onBreak }
 /// عنصر عرض لمخبري واحد في الجدول (مبني من نموذج الباك LabTechnician).
 class TechnicianItem {
   TechnicianItem({
+    required this.id,
     required this.name,
     required this.role,
     required this.shift,
@@ -21,6 +22,9 @@ class TechnicianItem {
     required this.status,
     required this.initials,
   });
+
+  /// معرّف الفنّي (employee.id) — لتحرير الجدول عبر الباك.
+  final int id;
 
   String name;
   String role;

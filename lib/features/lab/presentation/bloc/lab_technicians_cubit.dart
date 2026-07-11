@@ -77,6 +77,7 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
   ) {
     return techs
         .map((t) => TechnicianItem(
+              id: t.id,
               name: t.name,
               role: roleLabel,
               shift: '—', // غير متوفّر بالباك

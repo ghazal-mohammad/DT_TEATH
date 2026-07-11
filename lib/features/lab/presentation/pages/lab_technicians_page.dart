@@ -32,6 +32,7 @@ import '../widgets/assign_order_dialog.dart';
 import '../widgets/technicians/lab_technician_stats.dart';
 import '../widgets/technicians/lab_technician_table.dart';
 import '../widgets/technicians/lab_technician_view_data.dart';
+import '../widgets/technicians/technician_schedule_dialog.dart';
 
 /// صفحة إدارة المخبريين — تُنشئ [LabTechniciansCubit] وتزوّده للـ subtree.
 class LabTechniciansPage extends StatelessWidget {
@@ -138,6 +139,7 @@ class LabTechniciansPage extends StatelessWidget {
             onAssign: (tech) => _onAssign(context, state, tech),
             onTogglePause: (tech) =>
                 context.read<LabTechniciansCubit>().togglePause(tech),
+            onEditSchedule: (tech) => _onEditSchedule(context, tech),
           ),
         ],
       ),
@@ -157,6 +159,28 @@ class LabTechniciansPage extends StatelessWidget {
     );
     if (orderId == null) return;
     cubit.assign(tech, orderId);
+  }
+
+  /// يفتح محرّر جدول الدوام؛ عند الحفظ الناجح يعيد جلب الفنّيين (الكاش أُبطل)
+  /// ويعرض إشعاراً.
+  Future<void> _onEditSchedule(
+    BuildContext context,
+    TechnicianItem tech,
+  ) async {
+    final cubit = context.read<LabTechniciansCubit>();
+    final messenger = ScaffoldMessenger.of(context);
+    final savedText = context.l10n.techScheduleSaved;
+    final roleLabel = _roleLabel(context);
+    final pendingLabel = context.l10n.labTechPendingAssign;
+
+    final bool? ok = await TechnicianScheduleDialog.show(
+      context,
+      id: tech.id,
+      name: tech.name,
+    );
+    if (ok != true) return;
+    await cubit.load(roleLabel: roleLabel, pendingLabel: pendingLabel);
+    messenger.showSnackBar(SnackBar(content: Text(savedText)));
   }
 }
 
