@@ -2136,6 +2136,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labInvOut => 'مواد نفدت';
 
   @override
+  String get stockLogsTitle => 'سجلّ الحركات';
+
+  @override
+  String get stockLogsEmpty => 'لا توجد حركات مسجّلة';
+
+  @override
   String get labInvColCategory => 'الفئة';
 
   @override

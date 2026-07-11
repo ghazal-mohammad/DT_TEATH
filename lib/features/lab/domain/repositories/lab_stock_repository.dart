@@ -6,6 +6,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/lab_stock.dart';
+import '../entities/lab_stock_log.dart';
 
 /// عقد الوصول لمخزون المخبر.
 abstract class LabStockRepository {
@@ -15,6 +16,9 @@ abstract class LabStockRepository {
 
   /// يجلب كل مواد مخزون المخبر.
   Future<List<LabStock>> getAll();
+
+  /// يجلب سجلّ حركات المخزون (إضافة/خصم) — showLabStockLogs.
+  Future<List<LabStockLog>> getLogs();
 
   /// يضيف كمية لمادة (إضافة يدوية للمخزون). [notes] اختياري.
   Future<void> addQuantity({

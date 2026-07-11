@@ -4202,6 +4202,18 @@ abstract class AppLocalizations {
   /// **'Out of stock'**
   String get labInvOut;
 
+  /// No description provided for @stockLogsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement log'**
+  String get stockLogsTitle;
+
+  /// No description provided for @stockLogsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No recorded movements'**
+  String get stockLogsEmpty;
+
   /// No description provided for @labInvColCategory.
   ///
   /// In en, this message translates to:

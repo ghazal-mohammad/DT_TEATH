@@ -740,6 +740,8 @@
   "labInvTotal": "إجمالي المواد",
   "labInvLow": "مواد تنفد",
   "labInvOut": "مواد نفدت",
+  "stockLogsTitle": "سجلّ الحركات",
+  "stockLogsEmpty": "لا توجد حركات مسجّلة",
   "labInvColCategory": "الفئة",
   "labInvConsume": "تسجيل استهلاك",
   "labInvConsumeTitle": "تسجيل استهلاك مادة",

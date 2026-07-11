@@ -42,6 +42,14 @@ class LabStockRemoteDataSource {
     );
   }
 
+  /// GET /api/labManager/showLabStockLogs → سجلّ حركات المخزون (مُصفّح).
+  /// الرد مُصفّح Laravel: العناصر تحت `data`.
+  Future<List<Map<String, dynamic>>> getLogs() async {
+    final res =
+        await _dio.get<dynamic>(ApiEndpoints.labManagerShowLabStockLogs);
+    return _asList(res.data);
+  }
+
   List<Map<String, dynamic>> _asList(Object? data) {
     final list = (data is Map) ? data['data'] : null;
     if (list is! List) return <Map<String, dynamic>>[];

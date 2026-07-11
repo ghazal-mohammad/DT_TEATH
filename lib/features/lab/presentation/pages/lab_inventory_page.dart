@@ -36,6 +36,7 @@ import '../../domain/repositories/lab_stock_repository.dart';
 import '../bloc/lab_stock_cubit.dart';
 import '../bloc/lab_stock_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
+import '../widgets/inventory/lab_stock_logs_dialog.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //  PAGE — تُنشئ LabStockCubit محلياً وتزوّده للـ subtree.
@@ -406,6 +407,13 @@ class _InventoryCard extends StatelessWidget {
                   style: AppTextStyles.headlineSmall.copyWith(
                     color: isLight ? AppColors.lightText1 : AppColors.darkText1,
                   ),
+                ),
+                const SizedBox(width: AppSizes.spaceMD),
+                AppButton.secondary(
+                  label: l10n.stockLogsTitle,
+                  icon: Icons.history_rounded,
+                  onPressed: () => LabStockLogsDialog.show(context),
+                  size: AppButtonSize.small,
                 ),
                 const Spacer(),
                 Flexible(

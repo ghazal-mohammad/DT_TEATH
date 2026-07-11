@@ -2155,6 +2155,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labInvOut => 'Out of stock';
 
   @override
+  String get stockLogsTitle => 'Movement log';
+
+  @override
+  String get stockLogsEmpty => 'No recorded movements';
+
+  @override
   String get labInvColCategory => 'Category';
 
   @override

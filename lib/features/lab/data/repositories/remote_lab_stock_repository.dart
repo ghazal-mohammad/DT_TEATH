@@ -18,6 +18,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/lab_stock.dart';
+import '../../domain/entities/lab_stock_log.dart';
 import '../../domain/repositories/lab_stock_repository.dart';
 import '../../../../core/session/session_cache_registry.dart';
 import '../datasources/lab_stock_remote_datasource.dart';
@@ -48,6 +49,27 @@ class RemoteLabStockRepository implements LabStockRepository {
   void _emit() {
     if (!_controller.isClosed) {
       _controller.add(List.unmodifiable(_cache));
+    }
+  }
+
+  @override
+  Future<List<LabStockLog>> getLogs() async {
+    try {
+      final raw = await _remote.getLogs();
+      return raw
+          .map((m) => LabStockLog(
+                id: '${m['id'] ?? ''}',
+                type: (m['type'] ?? '').toString(),
+                quantity: int.tryParse('${m['quantity'] ?? ''}') ?? 0,
+                materialName: (m['material_name'] ?? '').toString(),
+                unit: (m['unit'] ?? '').toString(),
+                reason: (m['reason'] ?? '').toString(),
+                notes: (m['notes'] ?? '').toString(),
+                createdAt: (m['created_at'] ?? '').toString(),
+              ))
+          .toList(growable: false);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
     }
   }
 

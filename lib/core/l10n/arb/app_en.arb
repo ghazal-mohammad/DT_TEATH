@@ -808,6 +808,8 @@
   "labInvTotal": "Total materials",
   "labInvLow": "Low stock",
   "labInvOut": "Out of stock",
+  "stockLogsTitle": "Movement log",
+  "stockLogsEmpty": "No recorded movements",
   "labInvColCategory": "Category",
   "labInvConsume": "Record usage",
   "labInvConsumeTitle": "Record material usage",
