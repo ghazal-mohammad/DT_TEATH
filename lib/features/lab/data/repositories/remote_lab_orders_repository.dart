@@ -107,6 +107,16 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
   }
 
   @override
+  Future<List<LabOrderFull>> getToday() async {
+    try {
+      final raw = await _remote.getToday();
+      return raw.map(_fromJson).toList(growable: false);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Future<LabOrderFull> getOne(String id) async {
     try {
       final json = await _remote.getOne(id);

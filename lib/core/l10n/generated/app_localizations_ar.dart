@@ -911,6 +911,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labOrdersFilterAll => 'الكل';
 
   @override
+  String get labOrdersToday => 'طلبات اليوم';
+
+  @override
   String get labOrdersFilterNew => 'جديد';
 
   @override

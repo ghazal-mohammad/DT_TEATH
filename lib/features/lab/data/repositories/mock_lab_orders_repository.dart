@@ -40,6 +40,13 @@ class MockLabOrdersRepository implements LabOrdersRepository {
   }
 
   @override
+  Future<List<LabOrderFull>> getToday() async {
+    await Future<void>.delayed(_mockLatency);
+    // الموك بلا تواريخ حقيقية — نُرجع أول عنصرين كتقريب لطلبات اليوم.
+    return List.unmodifiable(_orders.take(2));
+  }
+
+  @override
   Future<LabOrderFull> getOne(String id) async {
     await Future<void>.delayed(_mockLatency);
     return _orders.firstWhere(

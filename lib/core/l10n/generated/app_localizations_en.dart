@@ -78,7 +78,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authEnterEmailTitle => 'Let\'s get you started';
 
   @override
-  String get authEnterEmailSubtitle => 'Enter the email your administrator registered';
+  String get authEnterEmailSubtitle =>
+      'Enter the email your administrator registered';
 
   @override
   String get authNext => 'Next';
@@ -98,7 +99,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get authVerifyCodeError => 'Invalid or expired code. Please try again.';
+  String get authVerifyCodeError =>
+      'Invalid or expired code. Please try again.';
 
   @override
   String get authResendCode => 'Resend Code';
@@ -118,13 +120,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSetPasswordTitle => 'Create Your Password';
 
   @override
-  String get authSetPasswordSubtitle => 'Choose a strong password to secure your account';
+  String get authSetPasswordSubtitle =>
+      'Choose a strong password to secure your account';
 
   @override
   String get authSaveAndLogin => 'Save & Sign In';
 
   @override
-  String get authCheckEmailSent => 'If this email is registered, a code was sent';
+  String get authCheckEmailSent =>
+      'If this email is registered, a code was sent';
 
   @override
   String get labSystem => 'Lab System';
@@ -361,7 +365,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeLab => 'Welcome to the Lab System 🧪';
 
   @override
-  String get systemStatusOk => 'Last updated: today — all systems operating normally';
+  String get systemStatusOk =>
+      'Last updated: today — all systems operating normally';
 
   @override
   String get roleLabManager => 'Lab Manager';
@@ -394,7 +399,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyNoMaterialsTitle => 'No Materials';
 
   @override
-  String get emptyNoMaterialsMessage => 'No materials have been added to inventory yet';
+  String get emptyNoMaterialsMessage =>
+      'No materials have been added to inventory yet';
 
   @override
   String get emptyNoInvoicesTitle => 'No Invoices';
@@ -406,7 +412,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyNoNotificationsTitle => 'No New Notifications';
 
   @override
-  String get emptyNoNotificationsMessage => 'We\'ll notify you when something new arrives';
+  String get emptyNoNotificationsMessage =>
+      'We\'ll notify you when something new arrives';
 
   @override
   String get emptyNoSearchResultsTitle => 'No Results Found';
@@ -418,19 +425,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyNoTechniciansTitle => 'No Technicians';
 
   @override
-  String get emptyNoTechniciansMessage => 'Start by adding the first technician to the team';
+  String get emptyNoTechniciansMessage =>
+      'Start by adding the first technician to the team';
 
   @override
   String get emptyNoReportsTitle => 'No Reports Available';
 
   @override
-  String get emptyNoReportsMessage => 'Reports will appear once data is collected';
+  String get emptyNoReportsMessage =>
+      'Reports will appear once data is collected';
 
   @override
   String get emptyErrorTitle => 'Failed to Load Data';
 
   @override
-  String get emptyErrorMessage => 'An error occurred while connecting to the server';
+  String get emptyErrorMessage =>
+      'An error occurred while connecting to the server';
 
   @override
   String get actionAddFirst => 'Add First Item';
@@ -448,25 +458,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get systemSelectionTitle => 'Select System';
 
   @override
-  String get systemSelectionSubtitle => 'Choose the system you want to work with';
+  String get systemSelectionSubtitle =>
+      'Choose the system you want to work with';
 
   @override
   String get systemSelectionLabTitle => 'Lab System';
 
   @override
-  String get systemSelectionLabDescription => 'Manage dental prosthetics orders, technicians, and reports';
+  String get systemSelectionLabDescription =>
+      'Manage dental prosthetics orders, technicians, and reports';
 
   @override
   String get systemSelectionWarehouseTitle => 'Warehouse System';
 
   @override
-  String get systemSelectionWarehouseDescription => 'Manage inventory, materials, invoices, and clinic orders';
+  String get systemSelectionWarehouseDescription =>
+      'Manage inventory, materials, invoices, and clinic orders';
 
   @override
   String get systemSelectionEnterButton => 'Enter';
 
   @override
-  String get systemSelectionDemoNotice => 'Preview mode — you can switch between systems anytime';
+  String get systemSelectionDemoNotice =>
+      'Preview mode — you can switch between systems anytime';
 
   @override
   String get systemSwitcherSwitchTo => 'Switch to';
@@ -478,7 +492,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get f4TopbarSubtitles => '─── Topbar subtitles ───';
 
   @override
-  String get warehouseTopbarSubtitle => 'Warehouse Management System · DT.Teeth';
+  String get warehouseTopbarSubtitle =>
+      'Warehouse Management System · DT.Teeth';
 
   @override
   String get labTopbarSubtitle => 'Lab Management System · DT.Teeth';
@@ -490,7 +505,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whDashboardTitle => 'Dashboard';
 
   @override
-  String get whDashboardHeroSubtitle => 'Last updated: today — all systems operating normally';
+  String get whDashboardHeroSubtitle =>
+      'Last updated: today — all systems operating normally';
 
   @override
   String get whHeroStatRegisteredMaterials => 'Registered Materials';
@@ -860,7 +876,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonTitle => 'Coming Soon';
 
   @override
-  String get comingSoonSubtitle => 'This screen is under construction — coming soon';
+  String get comingSoonSubtitle =>
+      'This screen is under construction — coming soon';
 
   @override
   String get screenUnderConstruction => 'Under Construction';
@@ -875,7 +892,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labHeroWelcome => 'Welcome to Lab System 🧪';
 
   @override
-  String get labHeroSubtitle => 'Last update: Today — All systems running normally ✅';
+  String get labHeroSubtitle =>
+      'Last update: Today — All systems running normally ✅';
 
   @override
   String get labHeroStatTodayOrders => 'Today\'s Orders';
@@ -900,6 +918,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labOrdersFilterAll => 'All';
+
+  @override
+  String get labOrdersToday => 'Today\'s orders';
 
   @override
   String get labOrdersFilterNew => 'New';
@@ -1061,7 +1082,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labManageTechnicians => 'Manage Technicians';
 
   @override
-  String get labDashboardSearchHint => 'Filter this page\'s orders... (number, doctor, material)';
+  String get labDashboardSearchHint =>
+      'Filter this page\'s orders... (number, doctor, material)';
 
   @override
   String get priorityUrgent => 'Urgent';
@@ -1140,7 +1162,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get labOrdersSearchHint => 'Filter doctor orders... (number, doctor, material, tooth)';
+  String get labOrdersSearchHint =>
+      'Filter doctor orders... (number, doctor, material, tooth)';
 
   @override
   String labOrdersCountOfTotal(String shown, String total) {
@@ -1169,7 +1192,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsChangePassword => 'Change Password';
 
   @override
-  String get settingsChangePasswordDesc => 'It\'s recommended to change your password every 90 days for better security';
+  String get settingsChangePasswordDesc =>
+      'It\'s recommended to change your password every 90 days for better security';
 
   @override
   String get settingsCurrentPassword => 'Current Password';
@@ -1193,25 +1217,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings2FAOtpTitle => 'Require OTP on login';
 
   @override
-  String get settings2FAOtpDesc => 'You receive a code by email each time you sign in from a new device';
+  String get settings2FAOtpDesc =>
+      'You receive a code by email each time you sign in from a new device';
 
   @override
   String get settingsLogoutAll => 'Sign out of all devices';
 
   @override
-  String get settingsLogoutAllDesc => 'End all active sessions on other devices';
+  String get settingsLogoutAllDesc =>
+      'End all active sessions on other devices';
 
   @override
   String get settingsNotifPrefs => 'Notification Preferences';
 
   @override
-  String get settingsNotifPrefsDesc => 'Choose which notifications you want to receive';
+  String get settingsNotifPrefsDesc =>
+      'Choose which notifications you want to receive';
 
   @override
   String get labSettingsNotifUrgentOrders => 'Urgent Orders';
 
   @override
-  String get labSettingsNotifUrgentOrdersDesc => 'Orders that must be completed today';
+  String get labSettingsNotifUrgentOrdersDesc =>
+      'Orders that must be completed today';
 
   @override
   String get labSettingsNotifNewFromDoctors => 'New orders from doctors';
@@ -1223,19 +1251,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsNotifLowMaterials => 'Low materials';
 
   @override
-  String get settingsNotifLowMaterialsDesc => 'When a material reaches its minimum';
+  String get settingsNotifLowMaterialsDesc =>
+      'When a material reaches its minimum';
 
   @override
   String get labSettingsNotifWarehouseUpdates => 'Warehouse updates';
 
   @override
-  String get labSettingsNotifWarehouseUpdatesDesc => 'Status of sent supply requests';
+  String get labSettingsNotifWarehouseUpdatesDesc =>
+      'Status of sent supply requests';
 
   @override
   String get labSettingsNotifTeamUpdates => 'Team updates';
 
   @override
-  String get labSettingsNotifTeamUpdatesDesc => 'Adding or changing a technician\'s shift';
+  String get labSettingsNotifTeamUpdatesDesc =>
+      'Adding or changing a technician\'s shift';
 
   @override
   String get settingsNotifChannels => 'Notification Channels';
@@ -1253,7 +1284,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsNotifSound => 'In-app notification sound';
 
   @override
-  String get settingsNotifSoundDesc => 'Play a tone when a new notification arrives';
+  String get settingsNotifSoundDesc =>
+      'Play a tone when a new notification arrives';
 
   @override
   String get settingsThemeDesc => 'Choose the system appearance';
@@ -1271,7 +1303,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTextSize => 'Font Size';
 
   @override
-  String get settingsTextSizeDesc => 'Enlarge or reduce the interface font to your comfort';
+  String get settingsTextSizeDesc =>
+      'Enlarge or reduce the interface font to your comfort';
 
   @override
   String get settingsTextSizeSmall => 'Small';
@@ -1412,13 +1445,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whNotifNewSupply => 'New supply orders';
 
   @override
-  String get whNotifNewSupplyDesc => 'When an order arrives from the lab/clinic';
+  String get whNotifNewSupplyDesc =>
+      'When an order arrives from the lab/clinic';
 
   @override
   String get whNotifSupplierDelay => 'Supplier delays';
 
   @override
-  String get whNotifSupplierDelayDesc => 'When a supplier misses a delivery date';
+  String get whNotifSupplierDelayDesc =>
+      'When a supplier misses a delivery date';
 
   @override
   String get whNotifInvoicesDue => 'Invoices pending payment';
@@ -1601,7 +1636,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get orderDetailsSubtitle => 'Details of the materials order sent to the warehouse';
+  String get orderDetailsSubtitle =>
+      'Details of the materials order sent to the warehouse';
 
   @override
   String get orderDetailsInfoSection => 'Order Information';
@@ -1797,7 +1833,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whMaterialsEmptyTitle => 'No Materials';
 
   @override
-  String get whMaterialsEmptyMessage => 'No materials match the current filters';
+  String get whMaterialsEmptyMessage =>
+      'No materials match the current filters';
 
   @override
   String get whColCode => 'Code';
@@ -1977,7 +2014,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whExpiringTitle => 'Materials expiring soon';
 
   @override
-  String get whExpiringSubtitle => 'These materials must be handled before they expire';
+  String get whExpiringSubtitle =>
+      'These materials must be handled before they expire';
 
   @override
   String whTodayOrdersCount(Object count) {
@@ -2009,7 +2047,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqNewRequest => 'New material request';
 
   @override
-  String get labReqMaterialPickHint => 'Type to search warehouse materials or enter a new one';
+  String get labReqMaterialPickHint =>
+      'Type to search warehouse materials or enter a new one';
 
   @override
   String get labReqDeleteTitle => 'Delete material request';
@@ -2032,7 +2071,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqFieldReason => 'Request reason';
 
   @override
-  String get labReqReasonHint => 'e.g. new material not available in the warehouse';
+  String get labReqReasonHint =>
+      'e.g. new material not available in the warehouse';
 
   @override
   String get labReqMaterialRequired => 'Material name is required';
@@ -2056,7 +2096,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techAddTitle => 'Add new technician';
 
   @override
-  String get techAddSubtitle => 'Enter the technician\'s details to join the lab team';
+  String get techAddSubtitle =>
+      'Enter the technician\'s details to join the lab team';
 
   @override
   String get techSectionBasic => 'Basic information';
@@ -2095,7 +2136,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderDetailsHeading => 'Order details';
 
   @override
-  String get orderDetailsSubtitleLab => 'Order details sent from the doctor to the lab';
+  String get orderDetailsSubtitleLab =>
+      'Order details sent from the doctor to the lab';
 
   @override
   String get orderDetailsExpectedDelivery => 'Expected delivery date';
@@ -2122,7 +2164,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProcessTitle => 'Process order';
 
   @override
-  String get labProcessDeliveredDesc => 'Material available and delivered to the doctor';
+  String get labProcessDeliveredDesc =>
+      'Material available and delivered to the doctor';
 
   @override
   String get labProcessMissingDesc => 'Material not available in the lab';
@@ -2273,10 +2316,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProcessTechnicianNone => 'Not specified';
 
   @override
-  String get labProcessTechnicianRequired => 'Select the executing technician before changing the status';
+  String get labProcessTechnicianRequired =>
+      'Select the executing technician before changing the status';
 
   @override
-  String get labProcessManufacturingDesc => 'Order is currently being manufactured';
+  String get labProcessManufacturingDesc =>
+      'Order is currently being manufactured';
 
   @override
   String get labProcessReadyTitle => 'Ready for delivery';
@@ -2315,7 +2360,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProcessConsumedSection => 'Materials consumed from inventory';
 
   @override
-  String get labProcessConsumedHint => 'These materials are deducted from lab inventory on save';
+  String get labProcessConsumedHint =>
+      'These materials are deducted from lab inventory on save';
 
   @override
   String get labProcessAddMaterial => 'Add material';

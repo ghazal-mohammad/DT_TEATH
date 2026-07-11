@@ -1868,6 +1868,12 @@ abstract class AppLocalizations {
   /// **'All'**
   String get labOrdersFilterAll;
 
+  /// No description provided for @labOrdersToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s orders'**
+  String get labOrdersToday;
+
   /// No description provided for @labOrdersFilterNew.
   ///
   /// In en, this message translates to:

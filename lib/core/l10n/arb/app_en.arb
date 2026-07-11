@@ -378,6 +378,7 @@
   "labStatReady": "Ready",
   "labStatUrgentToday": "Due Today",
   "labOrdersFilterAll": "All",
+  "labOrdersToday": "Today's orders",
   "labOrdersFilterNew": "New",
   "labOrdersFilterManufacturing": "Manufacturing",
   "labOrdersFilterReady": "Ready",

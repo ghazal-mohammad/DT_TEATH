@@ -18,6 +18,9 @@ abstract class LabOrdersRepository {
   /// يجلب كل الطلبات.
   Future<List<LabOrderFull>> getAll();
 
+  /// يجلب طلبات اليوم فقط (showAllTodayLabOrders) — عرض منفصل بلا كاش/stream.
+  Future<List<LabOrderFull>> getToday();
+
   /// يجلب تفاصيل طلب واحد كاملة (بما فيها طلبات التعديل modifications) —
   /// showLabOrder. تُستخدم في مودال التفاصيل.
   Future<LabOrderFull> getOne(String id);

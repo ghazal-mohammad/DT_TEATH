@@ -93,6 +93,15 @@ class _OrdersBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ── Today toggle ───────────────────────────────────────────
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: _TodayToggle(
+              active: state.todayOnly,
+              onTap: () => _toggleToday(context, !state.todayOnly),
+            ),
+          ),
+          const SizedBox(height: AppSizes.spaceMD),
           // ── Filter bar ─────────────────────────────────────────────
           LabOrdersFilterBar(
             total: state.total,
@@ -173,6 +182,79 @@ class _OrdersBody extends StatelessWidget {
     } catch (_) {
       return const [];
     }
+  }
+
+  /// تبديل وضع "طلبات اليوم"؛ يُشعِر عند فشل جلب طلبات اليوم من الباك.
+  Future<void> _toggleToday(BuildContext context, bool value) async {
+    final cubit = context.read<LabOrdersCubit>();
+    final messenger = ScaffoldMessenger.of(context);
+    final errText = context.l10n.error;
+    final ok = await cubit.setTodayOnly(value);
+    if (!ok) {
+      messenger.showSnackBar(SnackBar(content: Text(errText)));
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TODAY TOGGLE — تبديل عرض "طلبات اليوم" (يحترم الثيمين)
+// ══════════════════════════════════════════════════════════════════════════
+
+class _TodayToggle extends StatelessWidget {
+  const _TodayToggle({required this.active, required this.onTap});
+
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final Color accent = isLight ? AppColors.primary : AppColors.brand;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Semantics(
+          button: true,
+          toggled: active,
+          label: context.l10n.labOrdersToday,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: active
+                  ? accent
+                  : (isLight ? Colors.white : AppColors.darkBg1),
+              borderRadius: BorderRadius.circular(AppSizes.radiusXXL),
+              border: Border.all(
+                color: active
+                    ? accent
+                    : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.today_rounded,
+                    size: 15, color: active ? Colors.white : accent),
+                const SizedBox(width: 6),
+                Text(
+                  context.l10n.labOrdersToday,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: active
+                        ? Colors.white
+                        : (isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

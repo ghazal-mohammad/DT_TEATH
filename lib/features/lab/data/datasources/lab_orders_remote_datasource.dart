@@ -22,6 +22,13 @@ class LabOrdersRemoteDataSource {
     return _asList(res.data);
   }
 
+  /// GET /api/labManager/showAllTodayLabOrders → طلبات اليوم الخام.
+  Future<List<Map<String, dynamic>>> getToday() async {
+    final res =
+        await _dio.get<dynamic>(ApiEndpoints.labManagerShowAllTodayLabOrders);
+    return _asList(res.data);
+  }
+
   /// GET /api/labManager/showLabOrder/{id} → طلب واحد كامل (مع modifications).
   Future<Map<String, dynamic>> getOne(Object id) async {
     final res =

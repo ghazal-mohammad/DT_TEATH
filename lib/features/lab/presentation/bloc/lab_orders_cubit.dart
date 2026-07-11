@@ -68,6 +68,29 @@ class LabOrdersCubit extends Cubit<LabOrdersState> {
     emit(state.copyWith(filter: filter));
   }
 
+  /// تبديل وضع "طلبات اليوم". عند التفعيل يجلب طلبات اليوم من الباك
+  /// (showAllTodayLabOrders). يرجّع false عند فشل الجلب (يعود للكل).
+  Future<bool> setTodayOnly(bool value) async {
+    if (value == state.todayOnly) return true;
+    if (!value) {
+      // العودة للكل — قائمة orders محدّثة أصلاً من الـ stream.
+      emit(state.copyWith(todayOnly: false, clearError: true));
+      return true;
+    }
+    try {
+      final today = await _repository.getToday();
+      emit(state.copyWith(
+          todayOnly: true, todayOrders: today, clearError: true));
+      return true;
+    } catch (e) {
+      emit(state.copyWith(
+        todayOnly: false,
+        errorMessage: userMessageFromError(e),
+      ));
+      return false;
+    }
+  }
+
   /// معالجة طلب: تحديث الحالة + التكلفة + المخبري المنفّذ.
   /// (الـ stream يحدّث القائمة تلقائياً بعد التطبيق.)
   Future<void> processOrder({
