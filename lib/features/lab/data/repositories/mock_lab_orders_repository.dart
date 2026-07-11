@@ -40,6 +40,15 @@ class MockLabOrdersRepository implements LabOrdersRepository {
   }
 
   @override
+  Future<LabOrderFull> getOne(String id) async {
+    await Future<void>.delayed(_mockLatency);
+    return _orders.firstWhere(
+      (o) => o.id == id,
+      orElse: () => throw StateError('LabOrder with id "$id" not found'),
+    );
+  }
+
+  @override
   Future<void> processOrder({
     required String id,
     required LabOrderBadgeVariant status,

@@ -22,6 +22,13 @@ class LabOrdersRemoteDataSource {
     return _asList(res.data);
   }
 
+  /// GET /api/labManager/showLabOrder/{id} → طلب واحد كامل (مع modifications).
+  Future<Map<String, dynamic>> getOne(Object id) async {
+    final res =
+        await _dio.get<dynamic>(ApiEndpoints.labManagerShowLabOrder(id));
+    return _asData(res.data);
+  }
+
   /// POST /api/labManager/setStatusInProgress/{id} — تعيين فنّي وبدء التصنيع.
   /// يتطلّب الباك حالة الطلب = new + technician_id لفنّي متاح.
   Future<void> setInProgress(Object id, int technicianId) async {
@@ -49,5 +56,13 @@ class LabOrdersRemoteDataSource {
         .whereType<Map<dynamic, dynamic>>()
         .map((e) => Map<String, dynamic>.from(e))
         .toList();
+  }
+
+  /// يستخرج `data` كـ Map من ردّ `{success, data:{...}}`.
+  Map<String, dynamic> _asData(Object? data) {
+    final inner = (data is Map) ? data['data'] : null;
+    if (inner is Map) return Map<String, dynamic>.from(inner);
+    if (data is Map) return Map<String, dynamic>.from(data);
+    return <String, dynamic>{};
   }
 }

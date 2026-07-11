@@ -16,15 +16,17 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../domain/repositories/lab_orders_repository.dart';
 import 'lab_order_models.dart';
 
 part 'order_details/lab_order_details_parts.dart';
 
-class LabOrderDetailsDialog extends StatelessWidget {
+class LabOrderDetailsDialog extends StatefulWidget {
   const LabOrderDetailsDialog({super.key, required this.order});
 
   final LabOrderFull order;
@@ -38,7 +40,30 @@ class LabOrderDetailsDialog extends StatelessWidget {
   }
 
   @override
+  State<LabOrderDetailsDialog> createState() => _LabOrderDetailsDialogState();
+}
+
+class _LabOrderDetailsDialogState extends State<LabOrderDetailsDialog> {
+  late LabOrderFull _order = widget.order;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFullDetails();
+  }
+
+  /// يجلب التفاصيل الكاملة (showLabOrder) لإضافة طلبات التعديل — دون حجب العرض:
+  /// نعرض بيانات القائمة فورًا ثم نُحدّث عند وصول التفاصيل. فشله صامت.
+  Future<void> _loadFullDetails() async {
+    try {
+      final full = await sl<LabOrdersRepository>().getOne(widget.order.id);
+      if (mounted) setState(() => _order = full);
+    } catch (_) {/* نُبقي بيانات القائمة */}
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final LabOrderFull order = _order;
     final double width = MediaQuery.of(context).size.width;
     final double dialogWidth = width > 800 ? 720 : width * 0.95;
     final double dialogMaxHeight = MediaQuery.of(context).size.height * 0.9;
@@ -112,6 +137,14 @@ class LabOrderDetailsDialog extends StatelessWidget {
                         const SizedBox(height: 10),
                         _NotesBox(notes: order.notes),
                       ],
+                      // طلبات التعديل — من showLabOrder (تظهر عند وصول التفاصيل).
+                      if (order.modifications.isNotEmpty) ...[
+                        const SizedBox(height: 18),
+                        _SectionHeader(
+                            label: context.l10n.orderDetailsModifications),
+                        const SizedBox(height: 10),
+                        _ModificationsList(mods: order.modifications),
+                      ],
                     ],
                   ),
                 ),
@@ -128,6 +161,96 @@ class LabOrderDetailsDialog extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  MODIFICATIONS LIST — طلبات التعديل/الإصلاح على الطلبية (من showLabOrder)
+// ══════════════════════════════════════════════════════════════════════════
+
+class _ModificationsList extends StatelessWidget {
+  const _ModificationsList({required this.mods});
+
+  final List<LabOrderModification> mods;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.statusWarnBg.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lightBorder),
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < mods.length; i++) ...[
+            if (i > 0) const Divider(height: 1, color: AppColors.lightBorder),
+            _ModRow(mod: mods[i]),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ModRow extends StatelessWidget {
+  const _ModRow({required this.mod});
+
+  final LabOrderModification mod;
+
+  @override
+  Widget build(BuildContext context) {
+    final sub = [
+      if (mod.fault.isNotEmpty) mod.fault,
+      if (mod.status.isNotEmpty) mod.status,
+    ].join(' · ');
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.build_outlined,
+                  size: 16, color: AppColors.statusWarn),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  mod.details.isEmpty ? '—' : mod.details,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.lightText1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (sub.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 24),
+              child: Text(
+                sub,
+                style:
+                    AppTextStyles.bodySmall.copyWith(color: AppColors.lightText3),
+              ),
+            ),
+          ],
+          if (mod.responseNotes.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 24),
+              child: Text(
+                mod.responseNotes,
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.lightText2),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

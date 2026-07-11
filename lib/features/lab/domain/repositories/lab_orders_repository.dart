@@ -18,6 +18,10 @@ abstract class LabOrdersRepository {
   /// يجلب كل الطلبات.
   Future<List<LabOrderFull>> getAll();
 
+  /// يجلب تفاصيل طلب واحد كاملة (بما فيها طلبات التعديل modifications) —
+  /// showLabOrder. تُستخدم في مودال التفاصيل.
+  Future<LabOrderFull> getOne(String id);
+
   /// يعالج طلباً: يحدّث الحالة + التكلفة + المخبري المنفّذ (UC69/UC70/UC71).
   Future<void> processOrder({
     required String id,

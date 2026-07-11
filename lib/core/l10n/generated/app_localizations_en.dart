@@ -1610,6 +1610,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderDetailsNotes => 'Notes';
 
   @override
+  String get orderDetailsModifications => 'Modification requests';
+
+  @override
   String get orderDetailsStatusLabel => 'Order Status';
 
   @override

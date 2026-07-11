@@ -563,6 +563,7 @@
   "orderDetailsItems": "عناصر الطلب",
   "orderDetailsProgressSection": "تقدم التوريد",
   "orderDetailsNotes": "ملاحظات",
+  "orderDetailsModifications": "طلبات التعديل",
   "orderDetailsStatusLabel": "حالة الطلبية",
   "orderDetailsOrderDate": "تاريخ الطلب",
   "orderDetailsRequestData": "بيانات الطلب",

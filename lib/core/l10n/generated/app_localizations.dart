@@ -3182,6 +3182,12 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get orderDetailsNotes;
 
+  /// No description provided for @orderDetailsModifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Modification requests'**
+  String get orderDetailsModifications;
+
   /// No description provided for @orderDetailsStatusLabel.
   ///
   /// In en, this message translates to:

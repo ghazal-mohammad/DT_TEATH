@@ -14,7 +14,7 @@ import '../../domain/entities/lab_order.dart';
 // LabOrderFull و LabOrderBadgeVariant انتقلا إلى domain/entities/lab_order.dart؛
 // نعيد تصديرهما هنا كي تبقى الملفات المستوردة لهذا الملف تعمل دون تعديل.
 export '../../domain/entities/lab_order.dart'
-    show LabOrderFull, LabOrderBadgeVariant, LabOrderPart;
+    show LabOrderFull, LabOrderBadgeVariant, LabOrderPart, LabOrderModification;
 
 /// ألوان الـ status badge (نقطة + نص) — مطابقة لتصميم الجدول بالـ Dashboard.
 class LabStatusColors {

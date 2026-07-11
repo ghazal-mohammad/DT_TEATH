@@ -37,6 +37,22 @@ class LabOrderPart {
   final String notes;
 }
 
+/// طلب تعديل/إصلاح على الطلبية (يرسله الطبيب) — يأتي مع تفاصيل الطلب الكاملة
+/// عبر showLabOrder فقط (غير موجود في قائمة الطلبات).
+class LabOrderModification {
+  const LabOrderModification({
+    required this.details,
+    this.fault = '',
+    this.status = '',
+    this.responseNotes = '',
+  });
+
+  final String details;
+  final String fault;
+  final String status;
+  final String responseNotes;
+}
+
 /// نموذج كامل لطلب المخبر — يُستخدم بصفحة الطلبات والمودالات.
 ///
 /// الحقول القابلة للتغيير (statusVariant/cost/assignedTechnician) تُحدَّث عند
@@ -55,6 +71,7 @@ class LabOrderFull {
     this.cost,
     this.assignedTechnician,
     this.parts = const [],
+    this.modifications = const [],
   });
 
   final String id;
@@ -70,6 +87,9 @@ class LabOrderFull {
   /// كل قطع الطلب (للعرض الكامل في مودال التفاصيل). الحقول المسطّحة
   /// (type/material/tooth) تلخّص أول قطعة للبطاقة.
   final List<LabOrderPart> parts;
+
+  /// طلبات التعديل/الإصلاح على الطلبية — تُملأ فقط من showLabOrder (تفاصيل).
+  final List<LabOrderModification> modifications;
 
   /// تكلفة تصنيع الطلبية بالليرة السورية (تُسجَّل عند المعالجة) — UC69.
   int? cost;

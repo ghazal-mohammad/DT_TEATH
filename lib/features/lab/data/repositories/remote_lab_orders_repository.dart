@@ -107,6 +107,16 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
   }
 
   @override
+  Future<LabOrderFull> getOne(String id) async {
+    try {
+      final json = await _remote.getOne(id);
+      return _fromJson(json);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Stream<List<LabOrderFull>> watchAll() => _controller.stream;
 
   /// يحلّ اسم الفنّي إلى معرّفه عبر قائمة الفنّيين من الباك.
@@ -157,6 +167,20 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
       );
     }).toList();
 
+    // طلبات التعديل — تأتي فقط من showLabOrder (تفاصيل)، غائبة في القائمة.
+    final modsRaw = (j['modifications'] is List)
+        ? j['modifications'] as List
+        : const <dynamic>[];
+    final mods = modsRaw.whereType<Map<dynamic, dynamic>>().map((raw) {
+      final m = Map<String, dynamic>.from(raw);
+      return LabOrderModification(
+        details: (m['modification_details'] ?? '').toString(),
+        fault: (m['fault'] ?? '').toString(),
+        status: (m['status'] ?? '').toString(),
+        responseNotes: (m['response_notes'] ?? '').toString(),
+      );
+    }).toList();
+
     return LabOrderFull(
       id: '${j['id'] ?? ''}',
       doctor: (dentist['name'] ?? '').toString(),
@@ -169,6 +193,7 @@ class RemoteLabOrdersRepository implements LabOrdersRepository {
       cost: _toInt(j['total_cost']),
       assignedTechnician: tech?['name']?.toString(),
       parts: parts,
+      modifications: mods,
     );
   }
 

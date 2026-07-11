@@ -1596,6 +1596,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orderDetailsNotes => 'ملاحظات';
 
   @override
+  String get orderDetailsModifications => 'طلبات التعديل';
+
+  @override
   String get orderDetailsStatusLabel => 'حالة الطلبية';
 
   @override

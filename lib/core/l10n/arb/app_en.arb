@@ -618,6 +618,7 @@
   "orderDetailsItems": "Order Items",
   "orderDetailsProgressSection": "Supply Progress",
   "orderDetailsNotes": "Notes",
+  "orderDetailsModifications": "Modification requests",
   "orderDetailsStatusLabel": "Order Status",
   "orderDetailsOrderDate": "Order Date",
   "orderDetailsRequestData": "Order Data",
