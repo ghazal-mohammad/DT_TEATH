@@ -53,6 +53,9 @@ class LabMaterialRequestsPage extends StatelessWidget {
             pageTitle: context.l10n.materialRequests,
             pageSubtitle: context.l10n.labTopbarSubtitle,
             userRole: context.l10n.roleLabManager,
+            searchPlaceholder: context.l10n.labReqSearchHint,
+            onSearchChanged: (q) =>
+                context.read<LabMaterialRequestsCubit>().setSearchQuery(q),
             body: _MaterialRequestsBody(state: state),
           );
         },

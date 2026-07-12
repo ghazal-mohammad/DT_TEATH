@@ -1244,6 +1244,12 @@ abstract class AppLocalizations {
   /// **'Materials'**
   String get whMaterialsTitle;
 
+  /// No description provided for @whMaterialsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter warehouse materials... (name, category)'**
+  String get whMaterialsSearchHint;
+
   /// No description provided for @whMaterialsAdd.
   ///
   /// In en, this message translates to:
@@ -4003,6 +4009,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New material request'**
   String get labReqNewRequest;
+
+  /// No description provided for @labReqSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter material requests... (material, id, company)'**
+  String get labReqSearchHint;
 
   /// No description provided for @labReqMaterialPickHint.
   ///

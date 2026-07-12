@@ -598,6 +598,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whMaterialsTitle => 'المواد';
 
   @override
+  String get whMaterialsSearchHint => 'فلترة مواد المستودع... (اسم، فئة)';
+
+  @override
   String get whMaterialsAdd => 'إضافة مادة';
 
   @override
@@ -2029,6 +2032,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get labReqNewRequest => 'طلب مادة جديدة';
+
+  @override
+  String get labReqSearchHint => 'فلترة طلبات المواد... (مادة، رقم، شركة)';
 
   @override
   String get labReqMaterialPickHint =>

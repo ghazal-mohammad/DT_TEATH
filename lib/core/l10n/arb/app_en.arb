@@ -267,6 +267,7 @@
 
   "f4Materials": "─── Materials Management ───",
   "whMaterialsTitle": "Materials",
+  "whMaterialsSearchHint": "Filter warehouse materials... (name, category)",
   "whMaterialsAdd": "Add Material",
   "whFilterAll": "All",
   "whFilterLowStock": "Low Stock",
@@ -771,6 +772,7 @@
   "labReqLabOrder": "Lab order",
   "labReqEmptyCategory": "No material requests in this category",
   "labReqNewRequest": "New material request",
+  "labReqSearchHint": "Filter material requests... (material, id, company)",
   "labReqMaterialPickHint": "Type to search warehouse materials or enter a new one",
   "labReqDeleteTitle": "Delete material request",
   "labReqDeleteConfirm": "Delete the \"{material}\" request? This cannot be undone.",

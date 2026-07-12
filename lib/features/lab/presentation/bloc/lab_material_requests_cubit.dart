@@ -76,6 +76,12 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
     emit(state.copyWith(filterIndex: index));
   }
 
+  /// تحديث نص البحث المُوجَّه لهذه الصفحة.
+  void setSearchQuery(String query) {
+    if (query == state.searchQuery) return;
+    emit(state.copyWith(searchQuery: query));
+  }
+
   /// إرسال طلب مادة جديد؛ يُدرَج بأعلى القائمة ويُعاد الفلتر لـ "الكل".
   Future<void> addRequest({
     required String material,

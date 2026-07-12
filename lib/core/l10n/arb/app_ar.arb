@@ -221,6 +221,7 @@
 
   "f4Materials": "─── إدارة المواد ───",
   "whMaterialsTitle": "المواد",
+  "whMaterialsSearchHint": "فلترة مواد المستودع... (اسم، فئة)",
   "whMaterialsAdd": "إضافة مادة",
   "whFilterAll": "الكل",
   "whFilterLowStock": "ينفد",
@@ -704,6 +705,7 @@
   "labReqLabOrder": "طلبية المخبر",
   "labReqEmptyCategory": "لا توجد طلبيات مواد في هذه الفئة",
   "labReqNewRequest": "طلب مادة جديدة",
+  "labReqSearchHint": "فلترة طلبات المواد... (مادة، رقم، شركة)",
   "labReqMaterialPickHint": "اكتب للبحث في مواد المستودع أو أدخل مادة جديدة",
   "labReqDeleteTitle": "حذف طلب المواد",
   "labReqDeleteConfirm": "هل تريد حذف طلب «{material}»؟ لا يمكن التراجع.",

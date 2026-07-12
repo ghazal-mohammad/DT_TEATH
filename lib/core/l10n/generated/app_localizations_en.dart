@@ -606,6 +606,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whMaterialsTitle => 'Materials';
 
   @override
+  String get whMaterialsSearchHint =>
+      'Filter warehouse materials... (name, category)';
+
+  @override
   String get whMaterialsAdd => 'Add Material';
 
   @override
@@ -2045,6 +2049,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labReqNewRequest => 'New material request';
+
+  @override
+  String get labReqSearchHint =>
+      'Filter material requests... (material, id, company)';
 
   @override
   String get labReqMaterialPickHint =>

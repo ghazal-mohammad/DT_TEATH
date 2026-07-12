@@ -43,7 +43,9 @@ class WarehouseMaterialsPage extends StatelessWidget {
       create: (_) => MaterialsCubit(
         repository: MockWarehouseMaterialsRepository(),
       )..load(),
-      child: AppShellLayout(
+      // Builder ليصبح للسياق وصولٌ لـ MaterialsCubit عند ربط البحث المُوجَّه.
+      child: Builder(
+        builder: (context) => AppShellLayout(
         system: AppSystemType.warehouse,
         currentRoute: RouteNames.warehouseMaterials,
         sections: WarehouseSidebarSections.buildWithBadges(
@@ -56,6 +58,10 @@ class WarehouseMaterialsPage extends StatelessWidget {
         pageSubtitle: context.l10n.warehouseTopbarSubtitle,
         userRole: context.l10n.roleWarehouseManager,
         notificationCount: 5,
+        // بحث مُوجَّه: يفلتر مواد هذه الصفحة فقط عبر كيوبتها.
+        searchPlaceholder: context.l10n.whMaterialsSearchHint,
+        onSearchChanged: (q) =>
+            context.read<MaterialsCubit>().setSearchQuery(q),
         body: Builder(
           builder: (context) {
             final controller = ScrollController();
@@ -70,6 +76,7 @@ class WarehouseMaterialsPage extends StatelessWidget {
               ),
             );
           },
+        ),
         ),
       ),
     );
