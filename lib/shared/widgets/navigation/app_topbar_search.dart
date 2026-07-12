@@ -23,6 +23,8 @@
 //   .tb-srch input::placeholder { color:var(--t4) }
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_styles.dart';
 
@@ -53,6 +55,7 @@ class AppTopbarSearch extends StatefulWidget {
     this.onSubmitted,
     this.placeholder,
     this.width = AppSizes.topbarSearchWidth,
+    this.debounce = const Duration(milliseconds: 300),
   });
 
   /// TextEditingController اختياري — لو ما تم تمريره، يُنشأ داخلياً.
@@ -70,6 +73,10 @@ class AppTopbarSearch extends StatefulWidget {
   /// عرض الحقل — افتراضياً 240px (من CSS).
   final double width;
 
+  /// مهلة تأجيل البحث (debounce) — لا نفلتر على كل حرف بل بعد توقّف الكتابة،
+  /// فيخفّ الضغط على القوائم الكبيرة. Duration.zero = بلا تأجيل.
+  final Duration debounce;
+
   @override
   State<AppTopbarSearch> createState() => _AppTopbarSearchState();
 }
@@ -79,6 +86,7 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
   late final FocusNode _focusNode;
   bool _isFocused = false;
   bool _ownController = false;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -95,6 +103,7 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     if (_ownController) {
@@ -107,6 +116,25 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
     setState(() {
       _isFocused = _focusNode.hasFocus;
     });
+  }
+
+  /// يؤجّل استدعاء onChanged حتى يتوقّف المستخدم عن الكتابة [debounce].
+  void _onChangedDebounced(String value) {
+    final cb = widget.onChanged;
+    if (cb == null) return;
+    if (widget.debounce == Duration.zero) {
+      cb(value);
+      return;
+    }
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(widget.debounce, () => cb(value));
+  }
+
+  /// عند الضغط على Enter: نطبّق البحث فورًا (نلغي التأجيل المعلّق).
+  void _onSubmitted(String value) {
+    _debounceTimer?.cancel();
+    widget.onChanged?.call(value);
+    widget.onSubmitted?.call(value);
   }
 
   @override
@@ -161,8 +189,8 @@ class _AppTopbarSearchState extends State<AppTopbarSearch> {
             child: TextField(
               controller: _controller,
               focusNode: _focusNode,
-              onChanged: widget.onChanged,
-              onSubmitted: widget.onSubmitted,
+              onChanged: _onChangedDebounced,
+              onSubmitted: _onSubmitted,
               // text-align:right في CSS — في RTL = start = right بصرياً
               textAlign: TextAlign.start,
               style: TextStyle(
