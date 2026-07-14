@@ -22,6 +22,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/auth/auth_models.dart';
+import '../../../../core/auth/current_user.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -165,25 +166,28 @@ class _EmployeeData {
     this.skills = const [],
   });
 
-  static _EmployeeData mockData() => _EmployeeData(
-        fullName: 'رامي الصالح',
-        roleTitle: 'مدير المخبر',
-        email: 'rami@dt-teeth.com',
-        phone: '0991234567',
-        nationalId: '01010101234',
-        birthDate: '1990 / 06 / 15',
-        gender: 'ذكر',
+  /// نموذج فارغ (بلا أي بيانات وهمية) — يُبذَر باسم/بريد/دور المستخدم الحقيقي
+  /// من CurrentUser فور الدخول، وتُملأ بقيّة الحقول من showProfile. هكذا لا
+  /// تظهر بيانات مُختلَقة إطلاقاً (لا وميض "بيانات مزيّفة ← حقيقية").
+  static _EmployeeData empty() => _EmployeeData(
+        fullName: '',
+        roleTitle: '',
+        email: '',
+        phone: '',
+        nationalId: '',
+        birthDate: '',
+        gender: '',
         address: '',
-        employeeId: 'LAB-2026-007',
-        department: 'مخبر التعويضات السنية',
-        position: 'مدير المخبر',
-        workDays: 'السبت - الخميس',
-        dayOff: 'الجمعة',
-        weeklyHours: '48 ساعة',
-        hireDate: 'يناير 2024',
-        languages: 'العربية، الإنجليزية',
-        adminNotes: 'مشرف ممتاز وملتزم بالمواعيد',
-        completion: 100,
+        employeeId: '',
+        department: '',
+        position: '',
+        workDays: '',
+        dayOff: '',
+        weeklyHours: '',
+        hireDate: '',
+        languages: '',
+        adminNotes: '',
+        completion: 0,
       );
 
   _EmployeeData copy() => _EmployeeData(
@@ -246,8 +250,27 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
   @override
   void initState() {
     super.initState();
-    _data = _EmployeeData.mockData();
+    // بذرة ببيانات المستخدم الحقيقية (الاسم/البريد) من الجلسة — بلا أي وهمي.
+    _data = _EmployeeData.empty();
+    final u = CurrentUser.instance.user;
+    if (u != null) {
+      _data.fullName = u.name;
+      _data.email = u.email;
+    }
     _cubit = sl<ProfileCubit>()..load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // عنوان الدور يحتاج l10n (غير متاح في initState) — نبذره من دور الجلسة.
+    if (_data.roleTitle.isEmpty) {
+      final r = CurrentUser.instance.role;
+      if (r != null) {
+        _data.roleTitle = _rolePosition(context.l10n, r);
+        _data.position = _data.roleTitle;
+      }
+    }
   }
 
   @override
