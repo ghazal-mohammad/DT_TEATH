@@ -25,6 +25,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../../../../core/auth/auth_models.dart';
+import '../../../../core/domain/work_schedule.dart';
 
 class EmployeeProfile {
   const EmployeeProfile({
@@ -46,6 +47,7 @@ class EmployeeProfile {
     this.profilePicture = '',
     this.address = '',
     this.dateOfBirth = '',
+    this.schedule = const [],
   });
 
   final int id;
@@ -76,6 +78,9 @@ class EmployeeProfile {
   /// جاهزان فاللحظة اللي يُضافان لـ EmployeeProfileResource.
   final String address;
   final String dateOfBirth;
+
+  /// جدول الدوام الحقيقي من الباك (schedule[] — أيام وأوقات العمل).
+  final List<WorkShift> schedule;
 
   /// بناء من الرد الخام. يتعامل مع التغليف `{ data: {...} }` ومع الكائن المباشر.
   factory EmployeeProfile.fromJson(Map<String, dynamic> json) {
@@ -112,6 +117,13 @@ class EmployeeProfile {
           _toStr(d['profile_picture'] ?? d['profile_picture_url']),
       address: _toStr(d['address']),
       dateOfBirth: _toStr(d['date_of_birth']),
+      schedule: d['schedule'] is List
+          ? (d['schedule'] as List)
+              .whereType<Map<dynamic, dynamic>>()
+              .map((e) => WorkShift.fromRaw(Map<String, dynamic>.from(e)))
+              .whereType<WorkShift>()
+              .toList()
+          : const <WorkShift>[],
     );
   }
 

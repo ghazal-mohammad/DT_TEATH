@@ -72,14 +72,25 @@ class _MainColumn extends StatelessWidget {
               onChanged: (v) => data.maritalStatus = v,
               options: const ['أعزب', 'متزوج', 'مطلّق', 'أرمل'],
             ),
-            _RowSpec(
-              icon: Icons.location_on_outlined,
-              label: context.l10n.profileAddress,
-              value: data.address,
-              onChanged: (v) => data.address = v,
-            ),
           ],
         ),
+        // ── جدول الدوام الحقيقي من الباك (schedule[]) ────────────────────
+        if (data.workSchedule.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          _RelationSection(
+            icon: Icons.schedule_outlined,
+            title: context.l10n.profileWorkSchedule,
+            items: [
+              for (final s in ([...data.workSchedule]
+                ..sort((a, b) => a.day.index.compareTo(b.day.index))))
+                _RelationItem(
+                  primary: workDayLabel(context.l10n, s.day),
+                  secondary: '',
+                  trailing: '${s.start} — ${s.end}',
+                ),
+            ],
+          ),
+        ],
         // ── أقسام حقيقية من الباك (showProfile) ──────────────────────────
         // أثناء التحميل: shimmer placeholders مكان الأقسام القادمة من الباك
         // (الشهادات/الخبرات/الدورات/المهارات) بدل ما تظهر فجأة بعد الرد.

@@ -23,6 +23,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/auth/auth_models.dart';
 import '../../../../core/auth/current_user.dart';
+import '../../../../core/domain/work_schedule.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -136,6 +137,7 @@ class _EmployeeData {
   List<Experience> experiences;
   List<Training> trainings;
   List<String> skills;
+  List<WorkShift> workSchedule;
 
   _EmployeeData({
     required this.fullName,
@@ -164,6 +166,7 @@ class _EmployeeData {
     this.experiences = const [],
     this.trainings = const [],
     this.skills = const [],
+    this.workSchedule = const [],
   });
 
   /// نموذج فارغ (بلا أي بيانات وهمية) — يُبذَر باسم/بريد/دور المستخدم الحقيقي
@@ -217,6 +220,7 @@ class _EmployeeData {
         experiences: experiences,
         trainings: trainings,
         skills: skills,
+        workSchedule: workSchedule,
       );
 }
 
@@ -345,6 +349,7 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
     c.experiences = p.experiences;
     c.trainings = p.trainings;
     c.skills = p.skills;
+    c.workSchedule = p.schedule;
     return c;
   }
 

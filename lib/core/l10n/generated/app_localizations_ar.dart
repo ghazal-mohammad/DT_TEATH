@@ -1515,6 +1515,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileAddress => 'العنوان';
 
   @override
+  String get profileWorkSchedule => 'جدول الدوام';
+
+  @override
   String get profileEmployeeId => 'رقم الموظف';
 
   @override

@@ -536,6 +536,7 @@
   "profileBirthDate": "تاريخ الميلاد",
   "profileGender": "الجنس",
   "profileAddress": "العنوان",
+  "profileWorkSchedule": "جدول الدوام",
   "profileEmployeeId": "رقم الموظف",
   "profileJobInfo": "المعلومات الوظيفية",
   "profileJobInfoSubtitle": "القسم والدوام والمسمى الوظيفي",

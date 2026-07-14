@@ -1529,6 +1529,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileAddress => 'Address';
 
   @override
+  String get profileWorkSchedule => 'Work schedule';
+
+  @override
   String get profileEmployeeId => 'Employee ID';
 
   @override

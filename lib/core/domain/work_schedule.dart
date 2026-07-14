@@ -1,10 +1,14 @@
 // ════════════════════════════════════════════════════════════════════════════
-// technician_schedule.dart
+// work_schedule.dart (core/domain)
 //
-// كيانات جدول دوام الفنّي (domain) — أيام الأسبوع + فترة الدوام.
-// أيام العمل بقيم الباك (day_of_week): saturday..friday، بترتيب الأسبوع العربي
-// (السبت أولاً). نقي (pure Dart) بلا اعتماد على Flutter.
+// نموذج جدول الدوام المشترك — يستخدمه المخبر (جدول الفنّي) والملف الشخصي
+// (جدول دوام الموظف). مُرقّى إلى core لأنّه مفهوم عابر للميزات (تجنّب تشابك
+// الميزات: profile لا يستورد من lab والعكس).
+//
+// أيام العمل بقيم الباك (day_of_week): saturday..friday، بترتيب الأسبوع العربي.
 // ════════════════════════════════════════════════════════════════════════════
+
+import '../l10n/generated/app_localizations.dart';
 
 /// أيام الأسبوع لجدول الدوام — الاسم يطابق قيمة الباك (day_of_week).
 enum WorkDay { saturday, sunday, monday, tuesday, wednesday, thursday, friday }
@@ -22,6 +26,17 @@ extension WorkDayX on WorkDay {
     return null;
   }
 }
+
+/// اسم اليوم المُترجَم (مصدر واحد لكل الشاشات).
+String workDayLabel(AppLocalizations l10n, WorkDay day) => switch (day) {
+      WorkDay.saturday => l10n.daySaturday,
+      WorkDay.sunday => l10n.daySunday,
+      WorkDay.monday => l10n.dayMonday,
+      WorkDay.tuesday => l10n.dayTuesday,
+      WorkDay.wednesday => l10n.dayWednesday,
+      WorkDay.thursday => l10n.dayThursday,
+      WorkDay.friday => l10n.dayFriday,
+    };
 
 /// فترة دوام ليوم واحد — الوقت بصيغة "HH:mm" (تطابق H:i بالباك).
 class WorkShift {
@@ -41,7 +56,7 @@ class WorkShift {
         end: end ?? this.end,
       );
 
-  /// يبني فترة من عنصر schedule الخام للباك ({day, start_time, end_time}).
+  /// يبني فترة من عنصر schedule الخام للباك ({day|day_of_week, start_time, end_time}).
   static WorkShift? fromRaw(Map<String, dynamic> raw) {
     final day = WorkDayX.fromApi('${raw['day'] ?? raw['day_of_week'] ?? ''}');
     if (day == null) return null;

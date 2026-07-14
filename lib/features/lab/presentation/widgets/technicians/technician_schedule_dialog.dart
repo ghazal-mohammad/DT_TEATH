@@ -18,7 +18,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
-import '../../../domain/entities/technician_schedule.dart';
+import '../../../../../core/domain/work_schedule.dart';
 import '../../../domain/repositories/lab_repository.dart';
 
 /// حوار تحرير جدول دوام فنّي. يرجّع true عند حفظ ناجح (لتحديث القائمة).
@@ -254,7 +254,7 @@ class _TechnicianScheduleDialogState extends State<TechnicianScheduleDialog> {
         children: [
           for (final day in WorkDay.values) ...[
             _DayRow(
-              label: _dayLabel(day),
+              label: workDayLabel(context.l10n, day),
               shift: _shifts[day],
               isLight: isLight,
               onToggle: (on) => _toggleDay(day, on),
@@ -299,25 +299,6 @@ class _TechnicianScheduleDialogState extends State<TechnicianScheduleDialog> {
     );
   }
 
-  String _dayLabel(WorkDay day) {
-    final l10n = context.l10n;
-    switch (day) {
-      case WorkDay.saturday:
-        return l10n.daySaturday;
-      case WorkDay.sunday:
-        return l10n.daySunday;
-      case WorkDay.monday:
-        return l10n.dayMonday;
-      case WorkDay.tuesday:
-        return l10n.dayTuesday;
-      case WorkDay.wednesday:
-        return l10n.dayWednesday;
-      case WorkDay.thursday:
-        return l10n.dayThursday;
-      case WorkDay.friday:
-        return l10n.dayFriday;
-    }
-  }
 
   static TimeOfDay _parseTod(String hm) {
     final p = hm.split(':');

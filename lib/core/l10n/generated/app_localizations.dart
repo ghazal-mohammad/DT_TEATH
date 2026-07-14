@@ -3032,6 +3032,12 @@ abstract class AppLocalizations {
   /// **'Address'**
   String get profileAddress;
 
+  /// No description provided for @profileWorkSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Work schedule'**
+  String get profileWorkSchedule;
+
   /// No description provided for @profileEmployeeId.
   ///
   /// In en, this message translates to:
