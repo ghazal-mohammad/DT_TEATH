@@ -17,6 +17,7 @@ class LabOrdersState {
     required this.filter,
     this.todayOnly = false,
     this.todayOrders = const [],
+    this.searchQuery = '',
     this.errorMessage,
   });
 
@@ -26,6 +27,7 @@ class LabOrdersState {
         filter = 'all',
         todayOnly = false,
         todayOrders = const [],
+        searchQuery = '',
         errorMessage = null;
 
   final LabOrdersStatus status;
@@ -37,33 +39,37 @@ class LabOrdersState {
 
   /// الفلتر النشط: all | urgent | new | manufacturing | ready.
   final String filter;
+
+  /// نص البحث المُوجَّه (رقم الطلب/الطبيب/النوع/المادة).
+  final String searchQuery;
   final String? errorMessage;
 
   /// المصدر النشط حسب وضع اليوم.
   List<LabOrderFull> get _source => todayOnly ? todayOrders : orders;
 
-  /// الطلبات بعد تطبيق الفلتر النشط (على المصدر النشط).
+  /// الطلبات بعد تطبيق فلتر الحالة + نص البحث (على المصدر النشط).
   List<LabOrderFull> get filtered {
-    final src = _source;
+    Iterable<LabOrderFull> src = _source;
     switch (filter) {
       case 'urgent':
-        return src.where((o) => o.isUrgent).toList(growable: false);
+        src = src.where((o) => o.isUrgent);
       case 'new':
-        return src
-            .where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder)
-            .toList(growable: false);
+        src = src.where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder);
       case 'manufacturing':
-        return src
-            .where(
-                (o) => o.statusVariant == LabOrderBadgeVariant.manufacturing)
-            .toList(growable: false);
+        src = src
+            .where((o) => o.statusVariant == LabOrderBadgeVariant.manufacturing);
       case 'ready':
-        return src
-            .where((o) => o.statusVariant == LabOrderBadgeVariant.ready)
-            .toList(growable: false);
-      default:
-        return src;
+        src = src.where((o) => o.statusVariant == LabOrderBadgeVariant.ready);
     }
+    final q = searchQuery.trim();
+    if (q.isNotEmpty) {
+      src = src.where((o) =>
+          o.id.contains(q) ||
+          o.doctor.contains(q) ||
+          o.type.contains(q) ||
+          o.material.contains(q));
+    }
+    return src.toList(growable: false);
   }
 
   int get total => _source.length;
@@ -84,6 +90,7 @@ class LabOrdersState {
     String? filter,
     bool? todayOnly,
     List<LabOrderFull>? todayOrders,
+    String? searchQuery,
     String? errorMessage,
     bool clearError = false,
   }) {
@@ -93,6 +100,7 @@ class LabOrdersState {
       filter: filter ?? this.filter,
       todayOnly: todayOnly ?? this.todayOnly,
       todayOrders: todayOrders ?? this.todayOrders,
+      searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }

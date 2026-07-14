@@ -68,6 +68,12 @@ class LabOrdersCubit extends Cubit<LabOrdersState> {
     emit(state.copyWith(filter: filter));
   }
 
+  /// تحديث نص البحث المُوجَّه لهذه الصفحة.
+  void setSearchQuery(String query) {
+    if (query == state.searchQuery) return;
+    emit(state.copyWith(searchQuery: query));
+  }
+
   /// تبديل وضع "طلبات اليوم". عند التفعيل يجلب طلبات اليوم من الباك
   /// (showAllTodayLabOrders). يرجّع false عند فشل الجلب (يعود للكل).
   Future<bool> setTodayOnly(bool value) async {

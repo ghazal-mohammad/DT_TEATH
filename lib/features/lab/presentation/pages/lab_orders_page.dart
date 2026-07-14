@@ -60,6 +60,8 @@ class LabOrdersPage extends StatelessWidget {
             pageTitle: context.l10n.doctorOrders,
             pageSubtitle: null,
             searchPlaceholder: context.l10n.labOrdersSearchHint,
+            onSearchChanged: (q) =>
+                context.read<LabOrdersCubit>().setSearchQuery(q),
             userRole: context.l10n.roleLabManager,
             notificationCount: 2,
             body: _OrdersBody(state: state),

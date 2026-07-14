@@ -67,6 +67,8 @@ class LabTechniciansPage extends StatelessWidget {
             pageTitle: context.l10n.labManageTechnicians,
             pageSubtitle: null,
             searchPlaceholder: context.l10n.techSearchHint,
+            onSearchChanged: (q) =>
+                context.read<LabTechniciansCubit>().setSearchQuery(q),
             showThemeToggle: false,
             userRole: context.l10n.roleLabManager,
             notificationCount: 2,
@@ -136,7 +138,7 @@ class LabTechniciansPage extends StatelessWidget {
           ),
           const SizedBox(height: AppSizes.spaceLG),
           LabTechnicianTeamTable(
-            technicians: state.technicians,
+            technicians: state.filteredTechnicians,
             onAssign: (tech) => _onAssign(context, state, tech),
             onTogglePause: (tech) =>
                 context.read<LabTechniciansCubit>().togglePause(tech),

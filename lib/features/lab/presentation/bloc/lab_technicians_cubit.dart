@@ -95,6 +95,12 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
         .toList();
   }
 
+  /// تحديث نص البحث المُوجَّه لهذه الصفحة.
+  void setSearchQuery(String query) {
+    if (query == state.searchQuery) return;
+    emit(state.copyWith(searchQuery: query));
+  }
+
   /// توكيل طلبية لمخبري: تسجيل المنفّذ على الطلب + نقله لقيد التصنيع +
   /// زيادة عدّاد مهام المخبري وجعله نشطاً (UC70/UC71).
   void assign(TechnicianItem tech, String orderId) {

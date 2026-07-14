@@ -18,6 +18,7 @@ class LabTechniciansState {
     required this.technicians,
     required this.orders,
     this.performance = const [],
+    this.searchQuery = '',
     this.errorMessage,
   });
 
@@ -26,6 +27,7 @@ class LabTechniciansState {
         technicians = const [],
         orders = const [],
         performance = const [],
+        searchQuery = '',
         errorMessage = null;
 
   final LabTechniciansStatus status;
@@ -36,7 +38,22 @@ class LabTechniciansState {
 
   /// تقرير أداء الفنّيين (showTechniciansPerformance) — الشهر الحالي.
   final List<TechnicianPerformance> performance;
+
+  /// نص البحث المُوجَّه (اسم/دور/مهمة الفنّي).
+  final String searchQuery;
   final String? errorMessage;
+
+  /// الفنّيون بعد تطبيق نص البحث (للعرض في الجدول).
+  List<TechnicianItem> get filteredTechnicians {
+    final q = searchQuery.trim();
+    if (q.isEmpty) return technicians;
+    return technicians
+        .where((t) =>
+            t.name.contains(q) ||
+            t.role.contains(q) ||
+            t.currentTask.contains(q))
+        .toList(growable: false);
+  }
 
   int get total => technicians.length;
   int get active =>
@@ -49,6 +66,7 @@ class LabTechniciansState {
     List<TechnicianItem>? technicians,
     List<LabOrderFull>? orders,
     List<TechnicianPerformance>? performance,
+    String? searchQuery,
     String? errorMessage,
     bool clearError = false,
   }) {
@@ -57,6 +75,7 @@ class LabTechniciansState {
       technicians: technicians ?? this.technicians,
       orders: orders ?? this.orders,
       performance: performance ?? this.performance,
+      searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }

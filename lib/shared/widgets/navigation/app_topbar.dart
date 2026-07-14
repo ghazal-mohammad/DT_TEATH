@@ -239,7 +239,12 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (showSearch && MediaQuery.of(context).size.width > 900)
+        // نُظهر حقل البحث فقط عند توفّر معالج فعلي (onSearchChanged) — كي لا يظهر
+        // "صندوق بحث ميّت" في صفحات العرض (اللوحة/الإعدادات/الإشعارات) التي لا
+        // تفلتر شيئاً. الصفحات ذات القوائم تربط المعالج فيظهر ويعمل.
+        if (showSearch &&
+            onSearchChanged != null &&
+            MediaQuery.of(context).size.width > 900)
           AppTopbarSearch(
             onChanged: onSearchChanged,
             placeholder: searchPlaceholder,
