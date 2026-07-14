@@ -594,6 +594,8 @@
   "profileGender": "Gender",
   "profileAddress": "Address",
   "profileWorkSchedule": "Work schedule",
+  "show": "Show",
+  "hide": "Hide",
   "profileEmployeeId": "Employee ID",
   "profileJobInfo": "Job Information",
   "profileJobInfoSubtitle": "Department, schedule and job title",

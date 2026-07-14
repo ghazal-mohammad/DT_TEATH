@@ -542,6 +542,8 @@
   "profileGender": "الجنس",
   "profileAddress": "العنوان",
   "profileWorkSchedule": "جدول الدوام",
+  "show": "إظهار",
+  "hide": "إخفاء",
   "profileEmployeeId": "رقم الموظف",
   "profileJobInfo": "المعلومات الوظيفية",
   "profileJobInfoSubtitle": "القسم والدوام والمسمى الوظيفي",

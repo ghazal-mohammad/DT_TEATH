@@ -3068,6 +3068,18 @@ abstract class AppLocalizations {
   /// **'Work schedule'**
   String get profileWorkSchedule;
 
+  /// No description provided for @show.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get show;
+
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hide;
+
   /// No description provided for @profileEmployeeId.
   ///
   /// In en, this message translates to:

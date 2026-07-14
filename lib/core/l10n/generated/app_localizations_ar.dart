@@ -1533,6 +1533,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileWorkSchedule => 'جدول الدوام';
 
   @override
+  String get show => 'إظهار';
+
+  @override
+  String get hide => 'إخفاء';
+
+  @override
   String get profileEmployeeId => 'رقم الموظف';
 
   @override

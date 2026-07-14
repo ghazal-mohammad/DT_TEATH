@@ -98,7 +98,7 @@ class _ProfileSidebar extends StatelessWidget {
           ),
           if (data.salary.trim().isNotEmpty) ...[
             const SizedBox(height: 10),
-            _SideMetaCard(
+            _SensitiveMetaCard(
               icon: Icons.payments_outlined,
               label: 'الراتب',
               value: _formatSalary(data.salary),
@@ -212,6 +212,102 @@ class _SideMetaCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(9),
             ),
             child: Icon(icon, size: 17, color: _Palette.of(context).accent),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// بطاقة meta لحقل حسّاس (راتب...) — مُخفاة افتراضيًا بنقاط مع زرّ عين للكشف.
+/// خصوصية على الأجهزة المشتركة؛ لا تُخزَّن ولا تُسجَّل — إخفاء عرض فقط.
+class _SensitiveMetaCard extends StatefulWidget {
+  const _SensitiveMetaCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.tint,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color tint;
+
+  @override
+  State<_SensitiveMetaCard> createState() => _SensitiveMetaCardState();
+}
+
+class _SensitiveMetaCardState extends State<_SensitiveMetaCard> {
+  bool _revealed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final String action = _revealed ? context.l10n.hide : context.l10n.show;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 11, 12, 11),
+      decoration: BoxDecoration(
+        color: widget.tint,
+        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: _Palette.of(context).label,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  _revealed ? widget.value : '••••••',
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.lightText1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Semantics(
+            button: true,
+            label: action,
+            child: Tooltip(
+              message: action,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () => setState(() => _revealed = !_revealed),
+                  child: Container(
+                    width: 34,
+                    height: 34,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: Icon(
+                      _revealed
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      size: 17,
+                      color: _Palette.of(context).accent,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

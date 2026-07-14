@@ -1547,6 +1547,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileWorkSchedule => 'Work schedule';
 
   @override
+  String get show => 'Show';
+
+  @override
+  String get hide => 'Hide';
+
+  @override
   String get profileEmployeeId => 'Employee ID';
 
   @override
