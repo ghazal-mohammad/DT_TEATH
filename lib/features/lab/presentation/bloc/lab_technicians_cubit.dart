@@ -67,6 +67,12 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
         emit(state.copyWith(status: LabTechniciansStatus.error));
       }
     }
+
+    // تقرير أداء الفنّيين (الشهر الحالي) — لا يحجب عرض الفريق، وفشله صامت.
+    try {
+      final perf = await _repository.getTechniciansPerformance();
+      emit(state.copyWith(performance: perf));
+    } catch (_) {/* تجاهل بصمت */}
   }
 
   /// يحوّل فنّيي الباك إلى نماذج عرض (التسميات المترجمة تُمرَّر من الـ UI).

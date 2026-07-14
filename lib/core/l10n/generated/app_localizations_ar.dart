@@ -1373,6 +1373,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get techScheduleEdit => 'تعديل الجدول';
 
   @override
+  String get techPerfTitle => 'أداء الفنّيين';
+
+  @override
+  String get techPerfThisMonth => 'هذا الشهر';
+
+  @override
+  String get techPerfAssigned => 'مُسنَد';
+
+  @override
+  String get techPerfInProgress => 'قيد التنفيذ';
+
+  @override
+  String get techPerfCompleted => 'مكتمل';
+
+  @override
   String get techScheduleDayOff => 'إجازة';
 
   @override

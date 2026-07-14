@@ -28,6 +28,27 @@ class LabRemoteDataSource {
         .toList();
   }
 
+  /// GET /api/labManager/showTechniciansPerformance → تقرير أداء الفنّيين.
+  /// [from]/[to] اختياريان (yyyy-MM-dd)؛ الافتراضي بالباك = الشهر الحالي.
+  Future<List<Map<String, dynamic>>> showTechniciansPerformance({
+    String? from,
+    String? to,
+  }) async {
+    final res = await _dio.get<dynamic>(
+      ApiEndpoints.labManagerShowTechniciansPerformance,
+      queryParameters: {
+        if (from != null && from.isNotEmpty) 'from': from,
+        if (to != null && to.isNotEmpty) 'to': to,
+      },
+    );
+    final list = (res.data is Map) ? res.data['data'] : null;
+    if (list is! List) return <Map<String, dynamic>>[];
+    return list
+        .whereType<Map<dynamic, dynamic>>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
   /// GET /api/labManager/showTechnician/{id} → فنّي واحد كامل (مع الجدول).
   Future<Map<String, dynamic>> showTechnician(Object id) async {
     final res =

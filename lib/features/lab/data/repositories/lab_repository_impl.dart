@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
 import '../../../../core/session/session_cache_registry.dart';
+import '../../domain/entities/technician_performance.dart';
 import '../../domain/repositories/lab_repository.dart';
 import '../datasources/lab_remote_datasource.dart';
 import '../models/lab_technician.dart';
@@ -57,6 +58,20 @@ class LabRepositoryImpl implements LabRepository {
       await _remote.updateTechnicianWorkSchedule(id, schedule);
       // نُبطل كاش الفنّيين ليعاد جلبه بجدول محدّث عند العرض التالي.
       _cache = null;
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<List<TechnicianPerformance>> getTechniciansPerformance({
+    String? from,
+    String? to,
+  }) async {
+    try {
+      final raw =
+          await _remote.showTechniciansPerformance(from: from, to: to);
+      return raw.map(TechnicianPerformance.fromJson).toList(growable: false);
     } on DioException catch (e) {
       throw _mapDioError(e);
     }

@@ -29,6 +29,7 @@ import '../bloc/lab_technicians_cubit.dart';
 import '../bloc/lab_technicians_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
 import '../widgets/assign_order_dialog.dart';
+import '../widgets/technicians/lab_technician_performance.dart';
 import '../widgets/technicians/lab_technician_stats.dart';
 import '../widgets/technicians/lab_technician_table.dart';
 import '../widgets/technicians/lab_technician_view_data.dart';
@@ -141,6 +142,11 @@ class LabTechniciansPage extends StatelessWidget {
                 context.read<LabTechniciansCubit>().togglePause(tech),
             onEditSchedule: (tech) => _onEditSchedule(context, tech),
           ),
+          // تقرير أداء/تقييم الفنّيين (يظهر عند توفّر بيانات من الباك).
+          if (state.performance.isNotEmpty) ...[
+            const SizedBox(height: AppSizes.spaceLG),
+            LabTechnicianPerformanceSection(items: state.performance),
+          ],
         ],
       ),
     );

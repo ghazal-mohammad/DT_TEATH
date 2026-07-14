@@ -6,6 +6,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../../data/models/lab_technician.dart';
+import '../entities/technician_performance.dart';
 
 abstract class LabRepository {
   /// آخر قائمة فنّيين مُحمَّلة (للعرض الفوري عند إعادة زيارة الصفحة)، أو null
@@ -24,4 +25,11 @@ abstract class LabRepository {
     int id,
     List<Map<String, String>> schedule,
   );
+
+  /// تقرير أداء/تقييم الفنّيين — showTechniciansPerformance.
+  /// [from]/[to] اختياريان (yyyy-MM-dd)؛ الافتراضي = الشهر الحالي.
+  Future<List<TechnicianPerformance>> getTechniciansPerformance({
+    String? from,
+    String? to,
+  });
 }

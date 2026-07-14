@@ -1386,6 +1386,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techScheduleEdit => 'Edit schedule';
 
   @override
+  String get techPerfTitle => 'Technician performance';
+
+  @override
+  String get techPerfThisMonth => 'This month';
+
+  @override
+  String get techPerfAssigned => 'Assigned';
+
+  @override
+  String get techPerfInProgress => 'In progress';
+
+  @override
+  String get techPerfCompleted => 'Completed';
+
+  @override
   String get techScheduleDayOff => 'Off';
 
   @override

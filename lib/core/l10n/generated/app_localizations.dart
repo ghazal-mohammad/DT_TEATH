@@ -2750,6 +2750,36 @@ abstract class AppLocalizations {
   /// **'Edit schedule'**
   String get techScheduleEdit;
 
+  /// No description provided for @techPerfTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician performance'**
+  String get techPerfTitle;
+
+  /// No description provided for @techPerfThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get techPerfThisMonth;
+
+  /// No description provided for @techPerfAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get techPerfAssigned;
+
+  /// No description provided for @techPerfInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get techPerfInProgress;
+
+  /// No description provided for @techPerfCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get techPerfCompleted;
+
   /// No description provided for @techScheduleDayOff.
   ///
   /// In en, this message translates to:
