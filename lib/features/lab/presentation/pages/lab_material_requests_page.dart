@@ -20,6 +20,7 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
@@ -121,7 +122,6 @@ class _MaterialRequestsBody extends StatelessWidget {
   /// فتح فورم "طلب مادة جديدة" وإرساله عبر الـ Cubit.
   Future<void> _onNewRequest(BuildContext context) async {
     final cubit = context.read<LabMaterialRequestsCubit>();
-    final messenger = ScaffoldMessenger.of(context);
     final successText = context.l10n.labReqSentSuccess;
     final r = await LabMaterialRequestDialog.show(
       context,
@@ -137,7 +137,13 @@ class _MaterialRequestsBody extends StatelessWidget {
       company: r.company,
       reason: r.reason,
     );
-    messenger.showSnackBar(SnackBar(content: Text(successText)));
+    if (context.mounted) {
+      GlassToast.show(
+        context,
+        message: successText,
+        icon: Icons.check_circle_rounded,
+      );
+    }
   }
 
   /// تأكيد ثم حذف طلب مواد عبر الـ Cubit.

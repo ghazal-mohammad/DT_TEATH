@@ -55,7 +55,7 @@ class AppColors {
   static const Color clinicSystem = Color(0xFF7DD3FC); // العيادة/الطبيب = أزرق فاتح
 
   // ── الوضع الداكن (Dark Mode — slate + indigo، مطابق theme.css) ──────────
-  // الخلفية رمادي فحمي (مش كحلي) لراحة العين، والبراند إندِغو.
+  // الخلفية رمادي فحمي (مش كحلي) ، والبراند إندِغو.
   static const Color darkBg = Color(0xFF1A1B26); // --bg (خلفية الصفحة)
   static const Color darkBg1 = Color(0xFF262838); // --white (سطح الكروت)
   static const Color darkBg2 = Color(0xFF20222F); // --bg-2 (تعبئة خفيفة/حقول)
@@ -187,20 +187,9 @@ class AppColors {
   /// من Design Guide: Selection #000000.
   static const Color guidePrimaryText = Color(0xFF000000);
 
-  /// نص ثانوي من Design Guide Selection — رمادي داكن.
-  /// من Design Guide: Selection #353535.
   static const Color guideSecondaryText = Color(0xFF353535);
 
-  // ══════════════════════════════════════════════════════════════════════
-  //         DASHBOARD ACCENT COLORS (Phase 4.2 — Warehouse)
-  // ══════════════════════════════════════════════════════════════════════
-  // ألوان قياسية مستخدمة في الـ stat cards و chips و badges في Dashboard.
-  // مأخوذة مباشرة من HTML mockup CSS variables:
-  //   --cyan:#7DD3FC  --green:#22C55E  --orange:#F97316
-  //   --violet:#8B5CF6  --amber:#FBBF24  --pink:#FCA5A5
 
-  /// سماوي معياري — للـ chips الإخبارية (chip-ok) وإحصائيات Dashboard hero.
-  /// من CSS: `--cyan-b: #7DD3FC` (البديل المعياري للـ accent).
   static const Color dashCyan = Color(0xFF7DD3FC);
 
   /// أخضر — للـ "متوفر" badges و stat cards الإيجابية.

@@ -104,9 +104,12 @@ class _TechnicianScheduleDialogState extends State<TechnicianScheduleDialog> {
     final picked = await showTimePicker(
       context: context,
       initialTime: initial,
+      // إدخال رقمي مباشرةً (بلا ساعة تناظرية) — أوضح للمستخدم.
+      initialEntryMode: TimePickerEntryMode.input,
       builder: (ctx, child) => MediaQuery(
-        // نفرض تنسيق 24 ساعة ليطابق H:i بالباك.
-        data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
+        // عرض 12 ساعة مع صباحي/مسائي (AM/PM). التخزين يبقى 24 ساعة (H:i) عبر
+        // _fmt ليطابق الباك — TimeOfDay.hour دائماً 0–23 مهما كان العرض.
+        data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: false),
         child: child!,
       ),
     );

@@ -21,6 +21,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../../../../shared/widgets/loading/app_shimmer_table.dart';
@@ -176,7 +177,6 @@ class LabTechniciansPage extends StatelessWidget {
     TechnicianItem tech,
   ) async {
     final cubit = context.read<LabTechniciansCubit>();
-    final messenger = ScaffoldMessenger.of(context);
     final savedText = context.l10n.techScheduleSaved;
     final roleLabel = _roleLabel(context);
     final pendingLabel = context.l10n.labTechPendingAssign;
@@ -187,8 +187,15 @@ class LabTechniciansPage extends StatelessWidget {
       name: tech.name,
     );
     if (ok != true) return;
+    // إشعار النظام الموحّد (GlassToast) بدل SnackBar — قبل إعادة الجلب فالسياق حيّ.
+    if (context.mounted) {
+      GlassToast.show(
+        context,
+        message: savedText,
+        icon: Icons.check_circle_rounded,
+      );
+    }
     await cubit.load(roleLabel: roleLabel, pendingLabel: pendingLabel);
-    messenger.showSnackBar(SnackBar(content: Text(savedText)));
   }
 }
 

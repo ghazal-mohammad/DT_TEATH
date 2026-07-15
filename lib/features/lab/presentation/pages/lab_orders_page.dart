@@ -23,6 +23,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../../data/lab_inventory_store.dart';
@@ -189,11 +190,14 @@ class _OrdersBody extends StatelessWidget {
   /// تبديل وضع "طلبات اليوم"؛ يُشعِر عند فشل جلب طلبات اليوم من الباك.
   Future<void> _toggleToday(BuildContext context, bool value) async {
     final cubit = context.read<LabOrdersCubit>();
-    final messenger = ScaffoldMessenger.of(context);
     final errText = context.l10n.error;
     final ok = await cubit.setTodayOnly(value);
-    if (!ok) {
-      messenger.showSnackBar(SnackBar(content: Text(errText)));
+    if (!ok && context.mounted) {
+      GlassToast.show(
+        context,
+        message: errText,
+        icon: Icons.error_outline_rounded,
+      );
     }
   }
 }
