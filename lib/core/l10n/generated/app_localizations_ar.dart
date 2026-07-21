@@ -208,6 +208,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get search => 'بحث في النظام...';
 
   @override
+  String get commandPaletteHint => 'ابحث أو انتقل... (طلب، منتج، فنّي، مادة)';
+
+  @override
+  String get commandPaletteEmpty => 'لا نتائج مطابقة';
+
+  @override
+  String get commandPaletteNavHint => 'للتنقّل · Enter للفتح · Esc للإغلاق';
+
+  @override
+  String get commandPaletteOpen => 'بحث عالمي (Ctrl+K)';
+
+  @override
+  String get commandCatNav => 'تنقّل';
+
+  @override
+  String get commandCatOrder => 'طلب';
+
+  @override
+  String get commandCatProduct => 'منتج';
+
+  @override
+  String get commandCatTechnician => 'فنّي';
+
+  @override
+  String get commandCatMaterial => 'مادة';
+
+  @override
+  String get commandCatRequest => 'طلب مواد';
+
+  @override
   String get save => 'حفظ';
 
   @override

@@ -36,6 +36,7 @@ import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_sizes.dart';
+import '../command_palette/command_palette.dart';
 import 'app_topbar_action.dart';
 import 'app_topbar_search.dart';
 
@@ -236,20 +237,66 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildActions(BuildContext context) {
     // البحث فقط. أزرار الثيم/اللغة ليست هنا (مكانها صفحة الإعدادات حصراً)،
     // والإشعارات/البروفايل صفحات في السايدبار — فلا نكرّر الوصول لنفس الفيتشر.
+    final bool wide = MediaQuery.of(context).size.width > 900;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         // نُظهر حقل البحث فقط عند توفّر معالج فعلي (onSearchChanged) — كي لا يظهر
         // "صندوق بحث ميّت" في صفحات العرض (اللوحة/الإعدادات/الإشعارات) التي لا
         // تفلتر شيئاً. الصفحات ذات القوائم تربط المعالج فيظهر ويعمل.
-        if (showSearch &&
-            onSearchChanged != null &&
-            MediaQuery.of(context).size.width > 900)
+        if (showSearch && onSearchChanged != null && wide) ...[
           AppTopbarSearch(
             onChanged: onSearchChanged,
             placeholder: searchPlaceholder,
           ),
+          const SizedBox(width: AppSizes.spaceSM),
+        ],
+        // زرّ مركز الأوامر (بحث عالمي Ctrl+K) — دائم، بديلٌ للفأرة عن الاختصار.
+        const _CommandButton(),
       ],
+    );
+  }
+}
+
+/// زرّ يفتح مركز الأوامر (البحث العالمي) — يحترم الثيمين.
+class _CommandButton extends StatelessWidget {
+  const _CommandButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    final bool wide = MediaQuery.of(context).size.width > 900;
+    final Color fg = isLight ? AppColors.lightText2 : AppColors.darkText2;
+    return Tooltip(
+      message: context.l10n.commandPaletteOpen,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => CommandPalette.show(context),
+          child: Container(
+            height: AppSizes.topbarSearchHeight,
+            padding: EdgeInsets.symmetric(horizontal: wide ? 12 : 9),
+            decoration: BoxDecoration(
+              color: isLight ? AppColors.lightBg1 : AppColors.darkBg2,
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(
+                  color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(AppIcons.search, size: AppSizes.iconSM, color: fg),
+                if (wide) ...[
+                  const SizedBox(width: 6),
+                  Text('Ctrl K',
+                      style: AppTextStyles.bodySmall.copyWith(
+                          color: fg, fontWeight: FontWeight.w700)),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

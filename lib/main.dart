@@ -35,6 +35,7 @@ import 'shared/bloc/text_scale_cubit.dart';
 import 'shared/bloc/theme_cubit.dart';
 import 'shared/widgets/feedback/app_error_view.dart';
 import 'shared/widgets/feedback/offline_banner.dart';
+import 'shared/widgets/command_palette/command_palette.dart';
 import 'shared/widgets/session/idle_timeout_watcher.dart';
 
 /// مدّة الخمول قبل قفل الجلسة تلقائياً (أمان الأجهزة المشتركة).
@@ -45,6 +46,12 @@ const Duration _kIdleTimeout = Duration(minutes: 15);
 void _onIdleTimeout() {
   di.sl<AuthRepository>().logout();
   AppRouter.router.go(RouteNames.login);
+}
+
+/// يفتح مركز الأوامر (بحث عالمي) — فقط أثناء جلسة نشطة (لا على شاشات الدخول).
+void _openCommandPalette(BuildContext context) {
+  if (!CurrentUser.instance.isLoggedIn) return;
+  CommandPalette.show(context);
 }
 
 Future<void> main() async {
@@ -145,17 +152,27 @@ class DtTeethApp extends StatelessWidget {
                       final scale =
                           context.watch<TextScaleCubit>().state.factor;
                       final mq = MediaQuery.of(context);
-                      // شريط انقطاع الاتصال (أعلى) + قفل الخمول + حجم الخط.
-                      return OfflineBanner(
-                        child: IdleTimeoutWatcher(
-                          timeout: _kIdleTimeout,
-                          sessionListenable: CurrentUser.instance,
-                          isActive: () => CurrentUser.instance.isLoggedIn,
-                          onTimeout: _onIdleTimeout,
-                          child: MediaQuery(
-                            data: mq.copyWith(
-                                textScaler: TextScaler.linear(scale)),
-                            child: child ?? const SizedBox.shrink(),
+                      // Ctrl+K (وCmd+K) → مركز الأوامر — يعترض الاختصار داخل
+                      // النظام فلا يذهب للمتصفّح، ويفتح بحثًا عالميًا.
+                      return CallbackShortcuts(
+                        bindings: <ShortcutActivator, VoidCallback>{
+                          const SingleActivator(LogicalKeyboardKey.keyK,
+                              control: true): () => _openCommandPalette(context),
+                          const SingleActivator(LogicalKeyboardKey.keyK,
+                              meta: true): () => _openCommandPalette(context),
+                        },
+                        // شريط انقطاع الاتصال (أعلى) + قفل الخمول + حجم الخط.
+                        child: OfflineBanner(
+                          child: IdleTimeoutWatcher(
+                            timeout: _kIdleTimeout,
+                            sessionListenable: CurrentUser.instance,
+                            isActive: () => CurrentUser.instance.isLoggedIn,
+                            onTimeout: _onIdleTimeout,
+                            child: MediaQuery(
+                              data: mq.copyWith(
+                                  textScaler: TextScaler.linear(scale)),
+                              child: child ?? const SizedBox.shrink(),
+                            ),
                           ),
                         ),
                       );

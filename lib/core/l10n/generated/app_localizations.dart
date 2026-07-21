@@ -482,6 +482,66 @@ abstract class AppLocalizations {
   /// **'Search in system...'**
   String get search;
 
+  /// No description provided for @commandPaletteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search or jump... (order, product, technician, material)'**
+  String get commandPaletteHint;
+
+  /// No description provided for @commandPaletteEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching results'**
+  String get commandPaletteEmpty;
+
+  /// No description provided for @commandPaletteNavHint.
+  ///
+  /// In en, this message translates to:
+  /// **'to navigate · Enter to open · Esc to close'**
+  String get commandPaletteNavHint;
+
+  /// No description provided for @commandPaletteOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Global search (Ctrl+K)'**
+  String get commandPaletteOpen;
+
+  /// No description provided for @commandCatNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate'**
+  String get commandCatNav;
+
+  /// No description provided for @commandCatOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get commandCatOrder;
+
+  /// No description provided for @commandCatProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get commandCatProduct;
+
+  /// No description provided for @commandCatTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician'**
+  String get commandCatTechnician;
+
+  /// No description provided for @commandCatMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get commandCatMaterial;
+
+  /// No description provided for @commandCatRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get commandCatRequest;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:

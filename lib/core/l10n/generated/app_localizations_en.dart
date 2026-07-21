@@ -209,6 +209,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search in system...';
 
   @override
+  String get commandPaletteHint =>
+      'Search or jump... (order, product, technician, material)';
+
+  @override
+  String get commandPaletteEmpty => 'No matching results';
+
+  @override
+  String get commandPaletteNavHint =>
+      'to navigate · Enter to open · Esc to close';
+
+  @override
+  String get commandPaletteOpen => 'Global search (Ctrl+K)';
+
+  @override
+  String get commandCatNav => 'Navigate';
+
+  @override
+  String get commandCatOrder => 'Order';
+
+  @override
+  String get commandCatProduct => 'Product';
+
+  @override
+  String get commandCatTechnician => 'Technician';
+
+  @override
+  String get commandCatMaterial => 'Material';
+
+  @override
+  String get commandCatRequest => 'Request';
+
+  @override
   String get save => 'Save';
 
   @override
