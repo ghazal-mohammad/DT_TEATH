@@ -26,6 +26,7 @@ import 'core/l10n/generated/app_localizations.dart';
 import 'core/network/dio_client.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
+import 'core/search/app_search_warmup.dart';
 import 'core/session/session_cache_registry.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -77,6 +78,10 @@ Future<void> main() async {
 
   // تهيئة الـ DI قبل runApp.
   await di.initDependencies();
+
+  // إعادة ضبط تسخين مركز الأوامر عند انتهاء الجلسة (مع مسح الكواش) ليُسخَّن
+  // من جديد عند الدخول التالي.
+  SessionCacheRegistry.instance.register(AppSearchWarmup.reset);
 
   // معالجة انتهاء الجلسة (401 على طلب مُصادَق): امسح الجلسة محلياً — التوكن
   // والمستخدم وكواش الـ SWR — ووجّه لشاشة الدخول. يُستدعى مرّة واحدة عبر حارس

@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/auth/current_user.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../core/search/app_search_warmup.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -38,9 +39,12 @@ class LabDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          LabDashboardCubit(ordersRepository: sl<LabOrdersRepository>())
-            ..load(),
+      create: (_) {
+        // تسخين كاش مركز الأوامر بصمت (مرّة/جلسة) — بحث عالمي فوري من أول دخول.
+        AppSearchWarmup.run();
+        return LabDashboardCubit(ordersRepository: sl<LabOrdersRepository>())
+          ..load();
+      },
       child: BlocBuilder<LabDashboardCubit, LabDashboardState>(
         builder: (context, state) {
           final l10n = context.l10n;
