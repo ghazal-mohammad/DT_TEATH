@@ -485,7 +485,7 @@ class _FieldPillState extends State<_FieldPill> {
                                     (_dateDisplay ?? widget.spec.value)
                                             .trim()
                                             .isEmpty
-                                        ? 'اختر التاريخ'
+                                        ? context.l10n.profilePickDate
                                         : (_dateDisplay ?? widget.spec.value),
                                     style: TextStyle(
                                       fontFamily: AppTextStyles.fontFamily,

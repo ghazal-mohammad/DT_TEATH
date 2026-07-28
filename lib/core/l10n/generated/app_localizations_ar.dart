@@ -1535,7 +1535,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileSaveChanges => 'حفظ التغييرات';
 
   @override
-  String get profileChangePhoto => 'تغيير الصورة';
+  String get profileChangePhoto => 'تغيير الصورة الشخصية';
 
   @override
   String get profilePersonalInfo => 'المعلومات الشخصية';
@@ -1546,6 +1546,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profilePhone => 'رقم الهاتف';
+
+  @override
+  String get profileSecondaryPhone => 'الهاتف الثانوي';
+
+  @override
+  String get profileMaritalStatus => 'الحالة الاجتماعية';
+
+  @override
+  String get profileSalary => 'الراتب';
+
+  @override
+  String get profileEducations => 'الشهادات العلمية';
+
+  @override
+  String get profileExperiences => 'الخبرات العملية';
+
+  @override
+  String get profileTrainings => 'الدورات التدريبية';
+
+  @override
+  String get profileSkills => 'المهارات';
+
+  @override
+  String get profileOngoing => 'الآن';
+
+  @override
+  String get profilePickDate => 'اختر التاريخ';
 
   @override
   String get profileNationalId => 'الرقم الوطني';

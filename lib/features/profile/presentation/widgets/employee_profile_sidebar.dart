@@ -100,7 +100,7 @@ class _ProfileSidebar extends StatelessWidget {
             const SizedBox(height: 10),
             _SensitiveMetaCard(
               icon: Icons.payments_outlined,
-              label: 'الراتب',
+              label: context.l10n.profileSalary,
               value: _formatSalary(data.salary),
               tint: AppColors.profileTintViolet,
             ),
@@ -480,7 +480,7 @@ class _AvatarState extends State<_Avatar> {
           Semantics(
             button: true,
             image: true,
-            label: 'تغيير الصورة الشخصية',
+            label: context.l10n.profileChangePhoto,
             child: GestureDetector(
               onTap: onChangePhoto,
               child: MouseRegion(

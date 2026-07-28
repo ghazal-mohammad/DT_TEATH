@@ -45,7 +45,7 @@ class _MainColumn extends StatelessWidget {
             ),
             _RowSpec(
               icon: Icons.phone_in_talk_outlined,
-              label: 'الهاتف الثانوي',
+              label: context.l10n.profileSecondaryPhone,
               value: data.secondaryPhone,
               onChanged: (v) => data.secondaryPhone = v,
             ),
@@ -67,7 +67,7 @@ class _MainColumn extends StatelessWidget {
               ),
             _RowSpec(
               icon: Icons.favorite_outline_rounded,
-              label: 'الحالة الاجتماعية',
+              label: context.l10n.profileMaritalStatus,
               value: data.maritalStatus,
               onChanged: (v) => data.maritalStatus = v,
               options: const ['أعزب', 'متزوج', 'مطلّق', 'أرمل'],
@@ -106,7 +106,7 @@ class _MainColumn extends StatelessWidget {
           const SizedBox(height: 18),
           _RelationSection(
             icon: Icons.school_outlined,
-            title: 'الشهادات العلمية',
+            title: context.l10n.profileEducations,
             items: [
               for (final e in data.educations)
                 _RelationItem(
@@ -124,14 +124,14 @@ class _MainColumn extends StatelessWidget {
           const SizedBox(height: 18),
           _RelationSection(
             icon: Icons.work_history_outlined,
-            title: 'الخبرات العملية',
+            title: context.l10n.profileExperiences,
             items: [
               for (final x in data.experiences)
                 _RelationItem(
                   primary: x.title,
                   secondary: x.company,
                   trailing:
-                      '${AppDate.display(x.startDate, fallback: '?')} — ${AppDate.display(x.endDate, fallback: 'الآن')}',
+                      '${AppDate.display(x.startDate, fallback: '?')} — ${AppDate.display(x.endDate, fallback: context.l10n.profileOngoing)}',
                 ),
             ],
           ),
@@ -140,7 +140,7 @@ class _MainColumn extends StatelessWidget {
           const SizedBox(height: 18),
           _RelationSection(
             icon: Icons.military_tech_outlined,
-            title: 'الدورات التدريبية',
+            title: context.l10n.profileTrainings,
             items: [
               for (final t in data.trainings)
                 _RelationItem(
@@ -425,9 +425,9 @@ class _SkillsSection extends StatelessWidget {
                     size: 19, color: _Palette.of(context).pinkAccent),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'المهارات',
-                style: TextStyle(
+              Text(
+                context.l10n.profileSkills,
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 15,
                   fontWeight: FontWeight.w800,

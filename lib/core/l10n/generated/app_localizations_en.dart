@@ -1552,7 +1552,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSaveChanges => 'Save Changes';
 
   @override
-  String get profileChangePhoto => 'Change Photo';
+  String get profileChangePhoto => 'Change Profile Photo';
 
   @override
   String get profilePersonalInfo => 'Personal Information';
@@ -1562,6 +1562,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhone => 'Phone Number';
+
+  @override
+  String get profileSecondaryPhone => 'Secondary Phone';
+
+  @override
+  String get profileMaritalStatus => 'Marital Status';
+
+  @override
+  String get profileSalary => 'Salary';
+
+  @override
+  String get profileEducations => 'Education';
+
+  @override
+  String get profileExperiences => 'Work Experience';
+
+  @override
+  String get profileTrainings => 'Training Courses';
+
+  @override
+  String get profileSkills => 'Skills';
+
+  @override
+  String get profileOngoing => 'Now';
+
+  @override
+  String get profilePickDate => 'Pick a date';
 
   @override
   String get profileNationalId => 'National ID';

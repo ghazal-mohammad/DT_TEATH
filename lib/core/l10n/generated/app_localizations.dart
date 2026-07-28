@@ -3077,7 +3077,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileChangePhoto.
   ///
   /// In en, this message translates to:
-  /// **'Change Photo'**
+  /// **'Change Profile Photo'**
   String get profileChangePhoto;
 
   /// No description provided for @profilePersonalInfo.
@@ -3097,6 +3097,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone Number'**
   String get profilePhone;
+
+  /// No description provided for @profileSecondaryPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary Phone'**
+  String get profileSecondaryPhone;
+
+  /// No description provided for @profileMaritalStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Marital Status'**
+  String get profileMaritalStatus;
+
+  /// No description provided for @profileSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get profileSalary;
+
+  /// No description provided for @profileEducations.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get profileEducations;
+
+  /// No description provided for @profileExperiences.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Experience'**
+  String get profileExperiences;
+
+  /// No description provided for @profileTrainings.
+  ///
+  /// In en, this message translates to:
+  /// **'Training Courses'**
+  String get profileTrainings;
+
+  /// No description provided for @profileSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills'**
+  String get profileSkills;
+
+  /// No description provided for @profileOngoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get profileOngoing;
+
+  /// No description provided for @profilePickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get profilePickDate;
 
   /// No description provided for @profileNationalId.
   ///
