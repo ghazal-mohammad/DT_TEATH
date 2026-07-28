@@ -21,9 +21,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
-import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/layout/app_scroll_view.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../navigation/warehouse_sidebar_sections.dart';
 import '../widgets/dashboard/warehouse_dashboard_content.dart';
@@ -49,27 +49,7 @@ class WarehouseDashboardPage extends StatelessWidget {
       userRole: context.l10n.roleWarehouseManager,
       // إشعارات الجرس في التوب بار
       notificationCount: 5,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final controller = ScrollController();
-          return Scrollbar(
-            controller: controller,
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-              controller: controller,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(AppSizes.spaceLG),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: constraints.maxWidth,
-                  maxWidth: constraints.maxWidth,
-                ),
-                child: const WarehouseDashboardContent(),
-              ),
-            ),
-          );
-        },
-      ),
+      body: const AppScrollView(child: WarehouseDashboardContent()),
     );
   }
 }

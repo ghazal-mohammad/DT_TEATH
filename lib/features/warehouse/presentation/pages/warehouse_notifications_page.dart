@@ -18,9 +18,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
-import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/layout/app_scroll_view.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../navigation/warehouse_sidebar_sections.dart';
 import '../widgets/notifications/warehouse_notifications_content.dart';
@@ -56,27 +56,7 @@ class _WarehouseNotificationsPageState
       onSearchChanged: (v) => setState(() => _query = v.trim()),
       userRole: context.l10n.roleWarehouseManager,
       notificationCount: 5,
-      body: LayoutBuilder(
-        builder: (ctx, constraints) {
-          final controller = ScrollController();
-          return Scrollbar(
-            controller: controller,
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-              controller: controller,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(AppSizes.spaceLG),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: constraints.maxWidth,
-                  maxWidth: constraints.maxWidth,
-                ),
-                child: WarehouseNotificationsContent(query: _query),
-              ),
-            ),
-          );
-        },
-      ),
+      body: AppScrollView(child: WarehouseNotificationsContent(query: _query)),
     );
   }
 }

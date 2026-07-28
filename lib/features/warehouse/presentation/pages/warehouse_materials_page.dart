@@ -21,9 +21,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
-import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/layout/app_scroll_view.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../data/repositories/mock_warehouse_materials_repository.dart';
 import '../bloc/materials_cubit.dart';
@@ -62,21 +62,7 @@ class WarehouseMaterialsPage extends StatelessWidget {
         searchPlaceholder: context.l10n.whMaterialsSearchHint,
         onSearchChanged: (q) =>
             context.read<MaterialsCubit>().setSearchQuery(q),
-        body: Builder(
-          builder: (context) {
-            final controller = ScrollController();
-            return Scrollbar(
-              controller: controller,
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                controller: controller,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(AppSizes.spaceLG),
-                child: const WarehouseMaterialsContent(),
-              ),
-            );
-          },
-        ),
+        body: const AppScrollView(child: WarehouseMaterialsContent()),
         ),
       ),
     );
