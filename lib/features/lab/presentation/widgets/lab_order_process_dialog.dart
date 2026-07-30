@@ -354,16 +354,16 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _header(context),
+              _ProcessHeader(order: order),
               Flexible(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(22, 12, 22, 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _summary(order),
+                      _OrderSummary(order: order),
                       const SizedBox(height: 18),
-                      _sectionLabel(context.l10n.labProcessUpdateStatus),
+                      _SectionLabel(context.l10n.labProcessUpdateStatus),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -413,7 +413,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                       ),
                       const SizedBox(height: 18),
                       // المخبري المنفّذ — إلزامي: تغيير الحالة = توكيل مخبري.
-                      _field(
+                      _FieldColumn(
                         label: context.l10n.labProcessTechnician,
                         child: AppDropdownMenuTheme(
                           child: DropdownButtonFormField<String?>(
@@ -450,7 +450,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                       // قسم المواد المستهلكة + التكلفة — فقط عند "جاهز" (الإنجاز)
                       if (_status == LabOrderBadgeVariant.ready) ...[
                         const SizedBox(height: 18),
-                        _sectionLabel(context.l10n.labProcessConsumedSection),
+                        _SectionLabel(context.l10n.labProcessConsumedSection),
                         const SizedBox(height: 4),
                         Align(
                           alignment: AlignmentDirectional.centerStart,
@@ -507,7 +507,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                         const SizedBox(height: 14),
                         _materialsCostBar(),
                         const SizedBox(height: 12),
-                        _field(
+                        _FieldColumn(
                           label: context.l10n.labProcessCost,
                           child: TextField(
                             controller: _cost,
@@ -557,159 +557,5 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
     );
   }
 
-  Widget _sectionLabel(String text) => Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              text,
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: AppColors.lightText1,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 3,
-              height: 16,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget _field({required String label, required Widget child}) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: AppColors.lightText1,
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-          child,
-        ],
-      );
-
-  Widget _header(BuildContext context) {
-    final order = widget.order;
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(22, 16, 16, 12),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.labProcessTitle,
-                style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '${order.id} — ${order.doctor}',
-                style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.lightText3,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          InkWell(
-            onTap: () => Navigator.of(context).pop(),
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              width: 32,
-              height: 32,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.surfaceTintCool,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(Icons.close_rounded, size: 18),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _summary(LabOrderFull o) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceTintIndigo,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: _summaryCell(context.l10n.colOrderNumber, o.id)),
-              Expanded(child: _summaryCell(context.l10n.colDoctor, o.doctor)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _summaryCell(
-                    context.l10n.colMaterial, '${o.material} · ${o.tooth}'),
-              ),
-              Expanded(child: _summaryCell(context.l10n.colDate, o.date)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _summaryCell(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: AppColors.lightText3,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            color: AppColors.lightText1,
-          ),
-          textAlign: TextAlign.start,
-        ),
-      ],
-    );
-  }
 }
 

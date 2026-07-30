@@ -229,3 +229,189 @@ class _OutlineButton extends StatelessWidget {
     );
   }
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+//  أجزاء التخطيط (مُستخرَجة من _LabOrderProcessDialogState لتقليل حجم الملف)
+// ══════════════════════════════════════════════════════════════════════════
+
+/// عنوان قسم مع شريط لوني جانبي.
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: AppColors.lightText1,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              width: 3,
+              height: 16,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+/// عمود حقل (عنوان فوق المحتوى).
+class _FieldColumn extends StatelessWidget {
+  const _FieldColumn({required this.label, required this.child});
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.lightText1,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          child,
+        ],
+      );
+}
+
+/// رأس حوار المعالجة (العنوان + معرّف الطلب/الطبيب + زر الإغلاق).
+class _ProcessHeader extends StatelessWidget {
+  const _ProcessHeader({required this.order});
+  final LabOrderFull order;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(22, 16, 16, 12),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n.labProcessTitle,
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${order.id} — ${order.doctor}',
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.lightText3,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          InkWell(
+            onTap: () => Navigator.of(context).pop(),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              width: 32,
+              height: 32,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceTintCool,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(Icons.close_rounded, size: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// بطاقة ملخّص الطلب (رقم/طبيب/مادة/تاريخ).
+class _OrderSummary extends StatelessWidget {
+  const _OrderSummary({required this.order});
+  final LabOrderFull order;
+
+  @override
+  Widget build(BuildContext context) {
+    final o = order;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceTintIndigo,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: _cell(context.l10n.colOrderNumber, o.id)),
+              Expanded(child: _cell(context.l10n.colDoctor, o.doctor)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _cell(
+                    context.l10n.colMaterial, '${o.material} · ${o.tooth}'),
+              ),
+              Expanded(child: _cell(context.l10n.colDate, o.date)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cell(String label, String value) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: AppColors.lightText3,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: AppColors.lightText1,
+            ),
+            textAlign: TextAlign.start,
+          ),
+        ],
+      );
+}
