@@ -2126,6 +2126,48 @@ abstract class AppLocalizations {
   /// **'Satisfaction Rate'**
   String get labReportStatSatisfaction;
 
+  /// No description provided for @labReportStatOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On-time Rate'**
+  String get labReportStatOnTime;
+
+  /// No description provided for @labReportHourSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get labReportHourSuffix;
+
+  /// No description provided for @labReportOrdersByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders by Day'**
+  String get labReportOrdersByDay;
+
+  /// No description provided for @labReportOrdersByType.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders by Type'**
+  String get labReportOrdersByType;
+
+  /// No description provided for @labReportTeamPerf.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Performance'**
+  String get labReportTeamPerf;
+
+  /// No description provided for @labReportNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data for this period'**
+  String get labReportNoData;
+
+  /// No description provided for @ordersUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'orders'**
+  String get ordersUnit;
+
   /// No description provided for @labReportCrownType.
   ///
   /// In en, this message translates to:

@@ -25,6 +25,8 @@ import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../data/mock/warehouse_pages_mock_data.dart';
 import 'warehouse_invoice_form_dialog.dart';
 
+part 'warehouse_invoices_parts.dart';
+
 // ══════════════════════════════════════════════════════════════════════════
 //                              FILTERS
 // ══════════════════════════════════════════════════════════════════════════
@@ -52,8 +54,6 @@ extension on _InvoiceFilter {
 // ══════════════════════════════════════════════════════════════════════════
 //                              MAIN CONTENT
 // ══════════════════════════════════════════════════════════════════════════
-
-part 'warehouse_invoices_parts.dart';
 
 class WarehouseInvoicesContent extends StatefulWidget {
   const WarehouseInvoicesContent({super.key});

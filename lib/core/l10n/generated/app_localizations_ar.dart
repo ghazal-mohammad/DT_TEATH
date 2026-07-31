@@ -1040,6 +1040,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReportStatSatisfaction => 'نسبة الرضا';
 
   @override
+  String get labReportStatOnTime => 'الإنجاز في الوقت';
+
+  @override
+  String get labReportHourSuffix => 'س';
+
+  @override
+  String get labReportOrdersByDay => 'الطلبات حسب اليوم';
+
+  @override
+  String get labReportOrdersByType => 'الطلبات حسب النوع';
+
+  @override
+  String get labReportTeamPerf => 'أداء الفريق';
+
+  @override
+  String get labReportNoData => 'لا توجد بيانات لهذه الفترة';
+
+  @override
+  String get ordersUnit => 'طلب';
+
+  @override
   String get labReportCrownType => 'تلبيسات';
 
   @override

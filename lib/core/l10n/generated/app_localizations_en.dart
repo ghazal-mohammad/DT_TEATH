@@ -1052,6 +1052,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReportStatSatisfaction => 'Satisfaction Rate';
 
   @override
+  String get labReportStatOnTime => 'On-time Rate';
+
+  @override
+  String get labReportHourSuffix => 'h';
+
+  @override
+  String get labReportOrdersByDay => 'Orders by Day';
+
+  @override
+  String get labReportOrdersByType => 'Orders by Type';
+
+  @override
+  String get labReportTeamPerf => 'Team Performance';
+
+  @override
+  String get labReportNoData => 'No data for this period';
+
+  @override
+  String get ordersUnit => 'orders';
+
+  @override
   String get labReportCrownType => 'Crowns';
 
   @override
