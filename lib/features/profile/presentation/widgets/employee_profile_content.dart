@@ -42,6 +42,7 @@ import '../bloc/profile_cubit.dart';
 part 'employee_profile_sidebar.dart';
 part 'employee_profile_main_column.dart';
 part 'employee_profile_info_stats.dart';
+part 'employee_profile_fields.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
 //                         نظام الألوان الخاص بالمخبر
