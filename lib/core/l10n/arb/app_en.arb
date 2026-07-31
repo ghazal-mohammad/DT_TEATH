@@ -428,6 +428,7 @@
   "labReportTeamPerf": "Team Performance",
   "labReportNoData": "No data for this period",
   "ordersUnit": "orders",
+  "piecesUnit": "pieces",
   "labReportCrownType": "Crowns",
   "labReportBridgeType": "Bridges",
   "labReportOtherType": "Other",

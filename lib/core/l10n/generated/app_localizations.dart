@@ -2168,6 +2168,12 @@ abstract class AppLocalizations {
   /// **'orders'**
   String get ordersUnit;
 
+  /// No description provided for @piecesUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'pieces'**
+  String get piecesUnit;
+
   /// No description provided for @labReportCrownType.
   ///
   /// In en, this message translates to:

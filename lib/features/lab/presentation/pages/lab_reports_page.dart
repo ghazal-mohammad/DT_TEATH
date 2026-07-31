@@ -378,6 +378,9 @@ class _LabReportsBody extends StatelessWidget {
           color: _kTypeColors[i % _kTypeColors.length],
         ),
     ];
+    // مركز الـ Donut = مجموع القطع (orders_by_type يَعُدّ القطع لا الطلبات؛
+    // الطلب قد يحوي عدّة قطع)، فلا يطابق total_orders.
+    final int totalPieces = segments.fold<int>(0, (s, seg) => s + seg.count);
     return Container(
       padding: const EdgeInsets.all(AppSizes.spaceMD),
       decoration: BoxDecoration(
@@ -410,7 +413,7 @@ class _LabReportsBody extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('${r.totalOrders}',
+                          Text('$totalPieces',
                               style: TextStyle(
                                 fontFamily: AppTextStyles.fontFamily,
                                 fontSize: 18,
@@ -419,7 +422,7 @@ class _LabReportsBody extends StatelessWidget {
                                     ? AppColors.lightText1
                                     : AppColors.darkText1,
                               )),
-                          Text(context.l10n.ordersUnit,
+                          Text(context.l10n.piecesUnit,
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: isLight
                                     ? AppColors.lightText4

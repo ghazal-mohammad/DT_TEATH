@@ -1061,6 +1061,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ordersUnit => 'طلب';
 
   @override
+  String get piecesUnit => 'قطعة';
+
+  @override
   String get labReportCrownType => 'تلبيسات';
 
   @override

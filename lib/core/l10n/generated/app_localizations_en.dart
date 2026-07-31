@@ -1073,6 +1073,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ordersUnit => 'orders';
 
   @override
+  String get piecesUnit => 'pieces';
+
+  @override
   String get labReportCrownType => 'Crowns';
 
   @override
