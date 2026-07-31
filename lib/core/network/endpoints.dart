@@ -72,6 +72,9 @@ class ApiEndpoints {
       '/api/labManager/countTechnicians';
   static const String labManagerCountStock = '/api/labManager/countStock';
 
+  /// GET /api/labManager/reports?period={daily|weekly|monthly|yearly}&date?
+  static const String labManagerReports = '/api/labManager/reports';
+
   // ── فئات الأصناف ───────────────────────────────────────────────────────
   static const String labManagerShowAllItemsCategories =
       '/api/labManager/showAllItemsCategories';
