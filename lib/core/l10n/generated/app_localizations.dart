@@ -3680,6 +3680,24 @@ abstract class AppLocalizations {
   /// **'Materials Consumed'**
   String get reportStatConsumed;
 
+  /// No description provided for @whReportByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumption by Category'**
+  String get whReportByCategory;
+
+  /// No description provided for @whReportActivityByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity by Day'**
+  String get whReportActivityByDay;
+
+  /// No description provided for @whReportMockNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo data — will be wired when backend is ready'**
+  String get whReportMockNote;
+
   /// No description provided for @reportStatTotalMaterials.
   ///
   /// In en, this message translates to:

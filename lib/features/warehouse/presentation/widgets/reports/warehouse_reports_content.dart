@@ -1,48 +1,16 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_reports_content.dart
 //
-// محتوى صفحة تقارير المستودع — مطابق لـ mockup التصميم.
-//
-// 🎯 البنية:
-//   1. شريط التصدير + اختيار الفترة (يومي/أسبوعي/شهري/سنوي)
-//   2. ترويسة التقرير: شهر + تاريخ الإنشاء
-//   3. صف 4 بطاقات إحصائية (مدة التوريد، نسبة التوريد، استهلاك، إجمالي)
-//   4. صفّ بطاقتين: donut توزع الاستهلاك + شبكة الأيام
+// محتوى تقارير المستودع — يستخدم العرض الموحّد ReportsView (نفس تصميم المخبر)
+// بلا تقييم أداء (المستودع لا أداء فنّيين فيه). البيانات **تجريبية (mock)** حتى
+// تفعيل مسارات تقارير المستودع في الباك؛ عندها نستبدلها بكيوبت/repo كالمخبر.
 // ════════════════════════════════════════════════════════════════════════════
-
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
-import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_sizes.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/primitives/app_button.dart';
-
-part 'warehouse_reports_performance.dart';
-part 'warehouse_reports_toolbar_stats.dart';
-part 'warehouse_reports_charts.dart';
-
-// ══════════════════════════════════════════════════════════════════════════
-//                             VIEW RANGE
-// ══════════════════════════════════════════════════════════════════════════
-
-enum _ReportRange { daily, weekly, monthly, yearly }
-
-extension on _ReportRange {
-  String label(AppLocalizations l10n) => switch (this) {
-        _ReportRange.daily => l10n.reportRangeDaily,
-        _ReportRange.weekly => l10n.reportRangeWeekly,
-        _ReportRange.monthly => l10n.reportRangeMonthly,
-        _ReportRange.yearly => l10n.reportRangeYearly,
-      };
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//                            MAIN CONTENT
-// ══════════════════════════════════════════════════════════════════════════
+import '../../../../../shared/widgets/reports/reports_view.dart';
 
 class WarehouseReportsContent extends StatefulWidget {
   const WarehouseReportsContent({super.key});
@@ -53,54 +21,77 @@ class WarehouseReportsContent extends StatefulWidget {
 }
 
 class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
-  _ReportRange _range = _ReportRange.monthly;
-
-  // الفترة الحالية (mock — مطابق للـ design).
-  static const _periodLabel = 'مارس 2026';
-  static const _generatedAt = '22 مايو 2026';
-  static const _daysInMonth = 31;
-
-  // الأيام ذات النشاط (highlighted) — مطابق للـ mockup.
-  static const _highlightedDays = {9, 11, 17, 24, 26};
-
-  // توزّع الاستهلاك حسب الفئة — مطابق للـ mockup.
-  static const _categoryShares = <_CategoryShare>[
-    _CategoryShare(label: 'مستهلكات', percent: 42, color: AppColors.primary),
-    _CategoryShare(label: 'مواد طبية', percent: 28, color: AppColors.statusProgress),
-    _CategoryShare(label: 'أدوية', percent: 18, color: AppColors.statusInfo),
-    _CategoryShare(label: 'معادن', percent: 12, color: AppColors.statusSuccess),
-  ];
+  int _period = 0; // شهري افتراضي
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _Toolbar(
-          range: _range,
-          onRangeChange: (r) => setState(() => _range = r),
-          isLight: isLight,
-        ),
-        const SizedBox(height: 16),
-        _ReportHeader(
-          period: _periodLabel,
-          generatedAt: _generatedAt,
-          isLight: isLight,
-        ),
-        const SizedBox(height: 14),
-        _StatsRow(isLight: isLight),
-        const SizedBox(height: 14),
-        _BottomRow(
-          isLight: isLight,
-          shares: _categoryShares,
-          daysInMonth: _daysInMonth,
-          highlighted: _highlightedDays,
-        ),
-        const SizedBox(height: 14),
-        _PerformanceRow(isLight: isLight),
-      ],
+    final l10n = context.l10n;
+
+    final kpis = [
+      ReportKpi(
+          icon: '⏱',
+          value: '1.8 ${l10n.reportUnitDay}',
+          label: l10n.reportStatAvgSupplyTime,
+          accent: AppColors.statusWarn),
+      ReportKpi(
+          icon: '✅',
+          value: '94%',
+          label: l10n.reportStatSupplyRate,
+          accent: AppColors.statusSuccess),
+      ReportKpi(
+          icon: '📈',
+          value: '156',
+          label: l10n.reportStatConsumed,
+          accent: AppColors.statusProgress),
+      ReportKpi(
+          icon: '📦',
+          value: '247',
+          label: l10n.reportStatTotalMaterials,
+          accent: AppColors.statusInfo),
+    ];
+
+    // الاستهلاك حسب الفئة (نِسب) — mock.
+    final byCategory = [
+      ReportSegment(
+          label: 'مستهلكات',
+          percentage: 42,
+          count: 42,
+          color: kReportPalette[0]),
+      ReportSegment(
+          label: 'مواد طبية',
+          percentage: 28,
+          count: 28,
+          color: kReportPalette[1]),
+      ReportSegment(
+          label: 'أدوية', percentage: 18, count: 18, color: kReportPalette[2]),
+      ReportSegment(
+          label: 'معادن', percentage: 12, count: 12, color: kReportPalette[3]),
+    ];
+
+    // النشاط الأسبوعي — mock.
+    final byDay = [
+      ReportDay(label: l10n.daySaturday, count: 12),
+      ReportDay(label: l10n.daySunday, count: 18),
+      ReportDay(label: l10n.dayMonday, count: 9),
+      ReportDay(label: l10n.dayTuesday, count: 22),
+      ReportDay(label: l10n.dayWednesday, count: 15),
+      ReportDay(label: l10n.dayThursday, count: 20),
+      ReportDay(label: l10n.dayFriday, count: 4),
+    ];
+
+    return ReportsView(
+      status: ReportsViewStatus.loaded,
+      selectedPeriod: _period,
+      onPeriodChanged: (i) => setState(() => _period = i),
+      onRetry: () {},
+      periodLabel: l10n.whReportMockNote,
+      kpis: kpis,
+      ordersByType: byCategory,
+      ordersByDay: byDay,
+      teamPerformance: null, // المستودع: بلا تقييم أداء.
+      byTypeTitle: l10n.whReportByCategory,
+      byTypeUnit: '%',
+      byDayTitle: l10n.whReportActivityByDay,
     );
   }
 }
-

@@ -1864,6 +1864,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportStatConsumed => 'Materials Consumed';
 
   @override
+  String get whReportByCategory => 'Consumption by Category';
+
+  @override
+  String get whReportActivityByDay => 'Activity by Day';
+
+  @override
+  String get whReportMockNote =>
+      'Demo data — will be wired when backend is ready';
+
+  @override
   String get reportStatTotalMaterials => 'Total Materials';
 
   @override

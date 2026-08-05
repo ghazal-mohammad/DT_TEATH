@@ -1847,6 +1847,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reportStatConsumed => 'مادة استُهلكت';
 
   @override
+  String get whReportByCategory => 'الاستهلاك حسب الفئة';
+
+  @override
+  String get whReportActivityByDay => 'النشاط حسب اليوم';
+
+  @override
+  String get whReportMockNote => 'بيانات تجريبية — تُربط عند تفعيل الباك';
+
+  @override
   String get reportStatTotalMaterials => 'إجمالي المواد';
 
   @override
