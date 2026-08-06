@@ -20,13 +20,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_scroll_view.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
-import '../../domain/repositories/warehouse_materials_repository.dart';
+import '../../data/repositories/mock_warehouse_materials_repository.dart';
 import '../bloc/materials_cubit.dart';
 import '../navigation/warehouse_sidebar_sections.dart';
 import '../widgets/materials/warehouse_materials_content.dart';
@@ -42,7 +41,9 @@ class WarehouseMaterialsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => MaterialsCubit(
-        repository: sl<WarehouseMaterialsRepository>(),
+        // Mock حتى يفكّ الباك تعليق مجموعة مسارات warehouseManager؛ التبديل لـ
+        // sl<WarehouseMaterialsRepository>() (Remote مُسجَّل جاهز) = سطر واحد.
+        repository: MockWarehouseMaterialsRepository(),
       )..load(),
       // Builder ليصبح للسياق وصولٌ لـ MaterialsCubit عند ربط البحث المُوجَّه.
       child: Builder(
