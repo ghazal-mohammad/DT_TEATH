@@ -146,4 +146,16 @@ class ApiEndpoints {
       '/api/labManager/notifications';
   static String labManagerMarkNotificationRead(Object id) =>
       '/api/labManager/notifications/$id/read';
+
+  // ── Warehouse Manager — المواد (فُعِّلت 2026-08) ─────────────────────────
+  static const String warehouseShowAllMaterials =
+      '/api/warehouseManager/showALLMaterials';
+  static String warehouseShowMaterial(Object id) =>
+      '/api/warehouseManager/showMaterialDetails/$id';
+  static const String warehouseAddMaterial =
+      '/api/warehouseManager/addMaterial';
+  static String warehouseUpdateMaterial(Object id) =>
+      '/api/warehouseManager/updateMaterial/$id';
+  static String warehouseDeleteMaterial(Object id) =>
+      '/api/warehouseManager/materials/$id';
 }

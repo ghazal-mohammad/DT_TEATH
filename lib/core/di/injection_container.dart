@@ -14,6 +14,11 @@ import '../../shared/bloc/mock_system_cubit.dart';
 import '../../shared/bloc/text_scale_cubit.dart';
 import '../../shared/bloc/theme_cubit.dart';
 
+// ── Warehouse feature ──────────────────────────────────────────────────────
+import '../../features/warehouse/data/datasources/warehouse_materials_remote_datasource.dart';
+import '../../features/warehouse/data/repositories/remote_warehouse_materials_repository.dart';
+import '../../features/warehouse/domain/repositories/warehouse_materials_repository.dart';
+
 // ── Auth feature ──────────────────────────────────────────────────────────
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -145,6 +150,16 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<LabReportsRepository>(
     () => RemoteLabReportsRepository(sl<LabReportsRemoteDataSource>()),
+  );
+
+  // ── Warehouse Materials — Remote عبر warehouseManager/showALLMaterials ────
+  sl.registerLazySingleton<WarehouseMaterialsRemoteDataSource>(
+    () => WarehouseMaterialsRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<WarehouseMaterialsRepository>(
+    () => RemoteWarehouseMaterialsRepository(
+      sl<WarehouseMaterialsRemoteDataSource>(),
+    ),
   );
 }
 
