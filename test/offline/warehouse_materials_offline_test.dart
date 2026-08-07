@@ -146,4 +146,28 @@ void main() {
     expect(created.id, startsWith('local_'));
     expect(outbox.pendingCount, 1);
   });
+
+  test('حذف أونلاين ⇒ إلغاء تفعيل (deactivate) لا حذف صلب', () async {
+    when(() => remote.getAll()).thenAnswer((_) async => [row('5', 'قابل')]);
+    await repo.getAll();
+    when(() => remote.deactivate('5')).thenAnswer((_) async {});
+
+    await repo.delete('5');
+    verify(() => remote.deactivate('5')).called(1);
+    expect(outbox.pendingCount, 0);
+  });
+
+  test('حذف أوفلاين لعنصر خادمي ⇒ عملية updateStatus(is_active=false) في الطابور',
+      () async {
+    when(() => remote.getAll()).thenAnswer((_) async => [row('5', 'قابل')]);
+    await repo.getAll();
+    NetworkStatus.instance.markOffline();
+
+    await repo.delete('5');
+    final entry = outbox.entries.single;
+    expect(entry.method.wire, 'POST');
+    expect(entry.path, contains('updateStatus/5'));
+    expect(entry.body!['is_active'], false);
+    NetworkStatus.instance.markOnline();
+  });
 }

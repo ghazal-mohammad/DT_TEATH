@@ -47,9 +47,13 @@ class WarehouseMaterialsRemoteDataSource {
     return _asData(res.data);
   }
 
-  /// DELETE materials/{id}.
-  Future<void> delete(Object id) async {
-    await _dio.delete<dynamic>(ApiEndpoints.warehouseDeleteMaterial(id));
+  /// POST updateStatus/{id} — "حذف" = إلغاء تفعيل (الباك لا يدعم حذفاً صلباً).
+  /// يرجع 422 إن كانت المادة لا تزال تملك مخزوناً > 0.
+  Future<void> deactivate(Object id) async {
+    await _dio.post<dynamic>(
+      ApiEndpoints.warehouseUpdateMaterialStatus(id),
+      data: FormData.fromMap({'is_active': false}),
+    );
   }
 
   List<Map<String, dynamic>> _asList(Object? data) {

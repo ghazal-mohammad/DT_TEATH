@@ -203,11 +203,13 @@ class RemoteWarehouseMaterialsRepository
     return material;
   }
 
+  /// "حذف" المادة = إلغاء تفعيلها (updateStatus is_active=false). الباك لا يدعم
+  /// حذفاً صلباً، والمادة غير المفعّلة لا تظهر في القائمة النشطة.
   @override
   Future<void> delete(String id) async {
     if (_network.isOnline && !_isLocal(id)) {
       try {
-        await _remote.delete(id);
+        await _remote.deactivate(id);
         _memory = _memory.where((m) => m.id != id).toList(growable: false);
         _emit();
         await _persistMemory();
@@ -232,10 +234,12 @@ class RemoteWarehouseMaterialsRepository
       await _outbox.add(OutboxEntry(
         id: _localId(),
         resource: resource,
-        method: OutboxMethod.delete,
-        path: ApiEndpoints.warehouseDeleteMaterial(id),
+        method: OutboxMethod.post,
+        path: ApiEndpoints.warehouseUpdateMaterialStatus(id),
+        body: const {'is_active': false},
         localEntityId: id,
         createdAt: DateTime.now(),
+        asForm: true,
       ));
     }
   }

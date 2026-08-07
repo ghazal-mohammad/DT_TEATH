@@ -156,6 +156,67 @@ class ApiEndpoints {
       '/api/warehouseManager/addMaterial';
   static String warehouseUpdateMaterial(Object id) =>
       '/api/warehouseManager/updateMaterial/$id';
-  static String warehouseDeleteMaterial(Object id) =>
-      '/api/warehouseManager/materials/$id';
+
+  /// POST — تفعيل/إلغاء تفعيل المادة (is_active). الباك لا يدعم حذفاً صلباً
+  /// (destroy معلّق)؛ "الحذف" = إلغاء تفعيل (لا يظهر في القائمة النشطة).
+  static String warehouseUpdateMaterialStatus(Object id) =>
+      '/api/warehouseManager/updateStatus/$id';
+
+  // ── Warehouse Manager — المخزون والدفعات (فُعِّلت 2026-08) ────────────────
+  static const String warehouseShowAllStock =
+      '/api/warehouseManager/showAllStock';
+  static const String warehouseShowStockLogs =
+      '/api/warehouseManager/showStockLogs';
+  static String warehouseShowStockDetails(Object materialId) =>
+      '/api/warehouseManager/showStockDetails/$materialId';
+
+  /// POST — تعديل كمية دفعة محدّدة. body: {type:in|out, quantity, reason, notes?}.
+  static String warehouseAdjustStock(Object batchId) =>
+      '/api/warehouseManager/adjustStockQuantity/$batchId';
+
+  /// POST — إضافة دفعة جديدة. body: {material_id, quantity, expiration_date?, notes?}.
+  static const String warehouseAddStockBatch =
+      '/api/warehouseManager/addStockBatch';
+
+  // ── Warehouse Manager — طلبات المواد (لبّي/ارفض) ─────────────────────────
+  static const String warehouseShowAllMaterialRequests =
+      '/api/warehouseManager/showAllMaterialRequests';
+  static String warehouseShowMaterialRequest(Object id) =>
+      '/api/warehouseManager/showMaterialRequestDetails/$id';
+
+  /// POST — تلبية الطلب (يخصم من الدفعات FIFO). body: {notes?}.
+  static String warehouseFulfillMaterialRequest(Object id) =>
+      '/api/warehouseManager/materialRequestFulfill/$id';
+
+  /// POST — رفض الطلب. body: {reason}.
+  static String warehouseRejectMaterialRequest(Object id) =>
+      '/api/warehouseManager/materialRequestReject/$id';
+
+  // ── Warehouse Manager — فواتير الشراء ────────────────────────────────────
+  static const String warehousePurchaseInvoices =
+      '/api/warehouseManager/purchase-invoices';
+  static String warehousePurchaseInvoice(Object id) =>
+      '/api/warehouseManager/purchase-invoices/$id';
+
+  // ── Warehouse Manager — مؤشّرات المخزون (dashboard) ──────────────────────
+  static const String warehouseInventoryStockLevels =
+      '/api/warehouseManager/inventory/stock-levels';
+  static const String warehouseInventoryStockValue =
+      '/api/warehouseManager/inventory/stock-value';
+  static const String warehouseInventoryByCategory =
+      '/api/warehouseManager/inventory/by-category';
+
+  // ── Warehouse Manager — التقارير ─────────────────────────────────────────
+  static const String warehouseReportStockMovement =
+      '/api/warehouseManager/reports/stock-movement';
+  static const String warehouseReportPurchaseInvoices =
+      '/api/warehouseManager/reports/purchase-invoices';
+  static const String warehouseReportMaterialRequests =
+      '/api/warehouseManager/reports/material-requests';
+
+  // ── Warehouse Manager — الإشعارات ────────────────────────────────────────
+  static const String warehouseNotifications =
+      '/api/warehouseManager/notifications';
+  static String warehouseMarkNotificationRead(Object id) =>
+      '/api/warehouseManager/notifications/$id/read';
 }
