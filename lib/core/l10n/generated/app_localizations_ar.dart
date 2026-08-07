@@ -1950,6 +1950,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whReportMockNote => 'بيانات تجريبية — تُربط عند تفعيل الباك';
 
   @override
+  String get whReportPurchasesTitle => 'تقرير المشتريات';
+
+  @override
+  String get whReportStatInvoices => 'عدد الفواتير';
+
+  @override
+  String get whReportStatSpending => 'إجمالي الإنفاق (ل.س)';
+
+  @override
+  String get whReportStatAvgInvoice => 'متوسط الفاتورة (ل.س)';
+
+  @override
+  String get whReportStatSuppliers => 'عدد المورّدين';
+
+  @override
+  String get whReportBySupplier => 'الإنفاق حسب المورّد';
+
+  @override
+  String get whReportByMonth => 'الإنفاق الشهري';
+
+  @override
   String get reportStatTotalMaterials => 'إجمالي المواد';
 
   @override

@@ -3872,6 +3872,48 @@ abstract class AppLocalizations {
   /// **'Demo data — will be wired when backend is ready'**
   String get whReportMockNote;
 
+  /// No description provided for @whReportPurchasesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases report'**
+  String get whReportPurchasesTitle;
+
+  /// No description provided for @whReportStatInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get whReportStatInvoices;
+
+  /// No description provided for @whReportStatSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Total spending (SYP)'**
+  String get whReportStatSpending;
+
+  /// No description provided for @whReportStatAvgInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg invoice (SYP)'**
+  String get whReportStatAvgInvoice;
+
+  /// No description provided for @whReportStatSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers'**
+  String get whReportStatSuppliers;
+
+  /// No description provided for @whReportBySupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by supplier'**
+  String get whReportBySupplier;
+
+  /// No description provided for @whReportByMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly spending'**
+  String get whReportByMonth;
+
   /// No description provided for @reportStatTotalMaterials.
   ///
   /// In en, this message translates to:

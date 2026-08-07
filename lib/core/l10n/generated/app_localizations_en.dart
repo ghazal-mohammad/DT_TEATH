@@ -1968,6 +1968,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Demo data — will be wired when backend is ready';
 
   @override
+  String get whReportPurchasesTitle => 'Purchases report';
+
+  @override
+  String get whReportStatInvoices => 'Invoices';
+
+  @override
+  String get whReportStatSpending => 'Total spending (SYP)';
+
+  @override
+  String get whReportStatAvgInvoice => 'Avg invoice (SYP)';
+
+  @override
+  String get whReportStatSuppliers => 'Suppliers';
+
+  @override
+  String get whReportBySupplier => 'Spending by supplier';
+
+  @override
+  String get whReportByMonth => 'Monthly spending';
+
+  @override
   String get reportStatTotalMaterials => 'Total Materials';
 
   @override
