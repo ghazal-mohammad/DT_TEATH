@@ -2122,6 +2122,34 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invColTotalSyp => 'الإجمالي (ل.س)';
 
   @override
+  String get invSupplierLabel => 'المورّد';
+
+  @override
+  String get invDetailsTitle => 'تفاصيل الفاتورة';
+
+  @override
+  String get invUnitPriceLabel => 'سعر الوحدة';
+
+  @override
+  String get invLineTotalLabel => 'الإجمالي';
+
+  @override
+  String get invCreatedByLabel => 'أُنشئت بواسطة';
+
+  @override
+  String get invGrandTotalLabel => 'إجمالي المشتريات (ل.س)';
+
+  @override
+  String invInvoiceNumber(String id) {
+    return 'فاتورة #$id';
+  }
+
+  @override
+  String invItemsCountLabel(int count) {
+    return '$count مادة';
+  }
+
+  @override
   String invCount(Object count, Object total) {
     return '$count فاتورة من أصل $total';
   }

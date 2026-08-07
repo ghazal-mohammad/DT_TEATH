@@ -4196,6 +4196,54 @@ abstract class AppLocalizations {
   /// **'Total (SYP)'**
   String get invColTotalSyp;
 
+  /// No description provided for @invSupplierLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get invSupplierLabel;
+
+  /// No description provided for @invDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice details'**
+  String get invDetailsTitle;
+
+  /// No description provided for @invUnitPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit price'**
+  String get invUnitPriceLabel;
+
+  /// No description provided for @invLineTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invLineTotalLabel;
+
+  /// No description provided for @invCreatedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by'**
+  String get invCreatedByLabel;
+
+  /// No description provided for @invGrandTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total purchases (SYP)'**
+  String get invGrandTotalLabel;
+
+  /// No description provided for @invInvoiceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice #{id}'**
+  String invInvoiceNumber(String id);
+
+  /// No description provided for @invItemsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} material(s)'**
+  String invItemsCountLabel(int count);
+
   /// No description provided for @invCount.
   ///
   /// In en, this message translates to:

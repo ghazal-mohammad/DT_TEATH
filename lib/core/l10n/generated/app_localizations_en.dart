@@ -2141,6 +2141,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invColTotalSyp => 'Total (SYP)';
 
   @override
+  String get invSupplierLabel => 'Supplier';
+
+  @override
+  String get invDetailsTitle => 'Invoice details';
+
+  @override
+  String get invUnitPriceLabel => 'Unit price';
+
+  @override
+  String get invLineTotalLabel => 'Total';
+
+  @override
+  String get invCreatedByLabel => 'Created by';
+
+  @override
+  String get invGrandTotalLabel => 'Total purchases (SYP)';
+
+  @override
+  String invInvoiceNumber(String id) {
+    return 'Invoice #$id';
+  }
+
+  @override
+  String invItemsCountLabel(int count) {
+    return '$count material(s)';
+  }
+
+  @override
   String invCount(Object count, Object total) {
     return '$count invoices of $total';
   }

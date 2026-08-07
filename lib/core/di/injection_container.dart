@@ -24,14 +24,17 @@ import '../../features/warehouse/data/datasources/warehouse_materials_remote_dat
 import '../../features/warehouse/data/datasources/warehouse_stock_remote_datasource.dart';
 import '../../features/warehouse/data/datasources/warehouse_requests_remote_datasource.dart';
 import '../../features/warehouse/data/datasources/warehouse_inventory_remote_datasource.dart';
+import '../../features/warehouse/data/datasources/purchase_invoices_remote_datasource.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_materials_repository.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_stock_repository.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_requests_repository.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_inventory_repository.dart';
+import '../../features/warehouse/data/repositories/remote_purchase_invoices_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_materials_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_stock_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_requests_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_inventory_repository.dart';
+import '../../features/warehouse/domain/repositories/purchase_invoices_repository.dart';
 
 // ── Auth feature ──────────────────────────────────────────────────────────
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
@@ -225,6 +228,17 @@ Future<void> initDependencies() async {
     () => RemoteWarehouseInventoryRepository(
       sl<WarehouseInventoryRemoteDataSource>(),
       sl<LocalStore>(),
+    ),
+  );
+
+  // ── Warehouse Purchase Invoices (فواتير الشراء — عرض) ────────────────────
+  sl.registerLazySingleton<PurchaseInvoicesRemoteDataSource>(
+    () => PurchaseInvoicesRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<PurchaseInvoicesRepository>(
+    () => RemotePurchaseInvoicesRepository(
+      sl<PurchaseInvoicesRemoteDataSource>(),
+      sl<PersistentCache>(),
     ),
   );
 }

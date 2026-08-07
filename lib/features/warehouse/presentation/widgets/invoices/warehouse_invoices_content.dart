@@ -1,229 +1,255 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_invoices_content.dart
 //
-// محتوى صفحة فواتير المستودع — مطابق لـ mockup التصميم.
-//
-// 🎯 البنية:
-//   1. صف 4 بطاقات إحصائية (إجمالي / مدفوع / معلق / المشتريات الكلية)
-//   2. شريط تابات الحالة (الكل / مدفوعة / بانتظار) + عدّاد
-//   3. قسم الجدول: عنوان "فواتير الشراء" + زر إضافة فاتورة
-//   4. الجدول: رقم الفاتورة | المورد | التاريخ | عدد المواد | الإجمالي | الحالة
-//
-// ملاحظة: حالة الدفع تُحسب محلياً (heuristic) حتى يصير في backend.
+// فواتير الشراء الواردة للمستودع — **مربوطة بالباك** (purchase-invoices/index).
+// كل فاتورة = مورّد + تاريخ + إجمالي + بنود؛ العرض ببطاقات + مودال تفاصيل.
+// ملاحظة: إنشاء فاتورة (store) متعدّد البنود مؤجَّل لواجهة لاحقة.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
-import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
-import '../../../../../shared/widgets/primitives/app_button.dart';
-import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
-import '../../../data/mock/warehouse_pages_mock_data.dart';
-import 'warehouse_invoice_form_dialog.dart';
+import '../../bloc/purchase_invoices_cubit.dart';
+import '../../../domain/entities/purchase_invoice.dart';
+import 'warehouse_invoice_details_dialog.dart';
 
-part 'warehouse_invoices_parts.dart';
-
-// ══════════════════════════════════════════════════════════════════════════
-//                              FILTERS
-// ══════════════════════════════════════════════════════════════════════════
-
-enum _PaymentStatus { paid, pending }
-
-enum _InvoiceFilter { all, paid, pending }
-
-extension on _InvoiceFilter {
-  String label(AppLocalizations l10n) => switch (this) {
-        _InvoiceFilter.all => l10n.whFilterAll,
-        _InvoiceFilter.paid => l10n.invStatusPaid,
-        _InvoiceFilter.pending => l10n.invStatusPending,
-      };
-
-  bool matches(_PaymentStatus s) {
-    return switch (this) {
-      _InvoiceFilter.all => true,
-      _InvoiceFilter.paid => s == _PaymentStatus.paid,
-      _InvoiceFilter.pending => s == _PaymentStatus.pending,
-    };
+/// تنسيق مبلغ بفواصل آلاف.
+String formatMoney(num v) {
+  final s = v.toStringAsFixed(0);
+  final buf = StringBuffer();
+  for (var i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+    buf.write(s[i]);
   }
+  return buf.toString();
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//                              MAIN CONTENT
-// ══════════════════════════════════════════════════════════════════════════
-
-class WarehouseInvoicesContent extends StatefulWidget {
+class WarehouseInvoicesContent extends StatelessWidget {
   const WarehouseInvoicesContent({super.key});
-
-  @override
-  State<WarehouseInvoicesContent> createState() =>
-      _WarehouseInvoicesContentState();
-}
-
-class _WarehouseInvoicesContentState extends State<WarehouseInvoicesContent> {
-  _InvoiceFilter _filter = _InvoiceFilter.all;
-
-  /// نأخذ فواتير الشراء فقط (المُطابقة للـ mockup).
-  late final List<WarehouseInvoiceItem> _all = WarehouseInvoicesMockData
-      .invoices
-      .where((i) => i.type == InvoiceType.purchase)
-      .toList();
-
-  /// تحديد حالة الدفع محلياً — heuristic: الفواتير الأقدم مدفوعة، الأحدث معلّقة.
-  _PaymentStatus _statusOf(WarehouseInvoiceItem i) {
-    final idx = _all.indexOf(i);
-    return idx < 5 ? _PaymentStatus.paid : _PaymentStatus.pending;
-  }
-
-  List<WarehouseInvoiceItem> get _filtered =>
-      _all.where((i) => _filter.matches(_statusOf(i))).toList();
-
-  int _countStatus(_PaymentStatus s) =>
-      _all.where((i) => _statusOf(i) == s).length;
-
-  double _sumWhere(bool Function(WarehouseInvoiceItem) test) =>
-      _all.where(test).fold<double>(0, (acc, i) => acc + i.total);
 
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _StatsRow(
-          isLight: isLight,
-          totalCount: _all.length,
-          paidSum: _sumWhere((i) => _statusOf(i) == _PaymentStatus.paid),
-          pendingSum: _sumWhere((i) => _statusOf(i) == _PaymentStatus.pending),
-          purchasesSum: _all.fold<double>(0, (acc, i) => acc + i.total),
-        ),
-        const SizedBox(height: 14),
-        _buildTabsRow(context, isLight),
-        const SizedBox(height: 14),
-        _buildTableSection(isLight),
-      ],
+    return BlocBuilder<PurchaseInvoicesCubit, PurchaseInvoicesState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _statsRow(context, state, isLight),
+            const SizedBox(height: 16),
+            _body(context, state, isLight),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildTabsRow(BuildContext context, bool isLight) {
-    final counts = <_InvoiceFilter, int>{
-      _InvoiceFilter.all: _all.length,
-      _InvoiceFilter.paid: _countStatus(_PaymentStatus.paid),
-      _InvoiceFilter.pending: _countStatus(_PaymentStatus.pending),
-    };
+  Widget _statsRow(
+      BuildContext context, PurchaseInvoicesState state, bool isLight) {
+    final l10n = context.l10n;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        AppSegmentedTabs<_InvoiceFilter>(
-          values: _InvoiceFilter.values,
-          selected: _filter,
-          labelOf: (v) => v.label(context.l10n),
-          countOf: (v) => counts[v] ?? 0,
-          onChanged: (v) => setState(() => _filter = v),
+        Expanded(
+          child: _StatBox(
+            icon: Icons.receipt_long_outlined,
+            value: state.count.toString(),
+            label: l10n.invStatThisMonth,
+            accent: AppColors.statusInfo,
+            isLight: isLight,
+          ),
         ),
-        const Spacer(),
-        Text(
-          context.l10n.invCount(_filtered.length, _all.length),
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12,
-            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+        const SizedBox(width: 12),
+        Expanded(
+          child: _StatBox(
+            icon: Icons.payments_outlined,
+            value: formatMoney(state.totalAmount),
+            label: l10n.invGrandTotalLabel,
+            accent: AppColors.statusSuccess,
+            isLight: isLight,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTableSection(bool isLight) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+  Widget _body(
+      BuildContext context, PurchaseInvoicesState state, bool isLight) {
+    if (state.status == InvoicesStatus.loading && state.invoices.isEmpty) {
+      return const Padding(
+          padding: EdgeInsets.all(48),
+          child: Center(child: CircularProgressIndicator()));
+    }
+    if (state.status == InvoicesStatus.error && state.invoices.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(36),
+        child: Center(
+          child: Text(state.errorMessage ?? '—',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: AppColors.alertRed)),
         ),
-      ),
-      child: Column(
-        children: [
-          _buildHeader(isLight),
-          Divider(
-            height: 1,
-            color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-          ),
-          if (_filtered.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 36),
-              child: AppEmptyState(
-                icon: Icons.receipt_long_outlined,
-                title: context.l10n.invEmptyTitle,
-                message: context.l10n.invEmptyMessage,
-              ),
-            )
-          else
-            _buildTable(isLight),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(bool isLight) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-      child: Row(
-        children: [
-          const Icon(Icons.receipt_long_outlined,
-              size: 18, color: AppColors.primary),
-          const SizedBox(width: 6),
-          Text(
-            context.l10n.invPurchaseInvoices,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-            ),
-          ),
-          const SizedBox(width: 8),
-          _CountBadge(count: _all.length),
-          const Spacer(),
-          AppButton(
-            label: '+ ${context.l10n.invAddInvoice}',
-            onPressed: () async {
-              final added =
-                  await WarehouseInvoiceFormDialog.show(context);
-              if (added != null && mounted) {
-                setState(() => _all.insert(0, added));
-              }
-            },
-            variant: AppButtonVariant.primary,
-            size: AppButtonSize.small,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTable(bool isLight) {
+      );
+    }
+    if (state.invoices.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: AppEmptyState(
+          icon: Icons.receipt_long_outlined,
+          title: context.l10n.invEmptyTitle,
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _TableHeader(isLight: isLight),
-        for (var i = 0; i < _filtered.length; i++)
-          _InvoiceDataRow(
-            invoice: _filtered[i],
-            status: _statusOf(_filtered[i]),
-            isLight: isLight,
-            isLast: i == _filtered.length - 1,
-          ),
+        for (final inv in state.invoices) ...[
+          _InvoiceCard(invoice: inv, isLight: isLight),
+          const SizedBox(height: 10),
+        ],
       ],
     );
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//                          STATS ROW
-// ══════════════════════════════════════════════════════════════════════════
+class _StatBox extends StatelessWidget {
+  const _StatBox({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.accent,
+    required this.isLight,
+  });
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color accent;
+  final bool isLight;
 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isLight ? Colors.white : AppColors.darkSurface,
+        border: Border.all(
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, size: 19, color: accent),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1)),
+                Text(label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.lightText3)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InvoiceCard extends StatelessWidget {
+  const _InvoiceCard({required this.invoice, required this.isLight});
+  final PurchaseInvoice invoice;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final txt1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
+    final txt3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
+    final date = invoice.invoiceDate;
+    final dateStr = date == null
+        ? '—'
+        : '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return InkWell(
+      onTap: () => WarehouseInvoiceDetailsDialog.show(context, invoice),
+      borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isLight ? Colors.white : AppColors.darkSurface,
+          border: Border.all(
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          borderRadius: BorderRadius.circular(AppSizes.radiusMD),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      invoice.supplierName.isEmpty
+                          ? l10n.invInvoiceNumber(invoice.id)
+                          : invoice.supplierName,
+                      style: AppTextStyles.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w800, color: txt1)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.event_outlined, size: 13, color: txt3),
+                      const SizedBox(width: 4),
+                      Text(dateStr,
+                          style: AppTextStyles.bodySmall.copyWith(color: txt3)),
+                      const SizedBox(width: 12),
+                      Icon(Icons.inventory_2_outlined, size: 13, color: txt3),
+                      const SizedBox(width: 4),
+                      Text(l10n.invItemsCountLabel(invoice.itemsCount),
+                          style: AppTextStyles.bodySmall.copyWith(color: txt3)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('${formatMoney(invoice.totalAmount)} ل.س',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.statusSuccess)),
+                const SizedBox(height: 2),
+                Text(l10n.invDetailsTitle,
+                    style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.primary, fontWeight: FontWeight.w700)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
