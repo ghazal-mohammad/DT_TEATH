@@ -10,6 +10,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../core/l10n/build_context_l10n.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -397,9 +399,9 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'أدخل التاريخ',
-            style: TextStyle(
+          Text(
+            context.l10n.dateEnterLabel,
+            style: const TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -433,7 +435,7 @@ class _AppDatePickerDialogState extends State<_AppDatePickerDialog> {
               color: AppColors.lightText1,
             ),
             decoration: InputDecoration(
-              hintText: 'يوم/شهر/سنة',
+              hintText: context.l10n.dateHintDMY,
               hintStyle: const TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 color: AppColors.lightText4,

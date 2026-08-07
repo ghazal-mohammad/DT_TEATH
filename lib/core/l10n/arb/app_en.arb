@@ -85,6 +85,11 @@
 
   "labSystem": "Lab System",
   "warehouseSystem": "Warehouse System",
+  "systemLabDesc": "Manage prosthetics orders, technicians and reports",
+  "systemWarehouseDesc": "Manage inventory, materials, invoices and clinic requests",
+  "systemSelectTitle": "Choose a system",
+  "systemSelectSubtitle": "Select the system you want to work on",
+  "systemPreviewNote": "Preview mode — you can switch anytime",
   "switchSystem": "Switch System",
 
   "dashboard": "Home",
@@ -180,6 +185,8 @@
     "description": "Arabic language name — always in Arabic."
   },
   "languageEnglish": "English",
+  "dateHintDMY": "DD/MM/YYYY",
+  "dateEnterLabel": "Enter date",
   "@languageEnglish": {
     "description": "English language name — always in English."
   },

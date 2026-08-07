@@ -45,9 +45,9 @@ class WarehouseSidebarSections {
             label: context.l10n.dashboard,
             route: RouteNames.warehouseDashboard,
           ),
-          const SidebarItemData(
+          SidebarItemData(
             icon: AppIcons.profile,
-            label: 'الملف الشخصي',
+            label: context.l10n.labProfile,
             route: RouteNames.warehouseProfile,
           ),
           SidebarItemData(

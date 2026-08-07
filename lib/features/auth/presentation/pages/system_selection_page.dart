@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -168,7 +169,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
                       controller: _entryCtrl,
                       delay: AuthStaggerDelays.title,
                       child: Text(
-                        'اختر النظام',
+                        context.l10n.systemSelectTitle,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.authFormTitle.copyWith(
                           color: Colors.white,
@@ -181,7 +182,7 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
                       controller: _entryCtrl,
                       delay: AuthStaggerDelays.subtitle,
                       child: Text(
-                        'حدد النظام الذي تريد العمل عليه',
+                        context.l10n.systemSelectSubtitle,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.authFormSubtitle.copyWith(
                           color: Colors.white.withValues(alpha: 0.65),
@@ -193,13 +194,13 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
                     AuthEntryAnimator(
                       controller: _entryCtrl,
                       delay: AuthStaggerDelays.field1,
-                      child: const _SystemCard(
+                      child: _SystemCard(
                         role: SystemRole.lab,
                         icon: Icons.science_outlined,
                         color: AppColors.labSystem,
-                        title: 'نظام المخبر',
+                        title: context.l10n.labSystem,
                         description:
-                            'إدارة طلبات التعويضات والمخبريين والتقارير',
+                            context.l10n.systemLabDesc,
                         destination: RouteNames.labDashboard,
                         darkMode: true,
                       ),
@@ -209,13 +210,13 @@ class _SystemSelectionPageState extends State<SystemSelectionPage>
                     AuthEntryAnimator(
                       controller: _entryCtrl,
                       delay: AuthStaggerDelays.field2,
-                      child: const _SystemCard(
+                      child: _SystemCard(
                         role: SystemRole.warehouse,
                         icon: Icons.inventory_2_outlined,
                         color: AppColors.warehouseSystem,
-                        title: 'نظام المستودع',
+                        title: context.l10n.warehouseSystem,
                         description:
-                            'إدارة المخزون والمواد والفواتير وطلبيات العيادات',
+                            context.l10n.systemWarehouseDesc,
                         destination: RouteNames.warehouseDashboard,
                         darkMode: true,
                       ),
@@ -322,7 +323,7 @@ class _BrandingPanel extends StatelessWidget {
                   ),
                   const SizedBox(width: 7),
                   Text(
-                    'وضع المعاينة — يمكنك التبديل في أي وقت',
+                    context.l10n.systemPreviewNote,
                     style: AppTextStyles.authFooterNote.copyWith(
                       color: Colors.white.withValues(alpha: 0.55),
                     ),
@@ -361,7 +362,7 @@ class _CardsPanel extends StatelessWidget {
             controller: entryCtrl,
             delay: AuthStaggerDelays.title,
             child: Text(
-              'اختر النظام',
+              context.l10n.systemSelectTitle,
               style: AppTextStyles.authFormTitle.copyWith(
                 color: AppColors.authCardTitleLight,
               ),
@@ -373,7 +374,7 @@ class _CardsPanel extends StatelessWidget {
             controller: entryCtrl,
             delay: AuthStaggerDelays.subtitle,
             child: Text(
-              'حدد النظام الذي تريد العمل عليه اليوم',
+              context.l10n.systemSelectSubtitle,
               style: AppTextStyles.authFormSubtitle.copyWith(
                 color: AppColors.authCardSubLight,
               ),
@@ -385,12 +386,12 @@ class _CardsPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.field1,
-            child: const _SystemCard(
+            child: _SystemCard(
               role: SystemRole.lab,
               icon: Icons.science_outlined,
               color: AppColors.labSystem,
-              title: 'نظام المخبر',
-              description: 'إدارة طلبات التعويضات السنية والمخبريين والتقارير',
+              title: context.l10n.labSystem,
+              description: context.l10n.systemLabDesc,
               destination: RouteNames.labDashboard,
               darkMode: false,
             ),
@@ -401,12 +402,12 @@ class _CardsPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.field2,
-            child: const _SystemCard(
+            child: _SystemCard(
               role: SystemRole.warehouse,
               icon: Icons.inventory_2_outlined,
               color: AppColors.warehouseSystem,
-              title: 'نظام المستودع',
-              description: 'إدارة المخزون والمواد والفواتير وطلبيات العيادات',
+              title: context.l10n.warehouseSystem,
+              description: context.l10n.systemWarehouseDesc,
               destination: RouteNames.warehouseDashboard,
               darkMode: false,
             ),

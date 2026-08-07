@@ -139,6 +139,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warehouseSystem => 'نظام المستودع';
 
   @override
+  String get systemLabDesc => 'إدارة طلبات التعويضات والمخبريين والتقارير';
+
+  @override
+  String get systemWarehouseDesc =>
+      'إدارة المخزون والمواد والفواتير وطلبيات العيادات';
+
+  @override
+  String get systemSelectTitle => 'اختر النظام';
+
+  @override
+  String get systemSelectSubtitle => 'حدد النظام الذي تريد العمل عليه';
+
+  @override
+  String get systemPreviewNote => 'وضع المعاينة — يمكنك التبديل في أي وقت';
+
+  @override
   String get switchSystem => 'تبديل النظام';
 
   @override
@@ -376,6 +392,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get dateHintDMY => 'يوم/شهر/سنة';
+
+  @override
+  String get dateEnterLabel => 'أدخل التاريخ';
 
   @override
   String get fontSize => 'حجم الخط';

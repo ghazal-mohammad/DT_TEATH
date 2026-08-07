@@ -344,6 +344,36 @@ abstract class AppLocalizations {
   /// **'Warehouse System'**
   String get warehouseSystem;
 
+  /// No description provided for @systemLabDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage prosthetics orders, technicians and reports'**
+  String get systemLabDesc;
+
+  /// No description provided for @systemWarehouseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage inventory, materials, invoices and clinic requests'**
+  String get systemWarehouseDesc;
+
+  /// No description provided for @systemSelectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a system'**
+  String get systemSelectTitle;
+
+  /// No description provided for @systemSelectSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the system you want to work on'**
+  String get systemSelectSubtitle;
+
+  /// No description provided for @systemPreviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview mode — you can switch anytime'**
+  String get systemPreviewNote;
+
   /// No description provided for @switchSystem.
   ///
   /// In en, this message translates to:
@@ -817,6 +847,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get languageEnglish;
+
+  /// No description provided for @dateHintDMY.
+  ///
+  /// In en, this message translates to:
+  /// **'DD/MM/YYYY'**
+  String get dateHintDMY;
+
+  /// No description provided for @dateEnterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter date'**
+  String get dateEnterLabel;
 
   /// No description provided for @fontSize.
   ///

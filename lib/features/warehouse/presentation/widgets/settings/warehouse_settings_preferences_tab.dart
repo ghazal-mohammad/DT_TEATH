@@ -137,7 +137,7 @@ class _PreferencesTabContentState extends State<_PreferencesTabContent> {
                   final ar = _LangOptionCard(
                     isLight: widget.isLight,
                     badge: 'ع',
-                    title: 'العربية',
+                    title: context.l10n.languageArabic,
                     sub: context.l10n.settingsLangArabicHint,
                     selected: isArabic,
                     onTap: () => context

@@ -45,6 +45,11 @@
 
   "labSystem": "نظام المخبر",
   "warehouseSystem": "نظام المستودع",
+  "systemLabDesc": "إدارة طلبات التعويضات والمخبريين والتقارير",
+  "systemWarehouseDesc": "إدارة المخزون والمواد والفواتير وطلبيات العيادات",
+  "systemSelectTitle": "اختر النظام",
+  "systemSelectSubtitle": "حدد النظام الذي تريد العمل عليه",
+  "systemPreviewNote": "وضع المعاينة — يمكنك التبديل في أي وقت",
   "switchSystem": "تبديل النظام",
 
   "dashboard": "الصفحة الرئيسية",
@@ -137,6 +142,8 @@
   "language": "اللغة",
   "languageArabic": "العربية",
   "languageEnglish": "English",
+  "dateHintDMY": "يوم/شهر/سنة",
+  "dateEnterLabel": "أدخل التاريخ",
   "fontSize": "حجم الخط",
   "fontSmall": "صغير",
   "fontMedium": "متوسط",

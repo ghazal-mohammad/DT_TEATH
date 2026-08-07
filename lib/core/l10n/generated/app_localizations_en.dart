@@ -140,6 +140,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warehouseSystem => 'Warehouse System';
 
   @override
+  String get systemLabDesc =>
+      'Manage prosthetics orders, technicians and reports';
+
+  @override
+  String get systemWarehouseDesc =>
+      'Manage inventory, materials, invoices and clinic requests';
+
+  @override
+  String get systemSelectTitle => 'Choose a system';
+
+  @override
+  String get systemSelectSubtitle => 'Select the system you want to work on';
+
+  @override
+  String get systemPreviewNote => 'Preview mode — you can switch anytime';
+
+  @override
   String get switchSystem => 'Switch System';
 
   @override
@@ -379,6 +396,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get dateHintDMY => 'DD/MM/YYYY';
+
+  @override
+  String get dateEnterLabel => 'Enter date';
 
   @override
   String get fontSize => 'Font Size';
