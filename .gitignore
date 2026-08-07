@@ -47,3 +47,4 @@ app.*.map.json
 # أدوات التطوير المحلية — لا تخصّ المشروع ولا تُرفَع.
 .claude/
 .github/copilot-instructions.md
+/memory/
