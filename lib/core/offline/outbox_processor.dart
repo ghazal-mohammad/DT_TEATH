@@ -90,9 +90,13 @@ class OutboxProcessor {
 
   Future<_SendOutcome> _sendOne(OutboxEntry entry) async {
     try {
+      // نطابق ترميز مسار الإرسال الأونلاين: multipart عند asForm، وإلا JSON.
+      final data = entry.body == null
+          ? null
+          : (entry.asForm ? FormData.fromMap(entry.body!) : entry.body);
       await _dio.request<dynamic>(
         entry.path,
-        data: entry.body,
+        data: data,
         options: Options(method: entry.method.wire),
       );
       return _SendOutcome.success;

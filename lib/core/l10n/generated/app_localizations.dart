@@ -728,6 +728,12 @@ abstract class AppLocalizations {
   /// **'No internet connection'**
   String get networkOfflineBanner;
 
+  /// No description provided for @syncPendingBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} change(s) awaiting sync'**
+  String syncPendingBanner(int count);
+
   /// No description provided for @errorServer.
   ///
   /// In en, this message translates to:

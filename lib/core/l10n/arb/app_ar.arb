@@ -118,6 +118,10 @@
 
   "errorNetwork": "لا يوجد اتصال بالإنترنت — تحقق من الشبكة",
   "networkOfflineBanner": "لا يوجد اتصال بالإنترنت",
+  "syncPendingBanner": "{count} تعديل بانتظار المزامنة",
+  "@syncPendingBanner": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "errorServer": "خطأ في السيرفر — حاول مرة أخرى بعد قليل",
   "errorTimeout": "انتهت مهلة الانتظار — السيرفر لا يستجيب",
   "errorUnauthorized": "انتهت صلاحية الجلسة — سجّل دخولك مجدداً",

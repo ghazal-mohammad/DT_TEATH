@@ -36,6 +36,7 @@ class OutboxEntry {
     this.body,
     this.localEntityId,
     this.attempts = 0,
+    this.asForm = false,
   });
 
   /// معرّف فريد للعملية نفسها (لإزالتها بعد النجاح).
@@ -62,6 +63,9 @@ class OutboxEntry {
   /// عدد محاولات الإرسال الفاشلة (لتفادي حلقة لا نهائية على خطأ دائم).
   final int attempts;
 
+  /// هل يُرسَل الجسم كـ multipart/form-data (مطابقة لمسار الإرسال الأونلاين)؟
+  final bool asForm;
+
   OutboxEntry copyWith({int? attempts}) => OutboxEntry(
         id: id,
         resource: resource,
@@ -71,6 +75,7 @@ class OutboxEntry {
         localEntityId: localEntityId,
         createdAt: createdAt,
         attempts: attempts ?? this.attempts,
+        asForm: asForm,
       );
 
   Map<String, dynamic> toJson() => {
@@ -82,6 +87,7 @@ class OutboxEntry {
         if (localEntityId != null) 'local_entity_id': localEntityId,
         'created_at': createdAt.toIso8601String(),
         'attempts': attempts,
+        'as_form': asForm,
       };
 
   factory OutboxEntry.fromJson(Map<String, dynamic> j) => OutboxEntry(
@@ -96,5 +102,6 @@ class OutboxEntry {
         createdAt:
             DateTime.tryParse('${j['created_at']}') ?? DateTime.now(),
         attempts: (j['attempts'] as num?)?.toInt() ?? 0,
+        asForm: j['as_form'] == true,
       );
 }

@@ -331,6 +331,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get networkOfflineBanner => 'لا يوجد اتصال بالإنترنت';
 
   @override
+  String syncPendingBanner(int count) {
+    return '$count تعديل بانتظار المزامنة';
+  }
+
+  @override
   String get errorServer => 'خطأ في السيرفر — حاول مرة أخرى بعد قليل';
 
   @override

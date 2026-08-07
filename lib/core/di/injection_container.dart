@@ -176,6 +176,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WarehouseMaterialsRepository>(
     () => RemoteWarehouseMaterialsRepository(
       sl<WarehouseMaterialsRemoteDataSource>(),
+      sl<PersistentCache>(),
+      sl<Outbox>(),
     ),
   );
 }

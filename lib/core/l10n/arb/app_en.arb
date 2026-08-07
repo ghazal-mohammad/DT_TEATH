@@ -158,6 +158,10 @@
 
   "errorNetwork": "No internet connection — check your network",
   "networkOfflineBanner": "No internet connection",
+  "syncPendingBanner": "{count} change(s) awaiting sync",
+  "@syncPendingBanner": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "errorServer": "Server error — try again in a moment",
   "errorTimeout": "Request timed out — server not responding",
   "errorUnauthorized": "Session expired — please sign in again",

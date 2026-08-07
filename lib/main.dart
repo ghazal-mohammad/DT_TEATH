@@ -14,6 +14,8 @@
 //   - أي Cubit جديد (Auth, User...) يُضاف هنا
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,8 +26,12 @@ import 'core/auth/current_user.dart';
 import 'core/di/injection_container.dart' as di;
 import 'core/l10n/generated/app_localizations.dart';
 import 'core/network/dio_client.dart';
+import 'core/offline/outbox.dart';
+import 'core/offline/outbox_processor.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
+import 'features/warehouse/data/repositories/remote_warehouse_materials_repository.dart';
+import 'features/warehouse/domain/repositories/warehouse_materials_repository.dart';
 import 'core/search/app_search_warmup.dart';
 import 'core/session/session_cache_registry.dart';
 import 'core/theme/app_theme.dart';
@@ -93,6 +99,19 @@ Future<void> main() async {
     SessionCacheRegistry.instance.clearAll();
     AppRouter.router.go(RouteNames.login);
   };
+
+  // صمود الأوفلاين: حمّل طابور الصادر المحفوظ وابدأ مُصرِّفه. عند رجوع الشبكة
+  // يُعاد إرسال التعديلات المؤجَّلة، وبعد نجاح مورد نعيد جلبه (مصالحة تفاؤلية).
+  await di.sl<Outbox>().load();
+  final outboxProcessor = di.sl<OutboxProcessor>()
+    ..onResourceSynced = (resource) {
+      if (resource == RemoteWarehouseMaterialsRepository.resource) {
+        di.sl<WarehouseMaterialsRepository>().getAll();
+      }
+    }
+    ..start();
+  // محاولة تصريف مبكّرة (إن كنا متصلين وفي عمليات معلّقة من جلسة سابقة).
+  unawaited(outboxProcessor.process());
 
   // تحميل التفضيلات المحفوظة (تشغيل متوازي لتسريع الإقلاع).
   await Future.wait([
@@ -172,8 +191,11 @@ class DtTeethApp extends StatelessWidget {
                             const SingleActivator(LogicalKeyboardKey.keyK,
                                 meta: true): () => _openCommandPalette(context),
                           },
-                          // شريط انقطاع الاتصال (أعلى) + قفل الخمول + حجم الخط.
+                          // شريط انقطاع الاتصال + شريط "بانتظار المزامنة" (أعلى)
+                          // + قفل الخمول + حجم الخط.
                           child: OfflineBanner(
+                            syncListenable: di.sl<Outbox>(),
+                            pendingSyncCount: () => di.sl<Outbox>().pendingCount,
                             child: IdleTimeoutWatcher(
                               timeout: _kIdleTimeout,
                               sessionListenable: CurrentUser.instance,

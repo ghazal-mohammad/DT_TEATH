@@ -334,6 +334,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get networkOfflineBanner => 'No internet connection';
 
   @override
+  String syncPendingBanner(int count) {
+    return '$count change(s) awaiting sync';
+  }
+
+  @override
   String get errorServer => 'Server error — try again in a moment';
 
   @override
