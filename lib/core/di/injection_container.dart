@@ -7,8 +7,13 @@
 
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../network/dio_client.dart';
+import '../offline/local_store.dart';
+import '../offline/outbox.dart';
+import '../offline/outbox_processor.dart';
+import '../offline/persistent_cache.dart';
 import '../../shared/bloc/locale_cubit.dart';
 import '../../shared/bloc/mock_system_cubit.dart';
 import '../../shared/bloc/text_scale_cubit.dart';
@@ -60,6 +65,18 @@ final GetIt sl = GetIt.instance;
 Future<void> initDependencies() async {
   // ── External (مكتبات خارجية) ────────────────────────────────────────────
   sl.registerLazySingleton<Dio>(() => DioClient.build());
+
+  // ── Offline core (كاش دائم + طابور صادر) ────────────────────────────────
+  // نُهيّئ SharedPreferences مبكّراً (async) لأن الكاش والطابور يعتمدان عليه.
+  final prefs = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<LocalStore>(() => SharedPrefsLocalStore(prefs));
+  sl.registerLazySingleton<PersistentCache>(
+    () => PersistentCache(sl<LocalStore>()),
+  );
+  sl.registerLazySingleton<Outbox>(() => Outbox(sl<LocalStore>()));
+  sl.registerLazySingleton<OutboxProcessor>(
+    () => OutboxProcessor(outbox: sl<Outbox>(), dio: sl<Dio>()),
+  );
 
   // ── Cubits / BLoCs مشتركة ──────────────────────────────────────────────
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
