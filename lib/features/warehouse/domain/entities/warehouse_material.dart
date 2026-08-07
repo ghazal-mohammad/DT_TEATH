@@ -173,14 +173,27 @@ class WarehouseMaterial {
       nameEn: json['name_en'] as String?,
       companyName: (json['company_name'] as String?) ?? '',
       category: category,
-      quantity: (json['total_stock'] as num?)?.toInt() ??
-          (json['quantity'] as num?)?.toInt() ??
-          0,
+      // الباك يرسل الأرقام أحياناً كنصوص (decimals: "250.50") ⇒ تحويل متسامح.
+      quantity: _numToInt(json['total_stock'] ?? json['quantity']),
       unit: (json['unit'] as String?) ?? '',
-      pricePerUnit: (json['price_per_unit'] as num?)?.toDouble() ?? 0,
+      pricePerUnit: _numToDouble(json['price_per_unit']),
       dosage: json['dosage'] as String?,
-      batchesCount: (json['batches_count'] as num?)?.toInt() ?? 0,
+      batchesCount: _numToInt(json['batches_count']),
     );
+  }
+
+  /// تحويل متسامح لـ int (يقبل num أو نصّاً أو null).
+  static int _numToInt(Object? v) {
+    if (v is num) return v.toInt();
+    return double.tryParse('${v ?? ''}')?.toInt() ??
+        int.tryParse('${v ?? ''}') ??
+        0;
+  }
+
+  /// تحويل متسامح لـ double (يقبل num أو نصّاً أو null).
+  static double _numToDouble(Object? v) {
+    if (v is num) return v.toDouble();
+    return double.tryParse('${v ?? ''}') ?? 0;
   }
 
   // ────────────────────────────────────────────────────────────────────────
