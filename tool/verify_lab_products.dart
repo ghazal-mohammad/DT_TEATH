@@ -24,6 +24,19 @@ import 'package:dt_teeth/features/lab/data/repositories/remote_lab_material_requ
 import 'package:dt_teeth/features/lab/data/repositories/remote_lab_stock_repository.dart';
 import 'package:dt_teeth/features/lab/data/repositories/lab_repository_impl.dart';
 import 'package:dt_teeth/features/lab/domain/entities/lab_product.dart';
+import 'package:dt_teeth/core/offline/local_store.dart';
+import 'package:dt_teeth/core/offline/persistent_cache.dart';
+
+/// مخزن في الذاكرة لأداة التحقق (لا SharedPreferences في سياق CLI).
+class _MemStore implements LocalStore {
+  final _m = <String, String>{};
+  @override
+  Future<String?> read(String key) async => _m[key];
+  @override
+  Future<void> write(String key, String value) async => _m[key] = value;
+  @override
+  Future<void> remove(String key) async => _m.remove(key);
+}
 
 Future<void> main(List<String> args) async {
   // التوكن من LAB_TOKEN بالبيئة (آمن مع | في sanctum tokens)، أو args[0].
@@ -43,7 +56,9 @@ Future<void> main(List<String> args) async {
     },
   ));
 
-  final repo = RemoteLabProductsRepository(LabProductsRemoteDataSource(dio));
+  final cache = PersistentCache(_MemStore());
+  final repo =
+      RemoteLabProductsRepository(LabProductsRemoteDataSource(dio), cache);
 
   print('── getAll() عبر LabProductsRepository ───────────────────────────');
   final products = await repo.getAll();
@@ -72,6 +87,7 @@ Future<void> main(List<String> args) async {
   final ordersRepo = RemoteLabOrdersRepository(
     LabOrdersRemoteDataSource(dio),
     LabRepositoryImpl(LabRemoteDataSource(dio)),
+    cache,
   );
   final orders = await ordersRepo.getAll();
   print('عدد الطلبات: ${orders.length}');
@@ -84,6 +100,7 @@ Future<void> main(List<String> args) async {
   print('\n── getAll() عبر LabMaterialRequestsRepository ──────────────────');
   final mrRepo = RemoteLabMaterialRequestsRepository(
     LabMaterialRequestsRemoteDataSource(dio),
+    cache,
   );
   final reqs = await mrRepo.getAll();
   print('عدد طلبات المواد: ${reqs.length}');
@@ -93,7 +110,8 @@ Future<void> main(List<String> args) async {
   }
 
   print('\n── getAll() عبر LabStockRepository ─────────────────────────────');
-  final stockRepo = RemoteLabStockRepository(LabStockRemoteDataSource(dio));
+  final stockRepo =
+      RemoteLabStockRepository(LabStockRemoteDataSource(dio), cache);
   final stock = await stockRepo.getAll();
   print('عدد مواد المخزون: ${stock.length}');
   for (final s in stock.take(4)) {

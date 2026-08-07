@@ -129,7 +129,10 @@ Future<void> initDependencies() async {
     () => LabProductsRemoteDataSource(sl<Dio>()),
   );
   sl.registerLazySingleton<LabProductsRepository>(
-    () => RemoteLabProductsRepository(sl<LabProductsRemoteDataSource>()),
+    () => RemoteLabProductsRepository(
+      sl<LabProductsRemoteDataSource>(),
+      sl<PersistentCache>(),
+    ),
   );
 
   // ── Lab Orders (طلبات الأطباء) — Remote عبر labManager/showAllLabOrders ────
@@ -140,6 +143,7 @@ Future<void> initDependencies() async {
     () => RemoteLabOrdersRepository(
       sl<LabOrdersRemoteDataSource>(),
       sl<LabRepository>(),
+      sl<PersistentCache>(),
     ),
   );
 
@@ -150,6 +154,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<LabMaterialRequestsRepository>(
     () => RemoteLabMaterialRequestsRepository(
       sl<LabMaterialRequestsRemoteDataSource>(),
+      sl<PersistentCache>(),
     ),
   );
 
@@ -158,7 +163,10 @@ Future<void> initDependencies() async {
     () => LabStockRemoteDataSource(sl<Dio>()),
   );
   sl.registerLazySingleton<LabStockRepository>(
-    () => RemoteLabStockRepository(sl<LabStockRemoteDataSource>()),
+    () => RemoteLabStockRepository(
+      sl<LabStockRemoteDataSource>(),
+      sl<PersistentCache>(),
+    ),
   );
 
   // ── Lab Reports (تقرير تحليلي) — Remote عبر labManager/reports ────────────

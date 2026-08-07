@@ -19,18 +19,28 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../../../core/offline/cached_list_repository.dart';
+import '../../../../core/offline/persistent_cache.dart';
 import '../../domain/entities/lab_product.dart';
 import '../../domain/repositories/lab_products_repository.dart';
 import '../../../../core/session/session_cache_registry.dart';
 import '../datasources/lab_products_remote_datasource.dart';
 
-class RemoteLabProductsRepository implements LabProductsRepository {
-  RemoteLabProductsRepository(this._remote) {
+class RemoteLabProductsRepository
+    with PersistentListCache
+    implements LabProductsRepository {
+  RemoteLabProductsRepository(this._remote, this.persistentCache) {
     _controller = StreamController<List<LabProduct>>.broadcast(
       onListen: _emit,
     );
     SessionCacheRegistry.instance.register(_clearCache);
   }
+
+  @override
+  final PersistentCache persistentCache;
+
+  @override
+  String get cacheResource => 'lab_products';
 
   /// يمسح كاش الجلسة (يُستدعى عند تسجيل الخروج) — منعًا لتسريب بيانات مستخدم لآخر.
   void _clearCache() {
@@ -63,10 +73,22 @@ class RemoteLabProductsRepository implements LabProductsRepository {
       final raw = await _remote.getAll();
       _cache = raw.map(_fromJson).toList();
       _loaded = true;
+      await saveCachedRows(raw);
       _emit();
       return List.unmodifiable(_cache);
     } on DioException catch (e) {
-      throw _mapDioError(e);
+      final failure = _mapDioError(e);
+      // انقطاع شبكة ⇒ اعرض آخر نسخة دائمة معروفة بدل الفشل.
+      if (failure is NetworkFailure || failure is TimeoutFailure) {
+        final cached = await loadCachedRows();
+        if (cached != null) {
+          _cache = cached.map(_fromJson).toList();
+          _loaded = true;
+          _emit();
+          return List.unmodifiable(_cache);
+        }
+      }
+      throw failure;
     }
   }
 
