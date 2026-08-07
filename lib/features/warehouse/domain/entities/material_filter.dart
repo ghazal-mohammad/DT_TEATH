@@ -31,14 +31,14 @@ enum MaterialFilter {
   /// المواد التي ستنتهي صلاحيتها (expiringSoon + expired).
   expiring,
 
-  /// مستهلكات.
-  consumables,
+  /// مواد العيادة.
+  clinic,
 
-  /// أدوية.
-  medicines,
+  /// مواد المخبر.
+  lab,
 
-  /// مواد طبية.
-  medical,
+  /// مواد مشتركة.
+  both,
 }
 
 /// extensions للـ MaterialFilter.
@@ -52,12 +52,12 @@ extension MaterialFilterX on MaterialFilter {
         return context.l10n.whFilterLowStock;
       case MaterialFilter.expiring:
         return context.l10n.whFilterExpiring;
-      case MaterialFilter.consumables:
-        return context.l10n.whFilterConsumables;
-      case MaterialFilter.medicines:
-        return context.l10n.whFilterMedicines;
-      case MaterialFilter.medical:
-        return context.l10n.whFilterMedical;
+      case MaterialFilter.clinic:
+        return context.l10n.whCategoryClinic;
+      case MaterialFilter.lab:
+        return context.l10n.whCategoryLab;
+      case MaterialFilter.both:
+        return context.l10n.whCategoryBoth;
     }
   }
 
@@ -92,19 +92,19 @@ extension MaterialFilterX on MaterialFilter {
               s == MaterialStatus.expired;
         }).toList(growable: false);
 
-      case MaterialFilter.consumables:
+      case MaterialFilter.clinic:
         return materials
-            .where((m) => m.category == MaterialCategory.consumables)
+            .where((m) => m.category == MaterialCategory.clinic)
             .toList(growable: false);
 
-      case MaterialFilter.medicines:
+      case MaterialFilter.lab:
         return materials
-            .where((m) => m.category == MaterialCategory.medicines)
+            .where((m) => m.category == MaterialCategory.lab)
             .toList(growable: false);
 
-      case MaterialFilter.medical:
+      case MaterialFilter.both:
         return materials
-            .where((m) => m.category == MaterialCategory.medical)
+            .where((m) => m.category == MaterialCategory.both)
             .toList(growable: false);
     }
   }

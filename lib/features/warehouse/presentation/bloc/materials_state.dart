@@ -74,9 +74,11 @@ class MaterialsState {
       result = result
           .where((m) {
             final inName = m.name.toLowerCase().contains(query);
-            final inSupplier =
-                m.supplier?.toLowerCase().contains(query) ?? false;
-            return inName || inSupplier;
+            final inNameEn =
+                m.nameEn?.toLowerCase().contains(query) ?? false;
+            final inCompany =
+                m.companyName.toLowerCase().contains(query);
+            return inName || inNameEn || inCompany;
           })
           .toList(growable: false);
     }

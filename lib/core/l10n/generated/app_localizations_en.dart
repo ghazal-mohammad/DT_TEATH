@@ -608,6 +608,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whInventoryDistribution => 'Inventory Distribution';
 
   @override
+  String get whCategoryClinic => 'Clinic';
+
+  @override
+  String get whCategoryLab => 'Lab';
+
+  @override
+  String get whCategoryBoth => 'Both';
+
+  @override
   String get whCategoryConsumables => 'Consumables';
 
   @override
@@ -664,6 +673,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whMaterialName => 'Material Name';
+
+  @override
+  String get whMaterialNameEn => 'Name (English)';
+
+  @override
+  String get whMaterialCompany => 'Manufacturer';
+
+  @override
+  String get whMaterialDosage => 'Dosage / Concentration';
+
+  @override
+  String get whMaterialPricePerUnit => 'Unit Price';
 
   @override
   String get whMaterialCategory => 'Category';
@@ -1977,6 +1998,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whColSupplier => 'Supplier';
+
+  @override
+  String get whColPrice => 'Price';
+
+  @override
+  String get whColCompany => 'Company';
+
+  @override
+  String get whColDosage => 'Dosage';
+
+  @override
+  String get whColBatches => 'Batches';
 
   @override
   String get whColStatus => 'Status';

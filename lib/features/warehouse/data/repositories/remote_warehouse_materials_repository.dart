@@ -4,9 +4,9 @@
 // تنفيذ Remote لـ WarehouseMaterialsRepository عبر warehouseManager/* (فُعِّلت
 // 2026-08). يستبدل Mock بتغيير سطر التسجيل في DI فقط.
 //
-// ملاحظة فجوة الباك: قائمة showALLMaterials (formatMaterial) لا تُرجع الفئة ولا
-// الحدّ الأدنى للمخزون — فنضع الفئة الافتراضية (consumables) وminStock=0 (لا
-// حالة "منخفض" زائفة) حتى يوفّرهما الباك.
+// عقد الباك (formatMaterial): {id, name, name_en, company_name, price_per_unit,
+// dosage, unit, category(clinic|lab|both), total_stock, batches_count}. الحدّ
+// الأدنى للمخزون غير موجود بالباك ⇒ minStock=0 (لا حالة "منخفض" زائفة).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:async';
@@ -103,30 +103,36 @@ class RemoteWarehouseMaterialsRepository
   @override
   Stream<List<WarehouseMaterial>> watchAll() => _controller.stream;
 
-  // ── تحويل ──────────────────────────────────────────────────────────────
+  // ── تحويل (مطابق لعقد الباك: formatMaterial) ────────────────────────────
   WarehouseMaterial _fromJson(Map<String, dynamic> j) {
+    final nameEn = (j['name_en'] ?? '').toString();
+    final dosage = (j['dosage'] ?? '').toString();
     return WarehouseMaterial(
       id: '${j['id'] ?? ''}',
       name: (j['name'] ?? '').toString(),
-      // الباك لا يوفّر الفئة في القائمة → افتراضي محايد حتى إضافتها.
+      nameEn: nameEn.isEmpty ? null : nameEn,
+      companyName: (j['company_name'] ?? '').toString(),
+      // إن غابت الفئة (استجابة قديمة) نضع clinic كافتراضي آمن.
       category: materialCategoryFromString('${j['category'] ?? ''}') ??
-          MaterialCategory.consumables,
+          MaterialCategory.clinic,
       quantity: _toInt(j['total_stock'] ?? j['quantity']),
       unit: (j['unit'] ?? '').toString(),
-      minStock: _toInt(j['min_stock']), // غائب حالياً ⇒ 0.
-      price: _toDouble(j['price']),
-      notes: (j['description'] ?? '').toString().isEmpty
-          ? null
-          : j['description'].toString(),
+      pricePerUnit: _toDouble(j['price_per_unit']) ?? 0,
+      dosage: dosage.isEmpty ? null : dosage,
+      batchesCount: _toInt(j['batches_count']),
     );
   }
 
-  /// body الإرسال — الباك يقبل {name, unit, price, description} فقط.
+  /// body الإرسال — مطابق لـ StoreMaterialRequest:
+  /// name, name_en?, company_name, price_per_unit, dosage?, unit, category.
   Map<String, dynamic> _toBody(WarehouseMaterial m) => {
         'name': m.name,
+        if (m.nameEn != null && m.nameEn!.isNotEmpty) 'name_en': m.nameEn,
+        'company_name': m.companyName,
+        'price_per_unit': m.pricePerUnit,
+        if (m.dosage != null && m.dosage!.isNotEmpty) 'dosage': m.dosage,
         'unit': m.unit,
-        'price': m.price ?? 0,
-        if (m.notes != null && m.notes!.isNotEmpty) 'description': m.notes,
+        'category': m.category.apiKey,
       };
 
   static int _toInt(Object? v) =>

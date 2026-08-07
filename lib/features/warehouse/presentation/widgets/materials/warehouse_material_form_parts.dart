@@ -16,20 +16,11 @@ String? _requiredValidator(BuildContext context, String? v) {
   return null;
 }
 
-String? _intValidator(BuildContext context, String? v) {
+String? _doubleValidator(BuildContext context, String? v) {
   final required = _requiredValidator(context, v);
   if (required != null) return required;
-  if (int.tryParse(v!.trim()) == null) {
-    return context.l10n.errorInvalidNumber;
-  }
-  final intVal = int.parse(v.trim());
-  if (intVal < 0) return context.l10n.errorInvalidNumber;
-  return null;
-}
-
-String? _optionalDoubleValidator(BuildContext context, String? v) {
-  if (v == null || v.trim().isEmpty) return null;
-  if (double.tryParse(v.trim()) == null) {
+  final parsed = double.tryParse(v!.trim());
+  if (parsed == null || parsed < 0) {
     return context.l10n.errorInvalidNumber;
   }
   return null;

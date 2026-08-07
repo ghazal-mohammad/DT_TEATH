@@ -41,29 +41,26 @@ part 'warehouse_materials_table.dart';
 //                             LOCAL FILTERS
 // ══════════════════════════════════════════════════════════════════════════
 
-enum _CategoryFilter { all, medical, consumables, medicines, metals }
+enum _CategoryFilter { all, clinic, lab, both }
 
 extension on _CategoryFilter {
   String label(AppLocalizations l10n) => switch (this) {
         _CategoryFilter.all => l10n.whFilterAll,
-        _CategoryFilter.medical => l10n.whCategoryMedical,
-        _CategoryFilter.consumables => l10n.whCategoryConsumables,
-        _CategoryFilter.medicines => l10n.whCategoryMedicines,
-        _CategoryFilter.metals => l10n.whCategoryEquipment,
+        _CategoryFilter.clinic => l10n.whCategoryClinic,
+        _CategoryFilter.lab => l10n.whCategoryLab,
+        _CategoryFilter.both => l10n.whCategoryBoth,
       };
 
   bool matches(WarehouseMaterial m) {
     switch (this) {
       case _CategoryFilter.all:
         return true;
-      case _CategoryFilter.medical:
-        return m.category == MaterialCategory.medical;
-      case _CategoryFilter.consumables:
-        return m.category == MaterialCategory.consumables;
-      case _CategoryFilter.medicines:
-        return m.category == MaterialCategory.medicines;
-      case _CategoryFilter.metals:
-        return m.category == MaterialCategory.equipment;
+      case _CategoryFilter.clinic:
+        return m.category == MaterialCategory.clinic;
+      case _CategoryFilter.lab:
+        return m.category == MaterialCategory.lab;
+      case _CategoryFilter.both:
+        return m.category == MaterialCategory.both;
     }
   }
 }

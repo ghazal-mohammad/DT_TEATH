@@ -31,7 +31,6 @@ import 'package:flutter/services.dart';
 import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
-import '../../../../../shared/widgets/forms/app_date_picker.dart';
 import '../../../../../shared/widgets/forms/app_form_field.dart';
 import '../../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
@@ -77,15 +76,13 @@ class _WarehouseMaterialFormDialogState
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _nameCtrl;
-  late final TextEditingController _quantityCtrl;
+  late final TextEditingController _nameEnCtrl;
+  late final TextEditingController _companyCtrl;
   late final TextEditingController _unitCtrl;
-  late final TextEditingController _minStockCtrl;
-  late final TextEditingController _supplierCtrl;
   late final TextEditingController _priceCtrl;
-  late final TextEditingController _notesCtrl;
+  late final TextEditingController _dosageCtrl;
 
-  MaterialCategory _category = MaterialCategory.consumables;
-  DateTime? _expiryDate;
+  MaterialCategory _category = MaterialCategory.clinic;
 
   // اقتراحات أسماء المواد الشائعة — قابلة للبحث عبر Autocomplete.
   static const _materialNameSuggestions = <String>[
@@ -133,26 +130,23 @@ class _WarehouseMaterialFormDialogState
     super.initState();
     final m = widget.initialMaterial;
     _nameCtrl = TextEditingController(text: m?.name ?? '');
-    _quantityCtrl = TextEditingController(text: m?.quantity.toString() ?? '');
+    _nameEnCtrl = TextEditingController(text: m?.nameEn ?? '');
+    _companyCtrl = TextEditingController(text: m?.companyName ?? '');
     _unitCtrl = TextEditingController(text: m?.unit ?? '');
-    _minStockCtrl = TextEditingController(text: m?.minStock.toString() ?? '');
-    _supplierCtrl = TextEditingController(text: m?.supplier ?? '');
     _priceCtrl =
-        TextEditingController(text: m?.price?.toStringAsFixed(0) ?? '');
-    _notesCtrl = TextEditingController(text: m?.notes ?? '');
-    _category = m?.category ?? MaterialCategory.consumables;
-    _expiryDate = m?.expiryDate;
+        TextEditingController(text: m?.pricePerUnit.toStringAsFixed(0) ?? '');
+    _dosageCtrl = TextEditingController(text: m?.dosage ?? '');
+    _category = m?.category ?? MaterialCategory.clinic;
   }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
-    _quantityCtrl.dispose();
+    _nameEnCtrl.dispose();
+    _companyCtrl.dispose();
     _unitCtrl.dispose();
-    _minStockCtrl.dispose();
-    _supplierCtrl.dispose();
     _priceCtrl.dispose();
-    _notesCtrl.dispose();
+    _dosageCtrl.dispose();
     super.dispose();
   }
 
@@ -160,39 +154,28 @@ class _WarehouseMaterialFormDialogState
   //                          VALIDATION & SUBMIT
   // ────────────────────────────────────────────────────────────────────────
 
-  Future<void> _pickExpiryDate() async {
-    final now = DateTime.now();
-    final picked = await showAppDatePicker(
-      context: context,
-      initialDate: _expiryDate ?? now.add(const Duration(days: 30)),
-      firstDate: now.subtract(const Duration(days: 365 * 2)),
-      lastDate: now.add(const Duration(days: 365 * 10)),
-      helpText: context.l10n.whMaterialExpiryDate,
-    );
-    if (picked != null && mounted) {
-      setState(() => _expiryDate = picked);
-    }
-  }
-
-
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
+    final m = widget.initialMaterial;
+    final nameEn = _nameEnCtrl.text.trim();
+    final dosage = _dosageCtrl.text.trim();
+
     final result = WarehouseMaterial(
-      id: widget.initialMaterial?.id ?? '',
+      id: m?.id ?? '',
       name: _nameCtrl.text.trim(),
+      nameEn: nameEn.isEmpty ? null : nameEn,
+      companyName: _companyCtrl.text.trim(),
       category: _category,
-      quantity: int.parse(_quantityCtrl.text.trim()),
+      // الكمية تُدار عبر الدفعات (batches) في الباك — تُحفَظ كما هي عند التعديل.
+      quantity: m?.quantity ?? 0,
       unit: _unitCtrl.text.trim(),
-      minStock: int.parse(_minStockCtrl.text.trim()),
-      expiryDate: _expiryDate,
-      supplier: _supplierCtrl.text.trim().isEmpty
-          ? null
-          : _supplierCtrl.text.trim(),
-      price: _priceCtrl.text.trim().isEmpty
-          ? null
-          : double.parse(_priceCtrl.text.trim()),
-      notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+      pricePerUnit: double.parse(_priceCtrl.text.trim()),
+      dosage: dosage.isEmpty ? null : dosage,
+      batchesCount: m?.batchesCount ?? 0,
+      minStock: m?.minStock ?? 0,
+      expiryDate: m?.expiryDate,
+      notes: m?.notes,
     );
 
     Navigator.of(context).pop(result);
@@ -341,6 +324,15 @@ class _WarehouseMaterialFormDialogState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildNameAutocomplete(context, isLight),
+            AppFormField(
+              label: context.l10n.whMaterialNameEn,
+              controller: _nameEnCtrl,
+            ),
+            AppFormField(
+              label: context.l10n.whMaterialCompany,
+              controller: _companyCtrl,
+              validator: (v) => _requiredValidator(context, v),
+            ),
             AppFormSelect<MaterialCategory>(
               label: context.l10n.whMaterialCategory,
               value: _category,
@@ -358,11 +350,14 @@ class _WarehouseMaterialFormDialogState
               children: [
                 Expanded(
                   child: AppFormField(
-                    label: context.l10n.whMaterialQuantity,
-                    controller: _quantityCtrl,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (v) => _intValidator(context, v),
+                    label: context.l10n.whMaterialPricePerUnit,
+                    controller: _priceCtrl,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                    ],
+                    validator: (v) => _doubleValidator(context, v),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -384,40 +379,9 @@ class _WarehouseMaterialFormDialogState
                 ),
               ],
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: AppFormField(
-                    label: context.l10n.whMaterialMinStock,
-                    controller: _minStockCtrl,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (v) => _intValidator(context, v),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: _buildExpiryField(context, isLight)),
-              ],
-            ),
             AppFormField(
-              label: context.l10n.whMaterialSupplier,
-              controller: _supplierCtrl,
-            ),
-            AppFormField(
-              label: context.l10n.whMaterialPrice,
-              controller: _priceCtrl,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
-              ],
-              validator: (v) => _optionalDoubleValidator(context, v),
-            ),
-            AppFormField(
-              label: context.l10n.whMaterialNotes,
-              controller: _notesCtrl,
-              maxLines: 3,
-              minLines: 2,
+              label: context.l10n.whMaterialDosage,
+              controller: _dosageCtrl,
             ),
           ],
         ),
@@ -538,72 +502,6 @@ class _WarehouseMaterialFormDialogState
           },
         ),
         const SizedBox(height: 12),
-      ],
-    );
-  }
-
-  /// حقل تاريخ الانتهاء (مع date picker).
-  Widget _buildExpiryField(BuildContext context, bool isLight) {
-    final dateText = _expiryDate == null
-        ? '—'
-        : '${_expiryDate!.year}-${_expiryDate!.month.toString().padLeft(2, '0')}-${_expiryDate!.day.toString().padLeft(2, '0')}';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          context.l10n.whMaterialExpiryDate,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            height: 1.2,
-            color: isLight ? AppColors.lightText2 : AppColors.darkText2,
-          ),
-        ),
-        const SizedBox(height: 5),
-        InkWell(
-          onTap: _pickExpiryDate,
-          borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.dashCyan.withValues(alpha: 0.04),
-              border: Border.all(
-                color: AppColors.dashCyan.withValues(alpha: 0.13),
-                width: AppSizes.borderThin,
-              ),
-              borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    dateText,
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: _expiryDate == null
-                          ? (isLight
-                              ? AppColors.lightText4
-                              : AppColors.darkText4)
-                          : (isLight
-                              ? AppColors.lightText1
-                              : AppColors.darkText1),
-                    ),
-                  ),
-                ),
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 16,
-                  color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }

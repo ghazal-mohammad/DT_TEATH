@@ -1,22 +1,18 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_material.dart
 //
-// الـ entity الرئيسي للمادة في نظام المستودع.
+// الـ entity الرئيسي للمادة في نظام المستودع — **مطابق لعقد الباك**.
 //
-// 🎯 الهدف:
-//   تمثيل مادة واحدة بكل حقولها — يُستخدم في:
-//   - عرض material card في الشبكة
-//   - نموذج الإضافة/التعديل
-//   - جدول Reports
+// عقد الباك (formatMaterial):
+//   { id, name, name_en, company_name, price_per_unit, dosage, unit,
+//     category(clinic|lab|both), total_stock, batches_count }
 //
-// 🔮 قابلية التوسيع:
-//   - الحقول الاختيارية (supplier, price, notes) سهل إضافة المزيد
-//   - `copyWith` يتيح update مرن (للـ form)
-//   - `toJson` / `fromJson` جاهزين للـ backend integration
+// الحقول التي لا يرسلها الباك (minStock, expiryDate, notes) اختيارية —
+// تُستخدم لحسابات الـ UI فقط (الحالة، أيام الصلاحية) ولا تُرسَل في الحفظ.
 //
 // قاعدة معمارية:
-//   نستخدم immutable class بـ const constructor — كل تحديث يُنتج نسخة جديدة
-//   عبر copyWith. هذا يتوافق مع نمط BLoC ويسهّل اختبار الـ state.
+//   immutable class بـ const constructor — كل تحديث يُنتج نسخة جديدة عبر
+//   copyWith. يتوافق مع نمط BLoC ويسهّل اختبار الـ state.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'material_category.dart';
@@ -24,50 +20,62 @@ import 'material_status.dart';
 
 /// مادة واحدة في المستودع.
 ///
-/// الحقول الإجبارية: id, name, category, quantity, unit, minStock.
-/// الباقي اختياري.
+/// الحقول الإجبارية (عقد الباك): id, name, companyName, category, quantity,
+/// unit, pricePerUnit. الباقي اختياري.
 class WarehouseMaterial {
   const WarehouseMaterial({
     required this.id,
     required this.name,
+    required this.companyName,
     required this.category,
     required this.quantity,
     required this.unit,
-    required this.minStock,
+    required this.pricePerUnit,
+    this.nameEn,
+    this.dosage,
+    this.batchesCount = 0,
+    this.minStock = 0,
     this.expiryDate,
-    this.supplier,
-    this.price,
     this.notes,
   });
 
-  /// المعرّف الفريد (للـ backend عادة UUID، حالياً String mock).
+  /// المعرّف الفريد.
   final String id;
 
-  /// اسم المادة (مثل "قفازات لاتكس M").
+  /// اسم المادة بالعربية (مثل "قفازات لاتكس M").
   final String name;
 
-  /// فئة المادة.
+  /// الاسم بالإنجليزية (اختياري — name_en في الباك).
+  final String? nameEn;
+
+  /// اسم الشركة المصنّعة/المورّدة (company_name — إجباري في الباك).
+  final String companyName;
+
+  /// فئة المادة — جهة الاستخدام (clinic|lab|both).
   final MaterialCategory category;
 
-  /// الكمية الحالية.
+  /// الكمية الحالية (total_stock من الباك = مجموع الدفعات).
   final int quantity;
 
   /// الوحدة (مثل "قطعة", "علبة", "كيلو").
   final String unit;
 
-  /// الحد الأدنى — تحته تُعتبر "ينفد".
+  /// سعر الوحدة بالليرة السورية (price_per_unit — إجباري في الباك).
+  final double pricePerUnit;
+
+  /// الجرعة/التركيز (اختياري — dosage، للأدوية).
+  final String? dosage;
+
+  /// عدد الدفعات (batches_count — للقراءة فقط من الباك).
+  final int batchesCount;
+
+  /// الحد الأدنى — تحته تُعتبر "تنفد". (حساب UI؛ لا يرسله الباك.)
   final int minStock;
 
-  /// تاريخ انتهاء الصلاحية (اختياري — بعض المواد لا تنتهي).
+  /// تاريخ انتهاء الصلاحية (حساب UI؛ من أقرب دفعة عند توفّرها).
   final DateTime? expiryDate;
 
-  /// اسم المورّد (اختياري).
-  final String? supplier;
-
-  /// السعر بالليرة السورية (اختياري).
-  final double? price;
-
-  /// ملاحظات إضافية (اختياري).
+  /// ملاحظات إضافية (اختياري، UI فقط).
   final String? notes;
 
   // ────────────────────────────────────────────────────────────────────────
@@ -101,30 +109,36 @@ class WarehouseMaterial {
   WarehouseMaterial copyWith({
     String? id,
     String? name,
+    String? nameEn,
+    String? companyName,
     MaterialCategory? category,
     int? quantity,
     String? unit,
+    double? pricePerUnit,
+    String? dosage,
+    int? batchesCount,
     int? minStock,
     DateTime? expiryDate,
-    String? supplier,
-    double? price,
     String? notes,
     // Sentinels لمسح الحقول الاختيارية بشكل صريح
+    bool clearNameEn = false,
+    bool clearDosage = false,
     bool clearExpiry = false,
-    bool clearSupplier = false,
-    bool clearPrice = false,
     bool clearNotes = false,
   }) {
     return WarehouseMaterial(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameEn: clearNameEn ? null : (nameEn ?? this.nameEn),
+      companyName: companyName ?? this.companyName,
       category: category ?? this.category,
       quantity: quantity ?? this.quantity,
       unit: unit ?? this.unit,
+      pricePerUnit: pricePerUnit ?? this.pricePerUnit,
+      dosage: clearDosage ? null : (dosage ?? this.dosage),
+      batchesCount: batchesCount ?? this.batchesCount,
       minStock: minStock ?? this.minStock,
       expiryDate: clearExpiry ? null : (expiryDate ?? this.expiryDate),
-      supplier: clearSupplier ? null : (supplier ?? this.supplier),
-      price: clearPrice ? null : (price ?? this.price),
       notes: clearNotes ? null : (notes ?? this.notes),
     );
   }
@@ -133,42 +147,39 @@ class WarehouseMaterial {
   //                              SERIALIZATION
   // ────────────────────────────────────────────────────────────────────────
 
-  /// تحويل إلى JSON — جاهز للـ POST/PUT للـ backend.
+  /// جسم الحفظ (POST/PUT) — مطابق لـ StoreMaterialRequest في الباك.
   Map<String, dynamic> toJson() => {
-        'id': id,
         'name': name,
-        'category': category.apiKey,
-        'quantity': quantity,
+        if (nameEn != null) 'name_en': nameEn,
+        'company_name': companyName,
+        'price_per_unit': pricePerUnit,
+        if (dosage != null) 'dosage': dosage,
         'unit': unit,
-        'min_stock': minStock,
-        if (expiryDate != null) 'expiry_date': expiryDate!.toIso8601String(),
-        if (supplier != null) 'supplier': supplier,
-        if (price != null) 'price': price,
-        if (notes != null) 'notes': notes,
+        'category': category.apiKey,
       };
 
-  /// تكوين entity من JSON — جاهز للـ GET من الـ backend.
+  /// تكوين entity من JSON — مطابق لـ formatMaterial في الباك.
   ///
   /// يرمي [FormatException] إذا الـ category غير معروف.
   factory WarehouseMaterial.fromJson(Map<String, dynamic> json) {
-    final categoryStr = json['category'] as String;
+    final categoryStr = (json['category'] as String?) ?? '';
     final category = materialCategoryFromString(categoryStr);
     if (category == null) {
       throw FormatException('Unknown material category: $categoryStr');
     }
     return WarehouseMaterial(
-      id: json['id'] as String,
+      id: json['id'].toString(),
       name: json['name'] as String,
+      nameEn: json['name_en'] as String?,
+      companyName: (json['company_name'] as String?) ?? '',
       category: category,
-      quantity: json['quantity'] as int,
-      unit: json['unit'] as String,
-      minStock: json['min_stock'] as int,
-      expiryDate: json['expiry_date'] != null
-          ? DateTime.parse(json['expiry_date'] as String)
-          : null,
-      supplier: json['supplier'] as String?,
-      price: (json['price'] as num?)?.toDouble(),
-      notes: json['notes'] as String?,
+      quantity: (json['total_stock'] as num?)?.toInt() ??
+          (json['quantity'] as num?)?.toInt() ??
+          0,
+      unit: (json['unit'] as String?) ?? '',
+      pricePerUnit: (json['price_per_unit'] as num?)?.toDouble() ?? 0,
+      dosage: json['dosage'] as String?,
+      batchesCount: (json['batches_count'] as num?)?.toInt() ?? 0,
     );
   }
 

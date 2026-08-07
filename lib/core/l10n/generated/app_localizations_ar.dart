@@ -598,6 +598,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whInventoryDistribution => 'توزيع المخزون';
 
   @override
+  String get whCategoryClinic => 'عيادة';
+
+  @override
+  String get whCategoryLab => 'مخبر';
+
+  @override
+  String get whCategoryBoth => 'كلاهما';
+
+  @override
   String get whCategoryConsumables => 'مستهلكات';
 
   @override
@@ -653,6 +662,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whMaterialName => 'اسم المادة';
+
+  @override
+  String get whMaterialNameEn => 'الاسم بالإنجليزية';
+
+  @override
+  String get whMaterialCompany => 'الشركة المصنّعة';
+
+  @override
+  String get whMaterialDosage => 'الجرعة / التركيز';
+
+  @override
+  String get whMaterialPricePerUnit => 'سعر الوحدة';
 
   @override
   String get whMaterialCategory => 'الفئة';
@@ -1958,6 +1979,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whColSupplier => 'المورد';
+
+  @override
+  String get whColPrice => 'السعر';
+
+  @override
+  String get whColCompany => 'الشركة';
+
+  @override
+  String get whColDosage => 'الجرعة';
+
+  @override
+  String get whColBatches => 'الدفعات';
 
   @override
   String get whColStatus => 'الحالة';

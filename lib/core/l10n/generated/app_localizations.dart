@@ -1244,6 +1244,24 @@ abstract class AppLocalizations {
   /// **'Inventory Distribution'**
   String get whInventoryDistribution;
 
+  /// No description provided for @whCategoryClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic'**
+  String get whCategoryClinic;
+
+  /// No description provided for @whCategoryLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab'**
+  String get whCategoryLab;
+
+  /// No description provided for @whCategoryBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get whCategoryBoth;
+
   /// No description provided for @whCategoryConsumables.
   ///
   /// In en, this message translates to:
@@ -1357,6 +1375,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Material Name'**
   String get whMaterialName;
+
+  /// No description provided for @whMaterialNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (English)'**
+  String get whMaterialNameEn;
+
+  /// No description provided for @whMaterialCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer'**
+  String get whMaterialCompany;
+
+  /// No description provided for @whMaterialDosage.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosage / Concentration'**
+  String get whMaterialDosage;
+
+  /// No description provided for @whMaterialPricePerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Price'**
+  String get whMaterialPricePerUnit;
 
   /// No description provided for @whMaterialCategory.
   ///
@@ -3889,6 +3931,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Supplier'**
   String get whColSupplier;
+
+  /// No description provided for @whColPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get whColPrice;
+
+  /// No description provided for @whColCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get whColCompany;
+
+  /// No description provided for @whColDosage.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosage'**
+  String get whColDosage;
+
+  /// No description provided for @whColBatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Batches'**
+  String get whColBatches;
 
   /// No description provided for @whColStatus.
   ///

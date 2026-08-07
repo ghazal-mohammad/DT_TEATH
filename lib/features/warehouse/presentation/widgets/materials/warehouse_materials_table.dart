@@ -209,9 +209,9 @@ class _TableHeader extends StatelessWidget {
           Expanded(flex: 3, child: _HCell(context.l10n.whColName)),
           Expanded(flex: 2, child: _HCell(context.l10n.whColCategory)),
           Expanded(flex: 2, child: _HCell(context.l10n.whColStock)),
-          Expanded(flex: 2, child: _HCell(context.l10n.whColMinStock)),
-          Expanded(flex: 2, child: _HCell(context.l10n.whColExpiry)),
-          Expanded(flex: 2, child: _HCell(context.l10n.whColSupplier)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColPrice)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColCompany)),
+          Expanded(flex: 2, child: _HCell(context.l10n.whColDosage)),
           Expanded(flex: 2, child: _HCell(context.l10n.whColStatus)),
           Expanded(flex: 2, child: _HCell(context.l10n.whMovementColumn)),
         ],
@@ -254,12 +254,10 @@ class _TableDataRow extends StatelessWidget {
 
   String get _code => 'MAT-${material.id.padLeft(3, '0').substring(material.id.length > 3 ? material.id.length - 3 : 0)}';
 
-  String get _expiryStr {
-    final d = material.expiryDate;
-    if (d == null) return '—';
-    final mm = d.month.toString().padLeft(2, '0');
-    final dd = d.day.toString().padLeft(2, '0');
-    return '${d.year}-$mm-$dd';
+  String get _priceStr {
+    final p = material.pricePerUnit;
+    final s = p == p.roundToDouble() ? p.toStringAsFixed(0) : p.toString();
+    return '$s ل.س';
   }
 
   @override
@@ -318,7 +316,7 @@ class _TableDataRow extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Text(
-                '${material.minStock} ${material.unit}',
+                _priceStr,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 13,
@@ -329,23 +327,24 @@ class _TableDataRow extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Text(
-                _expiryStr,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 13,
-                  color: txt3,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Text(
-                material.supplier ?? '—',
+                material.companyName.isEmpty ? '—' : material.companyName,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 13,
                   color: txt1,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                material.dosage?.isNotEmpty == true ? material.dosage! : '—',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 13,
+                  color: txt3,
                 ),
               ),
             ),
@@ -427,12 +426,7 @@ class _CategoryDot extends StatelessWidget {
   const _CategoryDot({required this.category});
   final MaterialCategory category;
 
-  Color get _color => switch (category) {
-        MaterialCategory.medical => AppColors.statusProgress,
-        MaterialCategory.consumables => AppColors.statusInfo,
-        MaterialCategory.medicines => AppColors.dashMagenta,
-        MaterialCategory.equipment => AppColors.categoryGrey,
-      };
+  Color get _color => category.accentColor;
 
   @override
   Widget build(BuildContext context) {
