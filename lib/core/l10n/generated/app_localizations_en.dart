@@ -1745,6 +1745,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ordersStatusFulfilled => 'Fulfilled';
 
   @override
+  String get whReqStatusNew => 'New';
+
+  @override
+  String get whReqStatusInProgress => 'In progress';
+
+  @override
+  String get whReqStatusCompleted => 'Fulfilled';
+
+  @override
+  String get whReqStatusRejected => 'Rejected';
+
+  @override
+  String get whReqRequester => 'Requester';
+
+  @override
+  String get whReqItems => 'Items';
+
+  @override
+  String get whReqExistingMaterials => 'Catalog materials';
+
+  @override
+  String get whReqNewMaterials => 'Proposed new materials';
+
+  @override
+  String get whReqQtyRequested => 'Requested';
+
+  @override
+  String get whReqFulfill => 'Fulfill';
+
+  @override
+  String get whReqReject => 'Reject';
+
+  @override
+  String get whReqViewDetails => 'Details';
+
+  @override
+  String get whReqDetailsTitle => 'Request details';
+
+  @override
+  String get whReqRejectTitle => 'Reject request';
+
+  @override
+  String get whReqRejectReason => 'Rejection reason';
+
+  @override
+  String get whReqRejectReasonHint => 'Write the reason for rejection…';
+
+  @override
+  String get whReqFulfillConfirm =>
+      'The requested quantities will be deducted from stock batches (FIFO). Confirm fulfillment?';
+
+  @override
+  String get whReqNotesHint => 'Notes (optional)';
+
+  @override
+  String whReqNumber(String id) {
+    return 'Request #$id';
+  }
+
+  @override
+  String whReqItemsCount(int count) {
+    return '$count item(s)';
+  }
+
+  @override
   String get ordersQuantity => 'Quantity';
 
   @override

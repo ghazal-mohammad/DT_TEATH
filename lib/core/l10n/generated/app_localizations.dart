@@ -3452,6 +3452,126 @@ abstract class AppLocalizations {
   /// **'Fulfilled'**
   String get ordersStatusFulfilled;
 
+  /// No description provided for @whReqStatusNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get whReqStatusNew;
+
+  /// No description provided for @whReqStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get whReqStatusInProgress;
+
+  /// No description provided for @whReqStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfilled'**
+  String get whReqStatusCompleted;
+
+  /// No description provided for @whReqStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get whReqStatusRejected;
+
+  /// No description provided for @whReqRequester.
+  ///
+  /// In en, this message translates to:
+  /// **'Requester'**
+  String get whReqRequester;
+
+  /// No description provided for @whReqItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get whReqItems;
+
+  /// No description provided for @whReqExistingMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalog materials'**
+  String get whReqExistingMaterials;
+
+  /// No description provided for @whReqNewMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposed new materials'**
+  String get whReqNewMaterials;
+
+  /// No description provided for @whReqQtyRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get whReqQtyRequested;
+
+  /// No description provided for @whReqFulfill.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfill'**
+  String get whReqFulfill;
+
+  /// No description provided for @whReqReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get whReqReject;
+
+  /// No description provided for @whReqViewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get whReqViewDetails;
+
+  /// No description provided for @whReqDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request details'**
+  String get whReqDetailsTitle;
+
+  /// No description provided for @whReqRejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject request'**
+  String get whReqRejectTitle;
+
+  /// No description provided for @whReqRejectReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection reason'**
+  String get whReqRejectReason;
+
+  /// No description provided for @whReqRejectReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write the reason for rejection…'**
+  String get whReqRejectReasonHint;
+
+  /// No description provided for @whReqFulfillConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested quantities will be deducted from stock batches (FIFO). Confirm fulfillment?'**
+  String get whReqFulfillConfirm;
+
+  /// No description provided for @whReqNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get whReqNotesHint;
+
+  /// No description provided for @whReqNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Request #{id}'**
+  String whReqNumber(String id);
+
+  /// No description provided for @whReqItemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} item(s)'**
+  String whReqItemsCount(int count);
+
   /// No description provided for @ordersQuantity.
   ///
   /// In en, this message translates to:

@@ -16,35 +16,43 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_scroll_view.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../domain/repositories/warehouse_requests_repository.dart';
+import '../bloc/warehouse_requests_cubit.dart';
 import '../navigation/warehouse_sidebar_sections.dart';
 import '../widgets/orders/warehouse_orders_content.dart';
 
-/// صفحة الطلبيات الواردة — نظام المستودع.
+/// صفحة الطلبيات الواردة — نظام المستودع (مربوطة بالباك).
 class WarehouseOrdersPage extends StatelessWidget {
   const WarehouseOrdersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppShellLayout(
-      system: AppSystemType.warehouse,
-      currentRoute: RouteNames.warehouseOrders,
-      sections: WarehouseSidebarSections.buildWithBadges(
-        context,
-        lowStockCount: 8,
-        pendingOrdersCount: 3,
-        unreadNotifsCount: 5,
+    return BlocProvider(
+      create: (_) =>
+          WarehouseRequestsCubit(sl<WarehouseRequestsRepository>())..load(),
+      child: AppShellLayout(
+        system: AppSystemType.warehouse,
+        currentRoute: RouteNames.warehouseOrders,
+        sections: WarehouseSidebarSections.buildWithBadges(
+          context,
+          lowStockCount: 8,
+          pendingOrdersCount: 3,
+          unreadNotifsCount: 5,
+        ),
+        pageTitle: context.l10n.whOrdersTitle,
+        pageSubtitle: context.l10n.warehouseTopbarSubtitle,
+        userRole: context.l10n.roleWarehouseManager,
+        notificationCount: 5,
+        body: const AppScrollView(child: WarehouseOrdersContent()),
       ),
-      pageTitle: context.l10n.whOrdersTitle,
-      pageSubtitle: context.l10n.warehouseTopbarSubtitle,
-      userRole: context.l10n.roleWarehouseManager,
-      notificationCount: 5,
-      body: const AppScrollView(child: WarehouseOrdersContent()),
     );
   }
 }

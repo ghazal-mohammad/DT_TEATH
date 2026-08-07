@@ -1729,6 +1729,71 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ordersStatusFulfilled => 'تم التوريد';
 
   @override
+  String get whReqStatusNew => 'جديد';
+
+  @override
+  String get whReqStatusInProgress => 'قيد المعالجة';
+
+  @override
+  String get whReqStatusCompleted => 'تمّت التلبية';
+
+  @override
+  String get whReqStatusRejected => 'مرفوض';
+
+  @override
+  String get whReqRequester => 'الطالب';
+
+  @override
+  String get whReqItems => 'العناصر';
+
+  @override
+  String get whReqExistingMaterials => 'مواد من الكتالوج';
+
+  @override
+  String get whReqNewMaterials => 'مواد جديدة مقترحة';
+
+  @override
+  String get whReqQtyRequested => 'المطلوب';
+
+  @override
+  String get whReqFulfill => 'تلبية الطلب';
+
+  @override
+  String get whReqReject => 'رفض';
+
+  @override
+  String get whReqViewDetails => 'التفاصيل';
+
+  @override
+  String get whReqDetailsTitle => 'تفاصيل الطلب';
+
+  @override
+  String get whReqRejectTitle => 'رفض الطلب';
+
+  @override
+  String get whReqRejectReason => 'سبب الرفض';
+
+  @override
+  String get whReqRejectReasonHint => 'اكتب سبب رفض الطلب…';
+
+  @override
+  String get whReqFulfillConfirm =>
+      'سيُخصم المطلوب من دفعات المخزون (FIFO). تأكيد التلبية؟';
+
+  @override
+  String get whReqNotesHint => 'ملاحظات (اختياري)';
+
+  @override
+  String whReqNumber(String id) {
+    return 'طلب #$id';
+  }
+
+  @override
+  String whReqItemsCount(int count) {
+    return '$count عنصر';
+  }
+
+  @override
   String get ordersQuantity => 'الكمية';
 
   @override

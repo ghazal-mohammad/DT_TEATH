@@ -1,562 +1,229 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_orders_content.dart
 //
-// محتوى صفحة طلبيات المستودع — مطابق لـ mockup التصميم.
-//
-// 🎯 البنية:
-//   - تابات فلترة: الكل / عاجل / جديد / جزئي / تم التوريد
-//   - شبكة بطاقات (3 أعمدة على wide): كل بطاقة فيها:
-//       * شارة المادة + رقم الطلب + (شارة عاجل اختيارية)
-//       * صف الطالب (أحرف بدائية + اسم الجهة)
-//       * صف stats (الكمية / الطالب / التاريخ)
-//       * شارة الحالة
-//       * زرّان (توريد + عرض)
+// طلبات المواد الواردة للمستودع — **مربوطة بالباك** (index/fulfill/reject).
+// الطلب متعدّد العناصر (مواد كتالوج + مواد جديدة مقترحة)؛ المستودع يلبّي كامل
+// الطلب (خصم FIFO) أو يرفضه بسبب.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
-import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
-import '../../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
-import '../../../data/mock/warehouse_pages_mock_data.dart';
-import 'warehouse_order_details_dialog.dart';
+import '../../bloc/warehouse_requests_cubit.dart';
+import '../../../domain/entities/warehouse_request.dart';
+import 'warehouse_request_details_dialog.dart';
 
-// ══════════════════════════════════════════════════════════════════════════
-//                              FILTERS
-// ══════════════════════════════════════════════════════════════════════════
-
-enum _OrderFilter { all, urgent, isNew, partial, fulfilled }
-
-extension on _OrderFilter {
-  String label(AppLocalizations l10n) => switch (this) {
-        _OrderFilter.all => l10n.ordersFilterAll,
-        _OrderFilter.urgent => l10n.ordersUrgent,
-        _OrderFilter.isNew => l10n.ordersStatusNew,
-        _OrderFilter.partial => l10n.ordersStatusPartial,
-        _OrderFilter.fulfilled => l10n.ordersStatusFulfilled,
-      };
-
-  bool matches(WarehouseOrderItem o, {required bool urgent}) {
-    switch (this) {
-      case _OrderFilter.all:
-        return true;
-      case _OrderFilter.urgent:
-        return urgent;
-      case _OrderFilter.isNew:
-        return o.status == WarehouseOrderStatus.newOrder;
-      case _OrderFilter.partial:
-        return o.status == WarehouseOrderStatus.missing;
-      case _OrderFilter.fulfilled:
-        return o.status == WarehouseOrderStatus.fulfilled;
-    }
+/// نصّ + لون حالة الطلب.
+({String label, Color color}) requestStatusStyle(
+    BuildContext context, WarehouseRequestStatus s) {
+  final l10n = context.l10n;
+  switch (s) {
+    case WarehouseRequestStatus.newReq:
+      return (label: l10n.whReqStatusNew, color: AppColors.statusInfo);
+    case WarehouseRequestStatus.inProgress:
+      return (label: l10n.whReqStatusInProgress, color: AppColors.dashOrange);
+    case WarehouseRequestStatus.completed:
+      return (label: l10n.whReqStatusCompleted, color: AppColors.dashGreen);
+    case WarehouseRequestStatus.rejected:
+      return (label: l10n.whReqStatusRejected, color: AppColors.alertRed);
+    case WarehouseRequestStatus.unknown:
+      return (label: '—', color: AppColors.categoryGrey);
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//                            MAIN CONTENT
-// ══════════════════════════════════════════════════════════════════════════
+String requestFilterLabel(BuildContext context, RequestsFilter f) {
+  final l10n = context.l10n;
+  return switch (f) {
+    RequestsFilter.all => l10n.ordersFilterAll,
+    RequestsFilter.newReq => l10n.whReqStatusNew,
+    RequestsFilter.inProgress => l10n.whReqStatusInProgress,
+    RequestsFilter.completed => l10n.whReqStatusCompleted,
+    RequestsFilter.rejected => l10n.whReqStatusRejected,
+  };
+}
 
-class WarehouseOrdersContent extends StatefulWidget {
+class WarehouseOrdersContent extends StatelessWidget {
   const WarehouseOrdersContent({super.key});
-
-  @override
-  State<WarehouseOrdersContent> createState() => _WarehouseOrdersContentState();
-}
-
-class _WarehouseOrdersContentState extends State<WarehouseOrdersContent> {
-  _OrderFilter _filter = _OrderFilter.all;
-
-  late final List<WarehouseOrderItem> _all =
-      WarehouseOrdersMockData.orders;
-
-  /// أول طلبين جديدين عاجلان (heuristic للعرض حتى يصير في backend).
-  late final Set<String> _urgentIds = _computeUrgent();
-
-  Set<String> _computeUrgent() {
-    final urgent = <String>{};
-    var count = 0;
-    for (final o in _all) {
-      if (o.status == WarehouseOrderStatus.newOrder && count < 2) {
-        urgent.add(o.id);
-        count++;
-      }
-    }
-    return urgent;
-  }
-
-  bool _isUrgent(WarehouseOrderItem o) => _urgentIds.contains(o.id);
-
-  int _count(_OrderFilter f) =>
-      _all.where((o) => f.matches(o, urgent: _isUrgent(o))).length;
-
-  List<WarehouseOrderItem> get _filtered =>
-      _all.where((o) => _filter.matches(o, urgent: _isUrgent(o))).toList();
-
-  void _onSupplyTap(BuildContext context, WarehouseOrderItem o) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: AppColors.primary,
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          context.l10n.ordersSupplyConfirmed(o.materialName, o.orderNumber),
-          style: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final list = _filtered;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildToolbar(context, isLight),
-        const SizedBox(height: 16),
-        if (list.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
-            child: AppEmptyState(
-              icon: Icons.assignment_outlined,
-              title: context.l10n.ordersEmptyTitle,
-              message: context.l10n.ordersEmptyMessage,
+    return BlocConsumer<WarehouseRequestsCubit, WarehouseRequestsState>(
+      listenWhen: (p, c) =>
+          p.actionError != c.actionError && c.actionError != null,
+      listener: (context, state) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(state.actionError!),
+          backgroundColor: AppColors.alertRed,
+        ));
+      },
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppSegmentedTabs<RequestsFilter>(
+              values: RequestsFilter.values,
+              selected: state.filter,
+              labelOf: (f) => requestFilterLabel(context, f),
+              countOf: (f) => state.countOf(f),
+              onChanged: (f) =>
+                  context.read<WarehouseRequestsCubit>().setFilter(f),
             ),
-          )
-        else
-          _buildGrid(list, isLight),
-      ],
+            const SizedBox(height: 16),
+            _body(context, state, isLight),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildToolbar(BuildContext context, bool isLight) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        AppSegmentedTabs<_OrderFilter>(
-          values: _OrderFilter.values,
-          selected: _filter,
-          labelOf: (f) => f.label(context.l10n),
-          countOf: (f) => _count(f),
-          onChanged: (f) => setState(() => _filter = f),
+  Widget _body(
+      BuildContext context, WarehouseRequestsState state, bool isLight) {
+    if (state.status == RequestsStatus.loading && state.requests.isEmpty) {
+      return const Padding(
+          padding: EdgeInsets.all(48),
+          child: Center(child: CircularProgressIndicator()));
+    }
+    if (state.status == RequestsStatus.error && state.requests.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(36),
+        child: Center(
+          child: Text(state.errorMessage ?? '—',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: AppColors.alertRed)),
         ),
-        const Spacer(),
-        Text(
-          context.l10n.ordersCountSummary(_filtered.length, _all.length),
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12,
-            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGrid(List<WarehouseOrderItem> orders, bool isLight) {
-    // Wrap بارتفاع طبيعي حسب المحتوى — نفس نمط كروت طلبات المخبر
-    // (توحيد المسافات: spacing 16 بدون فراغ داخلي زائد).
-    return LayoutBuilder(builder: (context, c) {
-      final cols = c.maxWidth >= 1180
-          ? 3
-          : c.maxWidth >= 760
-              ? 2
-              : 1;
-      const double spacing = 16;
-      final double cardW = (c.maxWidth - spacing * (cols - 1)) / cols;
-      return Wrap(
-        spacing: spacing,
-        runSpacing: spacing,
-        children: [
-          for (final o in orders)
-            SizedBox(
-              width: cardW,
-              child: _OrderCard(
-                order: o,
-                urgent: _isUrgent(o),
-                isLight: isLight,
-                onView: () => WarehouseOrderDetailsDialog.show(
-                  context,
-                  order: o,
-                  urgent: _isUrgent(o),
-                ),
-                onSupply: () => _onSupplyTap(context, o),
-              ),
-            ),
-        ],
       );
-    });
+    }
+    final list = state.filtered;
+    if (list.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: AppEmptyState(
+          icon: Icons.inbox_outlined,
+          title: context.l10n.whOrdersEmptyFilter,
+        ),
+      );
+    }
+    return LayoutBuilder(
+      builder: (context, c) {
+        final cross = c.maxWidth > 900 ? 3 : (c.maxWidth > 560 ? 2 : 1);
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cross,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            mainAxisExtent: 172,
+          ),
+          itemCount: list.length,
+          itemBuilder: (context, i) =>
+              _RequestCard(request: list[i], isLight: isLight),
+        );
+      },
+    );
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//                              ORDER CARD
-// ══════════════════════════════════════════════════════════════════════════
-
-class _OrderCard extends StatelessWidget {
-  const _OrderCard({
-    required this.order,
-    required this.urgent,
-    required this.isLight,
-    required this.onView,
-    required this.onSupply,
-  });
-  final WarehouseOrderItem order;
-  final bool urgent;
+class _RequestCard extends StatelessWidget {
+  const _RequestCard({required this.request, required this.isLight});
+  final WarehouseRequest request;
   final bool isLight;
-  final VoidCallback onView;
-  final VoidCallback onSupply;
-
-  // ── Status helpers ────────────────────────────────────────────────────
-  String _statusLabel(AppLocalizations l10n) => switch (order.status) {
-        WarehouseOrderStatus.newOrder => l10n.ordersStatusNew,
-        WarehouseOrderStatus.fulfilled => l10n.ordersStatusFulfilled,
-        WarehouseOrderStatus.missing => l10n.ordersStatusPartial,
-      };
-
-  Color get _statusColor => switch (order.status) {
-        WarehouseOrderStatus.newOrder => AppColors.statusInfo,
-        WarehouseOrderStatus.fulfilled => AppColors.statusSuccess,
-        WarehouseOrderStatus.missing => AppColors.statusProgress,
-      };
-
-  Color get _accentColor =>
-      urgent ? AppColors.statusUrgent : _statusColor;
-
-  String get _requesterInitial {
-    final r = order.requester.trim();
-    if (r.isEmpty) return '?';
-    final firstWord = r.split(' ').first;
-    return firstWord.characters.firstOrNull ?? '?';
-  }
-
-  String get _requestNumber {
-    final n = order.orderNumber.replaceAll(RegExp(r'\D'), '');
-    return 'REQ-1${n.padLeft(3, '0')}';
-  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    // فرض RTL لضمان: المادة يمين، REQ يسار، شارة الحالة يمين، الأزرار يسار.
-    return Directionality(
-      textDirection: TextDirection.rtl,
+    final st = requestStatusStyle(context, request.status);
+    final txt1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
+    final txt3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
+    final date = request.createdAt;
+    final dateStr = date == null
+        ? '—'
+        : '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return InkWell(
+      onTap: () => WarehouseRequestDetailsDialog.show(context, request),
+      borderRadius: BorderRadius.circular(AppSizes.radiusMD),
       child: Container(
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+        padding: const EdgeInsets.all(AppSizes.spaceMD),
+        decoration: BoxDecoration(
+          color: isLight ? Colors.white : AppColors.darkSurface,
+          border: Border.all(
+              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+          borderRadius: BorderRadius.circular(AppSizes.radiusMD),
         ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        // RTL: أوّل child=يمين، آخر=يسار.
-        // المطلوب: content يمين، stripe يسار → [content أوّل, stripe آخر].
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Padding(
-                // توحيد مع كرت طلبات المخبر (أفقي 16 / عمودي 14)
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTopRow(l10n),
-                    const SizedBox(height: 8),
-                    _buildRequesterRow(),
-                    const SizedBox(height: 10),
-                    _buildStatsRow(l10n),
-                    const SizedBox(height: 12),
-                    _buildBottomRow(l10n),
-                  ],
+            Row(
+              children: [
+                Expanded(
+                  child: Text(l10n.whReqNumber(request.id),
+                      style: AppTextStyles.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w800, color: txt1)),
                 ),
-              ),
+                _StatusChip(label: st.label, color: st.color),
+              ],
             ),
-            Container(width: 4, color: _accentColor),
+            const SizedBox(height: 8),
+            _line(Icons.person_outline_rounded,
+                request.requesterName.isEmpty ? '—' : request.requesterName, txt3),
+            const SizedBox(height: 4),
+            _line(Icons.inventory_2_outlined,
+                l10n.whReqItemsCount(request.itemsCount), txt3),
+            const SizedBox(height: 4),
+            _line(Icons.event_outlined, dateStr, txt3),
+            const Spacer(),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Text(l10n.whReqViewDetails,
+                  style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primary, fontWeight: FontWeight.w800)),
+            ),
           ],
         ),
       ),
-      ),
     );
   }
 
-  Widget _buildTopRow(AppLocalizations l10n) {
-    // RTL: أوّل=يمين، آخر=يسار.
-    // المطلوب فيزيائياً (مطابق mockup):
-    //   [REQ يمين]  ............  [Column: المادة فوق، عاجل تحت — يسار]
-    // → ترتيب children: [Text(REQ), Spacer, Column(material + urgent)].
-    final materialBadge = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.statusProgressBg,
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      child: Text(
-        order.materialName,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-        style: const TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          color: AppColors.statusProgress,
-        ),
-      ),
-    );
-    final urgentBadge = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.statusUrgentBg,
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      // RTL داخل الـ pill: الأيقونة يمين، النص يسار → [icon, SizedBox, text]
-      // لكن للنغمة الأقرب لـ "!عاجل"، نضع النص أوّل (=يمين) ثم الأيقونة بعده.
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+  Widget _line(IconData icon, String text, Color color) => Row(
         children: [
-          Text(
-            l10n.ordersUrgent,
-            style: const TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              color: AppColors.statusUrgent,
-            ),
-          ),
-          const SizedBox(width: 3),
-          const Icon(Icons.priority_high_rounded,
-              size: 12, color: AppColors.statusUrgent),
-        ],
-      ),
-    );
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          _requestNumber,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-          ),
-        ),
-        const Spacer(),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              materialBadge,
-              if (urgent) ...[
-                const SizedBox(height: 4),
-                urgentBadge,
-              ],
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRequesterRow() {
-    // RTL: أوّل=يمين، آخر=يسار.
-    // المطلوب: اسم الطالب يمين، avatar يسار → [Flexible(name), SizedBox, avatar].
-    return Row(
-      children: [
-        Flexible(
-          child: Text(
-            order.requester,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          width: 30,
-          height: 30,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            _requesterInitial,
-            style: const TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: AppColors.primary,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatsRow(AppLocalizations l10n) {
-    final txt1 = isLight ? AppColors.lightText1 : AppColors.darkText1;
-    final txt3 = isLight ? AppColors.lightText3 : AppColors.darkText3;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: _MiniStat(
-              label: l10n.ordersQuantity,
-              value: '${order.quantity} ${order.unit}',
-              txt1: txt1,
-              txt3: txt3),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: _MiniStat(
-              label: l10n.ordersRequester,
-              value: order.requester,
-              txt1: txt1,
-              txt3: txt3),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: _MiniStat(
-              label: l10n.ordersDate,
-              value: order.date,
-              txt1: txt1,
-              txt3: txt3),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomRow(AppLocalizations l10n) {
-    // RTL: أوّل=يمين، آخر=يسار.
-    // المطلوب فيزيائياً: [Status يمين] ... [عرض وسط] [توريد يسار].
-    // → ترتيب children: [Status, Spacer, View, Supply].
-    return Row(
-      children: [
-        _StatusPill(label: _statusLabel(l10n), color: _statusColor),
-        const Spacer(),
-        AppButton(
-          label: l10n.ordersView,
-          onPressed: onView,
-          variant: AppButtonVariant.secondary,
-          size: AppButtonSize.small,
-        ),
-        if (order.status != WarehouseOrderStatus.fulfilled) ...[
+          Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
-          AppButton(
-            label: '✓ ${l10n.ordersSupply}',
-            onPressed: onSupply,
-            variant: AppButtonVariant.primary,
-            size: AppButtonSize.small,
+          Expanded(
+            child: Text(text,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.bodySmall.copyWith(color: color)),
           ),
         ],
-      ],
-    );
-  }
+      );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//                              PIECES
-// ══════════════════════════════════════════════════════════════════════════
-
-class _MiniStat extends StatelessWidget {
-  const _MiniStat({
-    required this.label,
-    required this.value,
-    required this.txt1,
-    required this.txt3,
-  });
-  final String label;
-  final String value;
-  final Color txt1;
-  final Color txt3;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: txt3,
-          ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: txt1,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.label, required this.color});
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.label, required this.color});
   final String label;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+        color: color.withValues(alpha: 0.13),
+        borderRadius: BorderRadius.circular(100),
       ),
-      // RTL: أوّل=يمين، آخر=يسار.
-      // المطلوب: النص يمين، الـ dot يسار → [Text, SizedBox, dot].
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
+      child: Text(label,
+          style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-        ],
-      ),
+              fontSize: 11.5,
+              fontWeight: FontWeight.w800,
+              color: color)),
     );
   }
 }
-
-
