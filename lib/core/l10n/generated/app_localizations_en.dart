@@ -2523,6 +2523,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whMovementCurrent => 'Currently available';
 
   @override
+  String get whStockTitle => 'Stock management';
+
+  @override
+  String get whStockTotal => 'Total available';
+
+  @override
+  String get whStockBatches => 'Batches';
+
+  @override
+  String get whStockNoBatches => 'No batches — add a new one';
+
+  @override
+  String get whStockAddBatch => 'Add batch';
+
+  @override
+  String get whStockBatchQty => 'Batch quantity';
+
+  @override
+  String get whStockExpiry => 'Expiry date (optional)';
+
+  @override
+  String get whStockExpiryNone => 'No expiry';
+
+  @override
+  String get whStockExpired => 'Expired';
+
+  @override
+  String get whStockNotes => 'Notes (optional)';
+
+  @override
+  String get whStockReason => 'Reason';
+
+  @override
+  String get whStockAdjust => 'Adjust quantity';
+
+  @override
+  String get whStockAdd => 'Add';
+
+  @override
+  String get whStockDeduct => 'Remove';
+
+  @override
+  String get whStockReasonPurchase => 'Purchase';
+
+  @override
+  String get whStockReasonFulfillment => 'Fulfillment';
+
+  @override
+  String get whStockReasonExpired => 'Expired/disposed';
+
+  @override
+  String get whStockReasonAdjustment => 'Adjustment';
+
+  @override
+  String get whStockReasonReturn => 'Return';
+
+  @override
+  String get whStockBatchLabel => 'Batch';
+
+  @override
+  String get whStockCreatedAt => 'Added';
+
+  @override
   String get labProcessConsumedSection => 'Materials consumed from inventory';
 
   @override

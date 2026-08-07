@@ -31,7 +31,7 @@ import '../../../domain/entities/warehouse_material.dart';
 import '../../bloc/materials_cubit.dart';
 import '../../bloc/materials_state.dart';
 import 'warehouse_material_form_dialog.dart';
-import 'warehouse_material_movement_dialog.dart';
+import 'warehouse_material_stock_dialog.dart';
 
 part 'warehouse_materials_stats.dart';
 part 'warehouse_materials_filters.dart';
@@ -159,13 +159,13 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
     }
   }
 
-  /// تسجيل حركة مخزون (إدخال/إخراج) على مادة — UC81.
+  /// إدارة مخزون المادة عبر الدفعات (إضافة دفعة / تعديل كمية) — مربوط بالباك.
+  /// عند حدوث تغيير نُعيد تحميل قائمة المواد ليعكس الإجمالي الجديد.
   Future<void> _openMovement(BuildContext context,
       WarehouseMaterial material) async {
     final cubit = context.read<MaterialsCubit>();
-    final delta = await WarehouseMaterialMovementDialog.show(context, material);
-    if (delta == null) return;
-    final newQty = (material.quantity + delta).clamp(0, 1 << 30);
-    await cubit.update(material.copyWith(quantity: newQty));
+    final changed =
+        await WarehouseMaterialStockDialog.show(context, material);
+    if (changed) await cubit.load();
   }
 }

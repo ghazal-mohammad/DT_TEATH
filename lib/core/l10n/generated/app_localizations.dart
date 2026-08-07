@@ -4916,6 +4916,132 @@ abstract class AppLocalizations {
   /// **'Currently available'**
   String get whMovementCurrent;
 
+  /// No description provided for @whStockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock management'**
+  String get whStockTitle;
+
+  /// No description provided for @whStockTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total available'**
+  String get whStockTotal;
+
+  /// No description provided for @whStockBatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Batches'**
+  String get whStockBatches;
+
+  /// No description provided for @whStockNoBatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No batches — add a new one'**
+  String get whStockNoBatches;
+
+  /// No description provided for @whStockAddBatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Add batch'**
+  String get whStockAddBatch;
+
+  /// No description provided for @whStockBatchQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch quantity'**
+  String get whStockBatchQty;
+
+  /// No description provided for @whStockExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry date (optional)'**
+  String get whStockExpiry;
+
+  /// No description provided for @whStockExpiryNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No expiry'**
+  String get whStockExpiryNone;
+
+  /// No description provided for @whStockExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get whStockExpired;
+
+  /// No description provided for @whStockNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get whStockNotes;
+
+  /// No description provided for @whStockReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get whStockReason;
+
+  /// No description provided for @whStockAdjust.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust quantity'**
+  String get whStockAdjust;
+
+  /// No description provided for @whStockAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get whStockAdd;
+
+  /// No description provided for @whStockDeduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get whStockDeduct;
+
+  /// No description provided for @whStockReasonPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get whStockReasonPurchase;
+
+  /// No description provided for @whStockReasonFulfillment.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfillment'**
+  String get whStockReasonFulfillment;
+
+  /// No description provided for @whStockReasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired/disposed'**
+  String get whStockReasonExpired;
+
+  /// No description provided for @whStockReasonAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment'**
+  String get whStockReasonAdjustment;
+
+  /// No description provided for @whStockReasonReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get whStockReasonReturn;
+
+  /// No description provided for @whStockBatchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch'**
+  String get whStockBatchLabel;
+
+  /// No description provided for @whStockCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get whStockCreatedAt;
+
   /// No description provided for @labProcessConsumedSection.
   ///
   /// In en, this message translates to:

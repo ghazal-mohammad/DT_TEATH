@@ -21,8 +21,11 @@ import '../../shared/bloc/theme_cubit.dart';
 
 // ── Warehouse feature ──────────────────────────────────────────────────────
 import '../../features/warehouse/data/datasources/warehouse_materials_remote_datasource.dart';
+import '../../features/warehouse/data/datasources/warehouse_stock_remote_datasource.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_materials_repository.dart';
+import '../../features/warehouse/data/repositories/remote_warehouse_stock_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_materials_repository.dart';
+import '../../features/warehouse/domain/repositories/warehouse_stock_repository.dart';
 
 // ── Auth feature ──────────────────────────────────────────────────────────
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
@@ -187,6 +190,14 @@ Future<void> initDependencies() async {
       sl<PersistentCache>(),
       sl<Outbox>(),
     ),
+  );
+
+  // ── Warehouse Stock (المخزون والدفعات) — Remote عبر warehouseManager/*Stock* ─
+  sl.registerLazySingleton<WarehouseStockRemoteDataSource>(
+    () => WarehouseStockRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<WarehouseStockRepository>(
+    () => RemoteWarehouseStockRepository(sl<WarehouseStockRemoteDataSource>()),
   );
 }
 

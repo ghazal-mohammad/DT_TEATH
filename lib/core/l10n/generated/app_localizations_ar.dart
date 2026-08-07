@@ -2498,6 +2498,69 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whMovementCurrent => 'المتوفر حالياً';
 
   @override
+  String get whStockTitle => 'إدارة المخزون';
+
+  @override
+  String get whStockTotal => 'الإجمالي المتوفر';
+
+  @override
+  String get whStockBatches => 'الدفعات';
+
+  @override
+  String get whStockNoBatches => 'لا توجد دفعات — أضف دفعة جديدة';
+
+  @override
+  String get whStockAddBatch => 'إضافة دفعة';
+
+  @override
+  String get whStockBatchQty => 'كمية الدفعة';
+
+  @override
+  String get whStockExpiry => 'تاريخ الصلاحية (اختياري)';
+
+  @override
+  String get whStockExpiryNone => 'بلا صلاحية';
+
+  @override
+  String get whStockExpired => 'منتهية';
+
+  @override
+  String get whStockNotes => 'ملاحظات (اختياري)';
+
+  @override
+  String get whStockReason => 'السبب';
+
+  @override
+  String get whStockAdjust => 'تعديل الكمية';
+
+  @override
+  String get whStockAdd => 'إضافة';
+
+  @override
+  String get whStockDeduct => 'إخراج';
+
+  @override
+  String get whStockReasonPurchase => 'شراء';
+
+  @override
+  String get whStockReasonFulfillment => 'تلبية طلب';
+
+  @override
+  String get whStockReasonExpired => 'إتلاف/انتهاء';
+
+  @override
+  String get whStockReasonAdjustment => 'تسوية';
+
+  @override
+  String get whStockReasonReturn => 'إرجاع';
+
+  @override
+  String get whStockBatchLabel => 'دفعة';
+
+  @override
+  String get whStockCreatedAt => 'أُضيفت';
+
+  @override
   String get labProcessConsumedSection => 'المواد المستهلكة من المخزون';
 
   @override
