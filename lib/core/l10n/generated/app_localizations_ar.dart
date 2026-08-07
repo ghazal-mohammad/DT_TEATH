@@ -2192,6 +2192,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whStatMonthPurchases => 'مشتريات الشهر (ل.س)';
 
   @override
+  String get whStatExpiredBatches => 'دفعات منتهية';
+
+  @override
+  String get whStatStockValue => 'قيمة المخزون (ل.س)';
+
+  @override
   String get whBadgeAlert => 'تنبيه';
 
   @override

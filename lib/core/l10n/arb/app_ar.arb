@@ -764,6 +764,8 @@
   "whStatLowStockShort": "مواد بالحد الأدنى",
   "whStatPendingSupply": "طلبات بانتظار التوريد",
   "whStatMonthPurchases": "مشتريات الشهر (ل.س)",
+  "whStatExpiredBatches": "دفعات منتهية",
+  "whStatStockValue": "قيمة المخزون (ل.س)",
   "whBadgeAlert": "تنبيه",
   "whBadgeNew": "جديد",
   "whBadgeThisMonth": "هذا الشهر",

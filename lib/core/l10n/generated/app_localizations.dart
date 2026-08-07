@@ -4328,6 +4328,18 @@ abstract class AppLocalizations {
   /// **'Month purchases (SYP)'**
   String get whStatMonthPurchases;
 
+  /// No description provided for @whStatExpiredBatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired batches'**
+  String get whStatExpiredBatches;
+
+  /// No description provided for @whStatStockValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock value (SYP)'**
+  String get whStatStockValue;
+
   /// No description provided for @whBadgeAlert.
   ///
   /// In en, this message translates to:

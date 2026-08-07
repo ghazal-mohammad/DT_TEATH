@@ -827,6 +827,8 @@
   "whStatLowStockShort": "Low-stock materials",
   "whStatPendingSupply": "Orders awaiting supply",
   "whStatMonthPurchases": "Month purchases (SYP)",
+  "whStatExpiredBatches": "Expired batches",
+  "whStatStockValue": "Stock value (SYP)",
   "whBadgeAlert": "Alert",
   "whBadgeNew": "New",
   "whBadgeThisMonth": "This month",

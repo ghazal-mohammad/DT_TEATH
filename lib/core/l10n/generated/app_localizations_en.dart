@@ -2211,6 +2211,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whStatMonthPurchases => 'Month purchases (SYP)';
 
   @override
+  String get whStatExpiredBatches => 'Expired batches';
+
+  @override
+  String get whStatStockValue => 'Stock value (SYP)';
+
+  @override
   String get whBadgeAlert => 'Alert';
 
   @override

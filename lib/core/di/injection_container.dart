@@ -23,12 +23,15 @@ import '../../shared/bloc/theme_cubit.dart';
 import '../../features/warehouse/data/datasources/warehouse_materials_remote_datasource.dart';
 import '../../features/warehouse/data/datasources/warehouse_stock_remote_datasource.dart';
 import '../../features/warehouse/data/datasources/warehouse_requests_remote_datasource.dart';
+import '../../features/warehouse/data/datasources/warehouse_inventory_remote_datasource.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_materials_repository.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_stock_repository.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_requests_repository.dart';
+import '../../features/warehouse/data/repositories/remote_warehouse_inventory_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_materials_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_stock_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_requests_repository.dart';
+import '../../features/warehouse/domain/repositories/warehouse_inventory_repository.dart';
 
 // ── Auth feature ──────────────────────────────────────────────────────────
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
@@ -211,6 +214,17 @@ Future<void> initDependencies() async {
     () => RemoteWarehouseRequestsRepository(
       sl<WarehouseRequestsRemoteDataSource>(),
       sl<PersistentCache>(),
+    ),
+  );
+
+  // ── Warehouse Inventory (مؤشّرات لوحة المستودع) ──────────────────────────
+  sl.registerLazySingleton<WarehouseInventoryRemoteDataSource>(
+    () => WarehouseInventoryRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<WarehouseInventoryRepository>(
+    () => RemoteWarehouseInventoryRepository(
+      sl<WarehouseInventoryRemoteDataSource>(),
+      sl<LocalStore>(),
     ),
   );
 }

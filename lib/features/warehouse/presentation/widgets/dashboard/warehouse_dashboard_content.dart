@@ -11,6 +11,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
@@ -20,10 +21,19 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/layout/app_welcome_hero.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
+import '../../../domain/entities/inventory_summary.dart';
+import '../../bloc/inventory_cubit.dart';
 
 part 'warehouse_dashboard_stats.dart';
 part 'warehouse_dashboard_expiring.dart';
 part 'warehouse_dashboard_orders.dart';
+
+/// تنسيق رقم مضغوط (2.8M / 12.4K / 247) — للقيم الكبيرة على البطاقات.
+String _compactNumber(num v) {
+  if (v >= 1000000) return '${(v / 1000000).toStringAsFixed(v % 1000000 == 0 ? 0 : 1)}M';
+  if (v >= 1000) return '${(v / 1000).toStringAsFixed(v % 1000 == 0 ? 0 : 1)}K';
+  return v.toStringAsFixed(0);
+}
 
 class WarehouseDashboardContent extends StatelessWidget {
   const WarehouseDashboardContent({super.key});
@@ -31,23 +41,30 @@ class WarehouseDashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildWelcomeHero(context),
-        const SizedBox(height: 16),
-        _StatCardsRow(isLight: isLight),
-        const SizedBox(height: 16),
-        _ExpiringWarningStrip(isLight: isLight),
-        const SizedBox(height: 16),
-        _TodayOrdersSection(isLight: isLight),
-      ],
+    return BlocBuilder<InventoryCubit, InventoryState>(
+      builder: (context, state) {
+        final summary = state.summary;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildWelcomeHero(context, summary),
+            const SizedBox(height: 16),
+            _StatCardsRow(isLight: isLight, summary: summary),
+            const SizedBox(height: 16),
+            _ExpiringWarningStrip(isLight: isLight),
+            const SizedBox(height: 16),
+            _TodayOrdersSection(isLight: isLight),
+          ],
+        );
+      },
     );
   }
 
   /// hero الترحيب — الويدجت الموحّد المشترك مع المخبر.
-  Widget _buildWelcomeHero(BuildContext context) {
+  Widget _buildWelcomeHero(BuildContext context, InventorySummary? summary) {
     final l10n = context.l10n;
+    final totalMaterials =
+        summary != null ? summary.totalMaterials.toString() : '—';
     return AppWelcomeHero(
       emoji: '📦',
       greeting: l10n.whGreeting('أحمد'),
@@ -60,7 +77,7 @@ class WarehouseDashboardContent extends StatelessWidget {
       stats: [
         AppHeroMiniStat(
           icon: Icons.inventory_2_outlined,
-          value: '247',
+          value: totalMaterials,
           label: l10n.whTotalMaterials,
           accent: AppColors.dashVioletDeep,
         ),

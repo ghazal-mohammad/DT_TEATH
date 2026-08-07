@@ -25,24 +25,30 @@ extension on _StatVariant {
 }
 
 class _StatCardsRow extends StatelessWidget {
-  const _StatCardsRow({required this.isLight});
+  const _StatCardsRow({required this.isLight, this.summary});
   final bool isLight;
 
-  // الترتيب من اليمين لليسار (RTL): إجمالي → الحد الأدنى → الطلبات → المشتريات.
+  /// ملخّص مؤشّرات المخزون الحيّ (null قبل التحميل ⇒ يُعرَض «—»).
+  final InventorySummary? summary;
+
+  String _v(int? n) => n?.toString() ?? '—';
+
+  // الترتيب من اليمين لليسار (RTL): إجمالي → الحد الأدنى → منتهية → قيمة المخزون.
+  // كل القيم من مؤشّرات inventory الحيّة (تعود لكاش عند الانقطاع).
   List<_StatData> _items(BuildContext context) => [
     _StatData(
       variant: _StatVariant.blue,
-      badge: '4+',
-      value: '247',
+      badge: context.l10n.whBadgeThisMonth,
+      value: _v(summary?.totalMaterials),
       label: context.l10n.whTotalMaterials,
-      trend: context.l10n.whTrendThisWeek('4+'),
+      trend: context.l10n.whSystemsNormal,
       trendUp: true,
       icon: Icons.inventory_2_outlined,
     ),
     _StatData(
       variant: _StatVariant.orange,
       badge: context.l10n.whBadgeAlert,
-      value: '8',
+      value: _v(summary?.lowStockCount),
       label: context.l10n.whStatLowStockShort,
       trend: context.l10n.whNeedsSupply,
       trendUp: false,
@@ -50,21 +56,21 @@ class _StatCardsRow extends StatelessWidget {
     ),
     _StatData(
       variant: _StatVariant.purple,
-      badge: context.l10n.whBadgeNew,
-      value: '9',
-      label: context.l10n.whStatPendingSupply,
-      trend: context.l10n.whTrendToday('3+'),
-      trendUp: true,
-      icon: Icons.assignment_outlined,
+      badge: context.l10n.whBadgeAlert,
+      value: _v(summary?.expiredBatches),
+      label: context.l10n.whStatExpiredBatches,
+      trend: context.l10n.whNeedsSupply,
+      trendUp: false,
+      icon: Icons.event_busy_outlined,
     ),
     _StatData(
       variant: _StatVariant.green,
       badge: context.l10n.whBadgeThisMonth,
-      value: '2.8M',
-      label: context.l10n.whStatMonthPurchases,
-      trend: context.l10n.whTrendVsLastMonth('+12%'),
+      value: summary != null ? _compactNumber(summary!.totalValue) : '—',
+      label: context.l10n.whStatStockValue,
+      trend: context.l10n.whSystemsNormal,
       trendUp: true,
-      icon: Icons.assignment_outlined,
+      icon: Icons.payments_outlined,
     ),
   ];
 
