@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../monitoring/crash_reporter.dart';
 import '../network/dio_client.dart';
 import '../offline/local_store.dart';
 import '../offline/outbox.dart';
@@ -80,6 +81,9 @@ final GetIt sl = GetIt.instance;
 Future<void> initDependencies() async {
   // ── External (مكتبات خارجية) ────────────────────────────────────────────
   sl.registerLazySingleton<Dio>(() => DioClient.build());
+
+  // ── رصد الأعطال (مركزي، قابل للاستبدال بـ Sentry لاحقاً) ─────────────────
+  sl.registerLazySingleton<CrashReporter>(() => const ConsoleCrashReporter());
 
   // ── Offline core (كاش دائم + طابور صادر) ────────────────────────────────
   // نُهيّئ SharedPreferences مبكّراً (async) لأن الكاش والطابور يعتمدان عليه.

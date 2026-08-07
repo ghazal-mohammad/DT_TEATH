@@ -24,6 +24,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/auth/current_user.dart';
 import 'core/di/injection_container.dart' as di;
+import 'core/monitoring/crash_reporter.dart';
 import 'core/l10n/generated/app_localizations.dart';
 import 'core/network/dio_client.dart';
 import 'core/offline/outbox.dart';
@@ -62,8 +63,29 @@ void _openCommandPalette(BuildContext context) {
   CommandPalette.show(context);
 }
 
+/// مُبلِّغ الأعطال المركزي (const، بلا حزمة/مفتاح). يُستبدَل بـ Sentry لاحقاً.
+const CrashReporter _crashReporter = ConsoleCrashReporter();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ── رصد الأعطال المركزي ──────────────────────────────────────────────────
+  // كل الأخطاء (إطار Flutter + المنصّة غير المتزامنة) تمرّ عبر مُبلِّغ واحد يحجب
+  // الحسّاس — نقطة تكامل جاهزة لأي خدمة رصد لاحقاً (Sentry) دون لمس أماكن الالتقاط.
+  FlutterError.onError = (details) {
+    _crashReporter.recordError(details.exception, details.stack,
+        context: 'flutter');
+    if (!kReleaseMode) FlutterError.presentError(details);
+  };
+  // PlatformDispatcher.onError يلتقط أيضاً الأخطاء غير المتزامنة غير المُلتقَطة.
+  WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+    _crashReporter.recordError(error, stack, context: 'platform');
+    return true; // معالَج — لا ينهار التطبيق.
+  };
+  // تدهور رشيق في الإنتاج: واجهة خطأ لطيفة بدل المربّع الأحمر عند فشل بناء ودجت.
+  if (kReleaseMode) {
+    ErrorWidget.builder = (details) => const AppErrorView();
+  }
 
   // إعدادات System UI — خلفية شفافة لشريط الحالة.
   SystemChrome.setSystemUIOverlayStyle(
@@ -72,16 +94,6 @@ Future<void> main() async {
       systemNavigationBarColor: Colors.transparent,
     ),
   );
-
-  // تدهور رشيق في الإنتاج: واجهة خطأ لطيفة بدل المربّع الأحمر عند فشل بناء ودجت،
-  // ومنع انهيار التطبيق من استثناءات غير ملتقَطة. في التطوير نُبقي التشخيص الكامل.
-  if (kReleaseMode) {
-    ErrorWidget.builder = (details) => const AppErrorView();
-    WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
-      debugPrint('Uncaught (release): $error');
-      return true; // معالَج — لا ينهار التطبيق.
-    };
-  }
 
   // تهيئة الـ DI قبل runApp.
   await di.initDependencies();
