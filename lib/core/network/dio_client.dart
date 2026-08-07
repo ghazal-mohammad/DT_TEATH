@@ -55,6 +55,22 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // حارس النقل الآمن: خارج التطوير المحلّي، امنع أي طلب non-HTTPS
+          // (يحمي بيانات المرضى من الإرسال عبر قناة غير مشفّرة — دفاع بعمق
+          // ضد تجاوز API_BASE_URL خاطئ بعنوان http في الإنتاج/الاختبار).
+          if (AppUrls.current != Environment.development &&
+              !options.uri.isScheme('https')) {
+            handler.reject(
+              DioException(
+                requestOptions: options,
+                type: DioExceptionType.badResponse,
+                error: 'Insecure transport blocked: HTTPS required '
+                    'outside development (${options.uri.scheme}).',
+              ),
+            );
+            return;
+          }
+
           // الذاكرة أولاً، ثم secure storage كاحتياط (وتسخين الذاكرة).
           var token = _cachedToken;
           if (token == null || token.isEmpty) {

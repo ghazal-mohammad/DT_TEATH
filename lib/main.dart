@@ -38,6 +38,7 @@ import 'shared/widgets/feedback/app_error_view.dart';
 import 'shared/widgets/feedback/offline_banner.dart';
 import 'shared/widgets/command_palette/command_palette.dart';
 import 'shared/widgets/session/idle_timeout_watcher.dart';
+import 'shared/widgets/session/privacy_guard.dart';
 
 /// مدّة الخمول قبل قفل الجلسة تلقائياً (أمان الأجهزة المشتركة).
 const Duration _kIdleTimeout = Duration(minutes: 15);
@@ -159,24 +160,30 @@ class DtTeethApp extends StatelessWidget {
                       final mq = MediaQuery.of(context);
                       // Ctrl+K (وCmd+K) → مركز الأوامر — يعترض الاختصار داخل
                       // النظام فلا يذهب للمتصفّح، ويفتح بحثًا عالميًا.
-                      return CallbackShortcuts(
-                        bindings: <ShortcutActivator, VoidCallback>{
-                          const SingleActivator(LogicalKeyboardKey.keyK,
-                              control: true): () => _openCommandPalette(context),
-                          const SingleActivator(LogicalKeyboardKey.keyK,
-                              meta: true): () => _openCommandPalette(context),
-                        },
-                        // شريط انقطاع الاتصال (أعلى) + قفل الخمول + حجم الخط.
-                        child: OfflineBanner(
-                          child: IdleTimeoutWatcher(
-                            timeout: _kIdleTimeout,
-                            sessionListenable: CurrentUser.instance,
-                            isActive: () => CurrentUser.instance.isLoggedIn,
-                            onTimeout: _onIdleTimeout,
-                            child: MediaQuery(
-                              data: mq.copyWith(
-                                  textScaler: TextScaler.linear(scale)),
-                              child: child ?? const SizedBox.shrink(),
+                      // PrivacyGuard خارجيّ: يغطّي كل شيء (دخول + مخبري +
+                      // مستودع) بستار براند عند خروج التطبيق من المقدّمة، فلا
+                      // تتسرّب بيانات المرضى في لقطة مبدّل التطبيقات.
+                      return PrivacyGuard(
+                        child: CallbackShortcuts(
+                          bindings: <ShortcutActivator, VoidCallback>{
+                            const SingleActivator(LogicalKeyboardKey.keyK,
+                                    control: true):
+                                () => _openCommandPalette(context),
+                            const SingleActivator(LogicalKeyboardKey.keyK,
+                                meta: true): () => _openCommandPalette(context),
+                          },
+                          // شريط انقطاع الاتصال (أعلى) + قفل الخمول + حجم الخط.
+                          child: OfflineBanner(
+                            child: IdleTimeoutWatcher(
+                              timeout: _kIdleTimeout,
+                              sessionListenable: CurrentUser.instance,
+                              isActive: () => CurrentUser.instance.isLoggedIn,
+                              onTimeout: _onIdleTimeout,
+                              child: MediaQuery(
+                                data: mq.copyWith(
+                                    textScaler: TextScaler.linear(scale)),
+                                child: child ?? const SizedBox.shrink(),
+                              ),
                             ),
                           ),
                         ),

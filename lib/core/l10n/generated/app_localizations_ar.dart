@@ -12,6 +12,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'DT.Teeth';
 
   @override
+  String get privacyScreenHint => 'محتوى محمي';
+
+  @override
   String get appSubtitle => 'نظام إدارة مركز طب الأسنان الشامل';
 
   @override

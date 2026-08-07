@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'DT.Teeth';
 
   @override
+  String get privacyScreenHint => 'Protected content';
+
+  @override
   String get appSubtitle => 'Comprehensive Dental Clinic Management System';
 
   @override

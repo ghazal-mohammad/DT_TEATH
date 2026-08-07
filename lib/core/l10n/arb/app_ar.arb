@@ -2,6 +2,7 @@
   "@@locale": "ar",
 
   "appName": "DT.Teeth",
+  "privacyScreenHint": "محتوى محمي",
   "appSubtitle": "نظام إدارة مركز طب الأسنان الشامل",
   "appVersion": "v1.0 · Flutter Web",
 

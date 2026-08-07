@@ -7,6 +7,7 @@
   },
 
   "appName": "DT.Teeth",
+  "privacyScreenHint": "Protected content",
   "@appName": {
     "description": "Application name — never translated."
   },

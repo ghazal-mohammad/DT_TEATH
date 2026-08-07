@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'DT.Teeth'**
   String get appName;
 
+  /// No description provided for @privacyScreenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected content'**
+  String get privacyScreenHint;
+
   /// App tagline shown on splash and login screens.
   ///
   /// In en, this message translates to:
