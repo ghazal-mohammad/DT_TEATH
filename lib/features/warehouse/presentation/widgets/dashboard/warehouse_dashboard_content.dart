@@ -25,15 +25,7 @@ import '../../../domain/entities/inventory_summary.dart';
 import '../../bloc/inventory_cubit.dart';
 
 part 'warehouse_dashboard_stats.dart';
-part 'warehouse_dashboard_expiring.dart';
 part 'warehouse_dashboard_orders.dart';
-
-/// تنسيق رقم مضغوط (2.8M / 12.4K / 247) — للقيم الكبيرة على البطاقات.
-String _compactNumber(num v) {
-  if (v >= 1000000) return '${(v / 1000000).toStringAsFixed(v % 1000000 == 0 ? 0 : 1)}M';
-  if (v >= 1000) return '${(v / 1000).toStringAsFixed(v % 1000 == 0 ? 0 : 1)}K';
-  return v.toStringAsFixed(0);
-}
 
 class WarehouseDashboardContent extends StatelessWidget {
   const WarehouseDashboardContent({super.key});
@@ -49,9 +41,11 @@ class WarehouseDashboardContent extends StatelessWidget {
           children: [
             _buildWelcomeHero(context, summary),
             const SizedBox(height: 16),
-            _StatCardsRow(isLight: isLight, summary: summary),
-            const SizedBox(height: 16),
-            _ExpiringWarningStrip(isLight: isLight),
+            _InventorySectionsRow(
+              isLight: isLight,
+              summary: summary,
+              isError: state.status == InventoryStatus.error,
+            ),
             const SizedBox(height: 16),
             _TodayOrdersSection(isLight: isLight),
           ],
@@ -63,8 +57,8 @@ class WarehouseDashboardContent extends StatelessWidget {
   /// hero الترحيب — الويدجت الموحّد المشترك مع المخبر.
   Widget _buildWelcomeHero(BuildContext context, InventorySummary? summary) {
     final l10n = context.l10n;
-    final totalMaterials =
-        summary != null ? summary.totalMaterials.toString() : '—';
+    final lowStockCount =
+        summary != null ? summary.lowStockCount.toString() : '—';
     return AppWelcomeHero(
       emoji: '📦',
       greeting: l10n.whGreeting('أحمد'),
@@ -76,9 +70,9 @@ class WarehouseDashboardContent extends StatelessWidget {
       ],
       stats: [
         AppHeroMiniStat(
-          icon: Icons.inventory_2_outlined,
-          value: totalMaterials,
-          label: l10n.whTotalMaterials,
+          icon: Icons.error_outline_rounded,
+          value: lowStockCount,
+          label: l10n.whStatLowStockShort,
           accent: AppColors.dashVioletDeep,
         ),
         AppHeroMiniStat(

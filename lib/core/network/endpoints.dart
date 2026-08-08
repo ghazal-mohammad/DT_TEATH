@@ -198,13 +198,13 @@ class ApiEndpoints {
   static String warehousePurchaseInvoice(Object id) =>
       '/api/warehouseManager/purchase-invoices/$id';
 
-  // ── Warehouse Manager — مؤشّرات المخزون (dashboard) ──────────────────────
-  static const String warehouseInventoryStockLevels =
-      '/api/warehouseManager/inventory/stock-levels';
-  static const String warehouseInventoryStockValue =
-      '/api/warehouseManager/inventory/stock-value';
-  static const String warehouseInventoryByCategory =
-      '/api/warehouseManager/inventory/by-category';
+  // ── Warehouse Manager — مؤشّرات المخزون (dashboard — أعيدت تصميمها 2026-08-08) ─
+  static const String warehouseInventoryMostRequested =
+      '/api/warehouseManager/mostRequestedMaterials';
+  static const String warehouseInventoryExpiringSoon =
+      '/api/warehouseManager/expiringSoonMaterials';
+  static const String warehouseInventoryLowStock =
+      '/api/warehouseManager/lowStockMaterials';
 
   // ── Warehouse Manager — التقارير (بلا بادئة reports/ — الباك 2026-08-08) ──
   static const String warehouseReportStockMovement =

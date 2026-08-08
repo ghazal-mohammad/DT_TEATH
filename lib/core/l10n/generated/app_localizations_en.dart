@@ -2328,6 +2328,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get whInvMostRequestedTitle => 'Most Requested';
+
+  @override
+  String get whInvLowStockTitle => 'Low Stock';
+
+  @override
+  String get whInvNoItems => 'No items right now';
+
+  @override
+  String whInvDaysRemaining(int days) {
+    return '$days days';
+  }
+
+  @override
   String get labNotifActionOpenOrder => 'Open order';
 
   @override

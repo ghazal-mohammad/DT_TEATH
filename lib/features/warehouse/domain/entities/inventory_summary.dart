@@ -1,49 +1,142 @@
 // ════════════════════════════════════════════════════════════════════════════
 // inventory_summary.dart
 //
-// ملخّص مؤشّرات المخزون للوحة المستودع — يجمع summary من inventory/stock-levels
-// و inventory/stock-value.
+// ملخّص مؤشّرات المخزون للوحة المستودع — يجمع 3 قوائم من الباك (2026-08-08):
+//   mostRequestedMaterials · expiringSoonMaterials · lowStockMaterials.
+// لا يوفّر الباك بعد الآن "إجمالي عدد المواد" ولا "القيمة الإجمالية للمخزون" —
+// حُذفا من هذا الكيان (كانا من inventory/stock-levels+stock-value القديمة).
 // ════════════════════════════════════════════════════════════════════════════
+
+int _toInt(Object? v) =>
+    v is num ? v.toInt() : int.tryParse('${v ?? ''}') ?? 0;
+
+/// مادة من قائمة "الأكثر طلباً" (mostRequestedMaterials).
+class MostRequestedMaterial {
+  const MostRequestedMaterial({
+    required this.materialId,
+    required this.name,
+    required this.unit,
+    required this.requestCount,
+    required this.totalQuantity,
+  });
+
+  final String materialId;
+  final String name;
+  final String unit;
+  final int requestCount;
+  final int totalQuantity;
+
+  factory MostRequestedMaterial.fromJson(Map<String, dynamic> j) =>
+      MostRequestedMaterial(
+        materialId: '${j['material_id'] ?? ''}',
+        name: (j['name'] ?? '').toString(),
+        unit: (j['unit'] ?? '').toString(),
+        requestCount: _toInt(j['request_count']),
+        totalQuantity: _toInt(j['total_quantity']),
+      );
+}
+
+/// دفعة من قائمة "قريبة الانتهاء" (expiringSoonMaterials → data.batches).
+class ExpiringBatch {
+  const ExpiringBatch({
+    required this.batchId,
+    required this.materialId,
+    required this.name,
+    required this.unit,
+    required this.quantity,
+    required this.expirationDate,
+    required this.daysRemaining,
+  });
+
+  final String batchId;
+  final String materialId;
+  final String name;
+  final String unit;
+  final int quantity;
+  final DateTime? expirationDate;
+  final int daysRemaining;
+
+  factory ExpiringBatch.fromJson(Map<String, dynamic> j) => ExpiringBatch(
+        batchId: '${j['batch_id'] ?? ''}',
+        materialId: '${j['material_id'] ?? ''}',
+        name: (j['name'] ?? '').toString(),
+        unit: (j['unit'] ?? '').toString(),
+        quantity: _toInt(j['quantity']),
+        expirationDate: DateTime.tryParse('${j['expiration_date'] ?? ''}'),
+        daysRemaining: _toInt(j['days_remaining']),
+      );
+}
+
+/// مادة من قائمة "منخفضة المخزون" (lowStockMaterials → data.items).
+class LowStockMaterial {
+  const LowStockMaterial({
+    required this.materialId,
+    required this.name,
+    required this.unit,
+    required this.totalQuantity,
+    required this.isOut,
+  });
+
+  final String materialId;
+  final String name;
+  final String unit;
+  final int totalQuantity;
+  final bool isOut;
+
+  factory LowStockMaterial.fromJson(Map<String, dynamic> j) =>
+      LowStockMaterial(
+        materialId: '${j['material_id'] ?? ''}',
+        name: (j['name'] ?? '').toString(),
+        unit: (j['unit'] ?? '').toString(),
+        totalQuantity: _toInt(j['total_quantity']),
+        isOut: j['is_out'] == true,
+      );
+}
 
 class InventorySummary {
   const InventorySummary({
-    required this.totalMaterials,
-    required this.lowStockCount,
-    required this.normalStockCount,
-    required this.expiredBatches,
-    required this.totalValue,
+    required this.mostRequested,
+    required this.expiringBatches,
+    required this.lowStockItems,
   });
 
-  final int totalMaterials;
-  final int lowStockCount;
-  final int normalStockCount;
-  final int expiredBatches;
-  final double totalValue;
+  final List<MostRequestedMaterial> mostRequested;
+  final List<ExpiringBatch> expiringBatches;
+  final List<LowStockMaterial> lowStockItems;
 
-  /// من استجابة stock-levels ({data:{summary:{...}}}) + stock-value لقيمة الإجمالي.
+  int get expiringCount => expiringBatches.length;
+  int get lowStockCount => lowStockItems.length;
+
+  /// من استجابات الباك الثلاث: mostRequestedMaterials (data: [...]),
+  /// expiringSoonMaterials (data.batches: [...]), lowStockMaterials (data.items: [...]).
   factory InventorySummary.from({
-    required Map<String, dynamic> levels,
-    required Map<String, dynamic> value,
+    required Map<String, dynamic> mostRequested,
+    required Map<String, dynamic> expiringSoon,
+    required Map<String, dynamic> lowStock,
   }) {
-    final ls = _summaryOf(levels);
-    final vs = _summaryOf(value);
+    final mostRequestedList = _listOf(mostRequested['data']);
+    final expiringData = expiringSoon['data'];
+    final batchesList = expiringData is Map
+        ? _listOf(expiringData['batches'])
+        : const <Map<String, dynamic>>[];
+    final lowStockData = lowStock['data'];
+    final itemsList = lowStockData is Map
+        ? _listOf(lowStockData['items'])
+        : const <Map<String, dynamic>>[];
+
     return InventorySummary(
-      totalMaterials: _toInt(ls['total_materials']),
-      lowStockCount: _toInt(ls['low_stock_count']),
-      normalStockCount: _toInt(ls['normal_stock_count']),
-      expiredBatches: _toInt(ls['expired_batches']),
-      totalValue: _toDouble(vs['total_value']),
+      mostRequested:
+          mostRequestedList.map(MostRequestedMaterial.fromJson).toList(),
+      expiringBatches: batchesList.map(ExpiringBatch.fromJson).toList(),
+      lowStockItems: itemsList.map(LowStockMaterial.fromJson).toList(),
     );
   }
 
-  static Map<String, dynamic> _summaryOf(Map<String, dynamic> resp) {
-    final data = resp['data'] is Map ? resp['data'] as Map : resp;
-    final summary = data['summary'];
-    return summary is Map ? Map<String, dynamic>.from(summary) : {};
+  static List<Map<String, dynamic>> _listOf(Object? v) {
+    if (v is! List) return const [];
+    return v
+        .whereType<Map<dynamic, dynamic>>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
   }
-
-  static int _toInt(Object? v) =>
-      v is num ? v.toInt() : int.tryParse('${v ?? ''}') ?? 0;
-  static double _toDouble(Object? v) =>
-      v is num ? v.toDouble() : double.tryParse('${v ?? ''}') ?? 0;
 }

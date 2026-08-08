@@ -1,8 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_inventory_remote_datasource.dart
 //
-// مصدر بيانات مؤشّرات المخزون — warehouseManager/inventory/*. يرجّع الاستجابة
-// الخام (مع مفتاح data) لأن التلخيص يحتاج summary داخلها.
+// مصدر بيانات مؤشّرات المخزون — warehouseManager/{mostRequestedMaterials,
+// expiringSoonMaterials, lowStockMaterials}. يرجّع الاستجابة الخام (مع data)
+// لأن التلخيص يحتاج القوائم المتداخلة (batches/items) داخلها.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:dio/dio.dart';
@@ -14,15 +15,24 @@ class WarehouseInventoryRemoteDataSource {
 
   final Dio _dio;
 
-  Future<Map<String, dynamic>> stockLevels() async {
+  /// GET mostRequestedMaterials?limit= — الافتراضي بالباك limit=10.
+  Future<Map<String, dynamic>> mostRequested() async {
     final res =
-        await _dio.get<dynamic>(ApiEndpoints.warehouseInventoryStockLevels);
+        await _dio.get<dynamic>(ApiEndpoints.warehouseInventoryMostRequested);
     return _asMap(res.data);
   }
 
-  Future<Map<String, dynamic>> stockValue() async {
+  /// GET expiringSoonMaterials?days= — الافتراضي بالباك days=20.
+  Future<Map<String, dynamic>> expiringSoon() async {
     final res =
-        await _dio.get<dynamic>(ApiEndpoints.warehouseInventoryStockValue);
+        await _dio.get<dynamic>(ApiEndpoints.warehouseInventoryExpiringSoon);
+    return _asMap(res.data);
+  }
+
+  /// GET lowStockMaterials?threshold= — الافتراضي بالباك threshold=10.
+  Future<Map<String, dynamic>> lowStock() async {
+    final res =
+        await _dio.get<dynamic>(ApiEndpoints.warehouseInventoryLowStock);
     return _asMap(res.data);
   }
 

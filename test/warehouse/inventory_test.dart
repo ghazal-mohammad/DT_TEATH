@@ -9,44 +9,97 @@ class _MockRepo extends Mock implements WarehouseInventoryRepository {}
 
 void main() {
   group('InventorySummary.from', () {
-    test('يدمج summary من stock-levels + stock-value (مع غلاف data)', () {
+    test('يدمج القوائم الثلاث (mostRequested/expiringSoon/lowStock)', () {
       final s = InventorySummary.from(
-        levels: {
-          'data': {
-            'summary': {
-              'total_materials': 18,
-              'low_stock_count': 3,
-              'normal_stock_count': 15,
-              'expired_batches': 2,
-            }
-          }
+        mostRequested: {
+          'data': [
+            {
+              'material_id': 1,
+              'name': 'قفازات',
+              'unit': 'كرتونة',
+              'request_count': 5,
+              'total_quantity': 20,
+            },
+          ],
         },
-        value: {
+        expiringSoon: {
           'data': {
-            'summary': {'total_value': 2850000}
-          }
+            'days': 20,
+            'batches_count': 1,
+            'batches': [
+              {
+                'batch_id': 7,
+                'material_id': 1,
+                'name': 'قفازات',
+                'unit': 'كرتونة',
+                'quantity': 10,
+                'expiration_date': '2026-08-20',
+                'days_remaining': 12,
+              },
+            ],
+          },
+        },
+        lowStock: {
+          'data': {
+            'threshold': 10,
+            'count': 1,
+            'items': [
+              {
+                'material_id': 2,
+                'name': 'كمامات',
+                'unit': 'علبة',
+                'total_quantity': 3,
+                'is_out': false,
+              },
+            ],
+          },
         },
       );
-      expect(s.totalMaterials, 18);
-      expect(s.lowStockCount, 3);
-      expect(s.normalStockCount, 15);
-      expect(s.expiredBatches, 2);
-      expect(s.totalValue, 2850000);
+
+      expect(s.mostRequested, hasLength(1));
+      expect(s.mostRequested.single.name, 'قفازات');
+      expect(s.mostRequested.single.requestCount, 5);
+
+      expect(s.expiringCount, 1);
+      expect(s.expiringBatches.single.daysRemaining, 12);
+      expect(s.expiringBatches.single.expirationDate, DateTime(2026, 8, 20));
+
+      expect(s.lowStockCount, 1);
+      expect(s.lowStockItems.single.name, 'كمامات');
+      expect(s.lowStockItems.single.isOut, isFalse);
     });
 
-    test('يتحمّل غياب الحقول ⇒ أصفار', () {
-      final s = InventorySummary.from(levels: {}, value: {});
-      expect(s.totalMaterials, 0);
-      expect(s.totalValue, 0);
-    });
-
-    test('يقبل قيمة نصّية للقيمة الكلّية', () {
+    test('يتحمّل غياب الحقول ⇒ قوائم فارغة', () {
       final s = InventorySummary.from(
-        levels: {'summary': {'total_materials': '5'}},
-        value: {'summary': {'total_value': '1234.50'}},
+        mostRequested: {},
+        expiringSoon: {},
+        lowStock: {},
       );
-      expect(s.totalMaterials, 5);
-      expect(s.totalValue, 1234.5);
+      expect(s.mostRequested, isEmpty);
+      expect(s.expiringBatches, isEmpty);
+      expect(s.lowStockItems, isEmpty);
+      expect(s.expiringCount, 0);
+      expect(s.lowStockCount, 0);
+    });
+
+    test('يقبل قيماً نصّية للأعداد (الباك يرسل decimals كنصوص أحياناً)', () {
+      final s = InventorySummary.from(
+        mostRequested: {
+          'data': [
+            {
+              'material_id': 1,
+              'name': 'مادة',
+              'unit': 'قطعة',
+              'request_count': '5',
+              'total_quantity': '20',
+            },
+          ],
+        },
+        expiringSoon: {},
+        lowStock: {},
+      );
+      expect(s.mostRequested.single.requestCount, 5);
+      expect(s.mostRequested.single.totalQuantity, 20);
     });
   });
 
@@ -56,16 +109,22 @@ void main() {
 
     test('load ينجح ⇒ loaded مع الملخّص', () async {
       when(() => repo.getSummary()).thenAnswer((_) async => const InventorySummary(
-            totalMaterials: 10,
-            lowStockCount: 1,
-            normalStockCount: 9,
-            expiredBatches: 0,
-            totalValue: 500,
+            mostRequested: [],
+            expiringBatches: [],
+            lowStockItems: [
+              LowStockMaterial(
+                materialId: '1',
+                name: 'مادة',
+                unit: 'قطعة',
+                totalQuantity: 2,
+                isOut: false,
+              ),
+            ],
           ));
       final cubit = InventoryCubit(repo);
       await cubit.load();
       expect(cubit.state.status, InventoryStatus.loaded);
-      expect(cubit.state.summary?.totalMaterials, 10);
+      expect(cubit.state.summary?.lowStockCount, 1);
     });
 
     test('load يفشل ⇒ error بلا كسر (summary يبقى null)', () async {

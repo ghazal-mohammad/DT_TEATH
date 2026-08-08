@@ -1,290 +1,292 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_dashboard_stats.dart
 //
-// بطاقات الإحصاء — part of warehouse_dashboard_content.dart (تقسيم الصفحات العملاقة).
+// 3 أقسام مؤشّرات المخزون — part of warehouse_dashboard_content.dart.
+// تُطابق مباشرة الباك الجديد (2026-08-08): الأكثر طلباً / قريبة الانتهاء /
+// منخفضة المخزون. لا "إجمالي مواد" ولا "قيمة مخزون" — الباك لم يعد يوفّرهما.
 // تشارك نفس الاستيرادات المعرّفة في الملف الرئيسي.
 // ════════════════════════════════════════════════════════════════════════════
 
 part of 'warehouse_dashboard_content.dart';
 
-// ══════════════════════════════════════════════════════════════════════════
-//  2) STAT CARDS ROW
-// ══════════════════════════════════════════════════════════════════════════
-
-enum _StatVariant { green, purple, orange, blue }
-
-extension on _StatVariant {
-  Color get accent => switch (this) {
-        _StatVariant.green => AppColors.statusSuccess,
-        _StatVariant.purple => AppColors.statusProgress,
-        _StatVariant.orange => AppColors.statusWarn,
-        _StatVariant.blue => AppColors.statusInfo,
-      };
-
-  Color get tint => accent.withValues(alpha: 0.12);
-}
-
-class _StatCardsRow extends StatelessWidget {
-  const _StatCardsRow({required this.isLight, this.summary});
-  final bool isLight;
-
-  /// ملخّص مؤشّرات المخزون الحيّ (null قبل التحميل ⇒ يُعرَض «—»).
-  final InventorySummary? summary;
-
-  String _v(int? n) => n?.toString() ?? '—';
-
-  // الترتيب من اليمين لليسار (RTL): إجمالي → الحد الأدنى → منتهية → قيمة المخزون.
-  // كل القيم من مؤشّرات inventory الحيّة (تعود لكاش عند الانقطاع).
-  List<_StatData> _items(BuildContext context) => [
-    _StatData(
-      variant: _StatVariant.blue,
-      badge: context.l10n.whBadgeThisMonth,
-      value: _v(summary?.totalMaterials),
-      label: context.l10n.whTotalMaterials,
-      trend: context.l10n.whSystemsNormal,
-      trendUp: true,
-      icon: Icons.inventory_2_outlined,
-    ),
-    _StatData(
-      variant: _StatVariant.orange,
-      badge: context.l10n.whBadgeAlert,
-      value: _v(summary?.lowStockCount),
-      label: context.l10n.whStatLowStockShort,
-      trend: context.l10n.whNeedsSupply,
-      trendUp: false,
-      icon: Icons.error_outline,
-    ),
-    _StatData(
-      variant: _StatVariant.purple,
-      badge: context.l10n.whBadgeAlert,
-      value: _v(summary?.expiredBatches),
-      label: context.l10n.whStatExpiredBatches,
-      trend: context.l10n.whNeedsSupply,
-      trendUp: false,
-      icon: Icons.event_busy_outlined,
-    ),
-    _StatData(
-      variant: _StatVariant.green,
-      badge: context.l10n.whBadgeThisMonth,
-      value: summary != null ? _compactNumber(summary!.totalValue) : '—',
-      label: context.l10n.whStatStockValue,
-      trend: context.l10n.whSystemsNormal,
-      trendUp: true,
-      icon: Icons.payments_outlined,
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, c) {
-      final int cols = c.maxWidth >= 1100
-          ? 4
-          : c.maxWidth >= 720
-              ? 2
-              : 1;
-      // فرض RTL على الصف لضمان: أول عنصر بالقائمة = يمين الشاشة بصرياً.
-      return Directionality(
-        textDirection: TextDirection.rtl,
-        child: _buildRows(context, cols),
-      );
-    });
-  }
-
-  Widget _buildRows(BuildContext context, int cols) {
-    final cards = _items(context)
-        .map((d) => _StatCard(isLight: isLight, data: d))
-        .toList(growable: false);
-
-    if (cols == 1) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var i = 0; i < cards.length; i++) ...[
-            if (i > 0) const SizedBox(height: 12),
-            cards[i],
-          ],
-        ],
-      );
-    }
-
-    // عدد الصفوف المطلوب لتغطية كل العناصر.
-    final rows = <Widget>[];
-    for (var i = 0; i < cards.length; i += cols) {
-      if (i > 0) rows.add(const SizedBox(height: 12));
-      final rowChildren = <Widget>[];
-      for (var j = 0; j < cols; j++) {
-        if (j > 0) rowChildren.add(const SizedBox(width: 12));
-        if (i + j < cards.length) {
-          rowChildren.add(Expanded(child: cards[i + j]));
-        } else {
-          rowChildren.add(const Expanded(child: SizedBox.shrink()));
-        }
-      }
-      rows.add(IntrinsicHeight(child: Row(children: rowChildren)));
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: rows,
-    );
-  }
-}
-
-class _StatData {
-  const _StatData({
-    required this.variant,
-    required this.badge,
-    required this.value,
-    required this.label,
-    required this.trend,
-    required this.trendUp,
-    required this.icon,
+class _InventorySectionsRow extends StatelessWidget {
+  const _InventorySectionsRow({
+    required this.isLight,
+    this.summary,
+    this.isError = false,
   });
 
-  final _StatVariant variant;
-  final String badge;
-  final String value;
-  final String label;
-  final String trend;
-  final bool trendUp;
-  final IconData icon;
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({required this.isLight, required this.data});
   final bool isLight;
-  final _StatData data;
+  final InventorySummary? summary;
+
+  /// فشل التحميل (لا كاش متاح) — يعرض رسالة بدل انتظار لا ينتهي.
+  final bool isError;
 
   @override
   Widget build(BuildContext context) {
-    final accent = data.variant.accent;
-    final tint = data.variant.tint;
+    final l10n = context.l10n;
+    final sections = [
+      _InventorySection(
+        isLight: isLight,
+        isError: isError,
+        icon: Icons.trending_up_rounded,
+        accent: AppColors.statusInfo,
+        title: l10n.whInvMostRequestedTitle,
+        count: summary?.mostRequested.length,
+        rows: (summary?.mostRequested ?? const [])
+            .take(5)
+            .map<Widget>((m) => _InfoRow(
+                  isLight: isLight,
+                  title: m.name,
+                  subtitle: '${m.totalQuantity} ${m.unit}',
+                  badge: l10n.whTodayOrdersCount(m.requestCount),
+                  badgeColor: AppColors.statusInfo,
+                ))
+            .toList(),
+      ),
+      _InventorySection(
+        isLight: isLight,
+        isError: isError,
+        icon: Icons.timer_outlined,
+        accent: AppColors.statusWarn,
+        title: l10n.whExpiringTitle,
+        count: summary?.expiringCount,
+        rows: (summary?.expiringBatches ?? const [])
+            .take(5)
+            .map<Widget>((b) => _InfoRow(
+                  isLight: isLight,
+                  title: b.name,
+                  subtitle: '${b.quantity} ${b.unit}',
+                  badge: l10n.whInvDaysRemaining(b.daysRemaining),
+                  badgeColor: b.daysRemaining <= 7
+                      ? AppColors.alertRed
+                      : AppColors.statusWarn,
+                ))
+            .toList(),
+      ),
+      _InventorySection(
+        isLight: isLight,
+        isError: isError,
+        icon: Icons.error_outline_rounded,
+        accent: AppColors.statusUrgent,
+        title: l10n.whInvLowStockTitle,
+        count: summary?.lowStockCount,
+        rows: (summary?.lowStockItems ?? const [])
+            .take(5)
+            .map<Widget>((m) => _InfoRow(
+                  isLight: isLight,
+                  title: m.name,
+                  subtitle: '${m.totalQuantity} ${m.unit}',
+                  badge: m.isOut ? l10n.whStatusOut : l10n.whStatusLow,
+                  badgeColor: m.isOut
+                      ? AppColors.alertRed
+                      : AppColors.statusUrgent,
+                ))
+            .toList(),
+      ),
+    ];
 
+    return LayoutBuilder(builder: (context, c) {
+      final int cols = c.maxWidth >= 1100 ? 3 : (c.maxWidth >= 720 ? 2 : 1);
+      if (cols == 1) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = 0; i < sections.length; i++) ...[
+              if (i > 0) const SizedBox(height: 12),
+              sections[i],
+            ],
+          ],
+        );
+      }
+      final rows = <Widget>[];
+      for (var i = 0; i < sections.length; i += cols) {
+        if (i > 0) rows.add(const SizedBox(height: 12));
+        final rowChildren = <Widget>[];
+        for (var j = 0; j < cols; j++) {
+          if (j > 0) rowChildren.add(const SizedBox(width: 12));
+          rowChildren.add(i + j < sections.length
+              ? Expanded(child: sections[i + j])
+              : const Expanded(child: SizedBox.shrink()));
+        }
+        rows.add(IntrinsicHeight(child: Row(children: rowChildren)));
+      }
+      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: rows);
+    });
+  }
+}
+
+class _InventorySection extends StatelessWidget {
+  const _InventorySection({
+    required this.isLight,
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.count,
+    required this.rows,
+    this.isError = false,
+  });
+
+  final bool isLight;
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final int? count;
+  final List<Widget> rows;
+  final bool isError;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isLight ? AppColors.baseComponent : AppColors.darkSurface,
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
         border: Border.all(
-          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-        ),
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _StatBadge(text: data.badge, accent: accent, tint: tint),
-                        const Spacer(),
-                        Container(
-                          width: 28,
-                          height: 28,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: tint,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(data.icon, size: 15, color: accent),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      data.value,
-                      style: TextStyle(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, size: 15, color: accent),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 22,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w800,
-                        height: 1.0,
                         color: isLight
                             ? AppColors.lightText1
-                            : AppColors.darkText1,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      data.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: isLight
-                            ? AppColors.lightText3
-                            : AppColors.darkText3,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Icon(
-                          data.trendUp
-                              ? Icons.arrow_upward_rounded
-                              : Icons.arrow_downward_rounded,
-                          size: 11,
-                          color: accent,
-                        ),
-                        const SizedBox(width: 3),
-                        Flexible(
-                          child: Text(
-                            data.trend,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: accent,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                            : AppColors.darkText1)),
               ),
-            ),
-            // الشريط الجانبي على يسار البطاقة بصرياً (آخر child في RTL Row).
-            Container(width: 4, color: accent),
-          ],
-        ),
+              if (count != null) _CountBadge(count: count!, accent: accent),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (isError)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              child: Text(context.l10n.error,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodySmall
+                      .copyWith(color: AppColors.alertRed)),
+            )
+          else if (count == null)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            )
+          else if (rows.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              child: Text(context.l10n.whInvNoItems,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodySmall
+                      .copyWith(color: AppColors.lightText3)),
+            )
+          else
+            ...rows,
+        ],
       ),
     );
   }
 }
 
-class _StatBadge extends StatelessWidget {
-  const _StatBadge(
-      {required this.text, required this.accent, required this.tint});
-  final String text;
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.isLight,
+    required this.title,
+    required this.subtitle,
+    required this.badge,
+    required this.badgeColor,
+  });
+
+  final bool isLight;
+  final String title;
+  final String subtitle;
+  final String badge;
+  final Color badgeColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: isLight
+                            ? AppColors.lightText1
+                            : AppColors.darkText1)),
+                Text(subtitle,
+                    style: const TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 11,
+                        color: AppColors.lightText3)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: badgeColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+            ),
+            child: Text(badge,
+                style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: badgeColor)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CountBadge extends StatelessWidget {
+  const _CountBadge({required this.count, required this.accent});
+  final int count;
   final Color accent;
-  final Color tint;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: tint,
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-          color: accent,
-        ),
-      ),
+      width: 22,
+      height: 22,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+      child: Text('$count',
+          style: const TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: Colors.white)),
     );
   }
 }

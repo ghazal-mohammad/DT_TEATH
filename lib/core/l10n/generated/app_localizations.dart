@@ -4532,6 +4532,30 @@ abstract class AppLocalizations {
   /// **'{count} orders'**
   String whTodayOrdersCount(Object count);
 
+  /// No description provided for @whInvMostRequestedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Requested'**
+  String get whInvMostRequestedTitle;
+
+  /// No description provided for @whInvLowStockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock'**
+  String get whInvLowStockTitle;
+
+  /// No description provided for @whInvNoItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No items right now'**
+  String get whInvNoItems;
+
+  /// No description provided for @whInvDaysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String whInvDaysRemaining(int days);
+
   /// No description provided for @labNotifActionOpenOrder.
   ///
   /// In en, this message translates to:

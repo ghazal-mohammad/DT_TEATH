@@ -1,8 +1,8 @@
 // ════════════════════════════════════════════════════════════════════════════
 // remote_warehouse_inventory_repository.dart
 //
-// تنفيذ Remote لمؤشّرات المخزون: يجلب stock-levels + stock-value معاً (بالتوازي)
-// ويدمجهما في InventorySummary. مع كاش دائم بسيط ليصمد أوفلاين على اللوحة.
+// تنفيذ Remote لمؤشّرات المخزون: يجلب mostRequested + expiringSoon + lowStock
+// معاً (بالتوازي) ويدمجها في InventorySummary. مع كاش دائم بسيط ليصمد أوفلاين.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:convert';
@@ -22,18 +22,22 @@ class RemoteWarehouseInventoryRepository
   final WarehouseInventoryRemoteDataSource _remote;
   final LocalStore _store;
 
-  static const String _cacheKey = 'cache.v1.warehouse_inventory_summary';
+  static const String _cacheKey = 'cache.v2.warehouse_inventory_summary';
 
   @override
   Future<InventorySummary> getSummary() async {
     try {
       final results = await Future.wait([
-        _remote.stockLevels(),
-        _remote.stockValue(),
+        _remote.mostRequested(),
+        _remote.expiringSoon(),
+        _remote.lowStock(),
       ]);
-      final summary =
-          InventorySummary.from(levels: results[0], value: results[1]);
-      await _saveCache(summary);
+      final summary = InventorySummary.from(
+        mostRequested: results[0],
+        expiringSoon: results[1],
+        lowStock: results[2],
+      );
+      await _saveCache(results[0], results[1], results[2]);
       return summary;
     } on DioException catch (e) {
       final failure = _mapDioError(e);
@@ -45,16 +49,18 @@ class RemoteWarehouseInventoryRepository
     }
   }
 
-  Future<void> _saveCache(InventorySummary s) async {
+  Future<void> _saveCache(
+    Map<String, dynamic> mostRequested,
+    Map<String, dynamic> expiringSoon,
+    Map<String, dynamic> lowStock,
+  ) async {
     try {
       await _store.write(
         _cacheKey,
         jsonEncode({
-          'total_materials': s.totalMaterials,
-          'low_stock_count': s.lowStockCount,
-          'normal_stock_count': s.normalStockCount,
-          'expired_batches': s.expiredBatches,
-          'total_value': s.totalValue,
+          'most_requested': mostRequested,
+          'expiring_soon': expiringSoon,
+          'low_stock': lowStock,
         }),
       );
     } catch (_) {/* الكاش مساعِد */}
@@ -66,17 +72,9 @@ class RemoteWarehouseInventoryRepository
       if (raw == null || raw.isEmpty) return null;
       final j = jsonDecode(raw) as Map<String, dynamic>;
       return InventorySummary.from(
-        levels: {
-          'summary': {
-            'total_materials': j['total_materials'],
-            'low_stock_count': j['low_stock_count'],
-            'normal_stock_count': j['normal_stock_count'],
-            'expired_batches': j['expired_batches'],
-          }
-        },
-        value: {
-          'summary': {'total_value': j['total_value']}
-        },
+        mostRequested: Map<String, dynamic>.from(j['most_requested'] as Map),
+        expiringSoon: Map<String, dynamic>.from(j['expiring_soon'] as Map),
+        lowStock: Map<String, dynamic>.from(j['low_stock'] as Map),
       );
     } catch (_) {
       return null;

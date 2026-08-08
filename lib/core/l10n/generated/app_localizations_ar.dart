@@ -2307,6 +2307,20 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get whInvMostRequestedTitle => 'الأكثر طلباً';
+
+  @override
+  String get whInvLowStockTitle => 'منخفضة المخزون';
+
+  @override
+  String get whInvNoItems => 'لا توجد عناصر حالياً';
+
+  @override
+  String whInvDaysRemaining(int days) {
+    return '$days يوم';
+  }
+
+  @override
   String get labNotifActionOpenOrder => 'فتح الطلب';
 
   @override
