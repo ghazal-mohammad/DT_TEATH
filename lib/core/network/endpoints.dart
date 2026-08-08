@@ -206,13 +206,13 @@ class ApiEndpoints {
   static const String warehouseInventoryByCategory =
       '/api/warehouseManager/inventory/by-category';
 
-  // ── Warehouse Manager — التقارير ─────────────────────────────────────────
+  // ── Warehouse Manager — التقارير (بلا بادئة reports/ — الباك 2026-08-08) ──
   static const String warehouseReportStockMovement =
-      '/api/warehouseManager/reports/stock-movement';
+      '/api/warehouseManager/stock-movement';
   static const String warehouseReportPurchaseInvoices =
-      '/api/warehouseManager/reports/purchase-invoices';
+      '/api/warehouseManager/purchase-invoices';
   static const String warehouseReportMaterialRequests =
-      '/api/warehouseManager/reports/material-requests';
+      '/api/warehouseManager/material-requests';
 
   // ── Warehouse Manager — الإشعارات ────────────────────────────────────────
   static const String warehouseNotifications =
