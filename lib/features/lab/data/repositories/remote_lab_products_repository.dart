@@ -18,8 +18,12 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 
+import '../../../../core/network/endpoints.dart';
 import '../../../../core/network/failure.dart';
+import '../../../../core/network/network_status.dart';
 import '../../../../core/offline/cached_list_repository.dart';
+import '../../../../core/offline/outbox.dart';
+import '../../../../core/offline/outbox_entry.dart';
 import '../../../../core/offline/persistent_cache.dart';
 import '../../domain/entities/lab_product.dart';
 import '../../domain/repositories/lab_products_repository.dart';
@@ -29,18 +33,29 @@ import '../datasources/lab_products_remote_datasource.dart';
 class RemoteLabProductsRepository
     with PersistentListCache
     implements LabProductsRepository {
-  RemoteLabProductsRepository(this._remote, this.persistentCache) {
+  RemoteLabProductsRepository(
+    this._remote,
+    this.persistentCache,
+    this._outbox, {
+    NetworkStatus? networkStatus,
+  }) : _network = networkStatus ?? NetworkStatus.instance {
     _controller = StreamController<List<LabProduct>>.broadcast(
       onListen: _emit,
     );
     SessionCacheRegistry.instance.register(_clearCache);
   }
 
+  /// مفتاح المورد في الكاش/الطابور.
+  static const String resource = 'lab_products';
+
   @override
   final PersistentCache persistentCache;
 
+  final Outbox _outbox;
+  final NetworkStatus _network;
+
   @override
-  String get cacheResource => 'lab_products';
+  String get cacheResource => resource;
 
   /// يمسح كاش الجلسة (يُستدعى عند تسجيل الخروج) — منعًا لتسريب بيانات مستخدم لآخر.
   void _clearCache() {
@@ -109,42 +124,150 @@ class RemoteLabProductsRepository
 
   @override
   Future<LabProduct> create(LabProduct product) async {
-    try {
-      final json = await _remote.create(_toBody(product));
-      final created = _fromJson(json);
-      _cache = [..._cache, created];
-      _emit();
-      return created;
-    } on DioException catch (e) {
-      throw _mapDioError(e);
+    if (_network.isOnline) {
+      try {
+        final created = _fromJson(await _remote.create(_toBody(product)));
+        _cache = [..._cache, created];
+        _emit();
+        await _persistMemory();
+        return created;
+      } on DioException catch (e) {
+        final f = _mapDioError(e);
+        if (!_isTransient(f)) throw f; // خطأ دائم ⇒ يُظهَر للمستخدم.
+      }
     }
+    return _enqueueCreate(product);
+  }
+
+  Future<LabProduct> _enqueueCreate(LabProduct product) async {
+    final localId = _localId();
+    final optimistic = product.copyWith(id: localId);
+    _cache = [..._cache, optimistic];
+    _loaded = true;
+    _emit();
+    await _persistMemory();
+    await _outbox.add(OutboxEntry(
+      id: localId,
+      resource: resource,
+      method: OutboxMethod.post,
+      path: ApiEndpoints.labManagerAddLabItem,
+      body: _toBody(product),
+      localEntityId: localId,
+      createdAt: DateTime.now(),
+      asForm: true,
+    ));
+    return optimistic;
   }
 
   @override
   Future<LabProduct> update(LabProduct product) async {
-    try {
-      final json = await _remote.update(product.id, _toBody(product));
-      final updated = _fromJson(json);
-      _cache = _cache
-          .map((p) => p.id == updated.id ? updated : p)
-          .toList(growable: false);
-      _emit();
-      return updated;
-    } on DioException catch (e) {
-      throw _mapDioError(e);
+    if (_network.isOnline && !_isLocal(product.id)) {
+      try {
+        final updated =
+            _fromJson(await _remote.update(product.id, _toBody(product)));
+        _cache = _cache
+            .map((p) => p.id == updated.id ? updated : p)
+            .toList(growable: false);
+        _emit();
+        await _persistMemory();
+        return updated;
+      } on DioException catch (e) {
+        final f = _mapDioError(e);
+        if (!_isTransient(f)) throw f;
+      }
     }
+    return _enqueueUpdate(product);
+  }
+
+  Future<LabProduct> _enqueueUpdate(LabProduct product) async {
+    _cache = _cache
+        .map((p) => p.id == product.id ? product : p)
+        .toList(growable: false);
+    _emit();
+    await _persistMemory();
+
+    if (_isLocal(product.id)) {
+      // تعديل صنف أُنشئ أوفلاين ولم يُزامَن ⇒ عدّل جسم POST المعلّق نفسه.
+      final idx = _outbox.entries.indexWhere(
+          (e) => e.id == product.id && e.method == OutboxMethod.post);
+      if (idx >= 0) {
+        final old = _outbox.entries[idx];
+        await _outbox.update(OutboxEntry(
+          id: old.id,
+          resource: old.resource,
+          method: old.method,
+          path: old.path,
+          body: _toBody(product),
+          localEntityId: old.localEntityId,
+          createdAt: old.createdAt,
+          asForm: old.asForm,
+        ));
+      }
+    } else {
+      await _outbox.add(OutboxEntry(
+        id: _localId(),
+        resource: resource,
+        method: OutboxMethod.post,
+        path: ApiEndpoints.labManagerUpdateLabItem(product.id),
+        body: _toBody(product),
+        localEntityId: product.id,
+        createdAt: DateTime.now(),
+        asForm: true,
+      ));
+    }
+    return product;
   }
 
   @override
   Future<void> delete(String id) async {
-    try {
-      await _remote.delete(id);
-      _cache = _cache.where((p) => p.id != id).toList(growable: false);
-      _emit();
-    } on DioException catch (e) {
-      throw _mapDioError(e);
+    if (_network.isOnline && !_isLocal(id)) {
+      try {
+        await _remote.delete(id);
+        _cache = _cache.where((p) => p.id != id).toList(growable: false);
+        _emit();
+        await _persistMemory();
+        return;
+      } on DioException catch (e) {
+        final f = _mapDioError(e);
+        if (!_isTransient(f)) throw f;
+      }
+    }
+    _cache = _cache.where((p) => p.id != id).toList(growable: false);
+    _emit();
+    await _persistMemory();
+    if (_isLocal(id)) {
+      await _outbox.remove(id); // إلغاء إنشاء لم يُزامَن.
+    } else {
+      await _outbox.add(OutboxEntry(
+        id: _localId(),
+        resource: resource,
+        method: OutboxMethod.post,
+        path: ApiEndpoints.labManagerDeleteLabItem(id),
+        localEntityId: id,
+        createdAt: DateTime.now(),
+      ));
     }
   }
+
+  // ── مساعدات الأوفلاين ────────────────────────────────────────────────────
+  String _localId() => 'local_${DateTime.now().microsecondsSinceEpoch}';
+  bool _isLocal(String id) => id.startsWith('local_');
+  bool _isTransient(Failure f) => f is NetworkFailure || f is TimeoutFailure;
+
+  Future<void> _persistMemory() =>
+      saveCachedRows(_cache.map(_toCacheRow).toList());
+
+  /// صفّ الكاش الدائم — بشكل صنف الباك كي يُعاد بناؤه بنفس [_fromJson].
+  Map<String, dynamic> _toCacheRow(LabProduct p) => {
+        'id': p.id,
+        'name': p.name,
+        'type': p.type,
+        'material': p.material,
+        'price': p.price,
+        'duration': p.productionDays,
+        if (p.categoryId != null)
+          'category': {'id': p.categoryId, 'name': p.categoryName},
+      };
 
   @override
   Stream<List<LabProduct>> watchAll() => _controller.stream;

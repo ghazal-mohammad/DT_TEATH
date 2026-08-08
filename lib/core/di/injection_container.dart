@@ -151,6 +151,7 @@ Future<void> initDependencies() async {
     () => RemoteLabProductsRepository(
       sl<LabProductsRemoteDataSource>(),
       sl<PersistentCache>(),
+      sl<Outbox>(),
     ),
   );
 

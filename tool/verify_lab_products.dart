@@ -25,6 +25,7 @@ import 'package:dt_teeth/features/lab/data/repositories/remote_lab_stock_reposit
 import 'package:dt_teeth/features/lab/data/repositories/lab_repository_impl.dart';
 import 'package:dt_teeth/features/lab/domain/entities/lab_product.dart';
 import 'package:dt_teeth/core/offline/local_store.dart';
+import 'package:dt_teeth/core/offline/outbox.dart';
 import 'package:dt_teeth/core/offline/persistent_cache.dart';
 
 /// مخزن في الذاكرة لأداة التحقق (لا SharedPreferences في سياق CLI).
@@ -56,9 +57,10 @@ Future<void> main(List<String> args) async {
     },
   ));
 
-  final cache = PersistentCache(_MemStore());
-  final repo =
-      RemoteLabProductsRepository(LabProductsRemoteDataSource(dio), cache);
+  final memStore = _MemStore();
+  final cache = PersistentCache(memStore);
+  final repo = RemoteLabProductsRepository(
+      LabProductsRemoteDataSource(dio), cache, Outbox(memStore));
 
   print('── getAll() عبر LabProductsRepository ───────────────────────────');
   final products = await repo.getAll();

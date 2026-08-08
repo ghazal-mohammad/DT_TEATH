@@ -31,6 +31,8 @@ import 'core/offline/outbox.dart';
 import 'core/offline/outbox_processor.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
+import 'features/lab/data/repositories/remote_lab_products_repository.dart';
+import 'features/lab/domain/repositories/lab_products_repository.dart';
 import 'features/warehouse/data/repositories/remote_warehouse_materials_repository.dart';
 import 'features/warehouse/domain/repositories/warehouse_materials_repository.dart';
 import 'core/search/app_search_warmup.dart';
@@ -119,6 +121,8 @@ Future<void> main() async {
     ..onResourceSynced = (resource) {
       if (resource == RemoteWarehouseMaterialsRepository.resource) {
         di.sl<WarehouseMaterialsRepository>().getAll();
+      } else if (resource == RemoteLabProductsRepository.resource) {
+        di.sl<LabProductsRepository>().getAll();
       }
     }
     ..start();
