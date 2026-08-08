@@ -192,11 +192,15 @@ class ApiEndpoints {
   static String warehouseRejectMaterialRequest(Object id) =>
       '/api/warehouseManager/materialRequestReject/$id';
 
-  // ── Warehouse Manager — فواتير الشراء ────────────────────────────────────
+  // ── Warehouse Manager — فواتير الشراء (أعيدت تسميتها بالباك 2026-08-08) ───
   static const String warehousePurchaseInvoices =
-      '/api/warehouseManager/purchase-invoices';
+      '/api/warehouseManager/showAllPurchaseInvoices';
   static String warehousePurchaseInvoice(Object id) =>
-      '/api/warehouseManager/purchase-invoices/$id';
+      '/api/warehouseManager/showPurchaseInvoiceDetails/$id';
+  static const String warehouseAddPurchaseInvoice =
+      '/api/warehouseManager/addPurchaseInvoice';
+  static String warehouseUpdatePurchaseInvoice(Object id) =>
+      '/api/warehouseManager/updatePurchaseInvoice/$id';
 
   // ── Warehouse Manager — مؤشّرات المخزون (dashboard — أعيدت تصميمها 2026-08-08) ─
   static const String warehouseInventoryMostRequested =

@@ -2254,6 +2254,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invFormSave => 'Save Invoice';
 
   @override
+  String get invFormItemsTitle => 'Invoice Items';
+
+  @override
+  String get invFormAddItem => 'Add Material';
+
+  @override
+  String get invFormMaterialLabel => 'Material';
+
+  @override
+  String get invFormMaterialHint => 'Choose a material';
+
+  @override
+  String get invFormQuantityLabel => 'Quantity';
+
+  @override
+  String get invFormItemsRequired => 'Add at least one material';
+
+  @override
+  String get invFormQuantityInvalid => 'Quantity must be greater than zero';
+
+  @override
+  String get invFormItemsLockedNotice =>
+      'Items can\'t be edited after the invoice is created';
+
+  @override
+  String get invCreateSuccess => 'Invoice created successfully';
+
+  @override
+  String get invUpdateSuccess => 'Invoice updated successfully';
+
+  @override
   String whGreeting(String name) {
     return 'Hello, $name';
   }

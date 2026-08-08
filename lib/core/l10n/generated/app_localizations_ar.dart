@@ -2234,6 +2234,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invFormSave => 'حفظ الفاتورة';
 
   @override
+  String get invFormItemsTitle => 'بنود الفاتورة';
+
+  @override
+  String get invFormAddItem => 'إضافة مادة';
+
+  @override
+  String get invFormMaterialLabel => 'المادة';
+
+  @override
+  String get invFormMaterialHint => 'اختر مادة';
+
+  @override
+  String get invFormQuantityLabel => 'الكمية';
+
+  @override
+  String get invFormItemsRequired => 'أضف مادة واحدة على الأقل';
+
+  @override
+  String get invFormQuantityInvalid => 'الكمية يجب أن تكون أكبر من صفر';
+
+  @override
+  String get invFormItemsLockedNotice =>
+      'لا يمكن تعديل بنود الفاتورة بعد إنشائها';
+
+  @override
+  String get invCreateSuccess => 'تم إنشاء الفاتورة بنجاح';
+
+  @override
+  String get invUpdateSuccess => 'تم تحديث الفاتورة بنجاح';
+
+  @override
   String whGreeting(String name) {
     return 'مرحباً، $name';
   }

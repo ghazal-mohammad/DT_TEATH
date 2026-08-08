@@ -4406,6 +4406,66 @@ abstract class AppLocalizations {
   /// **'Save Invoice'**
   String get invFormSave;
 
+  /// No description provided for @invFormItemsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Items'**
+  String get invFormItemsTitle;
+
+  /// No description provided for @invFormAddItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Material'**
+  String get invFormAddItem;
+
+  /// No description provided for @invFormMaterialLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get invFormMaterialLabel;
+
+  /// No description provided for @invFormMaterialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a material'**
+  String get invFormMaterialHint;
+
+  /// No description provided for @invFormQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get invFormQuantityLabel;
+
+  /// No description provided for @invFormItemsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one material'**
+  String get invFormItemsRequired;
+
+  /// No description provided for @invFormQuantityInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity must be greater than zero'**
+  String get invFormQuantityInvalid;
+
+  /// No description provided for @invFormItemsLockedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Items can\'t be edited after the invoice is created'**
+  String get invFormItemsLockedNotice;
+
+  /// No description provided for @invCreateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice created successfully'**
+  String get invCreateSuccess;
+
+  /// No description provided for @invUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice updated successfully'**
+  String get invUpdateSuccess;
+
   /// No description provided for @whGreeting.
   ///
   /// In en, this message translates to:

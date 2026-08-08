@@ -69,6 +69,78 @@ class RemotePurchaseInvoicesRepository
   @override
   Stream<List<PurchaseInvoice>> watchAll() => _controller.stream;
 
+  @override
+  Future<PurchaseInvoice> create({
+    required String supplierName,
+    required DateTime invoiceDate,
+    required List<PurchaseInvoiceItemInput> items,
+    String? notes,
+  }) async {
+    try {
+      final created = PurchaseInvoice.fromJson(await _remote.create({
+        'supplier_name': supplierName,
+        'invoice_date': _formatDate(invoiceDate),
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+        'items': items.map((i) => i.toJson()).toList(),
+      }));
+      _cache = [created, ..._cache];
+      _emit();
+      await saveCachedRows(_cache.map(_toCacheRow).toList());
+      return created;
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<PurchaseInvoice> update(
+    String id, {
+    String? supplierName,
+    DateTime? invoiceDate,
+    String? notes,
+  }) async {
+    try {
+      final updated = PurchaseInvoice.fromJson(await _remote.update(id, {
+        if (supplierName != null) 'supplier_name': supplierName,
+        if (invoiceDate != null) 'invoice_date': _formatDate(invoiceDate),
+        if (notes != null) 'notes': notes,
+      }));
+      _cache =
+          _cache.map((i) => i.id == updated.id ? updated : i).toList();
+      _emit();
+      await saveCachedRows(_cache.map(_toCacheRow).toList());
+      return updated;
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  String _formatDate(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}-'
+      '${d.day.toString().padLeft(2, '0')}';
+
+  /// صفّ الكاش الدائم — بشكل formatInvoice كي يُعاد بناؤه بنفس [PurchaseInvoice.fromJson].
+  Map<String, dynamic> _toCacheRow(PurchaseInvoice i) => {
+        'id': i.id,
+        'supplier_name': i.supplierName,
+        'invoice_date': i.invoiceDate?.toIso8601String(),
+        'total_amount': i.totalAmount,
+        'notes': i.notes,
+        'created_by': i.createdBy,
+        'created_at': i.createdAt?.toIso8601String(),
+        'items': i.items
+            .map((it) => {
+                  'id': it.id,
+                  'material': it.materialName,
+                  'unit': it.unit,
+                  'quantity': it.quantity,
+                  'unit_price': it.unitPrice,
+                  'total_price': it.totalPrice,
+                })
+            .toList(),
+      };
+
   Failure _mapDioError(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||

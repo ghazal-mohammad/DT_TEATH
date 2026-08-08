@@ -39,6 +39,10 @@ void main() {
 
   group('PurchaseInvoicesCubit', () {
     late _MockRepo repo;
+    setUpAll(() {
+      registerFallbackValue(DateTime(2026, 1, 1));
+      registerFallbackValue(<PurchaseInvoiceItemInput>[]);
+    });
     setUp(() => repo = _MockRepo());
 
     PurchaseInvoice inv(String id, double total) => PurchaseInvoice(
@@ -65,6 +69,77 @@ void main() {
       await cubit.load();
       expect(cubit.state.status, InvoicesStatus.error);
       expect(cubit.state.errorMessage, 'خطأ');
+    });
+
+    test('create ينجح ⇒ يعيد تحميل القائمة وstatus=loaded', () async {
+      when(() => repo.create(
+            supplierName: any(named: 'supplierName'),
+            invoiceDate: any(named: 'invoiceDate'),
+            items: any(named: 'items'),
+            notes: any(named: 'notes'),
+          )).thenAnswer((_) async => inv('9', 500));
+      when(() => repo.getAll()).thenAnswer((_) async => [inv('9', 500)]);
+
+      final cubit = PurchaseInvoicesCubit(repo);
+      final ok = await cubit.create(
+        supplierName: 'مورّد جديد',
+        invoiceDate: DateTime(2026, 8, 8),
+        items: const [
+          PurchaseInvoiceItemInput(
+              materialId: '1',
+              materialName: 'قفازات',
+              quantity: 5,
+              unitPrice: 100),
+        ],
+      );
+
+      expect(ok, isTrue);
+      expect(cubit.state.saving, isFalse);
+      expect(cubit.state.status, InvoicesStatus.loaded);
+      expect(cubit.state.count, 1);
+    });
+
+    test('create يفشل ⇒ actionError برسالة ولا يغيّر القائمة', () async {
+      when(() => repo.create(
+            supplierName: any(named: 'supplierName'),
+            invoiceDate: any(named: 'invoiceDate'),
+            items: any(named: 'items'),
+            notes: any(named: 'notes'),
+          )).thenThrow(const ServerFailure('فشل الإنشاء', code: '422'));
+
+      final cubit = PurchaseInvoicesCubit(repo);
+      final ok = await cubit.create(
+        supplierName: 'مورّد',
+        invoiceDate: DateTime(2026, 8, 8),
+        items: const [
+          PurchaseInvoiceItemInput(
+              materialId: '1',
+              materialName: 'قفازات',
+              quantity: 5,
+              unitPrice: 100),
+        ],
+      );
+
+      expect(ok, isFalse);
+      expect(cubit.state.saving, isFalse);
+      expect(cubit.state.actionError, 'فشل الإنشاء');
+      expect(cubit.state.invoices, isEmpty);
+    });
+
+    test('update ينجح ⇒ يعيد تحميل القائمة', () async {
+      when(() => repo.update(
+            any(),
+            supplierName: any(named: 'supplierName'),
+            invoiceDate: any(named: 'invoiceDate'),
+            notes: any(named: 'notes'),
+          )).thenAnswer((_) async => inv('1', 100));
+      when(() => repo.getAll()).thenAnswer((_) async => [inv('1', 100)]);
+
+      final cubit = PurchaseInvoicesCubit(repo);
+      final ok = await cubit.update('1', supplierName: 'مورّد محدَّث');
+
+      expect(ok, isTrue);
+      expect(cubit.state.status, InvoicesStatus.loaded);
     });
   });
 }

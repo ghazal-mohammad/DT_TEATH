@@ -1,9 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_invoices_content.dart
 //
-// فواتير الشراء الواردة للمستودع — **مربوطة بالباك** (purchase-invoices/index).
+// فواتير الشراء الواردة للمستودع — **مربوطة بالباك** (showAllPurchaseInvoices).
 // كل فاتورة = مورّد + تاريخ + إجمالي + بنود؛ العرض ببطاقات + مودال تفاصيل.
-// ملاحظة: إنشاء فاتورة (store) متعدّد البنود مؤجَّل لواجهة لاحقة.
+// إنشاء/تعديل الفاتورة عبر WarehousePurchaseInvoiceFormDialog.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -14,9 +14,11 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
+import '../../../../../shared/widgets/primitives/app_button.dart';
 import '../../bloc/purchase_invoices_cubit.dart';
 import '../../../domain/entities/purchase_invoice.dart';
 import 'warehouse_invoice_details_dialog.dart';
+import 'warehouse_purchase_invoice_form_dialog.dart';
 
 /// تنسيق مبلغ بفواصل آلاف.
 String formatMoney(num v) {
@@ -40,6 +42,18 @@ class WarehouseInvoicesContent extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Row(
+              children: [
+                const Spacer(),
+                AppButton(
+                  label: '+ ${context.l10n.invAddInvoice}',
+                  onPressed: () => _openCreate(context),
+                  variant: AppButtonVariant.primary,
+                  size: AppButtonSize.small,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
             _statsRow(context, state, isLight),
             const SizedBox(height: 16),
             _body(context, state, isLight),
@@ -47,6 +61,47 @@ class WarehouseInvoicesContent extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _openCreate(BuildContext context) async {
+    final result = await WarehousePurchaseInvoiceFormDialog.show(context);
+    if (result == null || !context.mounted) return;
+    final cubit = context.read<PurchaseInvoicesCubit>();
+    final ok = await cubit.create(
+      supplierName: result.supplierName,
+      invoiceDate: result.invoiceDate,
+      items: result.items,
+      notes: result.notes,
+    );
+    if (!context.mounted) return;
+    _showResultSnackBar(
+        context, ok, context.l10n.invCreateSuccess, cubit.state.actionError);
+  }
+
+  static Future<void> openEdit(BuildContext context, PurchaseInvoice invoice) async {
+    final result = await WarehousePurchaseInvoiceFormDialog.show(
+      context,
+      initialInvoice: invoice,
+    );
+    if (result == null || !context.mounted) return;
+    final cubit = context.read<PurchaseInvoicesCubit>();
+    final ok = await cubit.update(
+      invoice.id,
+      supplierName: result.supplierName,
+      invoiceDate: result.invoiceDate,
+      notes: result.notes,
+    );
+    if (!context.mounted) return;
+    _showResultSnackBar(
+        context, ok, context.l10n.invUpdateSuccess, cubit.state.actionError);
+  }
+
+  static void _showResultSnackBar(BuildContext context, bool ok,
+      String successMessage, String? errorMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(ok ? successMessage : (errorMessage ?? successMessage)),
+      backgroundColor: ok ? AppColors.statusSuccess : AppColors.alertRed,
+    ));
   }
 
   Widget _statsRow(

@@ -38,6 +38,38 @@ class PurchaseInvoiceItem {
       v is num ? v.toDouble() : double.tryParse('${v ?? ''}') ?? 0;
 }
 
+/// بند مُدخَل عند إنشاء/تعديل فاتورة — يقابل items.* في StorePurchaseInvoiceRequest.
+class PurchaseInvoiceItemInput {
+  const PurchaseInvoiceItemInput({
+    required this.materialId,
+    required this.materialName,
+    required this.quantity,
+    required this.unitPrice,
+    this.expirationDate,
+  });
+
+  final String materialId;
+
+  /// اسم المادة — لعرض الصف بالفورم فقط، لا يُرسَل للباك.
+  final String materialName;
+  final int quantity;
+  final double unitPrice;
+  final DateTime? expirationDate;
+
+  double get totalPrice => quantity * unitPrice;
+
+  Map<String, dynamic> toJson() => {
+        'material_id': materialId,
+        'quantity': quantity,
+        'unit_price': unitPrice,
+        if (expirationDate != null)
+          'expiration_date':
+              '${expirationDate!.year.toString().padLeft(4, '0')}-'
+                  '${expirationDate!.month.toString().padLeft(2, '0')}-'
+                  '${expirationDate!.day.toString().padLeft(2, '0')}',
+      };
+}
+
 class PurchaseInvoice {
   const PurchaseInvoice({
     required this.id,
