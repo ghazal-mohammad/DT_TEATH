@@ -147,13 +147,13 @@ void main() {
     expect(outbox.pendingCount, 1);
   });
 
-  test('حذف أونلاين ⇒ إلغاء تفعيل (deactivate) لا حذف صلب', () async {
+  test('حذف أونلاين ⇒ إلغاء تفعيل (updateStatus) لا حذف صلب', () async {
     when(() => remote.getAll()).thenAnswer((_) async => [row('5', 'قابل')]);
     await repo.getAll();
-    when(() => remote.deactivate('5')).thenAnswer((_) async {});
+    when(() => remote.updateStatus('5', false)).thenAnswer((_) async {});
 
     await repo.delete('5');
-    verify(() => remote.deactivate('5')).called(1);
+    verify(() => remote.updateStatus('5', false)).called(1);
     expect(outbox.pendingCount, 0);
   });
 

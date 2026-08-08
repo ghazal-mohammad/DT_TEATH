@@ -1,7 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_materials_remote_datasource.dart
 //
-// مصدر بيانات مواد المستودع البعيد — warehouseManager/* (فُعِّلت 2026-08).
+// مصدر بيانات مواد المستودع البعيد — يطابق مسارات الباك حرفيًا:
+//   GET  showALLMaterials · showMaterialDetails/{id}
+//   POST addMaterial · updateMaterial/{id} · updateStatus/{id}
 // التوكن يُضاف تلقائياً عبر interceptor. يرجّع JSON خام؛ التحويل في الـ repository.
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -14,21 +16,16 @@ class WarehouseMaterialsRemoteDataSource {
 
   final Dio _dio;
 
-  /// GET showALLMaterials → [{id,name,unit,price,description,total_stock,...}].
   Future<List<Map<String, dynamic>>> getAll() async {
-    final res =
-        await _dio.get<dynamic>(ApiEndpoints.warehouseShowAllMaterials);
+    final res = await _dio.get<dynamic>(ApiEndpoints.warehouseShowAllMaterials);
     return _asList(res.data);
   }
 
-  /// GET showMaterialDetails/{id}.
   Future<Map<String, dynamic>> getById(Object id) async {
-    final res =
-        await _dio.get<dynamic>(ApiEndpoints.warehouseShowMaterial(id));
+    final res = await _dio.get<dynamic>(ApiEndpoints.warehouseShowMaterial(id));
     return _asData(res.data);
   }
 
-  /// POST addMaterial → المادة المُنشأة. body: {name, unit, price, description?}.
   Future<Map<String, dynamic>> create(Map<String, dynamic> body) async {
     final res = await _dio.post<dynamic>(
       ApiEndpoints.warehouseAddMaterial,
@@ -37,9 +34,7 @@ class WarehouseMaterialsRemoteDataSource {
     return _asData(res.data);
   }
 
-  /// POST updateMaterial/{id} → المادة المُحدَّثة.
-  Future<Map<String, dynamic>> update(
-      Object id, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> update(Object id, Map<String, dynamic> body) async {
     final res = await _dio.post<dynamic>(
       ApiEndpoints.warehouseUpdateMaterial(id),
       data: FormData.fromMap(body),
@@ -47,12 +42,12 @@ class WarehouseMaterialsRemoteDataSource {
     return _asData(res.data);
   }
 
-  /// POST updateStatus/{id} — "حذف" = إلغاء تفعيل (الباك لا يدعم حذفاً صلباً).
-  /// يرجع 422 إن كانت المادة لا تزال تملك مخزوناً > 0.
-  Future<void> deactivate(Object id) async {
+  /// POST updateStatus/{id} — تفعيل/إلغاء تفعيل (is_active). الباك يرفض إلغاء
+  /// تفعيل مادة كميتها > 0 (422).
+  Future<void> updateStatus(Object id, bool isActive) async {
     await _dio.post<dynamic>(
       ApiEndpoints.warehouseUpdateMaterialStatus(id),
-      data: FormData.fromMap({'is_active': false}),
+      data: FormData.fromMap({'is_active': isActive ? 1 : 0}),
     );
   }
 

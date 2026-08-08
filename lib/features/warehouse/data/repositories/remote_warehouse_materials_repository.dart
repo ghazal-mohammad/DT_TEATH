@@ -209,7 +209,7 @@ class RemoteWarehouseMaterialsRepository
   Future<void> delete(String id) async {
     if (_network.isOnline && !_isLocal(id)) {
       try {
-        await _remote.deactivate(id);
+        await _remote.updateStatus(id, false);
         _memory = _memory.where((m) => m.id != id).toList(growable: false);
         _emit();
         await _persistMemory();
