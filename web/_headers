@@ -1,0 +1,23 @@
+# رؤوس أمان HTTP لبناء الويب (DT.Teeth)
+# ─────────────────────────────────────────────────────────────────────────────
+# هذا الملف تطبّقه المضيفات الساكنة تلقائياً (Netlify / Cloudflare Pages) على كل
+# مسار. لخوادم nginx/apache انظر docs/SECURITY.md (نفس القيم كـ add_header).
+#
+# ملاحظة مهمة: عدّل `connect-src` ليطابق مضيف الـ API الفعلي للإنتاج، واختبر
+# على staging قبل النشر — CSP صارم خاطئ قد يمنع عرض Flutter web (شاشة بيضاء).
+
+/*
+  # منع تأطير الصفحة (clickjacking) — بيانات طبية.
+  X-Frame-Options: DENY
+  # منع تخمين نوع المحتوى.
+  X-Content-Type-Options: nosniff
+  # عدم تسريب الروابط لوجهات خارجية.
+  Referrer-Policy: no-referrer
+  # فرض HTTPS لمدة سنة (يُفعَّل على الإنتاج فقط عبر HTTPS).
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  # تعطيل صلاحيات المتصفّح غير المستخدمة.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  # سياسة محتوى متوافقة مع Flutter web (CanvasKit): 'wasm-unsafe-eval' للـ wasm،
+  # 'unsafe-inline' للأنماط التي يحقنها Flutter. لا سكربتات خارجية.
+  # استبدل api.dt-teeth.example.com بمضيف الـ API الحقيقي.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.dt-teeth.example.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
