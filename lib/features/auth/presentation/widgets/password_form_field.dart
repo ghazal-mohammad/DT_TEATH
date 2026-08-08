@@ -125,6 +125,10 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
                   onChanged: widget.onChanged,
                   onSubmitted: widget.onSubmitted,
                   obscureText: _obscureText,
+                  // أمان الأجهزة المشتركة: منع حفظ/اقتراح المتصفّح للاعتمادات.
+                  autofillHints: const <String>[],
+                  enableSuggestions: false,
+                  autocorrect: false,
                   textDirection: TextDirection.ltr,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
