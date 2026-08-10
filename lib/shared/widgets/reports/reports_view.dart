@@ -17,8 +17,10 @@ import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../feedback/glass_toast.dart';
 import '../primitives/app_button.dart';
 import '../primitives/app_filter_chip.dart';
+import 'report_export.dart';
 
 enum ReportsViewStatus { loading, loaded, error }
 
@@ -92,6 +94,7 @@ class ReportsView extends StatelessWidget {
     required this.kpis,
     required this.ordersByType,
     required this.ordersByDay,
+    required this.exportTitle,
     this.teamPerformance,
     this.errorMessage,
     this.byTypeTitle,
@@ -105,6 +108,10 @@ class ReportsView extends StatelessWidget {
   final VoidCallback onRetry;
 
   final String periodLabel;
+
+  /// عنوان التقرير المُستخدَم بملفات التصدير (PDF/Excel/البريد) — مستقلّ عن
+  /// [periodLabel] لأنّه بمخبر بيكون نطاق تاريخ، وبالمستودع بيكون عنوان التقرير.
+  final String exportTitle;
   final List<ReportKpi> kpis;
   final List<ReportSegment> ordersByType;
   final List<ReportDay> ordersByDay;
@@ -157,6 +164,18 @@ class ReportsView extends StatelessWidget {
     );
   }
 
+  /// يبني حزمة بيانات التصدير من نفس النماذج المعروضة بالشاشة.
+  ReportExportData _exportData() => ReportExportData(
+    title: exportTitle,
+    periodLabel: periodLabel,
+    kpis: kpis,
+    segments: ordersByType,
+    days: ordersByDay,
+    team: teamPerformance ?? const [],
+    segmentsTitle: byTypeTitle,
+    daysTitle: byDayTitle,
+  );
+
   // ── الأدوات: فترة + تصدير ────────────────────────────────────────────────
   Widget _controls(BuildContext context, bool isLight) {
     final l10n = context.l10n;
@@ -173,31 +192,17 @@ class ReportsView extends StatelessWidget {
           selectedIndex: selectedPeriod,
           onChanged: onPeriodChanged,
         );
-        final exports = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppButton.primary(
-                label: l10n.labReportExportPdf,
-                onPressed: () {},
-                size: AppButtonSize.small),
-            const SizedBox(width: AppSizes.spaceSM),
-            AppButton.secondary(
-                label: l10n.labReportExportExcel,
-                onPressed: () {},
-                size: AppButtonSize.small),
-            const SizedBox(width: AppSizes.spaceSM),
-            AppButton.secondary(
-                label: l10n.labReportSendEmail,
-                onPressed: () {},
-                size: AppButtonSize.small),
-          ],
-        );
+        final exports = _ExportButtonsRow(data: _exportData());
         if (isWide) {
           return Row(children: [chips, const Spacer(), exports]);
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [chips, const SizedBox(height: AppSizes.spaceSM), exports],
+          children: [
+            chips,
+            const SizedBox(height: AppSizes.spaceSM),
+            exports,
+          ],
         );
       },
     );
@@ -205,22 +210,24 @@ class ReportsView extends StatelessWidget {
 
   // ── حالات التحميل/الخطأ ─────────────────────────────────────────────────
   Widget _loading() => const Column(
+    children: [
+      Row(
         children: [
-          Row(children: [
-            Expanded(child: _Skeleton(height: 96)),
-            SizedBox(width: AppSizes.spaceMD),
-            Expanded(child: _Skeleton(height: 96)),
-            SizedBox(width: AppSizes.spaceMD),
-            Expanded(child: _Skeleton(height: 96)),
-            SizedBox(width: AppSizes.spaceMD),
-            Expanded(child: _Skeleton(height: 96)),
-          ]),
-          SizedBox(height: AppSizes.spaceLG),
-          _Skeleton(height: 180),
-          SizedBox(height: AppSizes.spaceLG),
-          _Skeleton(height: 220),
+          Expanded(child: _Skeleton(height: 96)),
+          SizedBox(width: AppSizes.spaceMD),
+          Expanded(child: _Skeleton(height: 96)),
+          SizedBox(width: AppSizes.spaceMD),
+          Expanded(child: _Skeleton(height: 96)),
+          SizedBox(width: AppSizes.spaceMD),
+          Expanded(child: _Skeleton(height: 96)),
         ],
-      );
+      ),
+      SizedBox(height: AppSizes.spaceLG),
+      _Skeleton(height: 180),
+      SizedBox(height: AppSizes.spaceLG),
+      _Skeleton(height: 220),
+    ],
+  );
 
   Widget _error(BuildContext context) {
     final l10n = context.l10n;
@@ -229,14 +236,23 @@ class ReportsView extends StatelessWidget {
       alignment: Alignment.center,
       child: Column(
         children: [
-          const Icon(Icons.error_outline_rounded,
-              size: 40, color: AppColors.error),
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 40,
+            color: AppColors.error,
+          ),
           const SizedBox(height: AppSizes.spaceMD),
-          Text(errorMessage ?? l10n.error,
-              textAlign: TextAlign.center, style: AppTextStyles.bodyMedium),
+          Text(
+            errorMessage ?? l10n.error,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium,
+          ),
           const SizedBox(height: AppSizes.spaceMD),
           AppButton.secondary(
-              label: l10n.retry, onPressed: onRetry, size: AppButtonSize.small),
+            label: l10n.retry,
+            onPressed: onRetry,
+            size: AppButtonSize.small,
+          ),
         ],
       ),
     );
@@ -248,27 +264,34 @@ class ReportsView extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, c) {
         if (c.maxWidth > 700) {
-          return Row(children: [
-            for (int i = 0; i < cards.length; i++) ...[
-              if (i > 0) const SizedBox(width: AppSizes.spaceMD),
-              Expanded(child: cards[i]),
+          return Row(
+            children: [
+              for (int i = 0; i < cards.length; i++) ...[
+                if (i > 0) const SizedBox(width: AppSizes.spaceMD),
+                Expanded(child: cards[i]),
+              ],
             ],
-          ]);
+          );
         }
         // شبكة 2×n للضيّق.
-        return Column(children: [
-          for (int i = 0; i < cards.length; i += 2) ...[
-            if (i > 0) const SizedBox(height: AppSizes.spaceMD),
-            Row(children: [
-              Expanded(child: cards[i]),
-              const SizedBox(width: AppSizes.spaceMD),
-              Expanded(
-                  child: i + 1 < cards.length
-                      ? cards[i + 1]
-                      : const SizedBox.shrink()),
-            ]),
+        return Column(
+          children: [
+            for (int i = 0; i < cards.length; i += 2) ...[
+              if (i > 0) const SizedBox(height: AppSizes.spaceMD),
+              Row(
+                children: [
+                  Expanded(child: cards[i]),
+                  const SizedBox(width: AppSizes.spaceMD),
+                  Expanded(
+                    child: i + 1 < cards.length
+                        ? cards[i + 1]
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ],
           ],
-        ]);
+        );
       },
     );
   }
@@ -283,8 +306,10 @@ class ReportsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(byDayTitle ?? context.l10n.labReportOrdersByDay,
-              style: AppTextStyles.headlineSmall),
+          Text(
+            byDayTitle ?? context.l10n.labReportOrdersByDay,
+            style: AppTextStyles.headlineSmall,
+          ),
           const SizedBox(height: AppSizes.spaceLG),
           if (ordersByDay.isEmpty)
             _noData(context, isLight)
@@ -297,10 +322,11 @@ class ReportsView extends StatelessWidget {
                   for (final d in ordersByDay)
                     Expanded(
                       child: _DayBar(
-                          label: d.label,
-                          count: d.count,
-                          maxCount: maxCount,
-                          isLight: isLight),
+                        label: d.label,
+                        count: d.count,
+                        maxCount: maxCount,
+                        isLight: isLight,
+                      ),
                     ),
                 ],
               ),
@@ -327,11 +353,13 @@ class ReportsView extends StatelessWidget {
             ],
           );
         }
-        return Column(children: [
-          chart,
-          const SizedBox(height: AppSizes.spaceLG),
-          team,
-        ]);
+        return Column(
+          children: [
+            chart,
+            const SizedBox(height: AppSizes.spaceLG),
+            team,
+          ],
+        );
       },
     );
   }
@@ -343,8 +371,10 @@ class ReportsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(byTypeTitle ?? context.l10n.labReportOrdersByType,
-              style: AppTextStyles.headlineSmall),
+          Text(
+            byTypeTitle ?? context.l10n.labReportOrdersByType,
+            style: AppTextStyles.headlineSmall,
+          ),
           const SizedBox(height: AppSizes.spaceMD),
           if (ordersByType.isEmpty)
             _noData(context, isLight)
@@ -360,21 +390,25 @@ class ReportsView extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('$total',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: isLight
-                                    ? AppColors.lightText1
-                                    : AppColors.darkText1,
-                              )),
-                          Text(byTypeUnit ?? context.l10n.piecesUnit,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: isLight
-                                    ? AppColors.lightText4
-                                    : AppColors.darkText4,
-                              )),
+                          Text(
+                            '$total',
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: isLight
+                                  ? AppColors.lightText1
+                                  : AppColors.darkText1,
+                            ),
+                          ),
+                          Text(
+                            byTypeUnit ?? context.l10n.piecesUnit,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: isLight
+                                  ? AppColors.lightText4
+                                  : AppColors.darkText4,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -387,33 +421,43 @@ class ReportsView extends StatelessWidget {
                       for (final seg in ordersByType)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
                                   color: seg.color,
-                                  borderRadius: BorderRadius.circular(2)),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                                child: Text(seg.label,
-                                    style: AppTextStyles.bodySmall)),
-                            Text('${seg.percentage}%',
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  seg.label,
+                                  style: AppTextStyles.bodySmall,
+                                ),
+                              ),
+                              Text(
+                                '${seg.percentage}%',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: isLight
                                       ? AppColors.lightText3
                                       : AppColors.darkText3,
-                                )),
-                            const SizedBox(width: 8),
-                            Text('${seg.count}',
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${seg.count}',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: isLight
                                       ? AppColors.lightText1
                                       : AppColors.darkText1,
-                                )),
-                          ]),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                     ],
                   ),
@@ -432,8 +476,10 @@ class ReportsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.l10n.labReportTeamPerf,
-              style: AppTextStyles.headlineSmall),
+          Text(
+            context.l10n.labReportTeamPerf,
+            style: AppTextStyles.headlineSmall,
+          ),
           const SizedBox(height: AppSizes.spaceMD),
           if (team.isEmpty)
             _noData(context, isLight)
@@ -448,26 +494,32 @@ class ReportsView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(t.name, style: AppTextStyles.bodyMedium),
-                        Text(t.trailing,
-                            style: AppTextStyles.bodySmall.copyWith(
-                                color: t.color, fontWeight: FontWeight.w700)),
+                        Text(
+                          t.trailing,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: t.color,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 6),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                      child: Stack(children: [
-                        Container(
-                          height: 8,
-                          color: isLight
-                              ? AppColors.dividerNeutral
-                              : Colors.white.withValues(alpha: 0.06),
-                        ),
-                        FractionallySizedBox(
-                          widthFactor: t.fraction.clamp(0.0, 1.0),
-                          child: Container(height: 8, color: t.color),
-                        ),
-                      ]),
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 8,
+                            color: isLight
+                                ? AppColors.dividerNeutral
+                                : Colors.white.withValues(alpha: 0.06),
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: t.fraction.clamp(0.0, 1.0),
+                            child: Container(height: 8, color: t.color),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -478,15 +530,90 @@ class ReportsView extends StatelessWidget {
   }
 
   Widget _noData(BuildContext context, bool isLight) => Text(
-        context.l10n.labReportNoData,
-        style: AppTextStyles.bodySmall.copyWith(
-            color: isLight ? AppColors.lightText4 : AppColors.darkText4),
-      );
+    context.l10n.labReportNoData,
+    style: AppTextStyles.bodySmall.copyWith(
+      color: isLight ? AppColors.lightText4 : AppColors.darkText4,
+    ),
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════
 //  أجزاء داخلية
 // ══════════════════════════════════════════════════════════════════════════
+
+/// أزرار التصدير الثلاثة (PDF/Excel/بريد) — تُدير حالة "جارٍ التصدير" لكل
+/// زر مستقلّة، وتُظهر خطأ عبر GlassToast لو فشل التصدير (ملف محظور، لا عميل
+/// بريد مُعرَّف، إلخ) بدل فشل صامت.
+class _ExportButtonsRow extends StatefulWidget {
+  const _ExportButtonsRow({required this.data});
+  final ReportExportData data;
+
+  @override
+  State<_ExportButtonsRow> createState() => _ExportButtonsRowState();
+}
+
+enum _ExportKind { pdf, excel, email }
+
+class _ExportButtonsRowState extends State<_ExportButtonsRow> {
+  _ExportKind? _busy;
+
+  Future<void> _run(_ExportKind kind, Future<void> Function() action) async {
+    if (_busy != null) return;
+    setState(() => _busy = kind);
+    try {
+      await action();
+    } catch (_) {
+      if (mounted) {
+        GlassToast.show(
+          context,
+          message: context.l10n.reportExportError,
+          icon: Icons.error_outline_rounded,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppButton.primary(
+          label: l10n.labReportExportPdf,
+          isLoading: _busy == _ExportKind.pdf,
+          onPressed: () => _run(
+            _ExportKind.pdf,
+            () => ReportExporter.exportPdf(widget.data),
+          ),
+          size: AppButtonSize.small,
+        ),
+        const SizedBox(width: AppSizes.spaceSM),
+        AppButton.secondary(
+          label: l10n.labReportExportExcel,
+          isLoading: _busy == _ExportKind.excel,
+          onPressed: () => _run(
+            _ExportKind.excel,
+            () => ReportExporter.exportExcel(widget.data),
+          ),
+          size: AppButtonSize.small,
+        ),
+        const SizedBox(width: AppSizes.spaceSM),
+        AppButton.secondary(
+          label: l10n.labReportSendEmail,
+          isLoading: _busy == _ExportKind.email,
+          onPressed: () => _run(
+            _ExportKind.email,
+            () => ReportExporter.emailReport(widget.data),
+          ),
+          size: AppButtonSize.small,
+        ),
+      ],
+    );
+  }
+}
 
 class _Card extends StatelessWidget {
   const _Card({required this.child, required this.isLight});
@@ -495,15 +622,16 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(AppSizes.spaceLG),
-        decoration: BoxDecoration(
-          color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-          border: Border.all(
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-        ),
-        child: child,
-      );
+    padding: const EdgeInsets.all(AppSizes.spaceLG),
+    decoration: BoxDecoration(
+      color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
+      borderRadius: BorderRadius.circular(AppSizes.radiusXL),
+      border: Border.all(
+        color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+      ),
+    ),
+    child: child,
+  );
 }
 
 class _KpiCard extends StatelessWidget {
@@ -512,41 +640,57 @@ class _KpiCard extends StatelessWidget {
   final bool isLight;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(AppSizes.spaceLG),
-        decoration: BoxDecoration(
-          color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusXL),
-          border: Border(
-            top: BorderSide(
-                color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-            right: BorderSide(
-                color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-            bottom: BorderSide(
-                color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
-            left: BorderSide(color: kpi.accent, width: 3),
+  Widget build(BuildContext context) => ClipRRect(
+    // ── لماذا ClipRRect + Stack بدل Border رباعي الألوان: Flutter يرمي
+    //    استثناء عند الرسم لو Border له borderRadius وألوان أضلاع مختلفة
+    //    ("A borderRadius can only be given on borders with uniform
+    //    colors") — كان يفشل الرسم بصمت بكل تحميل (صندوق فاضٍ فعلياً).
+    borderRadius: BorderRadius.circular(AppSizes.radiusXL),
+    child: Container(
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
+        border: Border.all(
+          color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            child: Container(width: 3, color: kpi.accent),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(kpi.icon, style: const TextStyle(fontSize: 20)),
-            const SizedBox(height: AppSizes.spaceSM),
-            Text(kpi.value,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-                )),
-            const SizedBox(height: 2),
-            Text(kpi.label,
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: isLight ? AppColors.lightText4 : AppColors.darkText3,
-                )),
-          ],
-        ),
-      );
+          Padding(
+            padding: const EdgeInsets.all(AppSizes.spaceLG),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(kpi.icon, style: const TextStyle(fontSize: 20)),
+                const SizedBox(height: AppSizes.spaceSM),
+                Text(
+                  kpi.value,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  kpi.label,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: isLight ? AppColors.lightText4 : AppColors.darkText3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _DayBar extends StatelessWidget {
@@ -570,11 +714,13 @@ class _DayBar extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text('$count',
-              style: AppTextStyles.bodySmall.copyWith(
-                fontWeight: FontWeight.w800,
-                color: isLight ? AppColors.lightText1 : AppColors.darkText1,
-              )),
+          Text(
+            '$count',
+            style: AppTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w800,
+              color: isLight ? AppColors.lightText1 : AppColors.darkText1,
+            ),
+          ),
           const SizedBox(height: 4),
           Expanded(
             child: FractionallySizedBox(
@@ -589,12 +735,14 @@ class _DayBar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-              )),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+            ),
+          ),
         ],
       ),
     );

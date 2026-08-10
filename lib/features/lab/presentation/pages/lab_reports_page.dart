@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -38,7 +39,7 @@ class LabReportsPage extends StatelessWidget {
             sections: LabSidebarSections.build(context),
             pageTitle: l10n.labReports,
             pageSubtitle: l10n.labTopbarSubtitle,
-            userRole: l10n.roleLabManager,
+            userRole: currentUserRoleLabel(context, fallback: l10n.roleLabManager),
             body: _mapToView(context, state),
           );
         },
@@ -142,6 +143,7 @@ class LabReportsPage extends StatelessWidget {
       selectedPeriod: periodIndex(state.period),
       onPeriodChanged: (i) => cubit.setPeriod(periodFor(i)),
       periodLabel: r?.periodLabel ?? '',
+      exportTitle: l10n.labReports,
       kpis: kpis,
       ordersByType: byType,
       ordersByDay: byDay,

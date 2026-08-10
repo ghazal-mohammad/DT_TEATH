@@ -1092,6 +1092,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReportSendEmail => '📧 Send by Email';
 
   @override
+  String get reportExportError => 'Couldn\'t export the report';
+
+  @override
   String get labReportStatTotal => 'Period Orders';
 
   @override
@@ -2010,6 +2013,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whReportByMonth => 'Monthly spending';
+
+  @override
+  String get whReportTypePurchases => 'Purchases';
+
+  @override
+  String get whReportTypeStockMovement => 'Stock Movement';
+
+  @override
+  String get whReportTypeMaterialRequests => 'Material Requests';
+
+  @override
+  String get whReportStockMovementTitle => 'Stock Movement Report';
+
+  @override
+  String get whReportStatIncoming => 'Total Incoming';
+
+  @override
+  String get whReportStatOutgoing => 'Total Outgoing';
+
+  @override
+  String get whReportStatMovements => 'Movements Count';
+
+  @override
+  String get whReportIncomingVsOutgoing => 'Incoming vs Outgoing';
+
+  @override
+  String get whReportIncoming => 'Incoming';
+
+  @override
+  String get whReportOutgoing => 'Outgoing';
+
+  @override
+  String get whReportMovementsByDay => 'Movements by Day';
+
+  @override
+  String get whReportMaterialRequestsTitle => 'Material Requests Report';
+
+  @override
+  String get whReportStatTotalRequests => 'Total Requests';
+
+  @override
+  String get whReportStatFulfilled => 'Fulfilled Requests';
+
+  @override
+  String get whReportStatRejected => 'Rejected Requests';
+
+  @override
+  String get whReportStatFulfillmentRate => 'Fulfillment Rate';
+
+  @override
+  String get whReportByRequester => 'By Requester';
+
+  @override
+  String get whReportRequestsByDay => 'Requests by Day';
 
   @override
   String get reportStatTotalMaterials => 'Total Materials';

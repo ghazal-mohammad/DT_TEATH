@@ -2198,6 +2198,12 @@ abstract class AppLocalizations {
   /// **'📧 Send by Email'**
   String get labReportSendEmail;
 
+  /// No description provided for @reportExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t export the report'**
+  String get reportExportError;
+
   /// No description provided for @labReportStatTotal.
   ///
   /// In en, this message translates to:
@@ -3955,6 +3961,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Monthly spending'**
   String get whReportByMonth;
+
+  /// No description provided for @whReportTypePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases'**
+  String get whReportTypePurchases;
+
+  /// No description provided for @whReportTypeStockMovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Movement'**
+  String get whReportTypeStockMovement;
+
+  /// No description provided for @whReportTypeMaterialRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Material Requests'**
+  String get whReportTypeMaterialRequests;
+
+  /// No description provided for @whReportStockMovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Movement Report'**
+  String get whReportStockMovementTitle;
+
+  /// No description provided for @whReportStatIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Incoming'**
+  String get whReportStatIncoming;
+
+  /// No description provided for @whReportStatOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Outgoing'**
+  String get whReportStatOutgoing;
+
+  /// No description provided for @whReportStatMovements.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements Count'**
+  String get whReportStatMovements;
+
+  /// No description provided for @whReportIncomingVsOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming vs Outgoing'**
+  String get whReportIncomingVsOutgoing;
+
+  /// No description provided for @whReportIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming'**
+  String get whReportIncoming;
+
+  /// No description provided for @whReportOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing'**
+  String get whReportOutgoing;
+
+  /// No description provided for @whReportMovementsByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements by Day'**
+  String get whReportMovementsByDay;
+
+  /// No description provided for @whReportMaterialRequestsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Material Requests Report'**
+  String get whReportMaterialRequestsTitle;
+
+  /// No description provided for @whReportStatTotalRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Requests'**
+  String get whReportStatTotalRequests;
+
+  /// No description provided for @whReportStatFulfilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfilled Requests'**
+  String get whReportStatFulfilled;
+
+  /// No description provided for @whReportStatRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected Requests'**
+  String get whReportStatRejected;
+
+  /// No description provided for @whReportStatFulfillmentRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfillment Rate'**
+  String get whReportStatFulfillmentRate;
+
+  /// No description provided for @whReportByRequester.
+  ///
+  /// In en, this message translates to:
+  /// **'By Requester'**
+  String get whReportByRequester;
+
+  /// No description provided for @whReportRequestsByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests by Day'**
+  String get whReportRequestsByDay;
 
   /// No description provided for @reportStatTotalMaterials.
   ///

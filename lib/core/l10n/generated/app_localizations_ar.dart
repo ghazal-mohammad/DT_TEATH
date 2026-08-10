@@ -1079,6 +1079,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReportSendEmail => '📧 إرسال بالبريد';
 
   @override
+  String get reportExportError => 'تعذّر تصدير التقرير';
+
+  @override
   String get labReportStatTotal => 'طلبات الفترة';
 
   @override
@@ -1991,6 +1994,60 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whReportByMonth => 'الإنفاق الشهري';
+
+  @override
+  String get whReportTypePurchases => 'المشتريات';
+
+  @override
+  String get whReportTypeStockMovement => 'حركة المخزون';
+
+  @override
+  String get whReportTypeMaterialRequests => 'طلبات المواد';
+
+  @override
+  String get whReportStockMovementTitle => 'تقرير حركة المخزون';
+
+  @override
+  String get whReportStatIncoming => 'إجمالي الوارد';
+
+  @override
+  String get whReportStatOutgoing => 'إجمالي الصادر';
+
+  @override
+  String get whReportStatMovements => 'عدد الحركات';
+
+  @override
+  String get whReportIncomingVsOutgoing => 'الوارد مقابل الصادر';
+
+  @override
+  String get whReportIncoming => 'وارد';
+
+  @override
+  String get whReportOutgoing => 'صادر';
+
+  @override
+  String get whReportMovementsByDay => 'الحركات حسب اليوم';
+
+  @override
+  String get whReportMaterialRequestsTitle => 'تقرير طلبات المواد';
+
+  @override
+  String get whReportStatTotalRequests => 'إجمالي الطلبات';
+
+  @override
+  String get whReportStatFulfilled => 'طلبات مُلبّاة';
+
+  @override
+  String get whReportStatRejected => 'طلبات مرفوضة';
+
+  @override
+  String get whReportStatFulfillmentRate => 'نسبة الإنجاز';
+
+  @override
+  String get whReportByRequester => 'حسب مقدّم الطلب';
+
+  @override
+  String get whReportRequestsByDay => 'الطلبات حسب اليوم';
 
   @override
   String get reportStatTotalMaterials => 'إجمالي المواد';
