@@ -15,6 +15,8 @@ class _MainColumn extends StatelessWidget {
     required this.data,
     required this.editing,
     this.loading = false,
+    this.loadError,
+    this.onRetry,
   });
 
   final _EmployeeData data;
@@ -24,12 +26,21 @@ class _MainColumn extends StatelessWidget {
   /// مكان أقسام الباك بدل ما تنطّ فجأة لاحقاً).
   final bool loading;
 
+  /// فشل جلب showProfile الأولي (بلا كاش) — تُعرض كبطاقة خطأ + إعادة محاولة
+  /// بدل التوقّف الصامت (كانت الصفحة تكتفي بإخفاء الـ shimmer بلا أي تفسير).
+  final String? loadError;
+  final VoidCallback? onRetry;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _StatsRow(),
+        if (loadError != null) ...[
+          const SizedBox(height: 18),
+          _LoadErrorBanner(message: loadError!, onRetry: onRetry),
+        ],
         const SizedBox(height: 18),
         _InfoSection(
           icon: Icons.person_outline_rounded,
@@ -156,6 +167,49 @@ class _MainColumn extends StatelessWidget {
           _SkillsSection(skills: data.skills),
         ],
       ],
+    );
+  }
+}
+
+/// بطاقة خطأ + إعادة محاولة عند فشل جلب showProfile الأولي (بلا كاش) — بدل
+/// التوقّف الصامت اللي كان يخلي الصفحة تبدو "عالقة بنص التحميل" بلا تفسير.
+class _LoadErrorBanner extends StatelessWidget {
+  const _LoadErrorBanner({required this.message, this.onRetry});
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.alertRed.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        border: Border.all(color: AppColors.alertRed.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline_rounded,
+              size: 20, color: AppColors.alertRed),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(message,
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.alertRed)),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: onRetry,
+              child: Text(context.l10n.retry,
+                  style: const TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.alertRed)),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

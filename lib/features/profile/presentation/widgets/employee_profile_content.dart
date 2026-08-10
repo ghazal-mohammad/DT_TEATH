@@ -248,6 +248,9 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
   late final ProfileCubit _cubit;
   bool _savingEdit = false;
 
+  /// حفظ صورة مستقل عن وضع "تعديل الملف" العام — لا يلمس _editing/_draft.
+  bool _savingPhoto = false;
+
   final ScrollController _mainCtrl = ScrollController();
   final ScrollController _narrowCtrl = ScrollController();
   final ScrollController _sideCtrl = ScrollController();
@@ -290,24 +293,39 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
   // ── مزامنة بيانات الخادم → نموذج الواجهة (مع الحفاظ على التصميم كما هو) ──
   void _onCubitState(BuildContext context, ProfileState state) {
     if (state.status == ProfileStatus.loaded && state.profile != null) {
-      final wasSaving = _savingEdit;
+      final wasSavingEdit = _savingEdit;
+      final wasSavingPhoto = _savingPhoto;
       setState(() {
         _data = _mergeFromProfile(context.l10n, _data, state.profile!);
-        if (wasSaving) {
+        if (wasSavingEdit) {
           _editing = false;
           _draft = null;
         }
+        if (wasSavingPhoto) _avatarBytes = null; // رابط الباك صار المصدر.
         _savingEdit = false;
+        _savingPhoto = false;
       });
-      if (wasSaving) {
+      if (wasSavingEdit) {
         GlassToast.show(
           context,
           message: context.l10n.profileSavedSuccess,
           icon: Icons.check_circle_rounded,
         );
+      } else if (wasSavingPhoto) {
+        GlassToast.show(
+          context,
+          message: context.l10n.profilePhotoUpdated,
+          icon: Icons.check_circle_rounded,
+        );
       }
-    } else if (state.status == ProfileStatus.error && _savingEdit) {
-      _savingEdit = false;
+    } else if (state.status == ProfileStatus.error &&
+        (_savingEdit || _savingPhoto)) {
+      final wasSavingPhoto = _savingPhoto;
+      setState(() {
+        _savingEdit = false;
+        _savingPhoto = false;
+        if (wasSavingPhoto) _avatarBytes = null; // الرفع فشل — لا نُبقي وهماً محلياً.
+      });
       GlassToast.show(
         context,
         message: state.errorMessage ?? context.l10n.profileSaveError,
@@ -363,6 +381,8 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
         _ => l10n.roleEmployee,
       };
 
+  /// يختار صورة ويرفعها فوراً — مستقل عن وضع "تعديل الملف" العام، فلا تُفقَد
+  /// إن لم يضغط المستخدم زر الحفظ العام بعدها (كانت هذي الفجوة الأصلية).
   Future<void> _pickAvatar() async {
     if (_pickingImage) return;
     setState(() => _pickingImage = true);
@@ -382,21 +402,21 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
       if (!mounted) return;
       setState(() {
         _avatarBytes = bytes;
-        _pickingImage = false;
+        _savingPhoto = true;
       });
-      GlassToast.show(
-        context,
-        message: context.l10n.profilePhotoUpdated,
-        icon: Icons.check_circle_rounded,
-      );
+      await _cubit.save(EditProfilePayload(
+        imageBytes: bytes,
+        imageFilename: 'profile_picture.jpg',
+      ));
     } catch (e) {
       if (!mounted) return;
-      setState(() => _pickingImage = false);
       GlassToast.show(
         context,
         message: context.l10n.profilePhotoError(e),
         icon: Icons.error_outline_rounded,
       );
+    } finally {
+      if (mounted) setState(() => _pickingImage = false);
     }
   }
 
@@ -450,12 +470,18 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
         return _buildContent(
           context,
           loading: state.status == ProfileStatus.loading,
+          // خطأ التحميل الأولي فقط (بلا كاش) — لا نُظهره فوق بيانات صالحة
+          // ولا أثناء حفظ (له toast خاص عبر _onCubitState).
+          loadError: state.status == ProfileStatus.error && !_savingEdit
+              ? state.errorMessage
+              : null,
         );
       },
     );
   }
 
-  Widget _buildContent(BuildContext context, {required bool loading}) {
+  Widget _buildContent(BuildContext context,
+      {required bool loading, String? loadError}) {
     return LayoutBuilder(builder: (context, c) {
       final isWide = c.maxWidth >= 900;
 
@@ -475,6 +501,8 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
         data: _current,
         editing: _editing,
         loading: loading,
+        loadError: loadError,
+        onRetry: () => _cubit.load(),
       );
 
       if (isWide) {
