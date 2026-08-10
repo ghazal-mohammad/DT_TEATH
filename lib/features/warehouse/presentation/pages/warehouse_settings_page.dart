@@ -19,6 +19,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/router/route_names.dart';
@@ -44,7 +45,7 @@ class WarehouseSettingsPage extends StatelessWidget {
       ),
       pageTitle: context.l10n.whSettingsTitle,
       pageSubtitle: context.l10n.warehouseTopbarSubtitle,
-      userRole: context.l10n.roleWarehouseManager,
+      userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
       notificationCount: 5,
       // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
       showSearch: false,

@@ -133,7 +133,10 @@ class AppSidebar extends StatelessWidget {
   final String userName;
   final String userRole;
   final ValueChanged<String> onItemTap;
-  final VoidCallback onSystemSwitch;
+
+  /// null = بلا زر تبديل نظام (دور المستخدم مقصور على نظام واحد — الأدمن فقط
+  /// يملك أكثر من نظام يبدّل بينه).
+  final VoidCallback? onSystemSwitch;
   final bool collapsed;
   final String appVersion;
   final String appName;

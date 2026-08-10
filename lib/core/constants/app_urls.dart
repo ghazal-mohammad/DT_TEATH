@@ -1,17 +1,3 @@
-// ════════════════════════════════════════════════════════════════════════════
-// app_urls.dart
-//
-// إعدادات الـ Base URL والبيئات (Development / Staging / Production).
-// تُحدَّد البيئة **وقت البناء** عبر --dart-define (لا تعديل يدوي على الكود):
-//
-//   flutter run                                         → development (افتراضي)
-//   flutter build web --dart-define=APP_ENV=staging     → staging
-//   flutter build web --dart-define=APP_ENV=production   → production
-//   flutter build web --dart-define=API_BASE_URL=https://api.x.com  (تجاوز صريح)
-//
-// الفائدة الأمنية: بناء الإنتاج لا يشحن أبداً عنوان localhost/http، ولا يعتمد
-// على تذكّر تبديل ثابت يدوي قبل النشر.
-// ════════════════════════════════════════════════════════════════════════════
 
 enum Environment { development, staging, production }
 

@@ -19,6 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -50,7 +51,7 @@ class WarehouseReportsPage extends StatelessWidget {
         ),
         pageTitle: context.l10n.whReportsTitle,
         pageSubtitle: context.l10n.warehouseTopbarSubtitle,
-        userRole: context.l10n.roleWarehouseManager,
+        userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
         notificationCount: 5,
         body: const AppScrollView(child: WarehouseReportsContent()),
       ),

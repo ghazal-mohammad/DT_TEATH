@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -53,7 +54,7 @@ class LabProductsPage extends StatelessWidget {
             searchPlaceholder: l10n.labProductsSearchHint,
             onSearchChanged: (v) =>
                 context.read<LabProductsCubit>().setSearchQuery(v),
-            userRole: l10n.roleLabManager,
+            userRole: currentUserRoleLabel(context, fallback: l10n.roleLabManager),
             body: BlocBuilder<LabProductsCubit, LabProductsState>(
               builder: (context, state) {
                 return SingleChildScrollView(

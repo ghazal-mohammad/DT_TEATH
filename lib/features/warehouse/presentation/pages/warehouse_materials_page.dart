@@ -24,6 +24,7 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_scroll_view.dart';
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../domain/repositories/warehouse_materials_repository.dart';
@@ -58,7 +59,7 @@ class WarehouseMaterialsPage extends StatelessWidget {
         ),
         pageTitle: context.l10n.whMaterialsTitle,
         pageSubtitle: context.l10n.warehouseTopbarSubtitle,
-        userRole: context.l10n.roleWarehouseManager,
+        userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
         notificationCount: 5,
         // بحث مُوجَّه: يفلتر مواد هذه الصفحة فقط عبر كيوبتها.
         searchPlaceholder: context.l10n.whMaterialsSearchHint,

@@ -81,7 +81,9 @@ class AppSidebarSystemSwitcher extends StatefulWidget {
   final String userRole;
 
   /// القيمة لما المستخدم يضغط على الكرت — للتبديل بين الأنظمة.
-  final VoidCallback onTap;
+  /// null = المستخدم بدوره الحالي ما إله نظام تاني يبدّل عليه (لا يظهر سهم
+  /// التبديل ولا يستجيب للنقر).
+  final VoidCallback? onTap;
 
   /// وضع العرض المطوي — يعرض الأفاتار فقط.
   final bool collapsed;
@@ -136,15 +138,16 @@ class _AppSidebarSystemSwitcherState extends State<AppSidebarSystemSwitcher> {
                 _buildAvatar(),
                 const SizedBox(width: AppSizes.spaceSM), // gap:8px
                 Expanded(child: _buildUserInfo(isLight)),
-                _buildSwitchIcon(isLight),
+                if (widget.onTap != null) _buildSwitchIcon(isLight),
               ],
             ),
     );
 
+    final bool canSwitch = widget.onTap != null;
     Widget result = MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      cursor: canSwitch ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: canSwitch ? (_) => setState(() => _isHovered = true) : null,
+      onExit: canSwitch ? (_) => setState(() => _isHovered = false) : null,
       child: GestureDetector(
         onTap: widget.onTap,
         child: content,

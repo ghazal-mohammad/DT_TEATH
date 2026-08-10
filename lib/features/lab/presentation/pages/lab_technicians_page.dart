@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -71,7 +72,7 @@ class LabTechniciansPage extends StatelessWidget {
             onSearchChanged: (q) =>
                 context.read<LabTechniciansCubit>().setSearchQuery(q),
             showThemeToggle: false,
-            userRole: context.l10n.roleLabManager,
+            userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
             notificationCount: 2,
             body: _buildBody(context, state),
           );

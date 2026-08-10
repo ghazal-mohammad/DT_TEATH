@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -53,7 +54,7 @@ class LabMaterialRequestsPage extends StatelessWidget {
             sections: LabSidebarSections.build(context),
             pageTitle: context.l10n.materialRequests,
             pageSubtitle: context.l10n.labTopbarSubtitle,
-            userRole: context.l10n.roleLabManager,
+            userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
             searchPlaceholder: context.l10n.labReqSearchHint,
             onSearchChanged: (q) =>
                 context.read<LabMaterialRequestsCubit>().setSearchQuery(q),

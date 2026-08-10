@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
@@ -54,7 +55,7 @@ class _WarehouseNotificationsPageState
       pageSubtitle: context.l10n.warehouseTopbarSubtitle,
       searchPlaceholder: context.l10n.notifSearchHint,
       onSearchChanged: (v) => setState(() => _query = v.trim()),
-      userRole: context.l10n.roleWarehouseManager,
+      userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
       notificationCount: 5,
       body: AppScrollView(child: WarehouseNotificationsContent(query: _query)),
     );

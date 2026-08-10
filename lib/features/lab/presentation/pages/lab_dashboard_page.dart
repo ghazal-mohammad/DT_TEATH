@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/auth/current_user.dart';
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/search/app_search_warmup.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
@@ -60,7 +61,7 @@ class LabDashboardPage extends StatelessWidget {
             pageSubtitle: null,
             searchPlaceholder: l10n.labDashboardSearchHint,
             showThemeToggle: false,
-            userRole: l10n.roleLabManager,
+            userRole: currentUserRoleLabel(context, fallback: l10n.roleLabManager),
             notificationCount: 2,
             body: _LabDashboardBody(state: state),
           );

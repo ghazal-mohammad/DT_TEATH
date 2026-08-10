@@ -71,25 +71,20 @@ const CrashReporter _crashReporter = ConsoleCrashReporter();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ── رصد الأعطال المركزي ──────────────────────────────────────────────────
-  // كل الأخطاء (إطار Flutter + المنصّة غير المتزامنة) تمرّ عبر مُبلِّغ واحد يحجب
-  // الحسّاس — نقطة تكامل جاهزة لأي خدمة رصد لاحقاً (Sentry) دون لمس أماكن الالتقاط.
+
   FlutterError.onError = (details) {
     _crashReporter.recordError(details.exception, details.stack,
         context: 'flutter');
     if (!kReleaseMode) FlutterError.presentError(details);
   };
-  // PlatformDispatcher.onError يلتقط أيضاً الأخطاء غير المتزامنة غير المُلتقَطة.
   WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
     _crashReporter.recordError(error, stack, context: 'platform');
-    return true; // معالَج — لا ينهار التطبيق.
+    return true;
   };
-  // تدهور رشيق في الإنتاج: واجهة خطأ لطيفة بدل المربّع الأحمر عند فشل بناء ودجت.
   if (kReleaseMode) {
     ErrorWidget.builder = (details) => const AppErrorView();
   }
 
-  // إعدادات System UI — خلفية شفافة لشريط الحالة.
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -97,16 +92,11 @@ Future<void> main() async {
     ),
   );
 
-  // تهيئة الـ DI قبل runApp.
   await di.initDependencies();
 
-  // إعادة ضبط تسخين مركز الأوامر عند انتهاء الجلسة (مع مسح الكواش) ليُسخَّن
-  // من جديد عند الدخول التالي.
   SessionCacheRegistry.instance.register(AppSearchWarmup.reset);
 
-  // معالجة انتهاء الجلسة (401 على طلب مُصادَق): امسح الجلسة محلياً — التوكن
-  // والمستخدم وكواش الـ SWR — ووجّه لشاشة الدخول. يُستدعى مرّة واحدة عبر حارس
-  // DioClient (لا حلقات إعادة توجيه من طلبات 401 متزامنة).
+
   DioClient.onUnauthenticated = () {
     DioClient.clearToken();
     CurrentUser.instance.clear();
@@ -114,8 +104,7 @@ Future<void> main() async {
     AppRouter.router.go(RouteNames.login);
   };
 
-  // صمود الأوفلاين: حمّل طابور الصادر المحفوظ وابدأ مُصرِّفه. عند رجوع الشبكة
-  // يُعاد إرسال التعديلات المؤجَّلة، وبعد نجاح مورد نعيد جلبه (مصالحة تفاؤلية).
+
   await di.sl<Outbox>().load();
   final outboxProcessor = di.sl<OutboxProcessor>()
     ..onResourceSynced = (resource) {
@@ -126,10 +115,8 @@ Future<void> main() async {
       }
     }
     ..start();
-  // محاولة تصريف مبكّرة (إن كنا متصلين وفي عمليات معلّقة من جلسة سابقة).
   unawaited(outboxProcessor.process());
 
-  // تحميل التفضيلات المحفوظة (تشغيل متوازي لتسريع الإقلاع).
   await Future.wait([
     di.sl<ThemeCubit>().loadSavedTheme(),
     di.sl<TextScaleCubit>().loadSaved(),
@@ -140,9 +127,8 @@ Future<void> main() async {
   runApp(const DtTeethApp());
 }
 
-/// الـ Widget الجذر للتطبيق.
-///
-/// يغلّف التطبيق بكل الـ providers الضرورية ويبني [MaterialApp.router].
+
+/// [MaterialApp.router].
 class DtTeethApp extends StatelessWidget {
   const DtTeethApp({super.key});
 
@@ -155,19 +141,16 @@ class DtTeethApp extends StatelessWidget {
         BlocProvider<LocaleCubit>.value(value: di.sl<LocaleCubit>()),
         BlocProvider<MockSystemCubit>.value(value: di.sl<MockSystemCubit>()),
       ],
-      // BlocBuilder خارجي يراقب الثيم + اللغة معاً.
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return BlocBuilder<LocaleCubit, Locale>(
             builder: (context, locale) {
               return ScreenUtilInit(
-                // أبعاد التصميم الأساسي — مطابقة لتصميم HTML (1440×900).
                 designSize: const Size(1440, 900),
                 minTextAdapt: true,
                 splitScreenMode: true,
                 builder: (context, child) {
                   return MaterialApp.router(
-                    // العنوان الآن من الـ l10n — يتبدل مع اللغة.
                     onGenerateTitle: (ctx) =>
                         AppLocalizations.of(ctx).appName,
                     debugShowCheckedModeBanner: false,
@@ -177,28 +160,19 @@ class DtTeethApp extends StatelessWidget {
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
 
-                    // الدولية والـ RTL — تُحدّد تلقائياً من LocaleCubit.
                     locale: locale,
                     supportedLocales: AppLocalizations.supportedLocales,
                     localizationsDelegates:
                         AppLocalizations.localizationsDelegates,
 
-                    // التنقل
+
                     routerConfig: AppRouter.router,
 
-                    // غلاف الصفحات: (1) قفل الجلسة بالخمول (أمان)، (2) حجم الخط
-                    // (وصولية) عبر MediaQuery.textScaler — كلاهما بلا مسّ أي ودجت
-                    // أو تصميم.
                     builder: (context, child) {
                       final scale =
                           context.watch<TextScaleCubit>().state.factor;
                       final mq = MediaQuery.of(context);
-                      // Ctrl+K (وCmd+K) → مركز الأوامر — يعترض الاختصار داخل
-                      // النظام فلا يذهب للمتصفّح، ويفتح بحثًا عالميًا.
-                      // PrivacyGuard خارجيّ: يغطّي كل شيء (دخول + مخبري +
-                      // مستودع) بستار براند عند خروج التطبيق من المقدّمة، فلا
-                      // تتسرّب بيانات المرضى في لقطة مبدّل التطبيقات.
-                      return PrivacyGuard(
+                             return PrivacyGuard(
                         child: CallbackShortcuts(
                           bindings: <ShortcutActivator, VoidCallback>{
                             const SingleActivator(LogicalKeyboardKey.keyK,
@@ -207,8 +181,7 @@ class DtTeethApp extends StatelessWidget {
                             const SingleActivator(LogicalKeyboardKey.keyK,
                                 meta: true): () => _openCommandPalette(context),
                           },
-                          // شريط انقطاع الاتصال + شريط "بانتظار المزامنة" (أعلى)
-                          // + قفل الخمول + حجم الخط.
+
                           child: OfflineBanner(
                             syncListenable: di.sl<Outbox>(),
                             pendingSyncCount: () => di.sl<Outbox>().pendingCount,
@@ -228,9 +201,7 @@ class DtTeethApp extends StatelessWidget {
                       );
                     },
 
-                    // ملاحظة: إزالة Directionality اليدوي — Flutter الآن يحدد
-                    // الـ textDirection تلقائياً من الـ locale (ar → RTL، en → LTR).
-                  );
+                       );
                 },
               );
             },

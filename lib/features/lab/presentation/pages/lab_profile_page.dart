@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
@@ -26,7 +27,7 @@ class LabProfilePage extends StatelessWidget {
       sections: LabSidebarSections.build(context),
       pageTitle: context.l10n.labProfile,
       pageSubtitle: context.l10n.profilePageSubtitle,
-      userRole: context.l10n.roleLabManager,
+      userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
       notificationCount: 2,
       // صفحة الملف الشخصي: بلا بحث وبلا أيقونات جانبية.
       showTopbarActions: false,

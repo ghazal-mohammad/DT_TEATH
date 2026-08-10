@@ -1,30 +1,3 @@
-// ════════════════════════════════════════════════════════════════════════════
-// app_colors.dart
-//
-// مصدر الألوان:
-//   1. CSS variables من ملفات HTML الأصلية:
-//      - DT_Teeth_Lab_v12_Enhanced.html
-//      - DT_Teeth_Warehouse_v6_Enhanced.html
-//   2. Design Guide — Selection Colors (شام، 2026-04-24).
-//
-// قاعدة استخدام الألوان:
-//   1. ممنوع استخدام أي لون خارج هذا الملف داخل المشروع.
-//   2. كل تعديل بصري على اللون يتم من هنا فقط — ينعكس على كل الشاشات فوراً.
-//   3. الحالات المركّبة (reserved/empty/occupied) تستخدم OccupancyStatus enum
-//      الموجود في occupancy_status.dart بدل الوصول المباشر للألوان.
-//
-// التقسيم:
-//   - Brand Colors         → primary, secondary, accent
-//   - Semantic Colors      → success, warning, error, info, alert
-//   - System Colors        → labSystem, warehouseSystem
-//   - Dark Mode Palette    → darkBg*, darkText*, darkBorder*
-//   - Light Mode Palette   → lightBg*, lightText*, lightBorder*
-//   - Status Colors        → stock*, expiry*
-//   - Design Guide         → tableHeader, reservedBg, emptyBg...
-//   - Helper Functions     → contrastingTextOn, stockColorFor, expiryColorFor
-//
-// المرجع: الملف التقني — الجزء السابع (القرار 9).
-// ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 

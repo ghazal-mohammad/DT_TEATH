@@ -49,6 +49,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/auth/auth_models.dart';
 import '../../../core/auth/current_user.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
@@ -287,10 +288,14 @@ class AppShellLayout extends StatelessWidget {
 
         context.go(route);
       },
-      onSystemSwitch: () {
-        if (insideDrawer) Scaffold.of(context).closeDrawer();
-        _handleSystemSwitch(context);
-      },
+      // زر تبديل النظام يظهر للأدمن فقط — هو الوحيد اللي فعلاً يملك أكثر من
+      // نظام يبدّل بينه. لأي دور تاني بيبقى null (السايدبار بيخفي السهم تلقائياً).
+      onSystemSwitch: CurrentUser.instance.role == EmployeeRole.admin
+          ? () {
+              if (insideDrawer) Scaffold.of(context).closeDrawer();
+              _handleSystemSwitch(context);
+            }
+          : null,
     );
   }
 

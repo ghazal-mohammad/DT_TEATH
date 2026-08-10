@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
@@ -32,7 +33,7 @@ class WarehouseProfilePage extends StatelessWidget {
       ),
       pageTitle: context.l10n.labProfile,
       pageSubtitle: context.l10n.profilePageSubtitle,
-      userRole: context.l10n.roleWarehouseManager,
+      userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
       notificationCount: 5,
       // صفحة الملف الشخصي: بلا حقل بحث وبلا أيقونات جانبية في التوب بار.
       showTopbarActions: false,
