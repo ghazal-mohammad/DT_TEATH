@@ -92,7 +92,7 @@ class AppSearch {
       SearchHit(category: SearchCategory.navigation, icon: Icons.groups_outlined, title: 'إدارة المخبريين', subtitle: 'الفنّيون', route: RouteNames.labTechnicians),
       SearchHit(category: SearchCategory.navigation, icon: Icons.inventory_2_outlined, title: 'مخزون المخبر', subtitle: 'المخزون', route: RouteNames.labInventory),
       SearchHit(category: SearchCategory.navigation, icon: Icons.category_outlined, title: 'منتجات المخبر', subtitle: 'الكتالوج', route: RouteNames.labProducts),
-      SearchHit(category: SearchCategory.navigation, icon: Icons.local_shipping_outlined, title: 'طلبات المواد', subtitle: 'من المستودع', route: RouteNames.labMaterialRequests),
+      SearchHit(category: SearchCategory.navigation, icon: Icons.local_shipping_outlined, title: 'طلبات المواد', subtitle: 'طلب مواد للمخبر', route: RouteNames.labMaterialRequests),
       SearchHit(category: SearchCategory.navigation, icon: Icons.person_outline, title: 'الملف الشخصي', subtitle: '', route: RouteNames.labProfile),
       SearchHit(category: SearchCategory.navigation, icon: Icons.settings_outlined, title: 'الإعدادات', subtitle: '', route: RouteNames.labSettings),
     ];

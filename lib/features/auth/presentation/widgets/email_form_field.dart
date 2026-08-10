@@ -60,6 +60,11 @@ class _EmailFormFieldState extends State<EmailFormField> {
   List<String> _suggestions = [];
   bool _showSuggestions = false;
 
+  /// true أثناء تطبيق اقتراح — يمنع _onTextChanged من إعادة حساب/إظهار
+  /// الاقتراحات فوراً (كان النص المُختار يطابق نفسه كاقتراح فيعيد فتح اللوحة
+  /// بنفس الإطار، فتبدو الكتابة وكأنها "ما انكتبت").
+  bool _isApplyingSuggestion = false;
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +95,7 @@ class _EmailFormFieldState extends State<EmailFormField> {
   }
 
   void _onTextChanged() {
+    if (_isApplyingSuggestion) return;
     _updateSuggestions(widget.controller.text);
   }
 
@@ -153,12 +159,17 @@ class _EmailFormFieldState extends State<EmailFormField> {
 
   /// عند اختيار اقتراح من القائمة.
   void _onSuggestionTap(String suggestion) {
+    _isApplyingSuggestion = true;
     widget.controller.text = suggestion;
     widget.controller.selection = TextSelection.fromPosition(
       TextPosition(offset: suggestion.length),
     );
+    _isApplyingSuggestion = false;
     widget.onChanged(suggestion);
-    setState(() => _showSuggestions = false);
+    setState(() {
+      _suggestions = [];
+      _showSuggestions = false;
+    });
     // نخلي الـ focus بنفس الحقل (المستخدم ممكن يكمّل تعديل)
   }
 

@@ -568,8 +568,10 @@ class _FormContent extends StatelessWidget {
           controller: entryCtrl,
           delay: AuthStaggerDelays.footer,
           child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 6,
               children: [
                 Text(
                   isAr ? 'لم يصلك الكود؟' : "Didn't receive it?",
@@ -578,7 +580,6 @@ class _FormContent extends StatelessWidget {
                     color: sub,
                   ),
                 ),
-                const SizedBox(width: 6),
                 if (secs <= 0)
                   GestureDetector(
                     onTap: onResend,

@@ -1,25 +1,6 @@
-// ════════════════════════════════════════════════════════════════════════════
-// set_password_page.dart — F3.4 (Refactored: Clean Architecture Edition)
-//
-// 🎬 الانيميشن (مستوحى من الفيديو المرجعي):
-//   • AuthCardGlowBorder: توهج سماوي نابض على حدود الكارت
-//   • AuthGlowLinePainter: خط التوهج على الخط المائل
-//   • Entry Stagger: logo → title → subtitle → field1 → field2 → button → footer
-//   • Exit: _entryCtrl.reverse() قبل التنقل
-//
-// إصلاحات Code Quality:
-//   ✅ AuthNavyBackground    ← بدل gradient مكرر (كان مرتين في نفس الملف)
-//   ✅ AuthGlowLinePainter   ← بدل _GL الخاص
-//   ✅ AuthDiagRightClipper  ← بدل _DC الخاص
-//   ✅ AuthSubmitButton      ← بدل _SB/_SBS الخاص
-//   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
-//   ✅ AppColors.authXxx     ← بدل AppColors.authFormTitleLight hardcoded
-//   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
-// ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/auth/auth_models.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
@@ -38,10 +19,6 @@ import '../widgets/auth_submit_button.dart';
 import '../widgets/password_form_field.dart';
 import '../widgets/password_strength_meter.dart';
 
-// ══════════════════════════════════════════════════════════════════════════
-//  PAGE
-// ══════════════════════════════════════════════════════════════════════════
-
 class SetPasswordPage extends StatefulWidget {
   const SetPasswordPage({
     super.key,
@@ -53,7 +30,6 @@ class SetPasswordPage extends StatefulWidget {
   final String email;
   final String verificationCode;
 
-  /// نوع التدفّق: تفعيل أول مرة (دخول مباشر) أو "نسيت كلمة السر" (رجوع للـ login).
   final AuthFlowMode mode;
 
   @override
@@ -77,7 +53,6 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   @override
   void initState() {
     super.initState();
-    // الخلفية القطرية والتوهّج يوفّرهما AuthFlowShell — هنا فقط دخول المحتوى.
     _entryCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
@@ -105,7 +80,6 @@ class _SetPasswordPageState extends State<SetPasswordPage>
       setState(() => _errCfm = context.l10n.passwordMismatch);
       return;
     }
-    // كود التحقق مطلوب فقط لتدفّق التفعيل (setPassword)؛ إعادة التعيين ما بتحتاجه.
     if (widget.mode == AuthFlowMode.activation &&
         widget.verificationCode.isEmpty) {
       setState(() => _errPwd = 'كود التحقق مفقود — ارجع لشاشة الإيميل');
@@ -153,11 +127,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     }
   }
 
-  /// يحدّد لوحة التحكم المناسبة حسب دور الموظف.
-  /// Admin → systemSelection. Lab Manager → Lab Dashboard.
-  /// Warehouse Manager → Warehouse Dashboard.
-  /// إذا الـ role unknown/null → Lab Dashboard كـ fallback آمن
-  /// (لأن المستخدم نجح بـ setPassword وعندو توكن صالح).
+
   String _dashboardForRole(EmployeeRole? role) {
     switch (role) {
       case EmployeeRole.labManager:
@@ -183,20 +153,16 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     );
   }
 
-  // ── DESKTOP ──────────────────────────────────────────────────────────────
-  // الخلفية القطرية الدوّارة (الأبيض على اليمين) يوفّرها AuthFlowShell.
 
   Widget _buildDesktop(double W, double H) {
     return Stack(
       children: [
-        // Branding (يسار — فوق الكحلي)
         Positioned(
           left: 0, width: W * 0.40,
           top: 0, bottom: 0,
           child: _BrandingPanel(entryCtrl: _entryCtrl),
         ),
 
-        // Form (يمين — فوق الأبيض)
         Positioned(
           left: W * 0.67, right: 0,
           top: 0, bottom: 0,
@@ -245,10 +211,8 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     );
   }
 
-  // ── MOBILE ────────────────────────────────────────────────────────────────
 
   Widget _buildMobile() {
-    // الخلفية الكحلية يوفّرها AuthFlowShell — هنا المحتوى فقط.
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
@@ -311,9 +275,6 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//  BRANDING PANEL — يسار داكن
-// ══════════════════════════════════════════════════════════════════════════
 
 class _BrandingPanel extends StatelessWidget {
   const _BrandingPanel({required this.entryCtrl});
@@ -382,9 +343,6 @@ class _BrandingPanel extends StatelessWidget {
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-//  FORM CONTENT — مشترك بين Desktop و Mobile
-// ══════════════════════════════════════════════════════════════════════════
 
 class _FormContent extends StatelessWidget {
   const _FormContent({

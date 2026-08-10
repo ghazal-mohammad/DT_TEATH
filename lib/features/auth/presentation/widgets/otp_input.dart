@@ -207,9 +207,11 @@ class OtpInputState extends State<OtpInput>
               ? constraints.maxWidth
               : 340.0;
           // نطرح (hPad * 2 * length) مساحة الـ padding الكلية
+          // الحد الأدنى 24 (لا 36) — القيمة الأكبر كانت تفرض عرضاً أوسع من
+          // المتاح فعلياً على شاشات ضيّقة وتُنتج overflow (32px بالتحقّق الحيّ).
           final double boxWidth = ((availableWidth - (hPad * 2 * widget.length)) /
                   widget.length)
-              .clamp(36.0, 54.0);
+              .clamp(24.0, 54.0);
           final double boxHeight = (boxWidth * 1.15).clamp(42.0, 62.0);
           // حجم الخط يتكيّف مع حجم الصندوق
           final double fontSize = (boxWidth * 0.5).clamp(18.0, 28.0);
