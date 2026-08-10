@@ -82,25 +82,32 @@ flutter:
     - assets/images/onboarding/
     - assets/icons/
     - assets/animations/
+    - assets/fonts/
 
   # --- الخطوط (Cairo + Tajawal) — القرار 12 ---
-  # ملاحظة: مؤقتاً نعتمد على google_fonts. عند النشر Production يُفضّل
-  # وضع ملفات الخطوط محلياً في assets/fonts/ لتجنب الاعتماد على الإنترنت.
-  #
-  # fonts:
-  #   - family: Cairo
-  #     fonts:
-  #       - asset: assets/fonts/Cairo-Light.ttf
-  #         weight: 300
-  #       - asset: assets/fonts/Cairo-Regular.ttf
-  #         weight: 400
-  #       - asset: assets/fonts/Cairo-Medium.ttf
-  #         weight: 500
-  #       - asset: assets/fonts/Cairo-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/Cairo-Bold.ttf
-  #         weight: 700
-  #       - asset: assets/fonts/Cairo-ExtraBold.ttf
-  #         weight: 800
-  #       - asset: assets/fonts/Cairo-Black.ttf
-  #         weight: 900
+  # مُجمَّعة محلياً بالكامل (لا اعتماد على google_fonts وقت التشغيل) — كانت
+  # 'Cairo'/'Tajawal' مُستخدَمة بالاسم بكل التطبيق بلا أي تسجيل فعلي لأي منهما
+  # (لا asset ولا GoogleFonts.xxx())، فكان الرسم يعتمد على fallback الأساسي
+  # في CanvasKit فقط — غير مضمون النتيجة (نص عربي مفقود أحياناً على الويب).
+  # Cairo متوفّر بالمصدر كخط متغيّر واحد (wght axis) يغطّي كل الأوزان.
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/Cairo-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/Cairo-Variable.ttf
+          weight: 700
+        - asset: assets/fonts/Cairo-Variable.ttf
+          weight: 800
+        - asset: assets/fonts/Cairo-Variable.ttf
+          weight: 900
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/Tajawal-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Tajawal-Bold.ttf
+          weight: 700
