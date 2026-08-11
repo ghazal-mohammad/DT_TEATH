@@ -34,7 +34,8 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../bloc/login_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_submit_button.dart';
+import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_underline_field.dart';
 
 part '../widgets/login/login_branding_panel.dart';
 part '../widgets/login/login_form_side.dart';
@@ -144,16 +145,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildDesktop(BuildContext ctx, double W, double H) {
     return Stack(
       children: [
-        // Branding (يسار — فوق الكحلي)
-        Positioned(
-          left: 0, width: W * 0.40,
+        // Branding (جهة البداية — يمين في RTL، فوق الكحلي)
+        PositionedDirectional(
+          start: 0, width: W * 0.40,
           top: 0, bottom: 0,
           child: _BrandingPanel(entryCtrl: _entryCtrl),
         ),
 
-        // Form (يمين — فوق الأبيض)
-        Positioned(
-          left: W * 0.67, right: 0,
+        // Form (جهة النهاية — يسار في RTL، فوق الأبيض)
+        PositionedDirectional(
+          start: W * 0.67, end: 0,
           top: 0, bottom: 0,
           child: _FormSide(
             emailCtrl: _emailCtrl,
