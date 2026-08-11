@@ -191,6 +191,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
                 prefixIcon: Icon(widget.icon, size: 20, color: iconColor),
                 suffixIcon: suffix,
                 isDense: true,
+                filled: false,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: lineColor, width: 1.5),

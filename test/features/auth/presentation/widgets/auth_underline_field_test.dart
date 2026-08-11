@@ -109,4 +109,17 @@ void main() {
 
     expect(find.text('ali@clinic.com'), findsNothing);
   });
+
+  testWidgets('renders as a borderless underline field (filled: false), not a filled box',
+      (tester) async {
+    final controller = TextEditingController();
+    await tester.pumpWidget(_wrap(AuthUnderlineField(
+      controller: controller,
+      label: 'Email',
+      icon: Icons.alternate_email_rounded,
+    )));
+
+    final field = tester.widget<TextField>(find.byType(TextField));
+    expect(field.decoration?.filled, isFalse);
+  });
 }
