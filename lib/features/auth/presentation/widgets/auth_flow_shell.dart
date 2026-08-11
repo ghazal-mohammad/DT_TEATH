@@ -162,7 +162,8 @@ class AuthRotatingBackground extends StatelessWidget {
     return LayoutBuilder(
       builder: (_, box) {
         final double w = box.maxWidth, h = box.maxHeight;
-        final double p = progress;
+        final bool isRtl = Directionality.of(context) == TextDirection.rtl;
+        final double p = isRtl ? 1.0 - progress : progress;
 
         // طرفا الفاصل ينزلقان أفقيًا مع انعكاس الميل (top ↔ bottom) — القطر
         // يبقى مائلًا بحدّة (±0.10w حول المنتصف) ولا يمرّ بالوضع الأفقي.
