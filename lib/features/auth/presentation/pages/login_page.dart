@@ -59,7 +59,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late final AnimationController _entryCtrl;
 
   bool _loading  = false;
-  bool _obscure  = true;
   String? _error;
 
   final LoginCubit _cubit = sl<LoginCubit>();
@@ -159,12 +158,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           child: _FormSide(
             emailCtrl: _emailCtrl,
             passCtrl:  _passCtrl,
-            obscure:   _obscure,
             loading:   _loading,
             error:     _error,
             isMobile:  false,
             entryCtrl: _entryCtrl,
-            onToggleObscure: () => setState(() => _obscure = !_obscure),
             onSubmit: _submit,
           ),
         ),
@@ -215,12 +212,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             _FormContent(
               emailCtrl: _emailCtrl,
               passCtrl:  _passCtrl,
-              obscure:   _obscure,
               loading:   _loading,
               error:     _error,
               isMobile:  true,
               entryCtrl: _entryCtrl,
-              onToggleObscure: () => setState(() => _obscure = !_obscure),
               onSubmit: _submit,
             ),
           ],

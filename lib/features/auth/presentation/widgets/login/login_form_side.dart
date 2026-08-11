@@ -14,20 +14,18 @@ class _FormSide extends StatelessWidget {
   const _FormSide({
     required this.emailCtrl,
     required this.passCtrl,
-    required this.obscure,
     required this.loading,
     required this.error,
     required this.isMobile,
     required this.entryCtrl,
-    required this.onToggleObscure,
     required this.onSubmit,
   });
 
   final TextEditingController emailCtrl, passCtrl;
-  final bool obscure, loading, isMobile;
+  final bool loading, isMobile;
   final String? error;
   final AnimationController entryCtrl;
-  final VoidCallback onToggleObscure, onSubmit;
+  final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +46,10 @@ class _FormSide extends StatelessWidget {
                   child: _FormContent(
                     emailCtrl: emailCtrl,
                     passCtrl:  passCtrl,
-                    obscure:   obscure,
                     loading:   loading,
                     error:     error,
                     isMobile:  false,
                     entryCtrl: entryCtrl,
-                    onToggleObscure: onToggleObscure,
                     onSubmit: onSubmit,
                   ),
                 ),
@@ -74,20 +70,18 @@ class _FormContent extends StatelessWidget {
   const _FormContent({
     required this.emailCtrl,
     required this.passCtrl,
-    required this.obscure,
     required this.loading,
     required this.error,
     required this.isMobile,
     required this.entryCtrl,
-    required this.onToggleObscure,
     required this.onSubmit,
   });
 
   final TextEditingController emailCtrl, passCtrl;
-  final bool obscure, loading, isMobile;
+  final bool loading, isMobile;
   final String? error;
   final AnimationController entryCtrl;
-  final VoidCallback onToggleObscure, onSubmit;
+  final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
