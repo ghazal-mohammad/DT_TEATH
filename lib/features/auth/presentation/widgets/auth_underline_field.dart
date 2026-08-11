@@ -206,12 +206,18 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
                 ),
               ),
             ),
-            if (_suggestionsEnabled && _suggestions.isNotEmpty)
-              _SuggestionsPanel(
-                suggestions: _suggestions,
-                dark: widget.dark,
-                onTap: _applySuggestion,
-              ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              alignment: Alignment.topCenter,
+              child: _suggestionsEnabled && _suggestions.isNotEmpty
+                  ? _SuggestionsPanel(
+                      suggestions: _suggestions,
+                      dark: widget.dark,
+                      onTap: _applySuggestion,
+                    )
+                  : const SizedBox(width: double.infinity),
+            ),
           ],
         );
       },
@@ -277,14 +283,15 @@ class _SuggestionRowState extends State<_SuggestionRow> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: widget.onTap,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _hovered = true),
-        onExit: (_) => setState(() => _hovered = false),
-        child: Container(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           color: _hovered

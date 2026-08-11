@@ -84,6 +84,8 @@ void main() {
     await tester.tap(find.byType(TextField));
     await tester.enterText(find.byType(TextField), 'ali');
     await tester.pump();
+    // Allow AnimatedSize (200ms) to complete
+    await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.text('ali@clinic.com'), findsOneWidget);
 
