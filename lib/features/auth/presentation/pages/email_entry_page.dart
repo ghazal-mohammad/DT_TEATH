@@ -17,8 +17,9 @@ import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../../domain/auth_flow_mode.dart';
 import '../bloc/email_entry_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_submit_button.dart';
-import '../widgets/email_form_field.dart';
+import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_underline_field.dart';
+import '../widgets/email_suggestion_engine.dart';
 
 class EmailEntryPage extends StatelessWidget {
   const EmailEntryPage({super.key, this.mode = AuthFlowMode.activation});
@@ -112,15 +113,15 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
     return Stack(
       children: [
         // Branding panel — على اليسار (فوق الكحلي)
-        Positioned(
-          left: 0, width: W * 0.40,
+        PositionedDirectional(
+          start: 0, width: W * 0.40,
           top: 0, bottom: 0,
           child: _BrandingPanel(entryCtrl: _entryCtrl),
         ),
 
         // Form panel — على اليمين (فوق الأبيض)
-        Positioned(
-          left: W * 0.67, right: 0,
+        PositionedDirectional(
+          start: W * 0.67, end: 0,
           top: 0, bottom: 0,
           child: _DesktopForm(
             emailCtrl: _emailCtrl,
@@ -178,7 +179,7 @@ class _BrandingPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 28, right: 160, top: 28, bottom: 40),
+      padding: const EdgeInsetsDirectional.only(start: 28, end: 160, top: 28, bottom: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,7 +199,7 @@ class _BrandingPanel extends StatelessWidget {
             controller: entryCtrl,
             delay: AuthStaggerDelays.title,
             child: Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsetsDirectional.only(start: 8),
               child: Text(
                 'WELCOME!',
                 textDirection: TextDirection.ltr,
@@ -388,18 +389,17 @@ class _FormContent extends StatelessWidget {
             AuthEntryAnimator(
               controller: entryCtrl,
               delay: AuthStaggerDelays.field1,
-              child: Theme(
-                data: Theme.of(context).copyWith(
-                  brightness: isMobile ? Brightness.dark : Brightness.light,
-                ),
-                child: EmailFormField(
-                  controller: emailCtrl,
-                  enabled: state.status != EmailEntryStatus.submitting,
-                  onChanged: (v) =>
-                      context.read<EmailEntryCubit>().emailChanged(v),
-                  onSubmitted: (_) => onSubmit(),
-                  errorText: _resolveError(state, context),
-                ),
+              child: AuthUnderlineField(
+                controller: emailCtrl,
+                label: context.l10n.email,
+                icon: Icons.alternate_email_rounded,
+                dark: isMobile,
+                enabled: state.status != EmailEntryStatus.submitting,
+                onChanged: (v) => context.read<EmailEntryCubit>().emailChanged(v),
+                onSubmitted: (_) => onSubmit(),
+                errorText: _resolveError(state, context),
+                suggestionDomains: kDefaultAuthEmailDomains,
+                keyboardType: TextInputType.emailAddress,
               ),
             ),
             const SizedBox(height: AppSizes.spaceLG),
@@ -407,12 +407,11 @@ class _FormContent extends StatelessWidget {
             AuthEntryAnimator(
               controller: entryCtrl,
               delay: AuthStaggerDelays.button,
-              child: AuthSubmitButton(
+              child: AuthOutlineButton(
                 label: context.l10n.authNext,
                 onPressed: onSubmit,
                 isLoading: state.status == EmailEntryStatus.submitting,
                 isEnabled: !state.isSubmitDisabled,
-                darkMode: isMobile,
                 withPulseAnimation: true,
                 icon: Icons.arrow_forward_rounded,
               ),
