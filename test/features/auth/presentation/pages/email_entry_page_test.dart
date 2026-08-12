@@ -45,4 +45,33 @@ void main() {
     expect(find.byType(AuthOutlineButton), findsOneWidget);
     expect(find.byType(PositionedDirectional), findsNWidgets(2));
   });
+
+  testWidgets('desktop branding title is wrapped in a FittedBox with maxLines:1, softWrap:false',
+      (tester) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('ar'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      home: BlocProvider<LocaleCubit>(
+        create: (_) => LocaleCubit(),
+        child: const EmailEntryPage(),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final welcomeText = tester.widget<Text>(find.text('WELCOME!'));
+    expect(welcomeText.maxLines, 1);
+    expect(welcomeText.softWrap, isFalse);
+
+    final fittedBoxAncestor = find.ancestor(
+      of: find.text('WELCOME!'),
+      matching: find.byType(FittedBox),
+    );
+    expect(fittedBoxAncestor, findsOneWidget);
+  });
 }

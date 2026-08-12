@@ -200,12 +200,18 @@ class _BrandingPanel extends StatelessWidget {
             delay: AuthStaggerDelays.title,
             child: Padding(
               padding: const EdgeInsetsDirectional.only(start: 8),
-              child: Text(
-                'WELCOME!',
-                textDirection: TextDirection.ltr,
-                style: AppTextStyles.authHeroTitle.copyWith(
-                  fontSize: AppSizes.fontAuth58,
-                  color: Colors.white,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  'WELCOME!',
+                  textDirection: TextDirection.ltr,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppTextStyles.authHeroTitle.copyWith(
+                    fontSize: AppSizes.fontAuth58,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
