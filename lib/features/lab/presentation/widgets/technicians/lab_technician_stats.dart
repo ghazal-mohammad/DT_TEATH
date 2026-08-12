@@ -1,8 +1,11 @@
 // ════════════════════════════════════════════════════════════════════════════
 // lab_technician_stats.dart
 //
-// صف بطاقات إحصاء المخبريين (الإجمالي / يعمل الآن / جاهز للتوكيل) — مُستخرَج
-// من lab_technicians_page.dart ضمن تقسيم الصفحات العملاقة.
+// بطاقة إحصاء إجمالي المخبريين — مُستخرَجة من lab_technicians_page.dart ضمن
+// تقسيم الصفحات العملاقة.
+//
+// بطاقتا "يعمل الآن/جاهز للتوكيل" حُذفتا (2026-08): كانتا مبنيتين على حالة
+// نشط/متاح/استراحة وهمية بالكامل (لا تُحفظ، لا تعكس شيئاً من الباك).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -12,69 +15,21 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 
-/// صف بطاقات إحصاء فريق المخبر الثلاث.
+/// بطاقة إحصاء إجمالي فريق المخبر.
 class LabTechnicianStatsRow extends StatelessWidget {
-  const LabTechnicianStatsRow({
-    super.key,
-    required this.total,
-    required this.active,
-    required this.available,
-  });
+  const LabTechnicianStatsRow({super.key, required this.total});
 
   final int total;
-  final int active;
-  final int available;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, c) {
-        final wide = c.maxWidth > 800;
-        final cards = [
-          _TechStatCard(
-            chipLabel: context.l10n.labTeamTotalChip,
-            chipColor: AppColors.statusInfo,
-            accentColor: AppColors.statusInfo,
-            icon: Icons.people_alt_rounded,
-            value: '$total',
-            label: context.l10n.labTeamTotal,
-          ),
-          _TechStatCard(
-            chipLabel: context.l10n.labTeamActiveChip,
-            chipColor: AppColors.statusProgress,
-            accentColor: AppColors.statusProgress,
-            icon: Icons.adjust_rounded,
-            value: '$active',
-            label: context.l10n.techStatActiveLabel,
-          ),
-          _TechStatCard(
-            chipLabel: context.l10n.labTeamReadyChip,
-            chipColor: AppColors.statusSuccess,
-            accentColor: AppColors.statusSuccess,
-            icon: Icons.check_circle_rounded,
-            value: '$available',
-            label: context.l10n.labTeamAvailable,
-          ),
-        ];
-        if (wide) {
-          return Row(
-            children: [
-              for (int i = 0; i < cards.length; i++) ...[
-                if (i > 0) const SizedBox(width: AppSizes.spaceMD),
-                Expanded(child: cards[i]),
-              ],
-            ],
-          );
-        }
-        return Column(
-          children: [
-            for (final c in cards) ...[
-              c,
-              const SizedBox(height: AppSizes.spaceMD),
-            ],
-          ],
-        );
-      },
+    return _TechStatCard(
+      chipLabel: context.l10n.labTeamTotalChip,
+      chipColor: AppColors.statusInfo,
+      accentColor: AppColors.statusInfo,
+      icon: Icons.people_alt_rounded,
+      value: '$total',
+      label: context.l10n.labTeamTotal,
     );
   }
 }

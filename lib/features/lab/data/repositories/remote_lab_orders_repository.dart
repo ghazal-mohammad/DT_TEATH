@@ -104,7 +104,6 @@ class RemoteLabOrdersRepository
   Future<void> processOrder({
     required String id,
     required LabOrderBadgeVariant status,
-    int? cost,
     String? technician,
   }) async {
     try {

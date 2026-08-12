@@ -2,9 +2,9 @@
 // lab_orders_cubit.dart
 //
 // Cubit لإدارة state صفحة طلبات الأطباء — يطابق نمط MaterialsCubit.
-// المسؤوليات: تحميل الطلبات، الفلترة، معالجة طلب (حالة/تكلفة/منفّذ).
+// المسؤوليات: تحميل الطلبات، الفلترة، معالجة طلب (حالة/منفّذ).
 //
-// ملاحظة فصل: استهلاك المخزون (LabInventoryStore) يبقى side-effect في الصفحة،
+// ملاحظة فصل: استهلاك المخزون (LabStockRepository) يبقى side-effect بالصفحة،
 // فالـ Cubit مسؤول عن الطلبات فقط (single responsibility).
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -97,26 +97,27 @@ class LabOrdersCubit extends Cubit<LabOrdersState> {
     }
   }
 
-  /// معالجة طلب: تحديث الحالة + التكلفة + المخبري المنفّذ.
-  /// (الـ stream يحدّث القائمة تلقائياً بعد التطبيق.)
-  Future<void> processOrder({
+  /// معالجة طلب: تحديث الحالة + المخبري المنفّذ.
+  /// (الـ stream يحدّث القائمة تلقائياً بعد التطبيق.) يُرجع false عند الفشل
+  /// (الباك رفض الانتقال مثلاً) كي تُظهر الصفحة رسالة واضحة — لا فشل صامت.
+  Future<bool> processOrder({
     required String id,
     required LabOrderBadgeVariant status,
-    int? cost,
     String? technician,
   }) async {
     try {
       await _repository.processOrder(
         id: id,
         status: status,
-        cost: cost,
         technician: technician,
       );
+      return true;
     } catch (e) {
       emit(state.copyWith(
         status: LabOrdersStatus.error,
         errorMessage: userMessageFromError(e),
       ));
+      return false;
     }
   }
 

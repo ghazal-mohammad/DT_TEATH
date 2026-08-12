@@ -26,6 +26,7 @@ import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../../../../shared/widgets/loading/app_shimmer_table.dart';
+import '../../domain/repositories/lab_orders_repository.dart';
 import '../../domain/repositories/lab_repository.dart';
 import '../bloc/lab_technicians_cubit.dart';
 import '../bloc/lab_technicians_state.dart';
@@ -54,8 +55,10 @@ class LabTechniciansPage extends StatelessWidget {
     final roleLabel = _roleLabel(context);
     final pendingLabel = context.l10n.labTechPendingAssign;
     return BlocProvider(
-      create: (_) => LabTechniciansCubit(repository: sl<LabRepository>())
-        ..load(roleLabel: roleLabel, pendingLabel: pendingLabel),
+      create: (_) => LabTechniciansCubit(
+        repository: sl<LabRepository>(),
+        ordersRepository: sl<LabOrdersRepository>(),
+      )..load(roleLabel: roleLabel, pendingLabel: pendingLabel),
       child: BlocBuilder<LabTechniciansCubit, LabTechniciansState>(
         builder: (context, state) {
           return AppShellLayout(
@@ -133,17 +136,11 @@ class LabTechniciansPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          LabTechnicianStatsRow(
-            total: state.total,
-            active: state.active,
-            available: state.available,
-          ),
+          LabTechnicianStatsRow(total: state.total),
           const SizedBox(height: AppSizes.spaceLG),
           LabTechnicianTeamTable(
             technicians: state.filteredTechnicians,
             onAssign: (tech) => _onAssign(context, state, tech),
-            onTogglePause: (tech) =>
-                context.read<LabTechniciansCubit>().togglePause(tech),
             onEditSchedule: (tech) => _onEditSchedule(context, tech),
           ),
           // تقرير أداء/تقييم الفنّيين (يظهر عند توفّر بيانات من الباك).
@@ -168,7 +165,10 @@ class LabTechniciansPage extends StatelessWidget {
       orders: state.orders,
     );
     if (orderId == null) return;
-    cubit.assign(tech, orderId);
+    final ok = await cubit.assign(tech, orderId);
+    if (!ok && context.mounted) {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? context.l10n.error);
+    }
   }
 
   /// يفتح محرّر جدول الدوام؛ عند الحفظ الناجح يعيد جلب الفنّيين (الكاش أُبطل)

@@ -23,7 +23,11 @@ class AppUrls {
   static String get baseUrl {
     if (_baseUrlOverride.isNotEmpty) return _baseUrlOverride;
     return switch (current) {
-      Environment.development => 'http://localhost:8000',
+      // 127.0.0.1 لا localhost: على ويندوز localhost يتحلّل أولاً لِـ IPv6
+      // (::1) والباك (Laravel dev server) مربوط IPv4 فقط — فيتعلّق/يفشل
+      // الاتصال بصمت (تحقّق مباشر: نفس الطلب 0.5s عبر 127.0.0.1 مقابل
+      // 1-2.3s عبر localhost، ومحاولة [::1] فشلت بالكامل).
+      Environment.development => 'http://127.0.0.1:8000',
       Environment.staging => 'https://staging.dt-teeth.example.com',
       Environment.production => 'https://api.dt-teeth.example.com',
     };

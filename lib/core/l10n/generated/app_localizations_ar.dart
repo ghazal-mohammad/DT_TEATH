@@ -2554,6 +2554,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labProcessDeliveredDesc => 'المادة متوفرة وتم التسليم للطبيب';
 
   @override
+  String get labProcessReadyRequiresInProgress =>
+      'لازم يبلّش التصنيع أولاً (قيد التصنيع) قبل ما يصير جاهزاً للتسليم';
+
+  @override
   String get labProcessMissingDesc => 'المادة غير متوفرة في المخبر';
 
   @override
@@ -2687,6 +2691,34 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labProdEmpty => 'لا توجد منتجات';
 
   @override
+  String get labOrdersEmpty => 'لا توجد طلبات اليوم';
+
+  @override
+  String get labCategoriesManage => 'إدارة الفئات';
+
+  @override
+  String get labCategoryNameHint => 'اسم الفئة الجديدة';
+
+  @override
+  String get labCategoryAdd => 'إضافة';
+
+  @override
+  String get labCategoriesEmpty => 'لا توجد فئات بعد';
+
+  @override
+  String get labCategoryDeleteTitle => 'حذف الفئة';
+
+  @override
+  String labCategoryDeleteConfirm(String name) {
+    return 'هل تريد حذف «$name»؟';
+  }
+
+  @override
+  String labProcessConsumeFailed(String materials) {
+    return 'تم إنجاز الطلبية، لكن تعذّر خصم من المخزون: $materials';
+  }
+
+  @override
   String get labProdNameRequired => 'اسم المنتج مطلوب';
 
   @override
@@ -2751,13 +2783,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whStockBatches => 'الدفعات';
 
   @override
-  String get whStockNoBatches => 'لا توجد دفعات — أضف دفعة جديدة';
+  String get whStockNoBatches => 'لا توجد دفعات لهذه المادة بعد';
 
   @override
-  String get whStockAddBatch => 'إضافة دفعة';
-
-  @override
-  String get whStockBatchQty => 'كمية الدفعة';
+  String get whStockNewViaPurchaseInvoice =>
+      'إضافة مخزون جديد صارت عبر فاتورة شراء — من صفحة فواتير الشراء.';
 
   @override
   String get whStockExpiry => 'تاريخ الصلاحية (اختياري)';

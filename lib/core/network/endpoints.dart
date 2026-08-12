@@ -78,6 +78,12 @@ class ApiEndpoints {
   // ── فئات الأصناف ───────────────────────────────────────────────────────
   static const String labManagerShowAllItemsCategories =
       '/api/labManager/showAllItemsCategories';
+  static const String labManagerAddItemCategory =
+      '/api/labManager/addItemCategory';
+  static String labManagerUpdateItemCategory(Object id) =>
+      '/api/labManager/updateItemCategory/$id';
+  static String labManagerDeleteItemCategory(Object id) =>
+      '/api/labManager/deleteItemCategory/$id';
 
   // ── أصناف المخبر (= منتجات المخبر / lab items) ─────────────────────────
   static const String labManagerShowAllLabItems =
@@ -174,9 +180,8 @@ class ApiEndpoints {
   static String warehouseAdjustStock(Object batchId) =>
       '/api/warehouseManager/adjustStockQuantity/$batchId';
 
-  /// POST — إضافة دفعة جديدة. body: {material_id, quantity, expiration_date?, notes?}.
-  static const String warehouseAddStockBatch =
-      '/api/warehouseManager/addStockBatch';
+  // addStockBatch حُذف نهائياً من الباك (2026-08) — إضافة دفعة جديدة صارت
+  // حصراً عبر warehouseAddPurchaseInvoice (الباك ينشئ الدفعة تلقائياً).
 
   // ── Warehouse Manager — طلبات المواد (لبّي/ارفض) ─────────────────────────
   static const String warehouseShowAllMaterialRequests =

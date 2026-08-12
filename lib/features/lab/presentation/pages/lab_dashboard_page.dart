@@ -4,9 +4,9 @@
 // صفحة لوحة التحكم لنظام المخبر. الأقسام (بطاقات الإحصاء، تنبيه اليوم، جدول
 // الطلبات) ودجات مستقلة تحت widgets/dashboard/.
 //
-// العدّادات (البطاقات + hero + شارة السايدبار) محسوبة من الطلبات الحقيقية عبر
-// LabDashboardCubit (لا من mock ولا من عدّادات الباك التي ترجع أصفاراً).
-// جدول الطلبات وتنبيه اليوم ما زالا على بيانات تصميمية مؤقّتاً (بند تالٍ).
+// العدّادات (البطاقات + hero + شارة السايدبار) وجدول الطلبات كلها محسوبة/معروضة
+// من الطلبات الحقيقية عبر LabDashboardCubit (لا من mock ولا من عدّادات الباك
+// التي ترجع أصفاراً). تنبيه اليوم (LabEndingTodayAlert) لسا سكوني (بند منفصل).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -112,7 +112,10 @@ class _LabDashboardBody extends StatelessWidget {
                 const SizedBox(height: AppSizes.spaceLG),
 
                 // ── 4. Orders Table ─────────────────────────────────────
-                const LabDashboardOrdersTable(),
+                LabDashboardOrdersTable(
+                  orders: state.orders,
+                  isLoading: state.isInitialLoading,
+                ),
               ],
             ),
           ),

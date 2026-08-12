@@ -56,10 +56,6 @@ class LabTechniciansState {
   }
 
   int get total => technicians.length;
-  int get active =>
-      technicians.where((t) => t.status == TechnicianStatus.active).length;
-  int get available =>
-      technicians.where((t) => t.status == TechnicianStatus.available).length;
 
   LabTechniciansState copyWith({
     LabTechniciansStatus? status,

@@ -2579,6 +2579,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Material available and delivered to the doctor';
 
   @override
+  String get labProcessReadyRequiresInProgress =>
+      'Manufacturing must start first (in progress) before it can be marked ready for delivery';
+
+  @override
   String get labProcessMissingDesc => 'Material not available in the lab';
 
   @override
@@ -2712,6 +2716,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProdEmpty => 'No products';
 
   @override
+  String get labOrdersEmpty => 'No orders today';
+
+  @override
+  String get labCategoriesManage => 'Manage Categories';
+
+  @override
+  String get labCategoryNameHint => 'New category name';
+
+  @override
+  String get labCategoryAdd => 'Add';
+
+  @override
+  String get labCategoriesEmpty => 'No categories yet';
+
+  @override
+  String get labCategoryDeleteTitle => 'Delete Category';
+
+  @override
+  String labCategoryDeleteConfirm(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String labProcessConsumeFailed(String materials) {
+    return 'Order completed, but stock deduction failed for: $materials';
+  }
+
+  @override
   String get labProdNameRequired => 'Product name is required';
 
   @override
@@ -2777,13 +2809,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whStockBatches => 'Batches';
 
   @override
-  String get whStockNoBatches => 'No batches — add a new one';
+  String get whStockNoBatches => 'No batches for this material yet';
 
   @override
-  String get whStockAddBatch => 'Add batch';
-
-  @override
-  String get whStockBatchQty => 'Batch quantity';
+  String get whStockNewViaPurchaseInvoice =>
+      'New stock is now added via a purchase invoice — from the Purchase Invoices page.';
 
   @override
   String get whStockExpiry => 'Expiry date (optional)';

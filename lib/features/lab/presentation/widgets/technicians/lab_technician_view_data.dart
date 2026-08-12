@@ -4,11 +4,10 @@
 // نماذج عرض إدارة المخبريين (حالة المخبري + عنصر الجدول) — مُستخرَجة من
 // lab_technicians_page.dart ليشاركها كلٌّ من الصفحة وودجات الجدول.
 //
-// ملاحظة: الحقول غير المتوفّرة بالباك (الدوام/المهمة/الحالة) تُدار محلياً.
+// ملاحظة: الحقول غير المتوفّرة بالباك (الدوام/المهمة) تُدار محلياً. حالة
+// "نشط/متاح/استراحة" حُذفت (2026-08) — كانت وهمية بالكامل، لا تُحفظ ولا تعكس
+// شيئاً حقيقياً، وتُصفَّر عند كل إعادة تحميل.
 // ════════════════════════════════════════════════════════════════════════════
-
-/// حالة المخبري في جدول الفريق.
-enum TechnicianStatus { active, available, onBreak }
 
 /// عنصر عرض لمخبري واحد في الجدول (مبني من نموذج الباك LabTechnician).
 class TechnicianItem {
@@ -19,7 +18,6 @@ class TechnicianItem {
     required this.shift,
     required this.currentTask,
     required this.taskCount,
-    required this.status,
     required this.initials,
   });
 
@@ -31,6 +29,5 @@ class TechnicianItem {
   String shift;
   String currentTask;
   int taskCount;
-  TechnicianStatus status;
   String initials;
 }

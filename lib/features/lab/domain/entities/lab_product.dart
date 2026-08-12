@@ -26,6 +26,13 @@ class LabProductCategory {
 
   final int id;
   final String name;
+
+  @override
+  bool operator ==(Object other) =>
+      other is LabProductCategory && other.id == id && other.name == name;
+
+  @override
+  int get hashCode => Object.hash(id, name);
 }
 
 /// منتج واحد في كتالوج المخبر (اسم + فئة + نوع + مادة + سعر + مدة تصنيع).

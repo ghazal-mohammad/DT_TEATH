@@ -28,25 +28,6 @@ class RemoteWarehouseStockRepository implements WarehouseStockRepository {
   }
 
   @override
-  Future<void> addBatch({
-    required String materialId,
-    required int quantity,
-    DateTime? expiryDate,
-    String? notes,
-  }) async {
-    try {
-      await _remote.addBatch({
-        'material_id': materialId,
-        'quantity': quantity,
-        if (expiryDate != null) 'expiration_date': _ymd(expiryDate),
-        if (notes != null && notes.isNotEmpty) 'notes': notes,
-      });
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
-  @override
   Future<void> adjustBatch({
     required String batchId,
     required bool isIn,
@@ -65,11 +46,6 @@ class RemoteWarehouseStockRepository implements WarehouseStockRepository {
       throw _mapDioError(e);
     }
   }
-
-  static String _ymd(DateTime d) =>
-      '${d.year.toString().padLeft(4, '0')}-'
-      '${d.month.toString().padLeft(2, '0')}-'
-      '${d.day.toString().padLeft(2, '0')}';
 
   Failure _mapDioError(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||

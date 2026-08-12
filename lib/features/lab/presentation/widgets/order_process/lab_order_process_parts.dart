@@ -20,6 +20,7 @@ class _ChoiceCard extends StatelessWidget {
     required this.subtitle,
     required this.selected,
     required this.onTap,
+    this.enabled = true,
   });
 
   final IconData icon;
@@ -30,12 +31,18 @@ class _ChoiceCard extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  /// معطّل عندما يمنع الباك هذا الانتقال من الحالة الحالية (مثلاً: "جاهز
+  /// للتسليم" على طلب لم يبدأ تصنيعه بعد) — يُعرض باهتاً وغير قابل للنقر.
+  final bool enabled;
+
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
+    return Opacity(
+      opacity: enabled ? 1 : 0.45,
+      child: MouseRegion(
+      cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: enabled ? onTap : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
@@ -117,6 +124,7 @@ class _ChoiceCard extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

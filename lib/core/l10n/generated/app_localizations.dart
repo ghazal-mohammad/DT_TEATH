@@ -5012,6 +5012,12 @@ abstract class AppLocalizations {
   /// **'Material available and delivered to the doctor'**
   String get labProcessDeliveredDesc;
 
+  /// No description provided for @labProcessReadyRequiresInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturing must start first (in progress) before it can be marked ready for delivery'**
+  String get labProcessReadyRequiresInProgress;
+
   /// No description provided for @labProcessMissingDesc.
   ///
   /// In en, this message translates to:
@@ -5270,6 +5276,54 @@ abstract class AppLocalizations {
   /// **'No products'**
   String get labProdEmpty;
 
+  /// No description provided for @labOrdersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders today'**
+  String get labOrdersEmpty;
+
+  /// No description provided for @labCategoriesManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Categories'**
+  String get labCategoriesManage;
+
+  /// No description provided for @labCategoryNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'New category name'**
+  String get labCategoryNameHint;
+
+  /// No description provided for @labCategoryAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get labCategoryAdd;
+
+  /// No description provided for @labCategoriesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet'**
+  String get labCategoriesEmpty;
+
+  /// No description provided for @labCategoryDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Category'**
+  String get labCategoryDeleteTitle;
+
+  /// No description provided for @labCategoryDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{name}”?'**
+  String labCategoryDeleteConfirm(String name);
+
+  /// No description provided for @labProcessConsumeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Order completed, but stock deduction failed for: {materials}'**
+  String labProcessConsumeFailed(String materials);
+
   /// No description provided for @labProdNameRequired.
   ///
   /// In en, this message translates to:
@@ -5399,20 +5453,14 @@ abstract class AppLocalizations {
   /// No description provided for @whStockNoBatches.
   ///
   /// In en, this message translates to:
-  /// **'No batches — add a new one'**
+  /// **'No batches for this material yet'**
   String get whStockNoBatches;
 
-  /// No description provided for @whStockAddBatch.
+  /// No description provided for @whStockNewViaPurchaseInvoice.
   ///
   /// In en, this message translates to:
-  /// **'Add batch'**
-  String get whStockAddBatch;
-
-  /// No description provided for @whStockBatchQty.
-  ///
-  /// In en, this message translates to:
-  /// **'Batch quantity'**
-  String get whStockBatchQty;
+  /// **'New stock is now added via a purchase invoice — from the Purchase Invoices page.'**
+  String get whStockNewViaPurchaseInvoice;
 
   /// No description provided for @whStockExpiry.
   ///

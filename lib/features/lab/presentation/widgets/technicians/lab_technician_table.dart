@@ -19,13 +19,11 @@ class LabTechnicianTeamTable extends StatelessWidget {
     super.key,
     required this.technicians,
     required this.onAssign,
-    required this.onTogglePause,
     required this.onEditSchedule,
   });
 
   final List<TechnicianItem> technicians;
   final void Function(TechnicianItem) onAssign;
-  final void Function(TechnicianItem) onTogglePause;
   final void Function(TechnicianItem) onEditSchedule;
 
   @override
@@ -104,7 +102,6 @@ class LabTechnicianTeamTable extends StatelessWidget {
               tech: technicians[i],
               isLast: i == technicians.length - 1,
               onAssign: () => onAssign(technicians[i]),
-              onTogglePause: () => onTogglePause(technicians[i]),
               onEditSchedule: () => onEditSchedule(technicians[i]),
             ),
         ],
@@ -136,10 +133,6 @@ class _TableHeader extends StatelessWidget {
           ),
           Expanded(
             flex: 2,
-            child: _headerCell(context.l10n.labTeamColumnStatus, isLight),
-          ),
-          Expanded(
-            flex: 2,
             child: _headerCell(context.l10n.labTeamColumnAction, isLight),
           ),
         ],
@@ -166,14 +159,12 @@ class _TableRow extends StatelessWidget {
     required this.tech,
     required this.isLast,
     required this.onAssign,
-    required this.onTogglePause,
     required this.onEditSchedule,
   });
 
   final TechnicianItem tech;
   final bool isLast;
   final VoidCallback onAssign;
-  final VoidCallback onTogglePause;
   final VoidCallback onEditSchedule;
 
   @override
@@ -209,19 +200,12 @@ class _TableRow extends StatelessWidget {
             ),
           ),
           Expanded(flex: 3, child: _TaskPill(tech: tech)),
-          Expanded(flex: 2, child: _StatusPill(status: tech.status)),
           Expanded(
             flex: 2,
             child: Wrap(
               spacing: 6,
               runSpacing: 6,
               children: [
-                _PauseToggle(
-                  isPaused:
-                      tech.status == TechnicianStatus.onBreak ||
-                      tech.status == TechnicianStatus.available,
-                  onTap: onTogglePause,
-                ),
                 _ScheduleBtn(onTap: onEditSchedule),
                 _AssignBtn(onTap: onAssign),
               ],
@@ -353,107 +337,6 @@ class _TaskPill extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.status});
-  final TechnicianStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    late final Color bg;
-    late final Color fg;
-    late final String label;
-    switch (status) {
-      case TechnicianStatus.active:
-        bg = isLight ? AppColors.statusProgressBg : AppColors.darkChipVioletBg;
-        fg = isLight ? AppColors.statusProgress : AppColors.darkChipVioletText;
-        label = context.l10n.labTeamActive;
-        break;
-      case TechnicianStatus.available:
-        bg = isLight ? AppColors.statusSuccessBg : AppColors.darkChipGreenBg;
-        fg = isLight ? AppColors.statusSuccess : AppColors.darkChipGreenText;
-        label = context.l10n.labTeamAvailable;
-        break;
-      case TechnicianStatus.onBreak:
-        bg = isLight ? AppColors.chipAmberBgLight : AppColors.darkChipOrangeBg;
-        fg = isLight
-            ? AppColors.chipAmberTextLight
-            : AppColors.darkChipOrangeText;
-        label = context.l10n.techStatusBreak;
-        break;
-    }
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        // RTL: نص يمين، dot يسار.
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: fg,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PauseToggle extends StatelessWidget {
-  const _PauseToggle({required this.isPaused, required this.onTap});
-  final bool isPaused;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 32,
-          height: 30,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isLight ? Colors.white : AppColors.darkBg1,
-            border: Border.all(
-              color: isLight ? AppColors.lightBorder : AppColors.darkBorder,
-            ),
-            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-          ),
-          child: Icon(
-            isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-            size: 16,
-            color: isLight ? AppColors.lightText2 : AppColors.darkText2,
-          ),
         ),
       ),
     );

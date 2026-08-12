@@ -40,22 +40,6 @@ void main() {
     expect(cubit.state.errorMessage, 'غير موجود');
   });
 
-  test('addBatch ينجح ⇒ يعيد التحميل ويرفع changed', () async {
-    when(() => repo.addBatch(
-        materialId: any(named: 'materialId'),
-        quantity: any(named: 'quantity'),
-        expiryDate: any(named: 'expiryDate'),
-        notes: any(named: 'notes'))).thenAnswer((_) async {});
-    when(() => repo.getStockDetails('1')).thenAnswer((_) async => stock(50));
-
-    final cubit = StockCubit(repo, '1');
-    final ok = await cubit.addBatch(quantity: 10);
-    expect(ok, isTrue);
-    expect(cubit.changed, isTrue);
-    expect(cubit.state.busy, isFalse);
-    verify(() => repo.getStockDetails('1')).called(1); // أُعيد التحميل.
-  });
-
   test('adjustBatch يفشل ⇒ actionError دون رفع changed', () async {
     when(() => repo.adjustBatch(
         batchId: any(named: 'batchId'),

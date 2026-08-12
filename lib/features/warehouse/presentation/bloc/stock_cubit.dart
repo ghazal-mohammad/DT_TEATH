@@ -1,8 +1,10 @@
 // ════════════════════════════════════════════════════════════════════════════
 // stock_cubit.dart
 //
-// Cubit إدارة مخزون مادة واحدة (الدفعات): تحميل التفاصيل، إضافة دفعة، تعديل كمية
-// دفعة. بعد كل عملية ناجحة يُعيد تحميل التفاصيل ليعكس الحالة الجديدة.
+// Cubit إدارة مخزون مادة واحدة (الدفعات): تحميل التفاصيل + تعديل كمية دفعة
+// موجودة (إدخال/إخراج). إضافة دفعة جديدة صارت حصراً عبر فاتورة الشراء —
+// الباك حذف addStockBatch نهائياً (2026-08).
+// بعد كل عملية ناجحة يُعيد تحميل التفاصيل ليعكس الحالة الجديدة.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:equatable/equatable.dart';
@@ -75,19 +77,6 @@ class StockCubit extends Cubit<StockState> {
       emit(state.copyWith(
           status: StockStatus.error, errorMessage: f.message));
     }
-  }
-
-  Future<bool> addBatch({
-    required int quantity,
-    DateTime? expiryDate,
-    String? notes,
-  }) async {
-    return _run(() => _repo.addBatch(
-          materialId: materialId,
-          quantity: quantity,
-          expiryDate: expiryDate,
-          notes: notes,
-        ));
   }
 
   Future<bool> adjustBatch({

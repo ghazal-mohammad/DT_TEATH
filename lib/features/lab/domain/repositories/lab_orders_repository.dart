@@ -25,11 +25,11 @@ abstract class LabOrdersRepository {
   /// showLabOrder. تُستخدم في مودال التفاصيل.
   Future<LabOrderFull> getOne(String id);
 
-  /// يعالج طلباً: يحدّث الحالة + التكلفة + المخبري المنفّذ (UC69/UC70/UC71).
+  /// يعالج طلباً: يحدّث الحالة + المخبري المنفّذ (UC69/UC70/UC71). التكلفة
+  /// يحسبها الباك تلقائياً من بنود الطلبية — لا تُرسل يدوياً.
   Future<void> processOrder({
     required String id,
     required LabOrderBadgeVariant status,
-    int? cost,
     String? technician,
   });
 

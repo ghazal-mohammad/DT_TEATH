@@ -15,7 +15,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/forms/app_form_select.dart';
-import '../../data/lab_inventory_store.dart';
+import '../../domain/entities/lab_stock.dart';
 import 'lab_order_models.dart';
 
 part 'order_process/lab_order_process_parts.dart';
@@ -24,16 +24,12 @@ part 'order_process/lab_order_process_parts.dart';
 class LabProcessResult {
   LabProcessResult({
     required this.status,
-    this.cost,
     this.technician,
     this.consumption = const [],
   });
 
   /// الحالة الجديدة المختارة.
   final LabOrderBadgeVariant status;
-
-  /// تكلفة الطلبية بالليرة (null لو ما أُدخلت).
-  final int? cost;
 
   /// المخبري المنفّذ (null لو ما حُدِّد).
   final String? technician;
@@ -42,10 +38,18 @@ class LabProcessResult {
   final List<LabConsumptionLine> consumption;
 }
 
+/// سطر استهلاك واحد — [stockId] هو معرّف سجل المخزون (LabStock.id) المطلوب
+/// لاستدعاء subtractQuantity، لا معرّف المادة الأصل.
+class LabConsumptionLine {
+  const LabConsumptionLine({required this.stockId, required this.quantity});
+  final String stockId;
+  final int quantity;
+}
+
 /// سطر استهلاك قابل للتعديل داخل المودال.
 class _ConsumeRow {
   _ConsumeRow();
-  String? materialId;
+  String? stockId;
   final TextEditingController qty = TextEditingController();
 }
 
@@ -54,6 +58,7 @@ class LabOrderProcessDialog extends StatefulWidget {
     super.key,
     required this.order,
     this.technicianNames = const [],
+    this.stock = const [],
   });
 
   final LabOrderFull order;
@@ -61,10 +66,15 @@ class LabOrderProcessDialog extends StatefulWidget {
   /// أسماء الفنّيين الحقيقيين (من الباك) لقائمة التعيين. فارغة ⇒ بلا تعيين.
   final List<String> technicianNames;
 
+  /// مخزون المخبر الحقيقي (من LabStockRepository) لقائمة اختيار المواد
+  /// المستهلكة عند الإنجاز. فارغة ⇒ قسم المواد يبقى فارغاً بلا خيارات.
+  final List<LabStock> stock;
+
   static Future<LabProcessResult?> show(
     BuildContext context,
     LabOrderFull order, {
     List<String> technicianNames = const [],
+    List<LabStock> stock = const [],
   }) {
     return showDialog<LabProcessResult>(
       context: context,
@@ -72,6 +82,7 @@ class LabOrderProcessDialog extends StatefulWidget {
       builder: (_) => LabOrderProcessDialog(
         order: order,
         technicianNames: technicianNames,
+        stock: stock,
       ),
     );
   }
@@ -81,12 +92,9 @@ class LabOrderProcessDialog extends StatefulWidget {
 }
 
 class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
-  final LabInventoryStore _store = LabInventoryStore.instance;
   late LabOrderBadgeVariant _status;
-  late final TextEditingController _cost;
   String? _technician;
   final List<_ConsumeRow> _rows = [];
-  bool _costEdited = false; // هل عدّل المستخدم التكلفة يدوياً؟
   bool _technicianError = false; // محاولة حفظ بدون اختيار المخبري المنفّذ.
 
   @override
@@ -98,14 +106,11 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
             o.statusVariant == LabOrderBadgeVariant.manufacturing)
         ? o.statusVariant
         : LabOrderBadgeVariant.manufacturing;
-    _cost = TextEditingController(text: o.cost?.toString() ?? '');
-    if (o.cost != null) _costEdited = true;
     _technician = o.assignedTechnician;
   }
 
   @override
   void dispose() {
-    _cost.dispose();
     for (final r in _rows) {
       r.qty.dispose();
     }
@@ -116,29 +121,29 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
   List<LabConsumptionLine> get _validLines {
     final out = <LabConsumptionLine>[];
     for (final r in _rows) {
-      final id = r.materialId;
+      final id = r.stockId;
       final q = int.tryParse(r.qty.text.trim()) ?? 0;
       if (id != null && q > 0) {
-        out.add(LabConsumptionLine(materialId: id, quantity: q));
+        out.add(LabConsumptionLine(stockId: id, quantity: q));
       }
     }
     return out;
   }
 
-  /// يحدّث حقل التكلفة تلقائياً من تكلفة المواد ما لم يعدّله المستخدم.
-  void _refreshAutoCost() {
-    if (_costEdited) return;
-    final total = _store.costOf(_validLines);
-    _cost.text = total == 0 ? '' : total.toString();
+  LabStock? _stockById(String id) {
+    for (final s in widget.stock) {
+      if (s.id == id) return s;
+    }
+    return null;
   }
 
   /// خطأ سطر استهلاك: الكمية أكبر من المتوفر بالمخزون.
   String? _qtyError(_ConsumeRow r) {
-    final id = r.materialId;
+    final id = r.stockId;
     if (id == null) return null;
     final q = int.tryParse(r.qty.text.trim()) ?? 0;
     if (q <= 0) return null;
-    final avail = _store.byId(id)?.quantity ?? 0;
+    final avail = _stockById(id)?.quantity ?? 0;
     if (q > avail) return context.l10n.labInvConsumeExceeds;
     return null;
   }
@@ -170,11 +175,9 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
       setState(() {});
       return;
     }
-    final raw = _cost.text.trim();
     final isReady = _status == LabOrderBadgeVariant.ready;
     Navigator.of(context).pop(LabProcessResult(
       status: _status,
-      cost: raw.isEmpty ? null : int.tryParse(raw),
       technician: _technician,
       consumption: isReady ? _validLines : const [],
     ));
@@ -185,7 +188,6 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
   void _removeRow(_ConsumeRow r) {
     setState(() => _rows.remove(r));
     r.qty.dispose();
-    _refreshAutoCost();
   }
 
   List<Widget> _buildConsumeRows() {
@@ -204,7 +206,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
         ),
       ];
     }
-    final items = _store.items;
+    final items = widget.stock;
     return [
       for (final r in _rows)
         Padding(
@@ -217,7 +219,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                 flex: 3,
                 child: AppDropdownMenuTheme(
                   child: DropdownButtonFormField<String>(
-                  initialValue: r.materialId,
+                  initialValue: r.stockId,
                   isExpanded: true,
                   isDense: true,
                   dropdownColor: Colors.white,
@@ -234,16 +236,13 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                       DropdownMenuItem(
                         value: m.id,
                         child: Text(
-                          '${m.name} (${m.quantity} ${m.unit})',
+                          '${m.material} (${m.quantity} ${m.unit})',
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 13),
                         ),
                       ),
                   ],
-                  onChanged: (v) {
-                    setState(() => r.materialId = v);
-                    _refreshAutoCost();
-                  },
+                  onChanged: (v) => setState(() => r.stockId = v),
                 ),
                 ),
               ),
@@ -259,10 +258,7 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                     LengthLimitingTextInputFormatter(6),
                   ],
                   textAlign: TextAlign.center,
-                  onChanged: (_) {
-                    setState(() {});
-                    _refreshAutoCost();
-                  },
+                  onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: context.l10n.colQuantity,
@@ -286,40 +282,6 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
           ),
         ),
     ];
-  }
-
-  Widget _materialsCostBar() {
-    final total = _store.costOf(_validLines);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceTintCool,
-        borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-      ),
-      child: Row(
-        children: [
-          Text(
-            context.l10n.labProcessMaterialsCost,
-            style: const TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.lightText2,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            '${_formatMoney(total)} ل.س',
-            style: const TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: AppColors.primary,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   String _formatMoney(int v) {
@@ -388,9 +350,14 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                               iconColor: AppColors.statusSuccess,
                               iconBg: AppColors.statusSuccessBg,
                               title: context.l10n.labProcessReadyTitle,
-                              subtitle: context.l10n.labProcessDeliveredDesc,
+                              subtitle: order.statusVariant ==
+                                      LabOrderBadgeVariant.manufacturing
+                                  ? context.l10n.labProcessDeliveredDesc
+                                  : context.l10n.labProcessReadyRequiresInProgress,
                               selected:
                                   _status == LabOrderBadgeVariant.ready,
+                              enabled: order.statusVariant ==
+                                  LabOrderBadgeVariant.manufacturing,
                               onTap: () => setState(
                                   () => _status = LabOrderBadgeVariant.ready),
                             ),
@@ -404,9 +371,9 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                               title: context.l10n.whOrderFilterMissing,
                               subtitle: context.l10n.labProcessMissingDesc,
                               selected:
-                                  _status == LabOrderBadgeVariant.newOrder,
+                                  _status == LabOrderBadgeVariant.cancelled,
                               onTap: () => setState(() =>
-                                  _status = LabOrderBadgeVariant.newOrder),
+                                  _status = LabOrderBadgeVariant.cancelled),
                             ),
                           ),
                         ],
@@ -505,25 +472,20 @@ class _LabOrderProcessDialogState extends State<LabOrderProcessDialog> {
                           child: _AddMaterialButton(onTap: _addRow),
                         ),
                         const SizedBox(height: 14),
-                        _materialsCostBar(),
-                        const SizedBox(height: 12),
+                        // للعرض فقط — الباك يحسب total_cost تلقائياً (مجموع
+                        // أسعار بنود الطلبية التي حدّدها الطبيب عند الإنشاء)،
+                        // ولا يقبل قيمة يدوية من المخبري.
                         _FieldColumn(
                           label: context.l10n.labProcessCost,
-                          child: TextField(
-                            controller: _cost,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(9),
-                            ],
-                            onChanged: (_) => _costEdited = true,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              hintText: context.l10n.labProcessCostHint,
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusSM),
-                              ),
+                          child: Text(
+                            order.cost != null
+                                ? '${_formatMoney(order.cost!)} ل.س'
+                                : '—',
+                            style: const TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.lightText1,
                             ),
                           ),
                         ),

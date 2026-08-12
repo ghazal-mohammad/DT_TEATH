@@ -1,9 +1,11 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_stock_repository.dart
 //
-// عقد إدارة مخزون المستودع (الدفعات): جلب تفاصيل مادة، إضافة دفعة، تعديل كمية
-// دفعة (إدخال/إخراج). عمليات الكتابة تعتمد على منطق الباك (FIFO، سجلّات) فهي
-// أونلاين-أولاً بمعالجة أخطاء واضحة.
+// عقد إدارة مخزون المستودع (الدفعات): جلب تفاصيل مادة، تعديل كمية دفعة موجودة
+// (إدخال/إخراج). إضافة دفعة جديدة صارت حصراً عبر فاتورة الشراء (الباك حذف
+// addStockBatch نهائياً 2026-08) — انظر PurchaseInvoicesRepository.create.
+// عمليات الكتابة تعتمد على منطق الباك (FIFO، سجلّات) فهي أونلاين-أولاً
+// بمعالجة أخطاء واضحة.
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/material_stock.dart';
@@ -11,14 +13,6 @@ import '../entities/material_stock.dart';
 abstract class WarehouseStockRepository {
   /// تفاصيل مخزون مادة (بياناتها + دفعاتها + الإجمالي).
   Future<MaterialStock> getStockDetails(String materialId);
-
-  /// إضافة دفعة جديدة لمادة.
-  Future<void> addBatch({
-    required String materialId,
-    required int quantity,
-    DateTime? expiryDate,
-    String? notes,
-  });
 
   /// تعديل كمية دفعة محدّدة (إدخال/إخراج) مع سبب الحركة.
   Future<void> adjustBatch({

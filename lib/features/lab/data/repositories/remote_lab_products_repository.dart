@@ -111,16 +111,43 @@ class RemoteLabProductsRepository
   Future<List<LabProductCategory>> getCategories() async {
     try {
       final raw = await _remote.getCategories();
-      return raw
-          .map((c) => LabProductCategory(
-                id: _toInt(c['id']),
-                name: (c['name'] ?? '').toString(),
-              ))
-          .toList();
+      return raw.map(_categoryFromJson).toList();
     } on DioException catch (e) {
       throw _mapDioError(e);
     }
   }
+
+  @override
+  Future<LabProductCategory> createCategory(String name) async {
+    try {
+      final raw = await _remote.createCategory(name);
+      return _categoryFromJson(raw);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<LabProductCategory> updateCategory(int id, String name) async {
+    try {
+      final raw = await _remote.updateCategory(id, name);
+      return _categoryFromJson(raw);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<void> deleteCategory(int id) async {
+    try {
+      await _remote.deleteCategory(id);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  LabProductCategory _categoryFromJson(Map<String, dynamic> j) =>
+      LabProductCategory(id: _toInt(j['id']), name: (j['name'] ?? '').toString());
 
   @override
   Future<LabProduct> create(LabProduct product) async {

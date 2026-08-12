@@ -28,6 +28,29 @@ class LabProductsRemoteDataSource {
     return _asList(res.data);
   }
 
+  /// POST /api/labManager/addItemCategory → الفئة المُنشأة (data).
+  Future<Map<String, dynamic>> createCategory(String name) async {
+    final res = await _dio.post<dynamic>(
+      ApiEndpoints.labManagerAddItemCategory,
+      data: FormData.fromMap({'name': name}),
+    );
+    return _asData(res.data);
+  }
+
+  /// POST /api/labManager/updateItemCategory/{id} → الفئة المُحدَّثة (data).
+  Future<Map<String, dynamic>> updateCategory(Object id, String name) async {
+    final res = await _dio.post<dynamic>(
+      ApiEndpoints.labManagerUpdateItemCategory(id),
+      data: FormData.fromMap({'name': name}),
+    );
+    return _asData(res.data);
+  }
+
+  /// POST /api/labManager/deleteItemCategory/{id} → حذف فئة.
+  Future<void> deleteCategory(Object id) async {
+    await _dio.post<dynamic>(ApiEndpoints.labManagerDeleteItemCategory(id));
+  }
+
   /// POST /api/labManager/addLabItem → الصنف المُنشأ (data).
   Future<Map<String, dynamic>> create(Map<String, dynamic> body) async {
     final res = await _dio.post<dynamic>(

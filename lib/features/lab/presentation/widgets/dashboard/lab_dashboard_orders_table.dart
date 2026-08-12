@@ -15,11 +15,19 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/data/app_data_table.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
-import '../../../data/mock/lab_dashboard_mock_data.dart';
+import '../../../domain/entities/lab_order.dart';
 
 /// جدول طلبات اليوم مع شريط فلترة (الكل/جديد/قيد التصنيع/جاهز).
 class LabDashboardOrdersTable extends StatefulWidget {
-  const LabDashboardOrdersTable({super.key});
+  const LabDashboardOrdersTable({
+    super.key,
+    required this.orders,
+    this.isLoading = false,
+  });
+
+  /// الطلبات الحقيقية (من LabDashboardCubit/LabOrdersRepository) — لا mock.
+  final List<LabOrderFull> orders;
+  final bool isLoading;
 
   @override
   State<LabDashboardOrdersTable> createState() =>
@@ -29,8 +37,8 @@ class LabDashboardOrdersTable extends StatefulWidget {
 class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
   String _activeFilter = 'all';
 
-  List<LabOrderItem> get _filtered {
-    const all = LabDashboardMockData.todayOrders;
+  List<LabOrderFull> get _filtered {
+    final all = widget.orders;
     switch (_activeFilter) {
       case 'new':
         return all
@@ -53,7 +61,7 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
 
   @override
   Widget build(BuildContext context) {
-    const all = LabDashboardMockData.todayOrders;
+    final all = widget.orders;
     final counts = {
       'new': all
           .where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder)
@@ -159,17 +167,19 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
             ),
           ),
           // Table
-          AppDataTable<LabOrderItem>(
+          AppDataTable<LabOrderFull>(
             data: _filtered,
+            isLoading: widget.isLoading,
+            emptyMessage: context.l10n.labOrdersEmpty,
             // موحّد مع المستودع: tableHeader (#BED8FA) بالفاتح.
             headerBackground:
                 isLight ? AppColors.tableHeader : AppColors.darkBg2,
             columns: [
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colOrderNumber,
                 flex: 2,
                 cellBuilder: (item) => Text(
-                  item.orderId,
+                  item.id,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 13,
@@ -178,18 +188,18 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
                   ),
                 ),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colDoctor,
                 flex: 2,
-                cellBuilder: (item) => _doctorCell(item.doctorName, isLight),
+                cellBuilder: (item) => _doctorCell(item.doctor, isLight),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colType,
                 flex: 2,
                 cellBuilder: (item) =>
                     Text(item.type, style: AppTextStyles.bodyMedium),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colMaterial,
                 flex: 2,
                 cellBuilder: (item) => Text(
@@ -197,7 +207,7 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
                   style: AppTextStyles.bodyMedium,
                 ),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colTooth,
                 flex: 2,
                 cellBuilder: (item) => Text(
@@ -205,19 +215,19 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
                   style: AppTextStyles.bodyMedium,
                 ),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colDate,
                 flex: 2,
                 cellBuilder: (item) =>
-                    Text(item.dueDate, style: AppTextStyles.bodySmall),
+                    Text(item.date, style: AppTextStyles.bodySmall),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colPriority,
                 flex: 2,
                 cellBuilder: (item) =>
-                    _priorityCell(context, item.priority, isLight),
+                    _priorityCell(context, item.isUrgent, isLight),
               ),
-              AppDataColumn<LabOrderItem>(
+              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colStatus,
                 flex: 2,
                 cellBuilder: (item) => _statusBadge(context, item, isLight),
@@ -273,20 +283,17 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
     );
   }
 
-  Widget _priorityCell(
-      BuildContext context, LabOrderPriority priority, bool isLight) {
+  /// الباك لا يعرف إلا حالتين (isUrgent bool) — لا "متوسطة" حقيقية. موحّد مع
+  /// شارة العجلة بالبطاقة (lab_order_card.dart).
+  Widget _priorityCell(BuildContext context, bool isUrgent, bool isLight) {
     final l10n = context.l10n;
-    final ({Color color, String label, int bars}) data = switch (priority) {
-      LabOrderPriority.urgent =>
-        (color: AppColors.statusUrgent, label: l10n.priorityUrgent, bars: 3),
-      LabOrderPriority.medium =>
-        (color: AppColors.statusInfo, label: l10n.priorityMedium, bars: 2),
-      LabOrderPriority.normal => (
-          color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-          label: l10n.priorityNormal,
-          bars: 1,
-        ),
-    };
+    final ({Color color, String label, int bars}) data = isUrgent
+        ? (color: AppColors.statusUrgent, label: l10n.priorityUrgent, bars: 3)
+        : (
+            color: isLight ? AppColors.lightText4 : AppColors.darkText4,
+            label: l10n.priorityNormal,
+            bars: 1,
+          );
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -317,7 +324,7 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
     );
   }
 
-  Widget _statusBadge(BuildContext context, LabOrderItem item, bool isLight) {
+  Widget _statusBadge(BuildContext context, LabOrderFull item, bool isLight) {
     final l10n = context.l10n;
     final ({Color bg, Color text, String label}) data =
         switch (item.statusVariant) {

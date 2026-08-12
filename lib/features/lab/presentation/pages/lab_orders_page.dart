@@ -6,11 +6,11 @@
 // المعمارية (يطابق نظام المستودع): UI → LabOrdersCubit → LabOrdersRepository.
 //   - الكيان في domain/entities/lab_order.dart
 //   - العقد في domain/repositories/lab_orders_repository.dart
-//   - تنفيذ mock في data/repositories/mock_lab_orders_repository.dart
-//   - عند ربط الباك: نستبدل Mock بـ Remote دون لمس الـ UI.
+//   - التنفيذ الحقيقي في data/repositories/remote_lab_orders_repository.dart
 //
 // شريط الفلاتر والبطاقة والحالة الفارغة في widgets/orders/.
-// ملاحظة: استهلاك المخزون عند المعالجة يبقى side-effect هنا (LabInventoryStore).
+// ملاحظة: استهلاك المخزون عند المعالجة side-effect هنا، عبر LabStockRepository
+// الحقيقي (لا مخزون وهمي).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -27,10 +27,11 @@ import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/loading/app_shimmer_card.dart';
-import '../../data/lab_inventory_store.dart';
 import '../../domain/entities/lab_order.dart';
+import '../../domain/entities/lab_stock.dart';
 import '../../domain/repositories/lab_orders_repository.dart';
 import '../../domain/repositories/lab_repository.dart';
+import '../../domain/repositories/lab_stock_repository.dart';
 import '../bloc/lab_orders_cubit.dart';
 import '../bloc/lab_orders_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
@@ -158,23 +159,70 @@ class _OrdersBody extends StatelessWidget {
     final cubit = context.read<LabOrdersCubit>();
     // نجلب الفنّيين الحقيقيين لقائمة التعيين، وإلا يفشل التعيين بـ"الفنّي غير موجود".
     final names = await _technicianNames();
+    final stock = await _labStock();
     if (!context.mounted) return;
     final choice = await LabOrderProcessDialog.show(
       context,
       order,
       technicianNames: names,
+      stock: stock,
     );
     if (choice == null) return;
-    // تحديث الطلب عبر الـ Cubit/Repository.
-    await cubit.processOrder(
+    // تحديث الطلب عبر الـ Cubit/Repository. الباك يرفض بعض الانتقالات (مثلاً
+    // "جاهز" على طلب لم يبدأ تصنيعه) — لازم نُظهر السبب، لا فشل صامت.
+    final ok = await cubit.processOrder(
       id: order.id,
       status: choice.status,
-      cost: choice.cost,
       technician: choice.technician,
     );
-    // إنجاز الطلب → إنقاص المواد المستهلكة من مخزون المخبر (UC75) — side-effect.
+    if (!context.mounted) return;
+    if (!ok) {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? context.l10n.error);
+      return;
+    }
+    // إنجاز الطلب → إنقاص المواد المستهلكة من مخزون المخبر الحقيقي (UC75).
+    // الطلب نفسه نجح فعلاً — فشل خصم مادة هنا side-effect لاحق، نُظهره بتنبيه
+    // بدل ما نتجاهله (كان قبلاً بيروح لمخزون وهمي بالذاكرة بصمت).
     if (choice.consumption.isNotEmpty) {
-      LabInventoryStore.instance.applyConsumption(choice.consumption);
+      final failed = await _consumeStock(choice.consumption, stock);
+      if (failed.isNotEmpty && context.mounted) {
+        GlassToast.show(context, message: context.l10n.labProcessConsumeFailed(failed.join('، ')));
+      }
+    }
+  }
+
+  /// يخصم كل سطر استهلاك من مخزون المخبر الحقيقي. يرجّع أسماء المواد التي
+  /// فشل خصمها (فارغة = نجح الكل).
+  Future<List<String>> _consumeStock(
+    List<LabConsumptionLine> lines,
+    List<LabStock> stock,
+  ) async {
+    final repo = sl<LabStockRepository>();
+    final failed = <String>[];
+    for (final line in lines) {
+      try {
+        await repo.subtractQuantity(
+          id: line.stockId,
+          quantity: line.quantity.toDouble(),
+        );
+      } catch (_) {
+        final name = stock
+            .where((s) => s.id == line.stockId)
+            .map((s) => s.material)
+            .firstOrNull;
+        failed.add(name ?? line.stockId);
+      }
+    }
+    return failed;
+  }
+
+  /// مخزون المخبر الحقيقي لقائمة اختيار المواد المستهلكة (فارغة عند الفشل).
+  Future<List<LabStock>> _labStock() async {
+    try {
+      final repo = sl<LabStockRepository>();
+      return repo.cached ?? await repo.getAll();
+    } catch (_) {
+      return const [];
     }
   }
 

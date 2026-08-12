@@ -21,15 +21,6 @@ class WarehouseStockRemoteDataSource {
     return _asData(res.data);
   }
 
-  /// POST addStockBatch. body: {material_id, quantity, expiration_date?, notes?}.
-  Future<Map<String, dynamic>> addBatch(Map<String, dynamic> body) async {
-    final res = await _dio.post<dynamic>(
-      ApiEndpoints.warehouseAddStockBatch,
-      data: FormData.fromMap(body),
-    );
-    return _asData(res.data);
-  }
-
   /// POST adjustStockQuantity/{batchId}. body: {type, quantity, reason, notes?}.
   Future<Map<String, dynamic>> adjustBatch(
       Object batchId, Map<String, dynamic> body) async {

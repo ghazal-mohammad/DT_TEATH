@@ -99,6 +99,48 @@ class LabProductsCubit extends Cubit<LabProductsState> {
     }
   }
 
+  /// يضيف فئة جديدة. يُرجع false عند الفشل (مثلاً اسم مكرر) بدل رمي الاستثناء
+  /// — الصفحة تعرض رسالة toast بدل كسر الحالة العامة.
+  Future<bool> addCategory(String name) async {
+    try {
+      final created = await _repository.createCategory(name);
+      emit(state.copyWith(categories: [...state.categories, created]));
+      return true;
+    } catch (e) {
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
+    }
+  }
+
+  /// يعدّل اسم فئة موجودة.
+  Future<bool> renameCategory(int id, String name) async {
+    try {
+      final updated = await _repository.updateCategory(id, name);
+      emit(state.copyWith(
+        categories:
+            state.categories.map((c) => c.id == id ? updated : c).toList(),
+      ));
+      return true;
+    } catch (e) {
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
+    }
+  }
+
+  /// يحذف فئة. الباك يرفض (422) لو مرتبطة بأصناف — تبقى بالقائمة عند الفشل.
+  Future<bool> removeCategory(int id) async {
+    try {
+      await _repository.deleteCategory(id);
+      emit(state.copyWith(
+        categories: state.categories.where((c) => c.id != id).toList(),
+      ));
+      return true;
+    } catch (e) {
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
+    }
+  }
+
   /// حذف منتج (الـ stream يحدّث القائمة تلقائياً).
   Future<void> delete(String id) async {
     try {

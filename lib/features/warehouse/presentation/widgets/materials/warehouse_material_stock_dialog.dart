@@ -3,10 +3,10 @@
 //
 // مودال إدارة مخزون مادة عبر الدفعات (يقابل نظام الباك الحقيقي):
 //   • يعرض دفعات المادة (كمية + صلاحية + حالة انتهاء) والإجمالي.
-//   • إضافة دفعة جديدة (كمية + صلاحية اختيارية).
-//   • تعديل كمية دفعة (إدخال/إخراج) مع سبب الحركة.
+//   • تعديل كمية دفعة موجودة (إدخال/إخراج) مع سبب الحركة.
 //
-// يستبدل حوار "الحركة" القديم التفاؤلي الذي كان يعدّل الكمية محلياً بلا ربط.
+// إضافة دفعة جديدة لم تعد من هنا — صارت حصراً عبر فاتورة الشراء (الباك حذف
+// addStockBatch نهائياً 2026-08؛ إنشاء الفاتورة ينشئ الدفعة تلقائياً).
 // يُرجِع true إن تغيّر المخزون (لتحديث قائمة المواد).
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -19,7 +19,6 @@ import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/forms/app_date_picker.dart';
 import '../../../../../shared/widgets/forms/app_form_select.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
 import '../../../domain/entities/material_stock.dart';
@@ -163,7 +162,7 @@ class _StockDialogView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _AddBatchCard(unit: material.unit, busy: state.busy),
+          const _NewStockHint(),
           const SizedBox(height: AppSizes.spaceMD),
           Text('${context.l10n.whStockBatches} (${batches.length})',
               style: AppTextStyles.bodyMedium.copyWith(
@@ -187,57 +186,18 @@ class _StockDialogView extends StatelessWidget {
   }
 }
 
-// ── بطاقة إضافة دفعة ─────────────────────────────────────────────────────────
+// ── تلميح: إضافة مخزون جديد تصير عبر فاتورة الشراء ──────────────────────────
+//
+// الباك حذف addStockBatch نهائياً (2026-08) — الدفعة الجديدة تُنشأ تلقائياً
+// عند إضافة فاتورة شراء (كل بند بالفاتورة يُنشئ دفعة). هون بس تعديل/خصم من
+// دفعات موجودة أصلاً.
 
-class _AddBatchCard extends StatefulWidget {
-  const _AddBatchCard({required this.unit, required this.busy});
-  final String unit;
-  final bool busy;
-
-  @override
-  State<_AddBatchCard> createState() => _AddBatchCardState();
-}
-
-class _AddBatchCardState extends State<_AddBatchCard> {
-  final _qtyCtrl = TextEditingController();
-  DateTime? _expiry;
-
-  @override
-  void dispose() {
-    _qtyCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickExpiry() async {
-    final now = DateTime.now();
-    final picked = await showAppDatePicker(
-      context: context,
-      initialDate: _expiry ?? now.add(const Duration(days: 180)),
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 365 * 10)),
-      helpText: context.l10n.whStockExpiry,
-    );
-    if (picked != null && mounted) setState(() => _expiry = picked);
-  }
-
-  Future<void> _add() async {
-    final qty = int.tryParse(_qtyCtrl.text.trim());
-    if (qty == null || qty <= 0) return;
-    final ok = await context
-        .read<StockCubit>()
-        .addBatch(quantity: qty, expiryDate: _expiry);
-    if (ok && mounted) {
-      _qtyCtrl.clear();
-      setState(() => _expiry = null);
-    }
-  }
+class _NewStockHint extends StatelessWidget {
+  const _NewStockHint();
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final expiryText = _expiry == null
-        ? l10n.whStockExpiryNone
-        : '${_expiry!.year}-${_expiry!.month.toString().padLeft(2, '0')}-${_expiry!.day.toString().padLeft(2, '0')}';
     return Container(
       padding: const EdgeInsets.all(AppSizes.spaceMD),
       decoration: BoxDecoration(
@@ -245,56 +205,14 @@ class _AddBatchCardState extends State<_AddBatchCard> {
         border: Border.all(color: AppColors.dashCyan.withValues(alpha: 0.18)),
         borderRadius: BorderRadius.circular(AppSizes.radiusSM),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
         children: [
-          Text(l10n.whStockAddBatch,
-              style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w800, color: AppColors.info)),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _qtyCtrl,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    isDense: true,
-                    labelText: l10n.whStockBatchQty,
-                    suffixText: widget.unit,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.radiusSM)),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: InkWell(
-                  onTap: _pickExpiry,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-                  child: InputDecorator(
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: l10n.whStockExpiry,
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusSM)),
-                    ),
-                    child: Text(expiryText,
-                        style: AppTextStyles.bodySmall
-                            .copyWith(color: AppColors.lightText2)),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          AppButton.primary(
-            label: l10n.whStockAddBatch,
-            onPressed: widget.busy ? null : _add,
-            size: AppButtonSize.small,
-            icon: Icons.add_rounded,
+          const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.info),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(l10n.whStockNewViaPurchaseInvoice,
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.lightText2)),
           ),
         ],
       ),

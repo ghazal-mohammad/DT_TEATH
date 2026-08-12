@@ -7,8 +7,7 @@
 // المعمارية (يطابق نظام المستودع): UI → LabProductsCubit → LabProductsRepository.
 //   - الكيان في domain/entities/lab_product.dart
 //   - العقد في domain/repositories/lab_products_repository.dart
-//   - تنفيذ mock في data/repositories/mock_lab_products_repository.dart
-//   - عند ربط الباك: نستبدل Mock بـ Remote دون لمس الـ UI.
+//   - التنفيذ الحقيقي في data/repositories/remote_lab_products_repository.dart
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -28,6 +27,7 @@ import '../../domain/repositories/lab_products_repository.dart';
 import '../bloc/lab_products_cubit.dart';
 import '../bloc/lab_products_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
+import '../widgets/products/lab_categories_manage_dialog.dart';
 import '../widgets/products/lab_product_form_dialog.dart';
 import '../widgets/products/lab_products_stats.dart';
 import '../widgets/products/lab_products_table.dart';
@@ -67,6 +67,13 @@ class LabProductsPage extends StatelessWidget {
                       AppPageActionBar(
                         filter: const SizedBox.shrink(),
                         actions: [
+                          AppButton.secondary(
+                            label: l10n.labCategoriesManage,
+                            onPressed: () => LabCategoriesManageDialog.show(
+                                context, context.read<LabProductsCubit>()),
+                            size: AppButtonSize.small,
+                          ),
+                          const SizedBox(width: 8),
                           AppButton.primary(
                             label: '+ ${l10n.labProdAdd}',
                             onPressed: () => _onAdd(context),

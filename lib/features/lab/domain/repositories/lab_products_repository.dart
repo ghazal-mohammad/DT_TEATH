@@ -2,12 +2,8 @@
 // lab_products_repository.dart
 //
 // عقد (interface) للوصول لبيانات كتالوج منتجات المخبر — يفصل الـ UI عن مصدر
-// البيانات (mock/API). يطابق نمط WarehouseMaterialsRepository.
-//
-// التطبيقات:
-//   - الحالي: MockLabProductsRepository (بيانات في الذاكرة)
-//   - Backend لاحقاً: RemoteLabProductsRepository (GET/POST/PUT /api/lab/products)
-// كل تطبيق ينفّذ نفس العقد — الـ UI ما يلاحظ الفرق.
+// البيانات. يطابق نمط WarehouseMaterialsRepository.
+// التنفيذ الحقيقي: RemoteLabProductsRepository (data/repositories/).
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/lab_product.dart';
@@ -23,6 +19,16 @@ abstract class LabProductsRepository {
 
   /// يجلب فئات الأصناف من الباك (showAllItemsCategories) لقائمة الفئة بالنموذج.
   Future<List<LabProductCategory>> getCategories();
+
+  /// يضيف فئة جديدة (addItemCategory). يرجع الفئة مع id مولّد.
+  Future<LabProductCategory> createCategory(String name);
+
+  /// يعدّل اسم فئة موجودة (updateItemCategory/{id}).
+  Future<LabProductCategory> updateCategory(int id, String name);
+
+  /// يحذف فئة بالمعرّف (deleteItemCategory/{id}). الباك يرفض الحذف (422) لو
+  /// الفئة مرتبطة بأصناف — الخطأ يصعد كـ Failure برسالة الباك.
+  Future<void> deleteCategory(int id);
 
   /// يضيف منتجاً جديداً. يرجع الـ entity مع id مولّد.
   Future<LabProduct> create(LabProduct product);
