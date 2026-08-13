@@ -13,7 +13,7 @@
 //   ✅ AuthNavyBackground    ← بدل gradient مكرر (كان 2 مرة في نفس الملف)
 //   ✅ AuthGlowLinePainter   ← بدل _GlowLine الخاص
 //   ✅ AuthDiagRightClipper  ← بدل _DiagClipper الخاص
-//   ✅ AuthSubmitButton      ← بدل _SubmitBtn الخاص (withPulseAnimation: false)
+//   ✅ AuthOutlineButton     ← بدل _SubmitBtn الخاص (withPulseAnimation: false)
 //   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
 //   ✅ AppColors.authXxx     ← بدل AppColors.authFormTitleLight hardcoded
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية

@@ -14,7 +14,7 @@
 //   ✅ AuthGlowLinePainter   ← بدل _GL الخاص
 //   ✅ AuthDiagLeftClipper   ← بدل _DCLeft الخاص
 //   ✅ AuthDiagRightClipper  ← بدل _DC الخاص الزائد
-//   ✅ AuthSubmitButton      ← بدل _B/_BS الخاص
+//   ✅ AuthOutlineButton     ← بدل _B/_BS الخاص
 //   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
 //   ✅ AppColors.authXxx     ← بدل Color hardcoded
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
