@@ -44,7 +44,7 @@ class _BrandingPanel extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(start: 8),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   'WELCOME BACK!',
                   textDirection: TextDirection.ltr,
