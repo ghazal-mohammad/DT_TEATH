@@ -16,13 +16,12 @@ class _FormSide extends StatelessWidget {
     required this.passCtrl,
     required this.loading,
     required this.error,
-    required this.isMobile,
     required this.entryCtrl,
     required this.onSubmit,
   });
 
   final TextEditingController emailCtrl, passCtrl;
-  final bool loading, isMobile;
+  final bool loading;
   final String? error;
   final AnimationController entryCtrl;
   final VoidCallback onSubmit;

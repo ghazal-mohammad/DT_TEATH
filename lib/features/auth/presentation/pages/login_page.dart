@@ -163,7 +163,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             passCtrl:  _passCtrl,
             loading:   _loading,
             error:     _error,
-            isMobile:  false,
             entryCtrl: _entryCtrl,
             onSubmit: _submit,
           ),
