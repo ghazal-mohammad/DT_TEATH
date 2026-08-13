@@ -8,6 +8,7 @@ import 'package:dt_teeth/features/auth/domain/repositories/auth_repository.dart'
 import 'package:dt_teeth/features/auth/presentation/pages/verify_code_page.dart';
 import 'package:dt_teeth/features/auth/presentation/widgets/auth_outline_button.dart';
 import 'package:dt_teeth/shared/bloc/locale_cubit.dart';
+import 'package:dt_teeth/shared/widgets/brand/app_logo.dart';
 
 class _MockAuthRepo extends Mock implements AuthRepository {}
 
@@ -41,5 +42,15 @@ void main() {
 
     expect(find.byType(AuthOutlineButton), findsOneWidget);
     expect(find.byType(PositionedDirectional), findsNWidgets(2));
+
+    // Fix 5: prove actual mirrored geometry, not just widget-type presence.
+    // verify_code has the OPPOSITE orientation from the other three pages:
+    // branding is at `end` (visual-left under RTL), form at `start`
+    // (visual-right under RTL) — so the branding logo must sit to the left
+    // of the form's submit button on screen.
+    expect(
+      tester.getTopLeft(find.byType(AppLogo)).dx,
+      lessThan(tester.getTopLeft(find.byType(AuthOutlineButton)).dx),
+    );
   });
 }
