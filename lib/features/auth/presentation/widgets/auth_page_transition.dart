@@ -29,6 +29,7 @@ class AuthCardGlowBorder extends StatefulWidget {
     required this.child,
     this.glowColor = AppColors.accent,
     this.borderRadius = 0.0,
+    this.border,
   });
 
   final Widget child;
@@ -36,6 +37,10 @@ class AuthCardGlowBorder extends StatefulWidget {
 
   /// 0 للصفحات الـ full-screen، وقيمة موجبة للكروت الداخلية.
   final double borderRadius;
+
+  /// حدّ مرئي إضافي فوق التوهج — null يعني توهج فقط (السلوك الأصلي
+  /// المستخدم كامل الشاشة في system_selection_page.dart يبقى دون تغيير).
+  final Border? border;
 
   @override
   State<AuthCardGlowBorder> createState() => _AuthCardGlowBorderState();
@@ -72,6 +77,7 @@ class _AuthCardGlowBorderState extends State<AuthCardGlowBorder>
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.borderRadius),
+            border: widget.border,
             boxShadow: [
               // توهج خارجي واسع
               BoxShadow(

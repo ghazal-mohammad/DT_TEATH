@@ -107,6 +107,7 @@ class _AuthFlowShellState extends State<AuthFlowShell>
                 constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 580),
                 child: AuthCardGlowBorder(
                   borderRadius: AppSizes.radiusLG,
+                  border: Border.all(color: AppColors.accent, width: 2),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizes.radiusLG),
                     child: AnimatedBuilder(
