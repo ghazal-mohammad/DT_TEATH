@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:dt_teeth/core/theme/app_colors.dart';
 import 'package:dt_teeth/features/auth/presentation/widgets/auth_underline_field.dart';
 
 Widget _wrap(Widget child, {TextDirection dir = TextDirection.ltr}) {
@@ -121,5 +122,40 @@ void main() {
 
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.decoration?.filled, isFalse);
+  });
+
+  testWidgets(
+      'obscureText: true is honored even without showObscureToggle (Fix 2)',
+      (tester) async {
+    final controller = TextEditingController();
+    await tester.pumpWidget(_wrap(AuthUnderlineField(
+      controller: controller,
+      label: 'x',
+      icon: Icons.lock_outline_rounded,
+      obscureText: true,
+    )));
+
+    expect(tester.widget<TextField>(find.byType(TextField)).obscureText, isTrue);
+  });
+
+  testWidgets(
+      'focusing a field with no suggestionDomains still rebuilds icon color (Fix 3)',
+      (tester) async {
+    final controller = TextEditingController(text: 'ali@clinic.com');
+    await tester.pumpWidget(_wrap(AuthUnderlineField(
+      controller: controller,
+      label: 'Email',
+      icon: Icons.alternate_email_rounded,
+    )));
+
+    Icon leadingIcon() =>
+        tester.widget<Icon>(find.byIcon(Icons.alternate_email_rounded));
+
+    expect(leadingIcon().color, isNot(AppColors.accent));
+
+    await tester.tap(find.byType(TextField));
+    await tester.pump();
+
+    expect(leadingIcon().color, AppColors.accent);
   });
 }

@@ -93,12 +93,13 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
   }
 
   void _onFocusChange() {
-    if (!_focusNode.hasFocus) {
-      setState(() => _suggestions = const []);
-    } else if (_suggestionsEnabled) {
-      setState(
-          () => _suggestions = _engine.suggestionsFor(widget.controller.text));
-    }
+    setState(() {
+      if (!_focusNode.hasFocus) {
+        _suggestions = const [];
+      } else if (_suggestionsEnabled) {
+        _suggestions = _engine.suggestionsFor(widget.controller.text);
+      }
+    });
   }
 
   void _onTextChanged() {
@@ -141,6 +142,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
           suffix = IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
+            tooltip: 'إظهار/إخفاء كلمة المرور',
             icon: Icon(
               _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
               size: 18,
@@ -152,6 +154,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
           suffix = IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
+            tooltip: 'مسح',
             icon: Icon(Icons.close_rounded, size: 18, color: iconColor),
             onPressed: () {
               widget.controller.clear();
@@ -169,7 +172,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
               controller: widget.controller,
               focusNode: _focusNode,
               enabled: widget.enabled,
-              obscureText: widget.showObscureToggle ? _obscure : false,
+              obscureText: _obscure,
               onChanged: widget.onChanged,
               onSubmitted: widget.onSubmitted,
               keyboardType: widget.keyboardType,
@@ -187,7 +190,11 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
                   color: isFocused ? AppColors.accent : labelColor,
                 ),
                 errorText: widget.errorText,
-                errorStyle: const TextStyle(color: AppColors.error, fontSize: 12),
+                errorStyle: const TextStyle(
+                  color: AppColors.error,
+                  fontSize: 12,
+                  fontFamily: AppTextStyles.fontFamily,
+                ),
                 prefixIcon: Icon(widget.icon, size: 20, color: iconColor),
                 suffixIcon: suffix,
                 isDense: true,

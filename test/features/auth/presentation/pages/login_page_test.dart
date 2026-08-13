@@ -10,6 +10,7 @@ import 'package:dt_teeth/features/auth/presentation/pages/login_page.dart';
 import 'package:dt_teeth/features/auth/presentation/widgets/auth_underline_field.dart';
 import 'package:dt_teeth/features/auth/presentation/widgets/auth_outline_button.dart';
 import 'package:dt_teeth/shared/bloc/locale_cubit.dart';
+import 'package:dt_teeth/shared/widgets/brand/app_logo.dart';
 
 class _MockAuthRepo extends Mock implements AuthRepository {}
 
@@ -44,5 +45,14 @@ void main() {
     expect(find.byType(AuthUnderlineField), findsNWidgets(2));
     expect(find.byType(AuthOutlineButton), findsOneWidget);
     expect(find.byType(PositionedDirectional), findsNWidgets(2));
+
+    // Fix 5: prove actual mirrored geometry, not just widget-type presence.
+    // Branding is at `start` (visual-right under RTL), form at `end`
+    // (visual-left under RTL) — so the branding logo must sit to the right
+    // of the form's submit button on screen.
+    expect(
+      tester.getTopLeft(find.byType(AppLogo)).dx,
+      greaterThan(tester.getTopLeft(find.byType(AuthOutlineButton)).dx),
+    );
   });
 }
