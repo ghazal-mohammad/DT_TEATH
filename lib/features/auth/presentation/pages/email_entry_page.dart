@@ -100,9 +100,12 @@ class _ViewState extends State<_View> with TickerProviderStateMixin {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: LayoutBuilder(
-          builder: (_, box) => box.maxWidth < 750
-              ? _buildMobile()
-              : _buildDesktop(box.maxWidth, box.maxHeight),
+          builder: (ctx, box) {
+            final bool isMobile = MediaQuery.sizeOf(ctx).width < 750;
+            return isMobile
+                ? _buildMobile()
+                : _buildDesktop(box.maxWidth, box.maxHeight);
+          },
         ),
       ),
     );
