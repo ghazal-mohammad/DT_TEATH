@@ -14,7 +14,7 @@
 //   ✅ AuthGlowLinePainter   ← بدل _GL الخاص
 //   ✅ AuthDiagLeftClipper   ← بدل _DCLeft الخاص
 //   ✅ AuthDiagRightClipper  ← بدل _DC الخاص الزائد
-//   ✅ AuthSubmitButton      ← بدل _B/_BS الخاص
+//   ✅ AuthOutlineButton     ← بدل _B/_BS الخاص
 //   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
 //   ✅ AppColors.authXxx     ← بدل Color hardcoded
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
@@ -37,7 +37,7 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_submit_button.dart';
+import '../widgets/auth_outline_button.dart';
 import '../widgets/otp_input.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -173,9 +173,12 @@ class _VerifyCodePageState extends State<VerifyCodePage>
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: LayoutBuilder(
-        builder: (ctx, box) => box.maxWidth < 750
-            ? _buildMobile()
-            : _buildDesktop(box.maxWidth, box.maxHeight),
+        builder: (ctx, box) {
+          final bool isMobile = MediaQuery.sizeOf(ctx).width < 750;
+          return isMobile
+              ? _buildMobile()
+              : _buildDesktop(box.maxWidth, box.maxHeight);
+        },
       ),
     );
   }
@@ -186,16 +189,16 @@ class _VerifyCodePageState extends State<VerifyCodePage>
   Widget _buildDesktop(double W, double H) {
     return Stack(
       children: [
-        // Branding (يمين — فوق الكحلي)
-        Positioned(
-          right: 0, width: W * 0.40,
+        // Branding (جهة النهاية — يسار في RTL، فوق الكحلي)
+        PositionedDirectional(
+          end: 0, width: W * 0.40,
           top: 0, bottom: 0,
           child: _BrandingPanel(entryCtrl: _entryCtrl),
         ),
 
-        // Form (يسار — فوق الأبيض)
-        Positioned(
-          left: 0, right: W * 0.67,
+        // Form (جهة البداية — يمين في RTL، فوق الأبيض)
+        PositionedDirectional(
+          start: 0, end: W * 0.67,
           top: 0, bottom: 0,
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -318,9 +321,9 @@ class _BrandingPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      // padding معكوس (left/right) لأن الـ branding على اليمين هنا
-      padding: const EdgeInsets.only(
-        right: 28, left: 160, top: 28, bottom: 40,
+      // padding معكوس (start/end) لأن الـ branding على جهة النهاية هنا
+      padding: const EdgeInsetsDirectional.only(
+        end: 28, start: 160, top: 28, bottom: 40,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -342,10 +345,10 @@ class _BrandingPanel extends StatelessWidget {
             controller: entryCtrl,
             delay: AuthStaggerDelays.title,
             child: Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsetsDirectional.only(start: 8),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   'WELCOME BACK!',
                   textDirection: TextDirection.ltr,
@@ -548,16 +551,15 @@ class _FormContent extends StatelessWidget {
         ),
         const SizedBox(height: AppSizes.spaceXL),
 
-        // Submit button (مشترك — AuthSubmitButton)
+        // Submit button (مشترك — AuthOutlineButton)
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.button,
-          child: AuthSubmitButton(
+          child: AuthOutlineButton(
             label: context.l10n.authContinue,
             onPressed: onVerify,
             isLoading: verifying,
             isEnabled: code.length == 6 && !verifying,
-            darkMode: isMobile,
             withPulseAnimation: true,
           ),
         ),

@@ -14,20 +14,17 @@ class _FormSide extends StatelessWidget {
   const _FormSide({
     required this.emailCtrl,
     required this.passCtrl,
-    required this.obscure,
     required this.loading,
     required this.error,
-    required this.isMobile,
     required this.entryCtrl,
-    required this.onToggleObscure,
     required this.onSubmit,
   });
 
   final TextEditingController emailCtrl, passCtrl;
-  final bool obscure, loading, isMobile;
+  final bool loading;
   final String? error;
   final AnimationController entryCtrl;
-  final VoidCallback onToggleObscure, onSubmit;
+  final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +45,10 @@ class _FormSide extends StatelessWidget {
                   child: _FormContent(
                     emailCtrl: emailCtrl,
                     passCtrl:  passCtrl,
-                    obscure:   obscure,
                     loading:   loading,
                     error:     error,
                     isMobile:  false,
                     entryCtrl: entryCtrl,
-                    onToggleObscure: onToggleObscure,
                     onSubmit: onSubmit,
                   ),
                 ),
@@ -74,20 +69,18 @@ class _FormContent extends StatelessWidget {
   const _FormContent({
     required this.emailCtrl,
     required this.passCtrl,
-    required this.obscure,
     required this.loading,
     required this.error,
     required this.isMobile,
     required this.entryCtrl,
-    required this.onToggleObscure,
     required this.onSubmit,
   });
 
   final TextEditingController emailCtrl, passCtrl;
-  final bool obscure, loading, isMobile;
+  final bool loading, isMobile;
   final String? error;
   final AnimationController entryCtrl;
-  final VoidCallback onToggleObscure, onSubmit;
+  final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +102,7 @@ class _FormContent extends StatelessWidget {
             child: const Align(
               alignment: AlignmentDirectional.topEnd,
               child: Padding(
-                padding: EdgeInsets.only(bottom: AppSizes.spaceXXL),
+                padding: EdgeInsets.only(bottom: AppSizes.spaceLG),
                 child: AppLanguageToggle(
                   variant: AppLanguageToggleVariant.compact,
                 ),
@@ -172,7 +165,7 @@ class _FormContent extends StatelessWidget {
             style: AppTextStyles.authFormSubtitle.copyWith(color: sub),
           ),
         ),
-        const SizedBox(height: AppSizes.space2XL),
+        const SizedBox(height: AppSizes.spaceXL),
 
         // Error box
         if (error != null) ...[
@@ -213,63 +206,30 @@ class _FormContent extends StatelessWidget {
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.field1,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _FieldLabel(
-                label: isAr ? 'البريد الإلكتروني' : 'Email',
-                dark: isMobile,
-              ),
-              const SizedBox(height: AppSizes.spaceXS),
-              _InputField(
-                controller: emailCtrl,
-                hint: 'example@dtteeth.com',
-                icon: Icons.alternate_email_rounded,
-                dark: isMobile,
-                keyboardType: TextInputType.emailAddress,
-                autofillHints: const [AutofillHints.username],
-              ),
-            ],
+          child: AuthUnderlineField(
+            controller: emailCtrl,
+            label: isAr ? 'البريد الإلكتروني' : 'Email',
+            icon: Icons.alternate_email_rounded,
+            dark: isMobile,
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: const [AutofillHints.username],
           ),
         ),
+        const SizedBox(height: AppSizes.spaceMD),
 
         // Password field
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.field2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _FieldLabel(
-                label: isAr ? 'كلمة المرور' : 'Password',
-                dark: isMobile,
-              ),
-              const SizedBox(height: AppSizes.spaceXS),
-              _InputField(
-                controller: passCtrl,
-                hint: '••••••••',
-                icon: Icons.lock_outline_rounded,
-                dark: isMobile,
-                obscureText: obscure,
-                onSubmitted: (_) => onSubmit(),
-                autofillHints: const [AutofillHints.password],
-                suffix: GestureDetector(
-                  onTap: onToggleObscure,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 4),
-                    child: Icon(
-                      obscure
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      size: 18,
-                      color: isMobile
-                          ? AppColors.authInputIconMobile()
-                          : AppColors.authInputIconLight,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          child: AuthUnderlineField(
+            controller: passCtrl,
+            label: isAr ? 'كلمة المرور' : 'Password',
+            icon: Icons.lock_outline_rounded,
+            dark: isMobile,
+            obscureText: true,
+            showObscureToggle: true,
+            onSubmitted: (_) => onSubmit(),
+            autofillHints: const [AutofillHints.password],
           ),
         ),
         const SizedBox(height: AppSizes.spaceXS),
@@ -303,20 +263,19 @@ class _FormContent extends StatelessWidget {
         ),
         const SizedBox(height: AppSizes.spaceLG),
 
-        // Submit button (مشترك — AuthSubmitButton بدون pulse)
+        // Submit button (مشترك — AuthOutlineButton بدون pulse)
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.button,
-          child: AuthSubmitButton(
+          child: AuthOutlineButton(
             label: isAr ? 'تسجيل الدخول' : 'Sign In',
             onPressed: onSubmit,
             isLoading: loading,
-            darkMode: isMobile,
-            withPulseAnimation: false, // login بدون pulse (كما في الفيديو)
+            withPulseAnimation: false, // login بدون pulse (كما سابقاً)
             icon: Icons.login_rounded,
           ),
         ),
-        const SizedBox(height: AppSizes.spaceXL),
+        const SizedBox(height: AppSizes.spaceLG),
 
         // First time link
         AuthEntryAnimator(
@@ -325,117 +284,6 @@ class _FormContent extends StatelessWidget {
           child: _FirstTimeLink(isMobile: isMobile),
         ),
       ],
-    );
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//  FIELD LABEL — label فوق حقول الـ Input
-// ══════════════════════════════════════════════════════════════════════════
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel({required this.label, required this.dark});
-
-  final String label;
-  final bool dark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: AppTextStyles.authFieldLabel.copyWith(
-        color: dark
-            ? AppColors.authFormTextMobile(alpha: 0.85)
-            : AppColors.authLabelLight,
-      ),
-    );
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-//  INPUT FIELD — حقل الإدخال الموحّد لـ login_page
-// ══════════════════════════════════════════════════════════════════════════
-
-class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    required this.dark,
-    this.obscureText = false,
-    this.keyboardType,
-    this.onSubmitted,
-    this.suffix,
-    this.autofillHints,
-  });
-
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final bool dark;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final ValueChanged<String>? onSubmitted;
-  final Widget? suffix;
-  final Iterable<String>? autofillHints;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSizes.spaceMD),
-      decoration: BoxDecoration(
-        color: dark
-            ? AppColors.authInputBgMobile()
-            : AppColors.authInputBgLight,
-        border: Border.all(
-          color: dark
-              ? AppColors.authInputBorderMobile()
-              : AppColors.authInputBorderLight,
-        ),
-        borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 13),
-          Icon(
-            icon,
-            size: 16,
-            color: dark
-                ? AppColors.authInputIconMobile()
-                : AppColors.authInputIconLight,
-          ),
-          const SizedBox(width: 9),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              obscureText: obscureText,
-              keyboardType: keyboardType,
-              textDirection: TextDirection.ltr,
-              onSubmitted: onSubmitted,
-              autofillHints: autofillHints,
-              autocorrect: false,
-              enableSuggestions: false,
-              style: AppTextStyles.authFieldInput.copyWith(
-                color: dark
-                    ? AppColors.authFormTextMobile()
-                    : AppColors.authInputTextLight,
-              ),
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: AppTextStyles.authFieldHint.copyWith(
-                  color: dark
-                      ? AppColors.authInputBgMobile(alpha: 0.28)
-                      : AppColors.authInputHintLight,
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 13),
-              ),
-            ),
-          ),
-          if (suffix != null) suffix!,
-          const SizedBox(width: 4),
-        ],
-      ),
     );
   }
 }

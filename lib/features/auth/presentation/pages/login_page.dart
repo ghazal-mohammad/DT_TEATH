@@ -13,7 +13,7 @@
 //   ✅ AuthNavyBackground    ← بدل gradient مكرر (كان 2 مرة في نفس الملف)
 //   ✅ AuthGlowLinePainter   ← بدل _GlowLine الخاص
 //   ✅ AuthDiagRightClipper  ← بدل _DiagClipper الخاص
-//   ✅ AuthSubmitButton      ← بدل _SubmitBtn الخاص (withPulseAnimation: false)
+//   ✅ AuthOutlineButton     ← بدل _SubmitBtn الخاص (withPulseAnimation: false)
 //   ✅ AppTextStyles.authXxx ← بدل fontFamily: AppTextStyles.fontFamily يدوي
 //   ✅ AppColors.authXxx     ← بدل AppColors.authFormTitleLight hardcoded
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
@@ -34,7 +34,8 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../bloc/login_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_submit_button.dart';
+import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_underline_field.dart';
 
 part '../widgets/login/login_branding_panel.dart';
 part '../widgets/login/login_form_side.dart';
@@ -58,7 +59,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late final AnimationController _entryCtrl;
 
   bool _loading  = false;
-  bool _obscure  = true;
   String? _error;
 
   final LoginCubit _cubit = sl<LoginCubit>();
@@ -131,9 +131,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: LayoutBuilder(
-        builder: (ctx, box) => box.maxWidth < 750
-            ? _buildMobile()
-            : _buildDesktop(ctx, box.maxWidth, box.maxHeight),
+        builder: (ctx, box) {
+          final bool isMobile = MediaQuery.sizeOf(ctx).width < 750;
+          return isMobile
+              ? _buildMobile()
+              : _buildDesktop(ctx, box.maxWidth, box.maxHeight);
+        },
       ),
     );
   }
@@ -144,26 +147,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildDesktop(BuildContext ctx, double W, double H) {
     return Stack(
       children: [
-        // Branding (يسار — فوق الكحلي)
-        Positioned(
-          left: 0, width: W * 0.40,
+        // Branding (جهة البداية — يمين في RTL، فوق الكحلي)
+        PositionedDirectional(
+          start: 0, width: W * 0.40,
           top: 0, bottom: 0,
           child: _BrandingPanel(entryCtrl: _entryCtrl),
         ),
 
-        // Form (يمين — فوق الأبيض)
-        Positioned(
-          left: W * 0.67, right: 0,
+        // Form (جهة النهاية — يسار في RTL، فوق الأبيض)
+        PositionedDirectional(
+          start: W * 0.67, end: 0,
           top: 0, bottom: 0,
           child: _FormSide(
             emailCtrl: _emailCtrl,
             passCtrl:  _passCtrl,
-            obscure:   _obscure,
             loading:   _loading,
             error:     _error,
-            isMobile:  false,
             entryCtrl: _entryCtrl,
-            onToggleObscure: () => setState(() => _obscure = !_obscure),
             onSubmit: _submit,
           ),
         ),
@@ -214,12 +214,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             _FormContent(
               emailCtrl: _emailCtrl,
               passCtrl:  _passCtrl,
-              obscure:   _obscure,
               loading:   _loading,
               error:     _error,
               isMobile:  true,
               entryCtrl: _entryCtrl,
-              onToggleObscure: () => setState(() => _obscure = !_obscure),
               onSubmit: _submit,
             ),
           ],

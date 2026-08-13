@@ -15,7 +15,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sizes.dart';
 import 'auth_layout_painters.dart';
+import 'auth_page_transition.dart';
 
 /// موضعا طرفي الفاصل القطري (كنسبة من العرض): الطرف العلوي الأبعد والسفلي الأقرب.
 /// الفرق بينهما = حدّة ميل القطر. المرجع ~40° (skewY(40deg))؛ نستخدم ميلًا قويًا
@@ -88,25 +90,45 @@ class _AuthFlowShellState extends State<AuthFlowShell>
       body: LayoutBuilder(
         builder: (_, box) {
           final bool isMobile = box.maxWidth < 750;
-          return Stack(
-            children: [
-              // الخلفية الدائمة — تدور على سطح المكتب، ثابتة كحلية على الموبايل.
-              Positioned.fill(
-                child: isMobile
-                    ? const AuthNavyBackground()
-                    : AnimatedBuilder(
-                        animation: Listenable.merge([_rot, _glow]),
-                        builder: (_, __) => AuthRotatingBackground(
-                          // Curves.ease = cubic-bezier(0.25,0.1,0.25,1) = CSS `ease`
-                          // (نفس منحنى انتقال المرجع تماماً).
-                          progress: Curves.ease.transform(_rot.value),
-                          glowPhase: _glow.value * 2 * math.pi,
-                        ),
+
+          if (isMobile) {
+            return Stack(
+              children: [
+                const AuthNavyBackground(),
+                Positioned.fill(child: widget.child),
+              ],
+            );
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 580),
+                child: AuthCardGlowBorder(
+                  borderRadius: AppSizes.radiusLG,
+                  border: Border.all(color: AppColors.accent, width: 2),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+                    child: AnimatedBuilder(
+                      animation: Listenable.merge([_rot, _glow]),
+                      builder: (_, __) => Stack(
+                        children: [
+                          Positioned.fill(
+                            child: AuthRotatingBackground(
+                              // Curves.ease = cubic-bezier(0.25,0.1,0.25,1) = CSS `ease`.
+                              progress: Curves.ease.transform(_rot.value),
+                              glowPhase: _glow.value * 2 * math.pi,
+                            ),
+                          ),
+                          Positioned.fill(child: widget.child),
+                        ],
                       ),
+                    ),
+                  ),
+                ),
               ),
-              // محتوى الخطوة الحالية (شفّاف) فوق الخلفية.
-              Positioned.fill(child: widget.child),
-            ],
+            ),
           );
         },
       ),
@@ -141,7 +163,8 @@ class AuthRotatingBackground extends StatelessWidget {
     return LayoutBuilder(
       builder: (_, box) {
         final double w = box.maxWidth, h = box.maxHeight;
-        final double p = progress;
+        final bool isRtl = Directionality.of(context) == TextDirection.rtl;
+        final double p = isRtl ? 1.0 - progress : progress;
 
         // طرفا الفاصل ينزلقان أفقيًا مع انعكاس الميل (top ↔ bottom) — القطر
         // يبقى مائلًا بحدّة (±0.10w حول المنتصف) ولا يمرّ بالوضع الأفقي.

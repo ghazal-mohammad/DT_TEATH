@@ -46,6 +46,9 @@ class AuthEntryAnimator extends StatelessWidget {
       parent: controller,
       curve: delay,
     );
+    final bool isRtl = Directionality.of(context) == TextDirection.rtl;
+    final Offset effectiveOffset =
+        Offset(isRtl ? -slideOffset.dx : slideOffset.dx, slideOffset.dy);
 
     return AnimatedBuilder(
       animation: driven,
@@ -56,7 +59,7 @@ class AuthEntryAnimator extends StatelessWidget {
         final double blur = maxBlur * inv;
 
         Widget result = Transform.translate(
-          offset: Offset(slideOffset.dx * inv, slideOffset.dy * inv),
+          offset: Offset(effectiveOffset.dx * inv, effectiveOffset.dy * inv),
           child: Opacity(opacity: t.clamp(0.0, 1.0), child: c),
         );
 

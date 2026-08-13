@@ -18,8 +18,8 @@ class _BrandingPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 28, right: 160, top: 28, bottom: 40,
+      padding: const EdgeInsetsDirectional.only(
+        start: 28, end: 160, top: 28, bottom: 40,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -41,10 +41,10 @@ class _BrandingPanel extends StatelessWidget {
             controller: entryCtrl,
             delay: AuthStaggerDelays.title,
             child: Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsetsDirectional.only(start: 8),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   'WELCOME BACK!',
                   textDirection: TextDirection.ltr,

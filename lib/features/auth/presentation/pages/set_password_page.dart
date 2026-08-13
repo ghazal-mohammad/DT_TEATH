@@ -15,8 +15,8 @@ import '../../../../shared/widgets/brand/app_logo.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
-import '../widgets/auth_submit_button.dart';
-import '../widgets/password_form_field.dart';
+import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_underline_field.dart';
 import '../widgets/password_strength_meter.dart';
 
 class SetPasswordPage extends StatefulWidget {
@@ -146,9 +146,12 @@ class _SetPasswordPageState extends State<SetPasswordPage>
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: LayoutBuilder(
-        builder: (ctx, box) => box.maxWidth < 750
-            ? _buildMobile()
-            : _buildDesktop(box.maxWidth, box.maxHeight),
+        builder: (ctx, box) {
+          final bool isMobile = MediaQuery.sizeOf(ctx).width < 750;
+          return isMobile
+              ? _buildMobile()
+              : _buildDesktop(box.maxWidth, box.maxHeight);
+        },
       ),
     );
   }
@@ -157,14 +160,14 @@ class _SetPasswordPageState extends State<SetPasswordPage>
   Widget _buildDesktop(double W, double H) {
     return Stack(
       children: [
-        Positioned(
-          left: 0, width: W * 0.40,
+        PositionedDirectional(
+          start: 0, width: W * 0.40,
           top: 0, bottom: 0,
           child: _BrandingPanel(entryCtrl: _entryCtrl),
         ),
 
-        Positioned(
-          left: W * 0.67, right: 0,
+        PositionedDirectional(
+          start: W * 0.67, end: 0,
           top: 0, bottom: 0,
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -284,8 +287,8 @@ class _BrandingPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 28, right: 160, top: 28, bottom: 40,
+      padding: const EdgeInsetsDirectional.only(
+        start: 28, end: 160, top: 28, bottom: 40,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -307,10 +310,10 @@ class _BrandingPanel extends StatelessWidget {
             controller: entryCtrl,
             delay: AuthStaggerDelays.title,
             child: Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsetsDirectional.only(start: 8),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   'ALMOST THERE!',
                   textDirection: TextDirection.ltr,
@@ -461,16 +464,16 @@ class _FormContent extends StatelessWidget {
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.field1,
-          child: Theme(
-            data: Theme.of(context).copyWith(brightness: fieldBrightness),
-            child: PasswordFormField(
-              controller: pwdCtrl,
-              label: context.l10n.password,
-              hint: context.l10n.passwordHint,
-              enabled: !submitting,
-              errorText: errPwd,
-              onChanged: onPwdChanged,
-            ),
+          child: AuthUnderlineField(
+            controller: pwdCtrl,
+            label: context.l10n.password,
+            icon: Icons.lock_outline_rounded,
+            dark: isMobile,
+            enabled: !submitting,
+            errorText: errPwd,
+            onChanged: onPwdChanged,
+            obscureText: true,
+            showObscureToggle: true,
           ),
         ),
 
@@ -485,26 +488,26 @@ class _FormContent extends StatelessWidget {
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.field2,
-          child: Theme(
-            data: Theme.of(context).copyWith(brightness: fieldBrightness),
-            child: PasswordFormField(
-              controller: cfmCtrl,
-              label: context.l10n.passwordConfirm,
-              hint: context.l10n.passwordHint,
-              enabled: !submitting,
-              errorText: errCfm,
-              onChanged: onCfmChanged,
-              onSubmitted: (_) => valid ? onSubmit() : null,
-            ),
+          child: AuthUnderlineField(
+            controller: cfmCtrl,
+            label: context.l10n.passwordConfirm,
+            icon: Icons.lock_outline_rounded,
+            dark: isMobile,
+            enabled: !submitting,
+            errorText: errCfm,
+            onChanged: onCfmChanged,
+            onSubmitted: (_) => valid ? onSubmit() : null,
+            obscureText: true,
+            showObscureToggle: true,
           ),
         ),
         const SizedBox(height: AppSizes.spaceXL),
 
-        // Submit button (مشترك — AuthSubmitButton)
+        // Submit button (مشترك — AuthOutlineButton)
         AuthEntryAnimator(
           controller: entryCtrl,
           delay: AuthStaggerDelays.button,
-          child: AuthSubmitButton(
+          child: AuthOutlineButton(
             label: mode == AuthFlowMode.reset
                 ? (Localizations.localeOf(context).languageCode == 'ar'
                     ? 'إعادة تعيين كلمة المرور'
@@ -513,7 +516,6 @@ class _FormContent extends StatelessWidget {
             onPressed: onSubmit,
             isLoading: submitting,
             isEnabled: valid && !submitting,
-            darkMode: isMobile,
             withPulseAnimation: true,
             icon: Icons.check_rounded,
           ),
