@@ -102,7 +102,7 @@ class _FormContent extends StatelessWidget {
             child: const Align(
               alignment: AlignmentDirectional.topEnd,
               child: Padding(
-                padding: EdgeInsets.only(bottom: AppSizes.spaceXXL),
+                padding: EdgeInsets.only(bottom: AppSizes.spaceLG),
                 child: AppLanguageToggle(
                   variant: AppLanguageToggleVariant.compact,
                 ),
@@ -165,7 +165,7 @@ class _FormContent extends StatelessWidget {
             style: AppTextStyles.authFormSubtitle.copyWith(color: sub),
           ),
         ),
-        const SizedBox(height: AppSizes.space2XL),
+        const SizedBox(height: AppSizes.spaceXL),
 
         // Error box
         if (error != null) ...[
@@ -275,7 +275,7 @@ class _FormContent extends StatelessWidget {
             icon: Icons.login_rounded,
           ),
         ),
-        const SizedBox(height: AppSizes.spaceXL),
+        const SizedBox(height: AppSizes.spaceLG),
 
         // First time link
         AuthEntryAnimator(
