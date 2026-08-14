@@ -7,12 +7,9 @@
 //   فصل الـ UI عن مصدر البيانات. الواجهة تعرّف العمليات (CRUD) بدون
 //   الالتزام بطريقة التطبيق (mock / API / cache).
 //
-// 🔮 خطّة التطبيقات (implementations):
-//   - Phase 4.3 (الحالي): MockWarehouseMaterialsRepository → بيانات ثابتة
-//   - Phase 6 (Backend): RemoteWarehouseMaterialsRepository → REST API
-//   - Phase 7 (Offline): CachedWarehouseMaterialsRepository → SQLite + sync
-//
-// كل implementation تنفذ نفس interface — الـ UI ما يلاحظ الفرق.
+// التطبيق الحقيقي: RemoteWarehouseMaterialsRepository → REST API (مع كاش
+// أوفلاين عبر core/offline). كل implementation تنفذ نفس interface — الـ UI
+// ما يلاحظ الفرق.
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/warehouse_material.dart';

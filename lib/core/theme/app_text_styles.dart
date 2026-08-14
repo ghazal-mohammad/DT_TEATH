@@ -168,7 +168,7 @@ class AppTextStyles {
   // مصدر حقيقة واحد بدل 234 تكرار لـ fontFamily: AppTextStyles.fontFamily.
 
   /// عنوان Branding الكبير — Desktop (WELCOME! / ALMOST THERE!)
-  /// يُستخدم في [AuthBrandingPanel].
+  /// يُستخدم في LoginBrandingPanel وصفحات Auth.
   static const TextStyle authHeroTitle = TextStyle(
     fontFamily: fontFamily,
     fontFamilyFallback: fontFamilyFallback,
