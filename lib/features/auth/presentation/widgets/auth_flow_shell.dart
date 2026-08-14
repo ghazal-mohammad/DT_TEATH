@@ -107,7 +107,8 @@ class _AuthFlowShellState extends State<AuthFlowShell>
                 constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 580),
                 child: AuthCardGlowBorder(
                   borderRadius: AppSizes.radiusLG,
-                  border: Border.all(color: AppColors.accent, width: 2),
+                  glowColor: AppColors.authGlowBlue,
+                  border: Border.all(color: AppColors.authBorderBlue, width: 2),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizes.radiusLG),
                     child: AnimatedBuilder(
@@ -211,7 +212,7 @@ class AuthRotatingBackground extends StatelessWidget {
                   start: Offset(topX, 0),
                   end: Offset(botX, h),
                   phase: glowPhase,
-                  glowColor: AppColors.accent,
+                  glowColor: AppColors.authGlowBlue,
                 ),
               ),
             ),

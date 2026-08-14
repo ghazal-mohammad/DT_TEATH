@@ -132,7 +132,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
       builder: (context, value, _) {
         final bool isFocused = _focusNode.hasFocus;
         final Color iconColor = isFocused
-            ? AppColors.accent
+            ? AppColors.authBorderBlue
             : (widget.dark
                 ? Colors.white.withValues(alpha: 0.55)
                 : AppColors.authInputIconLight);
@@ -187,7 +187,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
                 labelStyle: AppTextStyles.authFieldLabel.copyWith(color: labelColor),
                 floatingLabelStyle: AppTextStyles.authFieldLabel.copyWith(
-                  color: isFocused ? AppColors.accent : labelColor,
+                  color: isFocused ? AppColors.authBorderBlue : labelColor,
                 ),
                 errorText: widget.errorText,
                 errorStyle: const TextStyle(
@@ -204,7 +204,7 @@ class _AuthUnderlineFieldState extends State<AuthUnderlineField> {
                   borderSide: BorderSide(color: lineColor, width: 1.5),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.accent, width: 2),
+                  borderSide: BorderSide(color: AppColors.authBorderBlue, width: 2),
                 ),
                 errorBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: AppColors.error, width: 1.5),
@@ -251,7 +251,7 @@ class _SuggestionsPanel extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: dark ? AppColors.darkSurface : AppColors.lightSurface,
-          border: Border.all(color: AppColors.accent.withValues(alpha: 0.35)),
+          border: Border.all(color: AppColors.authBorderBlue.withValues(alpha: 0.35)),
           borderRadius: BorderRadius.circular(AppSizes.radiusMD),
         ),
         clipBehavior: Clip.antiAlias,
@@ -303,7 +303,7 @@ class _SuggestionRowState extends State<_SuggestionRow> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           color: _hovered
-              ? AppColors.accent.withValues(alpha: 0.10)
+              ? AppColors.authGlowBlue.withValues(alpha: 0.10)
               : Colors.transparent,
           child: Text(
             widget.text,

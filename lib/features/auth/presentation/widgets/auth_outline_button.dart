@@ -102,8 +102,8 @@ class _AuthOutlineButtonState extends State<AuthOutlineButton>
         ? _pulseAnim
         : const AlwaysStoppedAnimation<double>(0.0);
     final Color fg = active
-        ? AppColors.accent
-        : AppColors.accent.withValues(alpha: 0.35);
+        ? AppColors.authBorderBlue
+        : AppColors.authBorderBlue.withValues(alpha: 0.35);
 
     return Semantics(
       button: true,
@@ -143,8 +143,8 @@ class _AuthOutlineButtonState extends State<AuthOutlineButton>
                     borderRadius: BorderRadius.circular(AppSizes.radiusLG),
                     border: Border.all(
                       color: active
-                          ? AppColors.accent
-                          : AppColors.accent.withValues(alpha: 0.35),
+                          ? AppColors.authBorderBlue
+                          : AppColors.authBorderBlue.withValues(alpha: 0.35),
                       width: 2,
                     ),
                     gradient: sweep > 0
@@ -152,8 +152,8 @@ class _AuthOutlineButtonState extends State<AuthOutlineButton>
                             begin: AlignmentDirectional.centerStart,
                             end: AlignmentDirectional.centerEnd,
                             colors: [
-                              AppColors.accent.withValues(alpha: 0.20),
-                              AppColors.accent.withValues(alpha: 0.20),
+                              AppColors.authGlowBlue.withValues(alpha: 0.20),
+                              AppColors.authGlowBlue.withValues(alpha: 0.20),
                               Colors.transparent,
                             ],
                             stops: [

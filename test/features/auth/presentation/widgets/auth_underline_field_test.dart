@@ -151,11 +151,11 @@ void main() {
     Icon leadingIcon() =>
         tester.widget<Icon>(find.byIcon(Icons.alternate_email_rounded));
 
-    expect(leadingIcon().color, isNot(AppColors.accent));
+    expect(leadingIcon().color, isNot(AppColors.authBorderBlue));
 
     await tester.tap(find.byType(TextField));
     await tester.pump();
 
-    expect(leadingIcon().color, AppColors.accent);
+    expect(leadingIcon().color, AppColors.authBorderBlue);
   });
 }
