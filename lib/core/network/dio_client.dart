@@ -55,6 +55,11 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // sendTimeout بلا جسم طلب (GET) يطبع تحذيراً على الويب في كل مرة
+          // ("sendTimeout cannot be used without a request body to send on
+          // Web") — Dio يتجاهله فعلياً فلا فرق وظيفي، لكنه يُغرق الـ console.
+          if (options.method == 'GET') options.sendTimeout = null;
+
           // حارس النقل الآمن: خارج التطوير المحلّي، امنع أي طلب non-HTTPS
           // (يحمي بيانات المرضى من الإرسال عبر قناة غير مشفّرة — دفاع بعمق
           // ضد تجاوز API_BASE_URL خاطئ بعنوان http في الإنتاج/الاختبار).

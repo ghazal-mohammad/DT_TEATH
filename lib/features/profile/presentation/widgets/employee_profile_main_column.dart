@@ -115,7 +115,9 @@ class _MainColumn extends StatelessWidget {
           const SizedBox(height: 18),
           const AppShimmerCard(height: 140),
           const SizedBox(height: 18),
-          const AppShimmerCard(height: 100),
+          // 112 لا 100: تخطيط basic (عنوان+سطرين+شريط سفلي) يحتاج ~108px
+          // كحدّ أدنى — 100 كانت تُسبّب RenderFlex overflow بمقدار 6px.
+          const AppShimmerCard(height: 112),
         ],
         if (data.educations.isNotEmpty) ...[
           const SizedBox(height: 18),
