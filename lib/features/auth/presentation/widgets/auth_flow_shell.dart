@@ -86,7 +86,7 @@ class _AuthFlowShellState extends State<AuthFlowShell>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.darkBg,
+      backgroundColor: AppColors.tableHeader,
       body: LayoutBuilder(
         builder: (_, box) {
           final bool isMobile = box.maxWidth < 750;

@@ -367,11 +367,17 @@ class _BrandingPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.subtitle,
-            child: Text(
-              'DENTAL CLINIC MANAGEMENT SYSTEM',
-              textDirection: TextDirection.ltr,
-              style: AppTextStyles.authSystemSubtitle.copyWith(
-                color: AppColors.reservedBg.withValues(alpha: 0.80),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                'DENTAL CLINIC MANAGEMENT SYSTEM',
+                textDirection: TextDirection.ltr,
+                maxLines: 1,
+                softWrap: false,
+                style: AppTextStyles.authSystemSubtitle.copyWith(
+                  color: AppColors.reservedBg.withValues(alpha: 0.80),
+                ),
               ),
             ),
           ),
