@@ -3,9 +3,10 @@
   "@@x-metadata": {
     "version": "1.0.0",
     "description": "DT.Teeth English translations — template for all locales.",
-    "contributors": ["Shams (owner)"]
+    "contributors": [
+      "Shams (owner)"
+    ]
   },
-
   "appName": "DT.Teeth",
   "privacyScreenHint": "Protected content",
   "@appName": {
@@ -19,7 +20,6 @@
   "@appVersion": {
     "description": "Version label shown in sidebar."
   },
-
   "login": "Sign In",
   "loginTitle": "Welcome Back",
   "loginSubtitle": "Sign in to continue",
@@ -42,7 +42,6 @@
   "rememberMe": "Remember Me",
   "forgotPassword": "Forgot Password?",
   "logout": "Sign Out",
-
   "authEnterEmailTitle": "Let's get you started",
   "@authEnterEmailTitle": {
     "description": "Email entry screen title — Phase 3.3."
@@ -82,7 +81,6 @@
   "@authCheckEmailSent": {
     "description": "Generic response for security (doesn't reveal if email exists)."
   },
-
   "labSystem": "Lab System",
   "warehouseSystem": "Warehouse System",
   "systemLabDesc": "Manage prosthetics orders, technicians and reports",
@@ -91,23 +89,22 @@
   "systemSelectSubtitle": "Select the system you want to work on",
   "systemPreviewNote": "Preview mode — you can switch anytime",
   "switchSystem": "Switch System",
-
   "dashboard": "Home",
   "reports": "Reports",
   "notifications": "Notifications",
   "settings": "Settings",
-
   "doctorOrders": "Doctor Orders",
   "technicians": "Technicians",
   "labReports": "Lab Reports",
+  "reportsPreviousPeriod": "Previous period",
+  "reportsNextPeriod": "Next period",
+  "reportsBackToToday": "Today",
   "materialRequests": "Material Requests",
-
   "materials": "Materials",
   "orders": "Orders",
   "invoices": "Invoices",
   "suppliers": "Suppliers",
   "inventory": "Inventory",
-
   "sectionMain": "Main",
   "sectionInventory": "Inventory",
   "sectionFinance": "Finance",
@@ -117,7 +114,6 @@
   "sectionOperations": "Operations",
   "sectionAccount": "Account",
   "menu": "Menu",
-
   "search": "Search in system...",
   "commandPaletteHint": "Search or jump... (order, product, technician, material)",
   "commandPaletteEmpty": "No matching results",
@@ -141,13 +137,11 @@
   "viewAll": "View All",
   "viewDetails": "View Details",
   "retry": "Retry",
-
   "loading": "Loading...",
   "noData": "No Data",
   "noResults": "No Results",
   "error": "Error Occurred",
   "success": "Operation Successful",
-
   "statusNew": "New",
   "statusPendingMaterials": "Pending Materials",
   "statusManufacturing": "Manufacturing",
@@ -155,17 +149,19 @@
   "statusCancelled": "Cancelled",
   "statusDelivered": "Delivered",
   "statusRejected": "Rejected",
-
   "statusReserved": "Reserved",
   "statusEmpty": "Empty",
   "statusOccupied": "Occupied",
   "statusMaintenance": "Maintenance",
-
   "errorNetwork": "No internet connection — check your network",
   "networkOfflineBanner": "No internet connection",
   "syncPendingBanner": "{count} change(s) awaiting sync",
   "@syncPendingBanner": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "errorServer": "Server error — try again in a moment",
   "errorTimeout": "Request timed out — server not responding",
@@ -175,7 +171,6 @@
   "errorValidation": "Please check required fields",
   "errorMaintenance": "Server under maintenance — come back later",
   "errorCache": "Local data error — please try again",
-
   "theme": "Theme",
   "darkMode": "Dark",
   "lightMode": "Light",
@@ -196,20 +191,16 @@
   "fontNormal": "Normal",
   "fontLarge": "Large",
   "fontXLarge": "Extra Large",
-
   "welcomeWarehouse": "Welcome to the Warehouse System 📦",
   "welcomeLab": "Welcome to the Lab System 🧪",
   "systemStatusOk": "Last updated: today — all systems operating normally",
-
   "roleLabManager": "Lab Manager",
   "roleWarehouseManager": "Warehouse Manager",
   "roleDentist": "Dentist",
   "roleSecretary": "Secretary",
   "roleAdmin": "Administrator",
-
   "labSystemBadge": "Lab System",
   "warehouseSystemBadge": "Warehouse System",
-
   "emptyNoOrdersTitle": "No Orders Yet",
   "emptyNoOrdersMessage": "Orders will appear here when added",
   "emptyNoMaterialsTitle": "No Materials",
@@ -226,13 +217,10 @@
   "emptyNoReportsMessage": "Reports will appear once data is collected",
   "emptyErrorTitle": "Failed to Load Data",
   "emptyErrorMessage": "An error occurred while connecting to the server",
-
   "actionAddFirst": "Add First Item",
   "actionClearFilters": "Clear Filters",
-
   "loadingData": "Loading data...",
   "loadingPleaseWait": "Please wait...",
-
   "systemSelectionTitle": "Select System",
   "systemSelectionSubtitle": "Choose the system you want to work with",
   "systemSelectionLabTitle": "Lab System",
@@ -243,11 +231,9 @@
   "systemSelectionDemoNotice": "Preview mode — you can switch between systems anytime",
   "systemSwitcherSwitchTo": "Switch to",
   "systemSwitcherCurrentSystem": "Current System",
-
   "f4TopbarSubtitles": "─── Topbar subtitles ───",
   "warehouseTopbarSubtitle": "Warehouse Management System · DT.Teeth",
   "labTopbarSubtitle": "Lab Management System · DT.Teeth",
-
   "f4Dashboard": "─── Dashboard — warehouse ───",
   "whDashboardTitle": "Dashboard",
   "whDashboardHeroSubtitle": "Last updated: today — all systems operating normally",
@@ -265,12 +251,20 @@
   "whAlertLowStockTitle": "Low Stock",
   "whAlertLowStockSubtitle": "{count} critical materials",
   "@whAlertLowStockSubtitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "whAlertNewOrdersTitle": "New Orders",
   "whAlertNewOrdersSubtitle": "{count} pending",
   "@whAlertNewOrdersSubtitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "whQuickActions": "Quick Actions",
   "whQuickActionAddMaterial": "Material",
@@ -289,7 +283,6 @@
   "errorRequired": "This field is required",
   "errorInvalidNumber": "Please enter a valid number",
   "whFullReport": "Full Report",
-
   "f4Materials": "─── Materials Management ───",
   "whMaterialsTitle": "Materials",
   "whMaterialsSearchHint": "Filter warehouse materials... (name, category)",
@@ -317,12 +310,11 @@
   "whStatusAvailable": "Available",
   "whStatusLow": "Low",
   "whStatusOut": "Out of Stock",
-
   "f4Orders": "─── Orders ───",
   "whOrdersTitle": "Orders",
   "whOrderNumber": "Order #",
   "whOrderRequester": "Requester",
-  "whOrderDate": "Date",
+  "whOrderDate": "Order date",
   "whOrderStatus": "Status",
   "whOrderAction": "Action",
   "whOrderFilterNew": "New",
@@ -331,7 +323,6 @@
   "whOrderStatusNew": "New",
   "whOrderStatusFulfilled": "Fulfilled",
   "whOrderStatusMissing": "Missing",
-
   "f4Invoices": "─── Invoices ───",
   "whInvoicesTitle": "Invoices",
   "whInvoiceAdd": "New Invoice",
@@ -343,7 +334,6 @@
   "whInvoiceTotalUsage": "Total Usage",
   "whInvoiceTotalLoss": "Loss — Expired",
   "whInvoiceExportPdf": "Export PDF",
-
   "f4Reports": "─── Reports ───",
   "whReportsTitle": "Reports",
   "whReportTabTopMaterials": "Top 10 Materials",
@@ -357,7 +347,6 @@
   "whReportWeeklyPurchases": "Weekly Purchases",
   "whReportUsageCost": "Usage Cost",
   "whReportExpiredLoss": "Expired Loss",
-
   "f4Notifications": "─── Notifications ───",
   "whNotificationsTitle": "Notifications",
   "whNotifFilterUnread": "Unread",
@@ -365,7 +354,6 @@
   "whNotifFilterExpiry": "Expiry",
   "whNotifFilterOrder": "Orders",
   "whNotifMarkAllRead": "Mark All Read",
-
   "f4Settings": "─── Settings ───",
   "whSettingsTitle": "Settings",
   "whSettingsTabProfile": "Profile",
@@ -390,12 +378,10 @@
   "whSettingsUpdatePassword": "Update",
   "whSettingsAboutTitle": "DT.Teeth Repository",
   "whSettingsAboutVersion": "v1.0.0 · March 2026 · Flutter Web",
-
   "f4ComingSoon": "─── Under construction badge ───",
   "comingSoonTitle": "Coming Soon",
   "comingSoonSubtitle": "This screen is under construction — coming soon",
   "screenUnderConstruction": "Under Construction",
-
   "f4Lab": "─── Lab System ───",
   "labDashboardTitle": "Dashboard",
   "labHeroWelcome": "Welcome to Lab System 🧪",
@@ -414,18 +400,14 @@
   "labOrdersFilterReady": "Ready",
   "labOrdersDueToday": "Due Today",
   "labOrdersDueTodaySubtitle": "Must be completed before evening",
+  "labOrdersDueTodayEmpty": "No orders due today",
   "labTeamTitle": "Manage Technicians",
   "labTeamTotal": "Total Technicians",
-  "labTeamActive": "Active",
-  "labTeamAvailable": "Available",
   "labTeamColumnName": "Technician",
   "labTeamColumnShift": "Shift Hours",
   "labTeamColumnCurrentTask": "Current Task",
-  "labTeamColumnStatus": "Status",
   "labTeamColumnAction": "Action",
   "labTeamAssign": "Assign",
-  "labTeamFree": "Free",
-  "labTeamBusy": "Busy",
   "labReportTabByType": "By Type",
   "labReportTabByDate": "By Date",
   "labReportTabTeam": "Team Performance",
@@ -469,25 +451,40 @@
   "labSettingsAboutTitle": "DT.Teeth Lab",
   "labSettingsAboutVersion": "v1.0.0 · Flutter Web · Laravel API",
   "labTopbarSubtitleFull": "Lab Management System · DT.Teeth",
-
   "labProfile": "My Profile",
   "labManageTechnicians": "Manage Technicians",
-
   "labDashboardSearchHint": "Filter this page's orders... (number, doctor, material)",
   "priorityUrgent": "Urgent",
-  "priorityMedium": "Medium",
   "priorityNormal": "Normal",
-  "labStatNeedsFollowup": "Needs follow-up",
   "labChipThisMonth": "This month",
   "labChipActive": "Active",
   "labStatReadyOrders": "Ready orders",
-  "labTrendFromLastMonth": "{value} from last month",
-  "@labTrendFromLastMonth": { "placeholders": { "value": { "type": "String" } } },
-  "labTrendFromYesterday": "{value} from yesterday",
-  "@labTrendFromYesterday": { "placeholders": { "value": { "type": "String" } } },
   "labTodayOrders": "Today's Orders",
+  "labLastUpdatedJustNow": "Last updated: just now",
+  "labLastUpdatedMinutesAgo": "Last updated: {minutes}m ago",
+  "@labLastUpdatedMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "labLastUpdatedHoursAgo": "Last updated: {hours}h ago",
+  "@labLastUpdatedHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "labOrdersCount": "{count} orders",
-  "@labOrdersCount": { "placeholders": { "count": { "type": "String" } } },
+  "@labOrdersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "colOrderNumber": "Order #",
   "colDoctor": "Doctor",
   "colType": "Type",
@@ -497,18 +494,37 @@
   "colPriority": "Priority",
   "colStatus": "Status",
   "labGreeting": "Welcome, {name}",
-  "@labGreeting": { "placeholders": { "name": { "type": "String" } } },
+  "@labGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "systemAllNormal": "All systems operating normally",
   "labLastUpdate": "Last update: {time}",
-  "@labLastUpdate": { "placeholders": { "time": { "type": "String" } } },
-
+  "@labLastUpdate": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "labOrdersSearchHint": "Filter doctor orders... (number, doctor, material, tooth)",
   "labOrdersCountOfTotal": "{shown} of {total} orders",
-  "@labOrdersCountOfTotal": { "placeholders": { "shown": { "type": "String" }, "total": { "type": "String" } } },
+  "@labOrdersCountOfTotal": {
+    "placeholders": {
+      "shown": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "labOrderProcess": "Process",
   "actionView": "View",
   "labNoOrdersInCategory": "No orders in this category",
-
   "settingsSearchHint": "Search this page...",
   "settingsTabSecurity": "Security",
   "settingsTabPreferences": "Preferences",
@@ -560,7 +576,6 @@
   "settingsCompactViewDesc": "Show more data on a single screen",
   "settingsAutoSave": "Auto-save",
   "settingsAutoSaveDesc": "Automatically save changes every minute",
-
   "notifSearchHint": "Search notifications...",
   "sectionToday": "Today",
   "sectionYesterday": "Yesterday",
@@ -570,7 +585,6 @@
   "notifFilterOrders": "Orders",
   "notifFilterMaterials": "Materials",
   "notifFilterSystem": "System",
-
   "techSearchHint": "Search technicians... (name, role, task)",
   "labTeamSectionTitle": "Lab Team",
   "techScheduleTitle": "Work schedule",
@@ -592,13 +606,7 @@
   "dayThursday": "Thursday",
   "dayFriday": "Friday",
   "labTeamTotalChip": "Total",
-  "labTeamActiveChip": "Working now",
-  "labTeamReadyChip": "Ready to assign",
-  "techStatActiveLabel": "Active Technicians",
-  "techStatusBreak": "On Break",
-  "labTeamAddTechnician": "Add Technician",
   "notifMarkAllRead": "Mark all as read",
-
   "whNotifExpiry": "Expiry",
   "whNotifExpiryDesc": "30 days before expiry",
   "whNotifNewSupply": "New supply orders",
@@ -607,14 +615,11 @@
   "whNotifSupplierDelayDesc": "When a supplier misses a delivery date",
   "whNotifInvoicesDue": "Invoices pending payment",
   "whNotifInvoicesDueDesc": "Reminder before the due date",
-
   "whOrderPartial": "Partial",
   "whOrderFulfilled": "Fulfilled",
   "whOrdersEmptyFilter": "No orders match this filter",
   "whOrderRequesterParty": "Requesting party",
   "colQuantity": "Quantity",
-  "whOrderDate": "Order date"
-,
   "profileGeneralInfo": "General Info",
   "profileHireDate": "Hire Date",
   "profileLanguages": "Languages",
@@ -623,7 +628,7 @@
   "profileEdit": "Edit Profile",
   "profileSaving": "Saving…",
   "profileSaveChanges": "Save Changes",
-  "profileChangePhoto": "Change Photo",
+  "profileChangePhoto": "Change Profile Photo",
   "profilePersonalInfo": "Personal Information",
   "profilePersonalInfoSubtitle": "Identity and contact details",
   "profilePhone": "Phone Number",
@@ -635,7 +640,6 @@
   "profileTrainings": "Training Courses",
   "profileSkills": "Skills",
   "profileOngoing": "Now",
-  "profileChangePhoto": "Change Profile Photo",
   "profilePickDate": "Pick a date",
   "profileNationalId": "National ID",
   "profileBirthDate": "Date of Birth",
@@ -665,8 +669,13 @@
   "profileStatStockAccuracy": "Stock Accuracy",
   "profileBadgeAlert": "Alert",
   "profilePhotoError": "Failed to pick image: {error}",
-  "@profilePhotoError": {"placeholders": {"error": {"type": "Object"}}}
-,
+  "@profilePhotoError": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
   "ordersFilterAll": "All",
   "ordersUrgent": "Urgent",
   "ordersStatusNew": "New",
@@ -691,9 +700,21 @@
   "whReqFulfillConfirm": "The requested quantities will be deducted from stock batches (FIFO). Confirm fulfillment?",
   "whReqNotesHint": "Notes (optional)",
   "whReqNumber": "Request #{id}",
-  "@whReqNumber": { "placeholders": { "id": { "type": "String" } } },
+  "@whReqNumber": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "whReqItemsCount": "{count} item(s)",
-  "@whReqItemsCount": { "placeholders": { "count": { "type": "int" } } },
+  "@whReqItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "ordersQuantity": "Quantity",
   "ordersRequester": "Requester",
   "ordersDate": "Date",
@@ -702,10 +723,27 @@
   "ordersEmptyTitle": "No Orders",
   "ordersEmptyMessage": "No orders match the current filter",
   "ordersSupplyConfirmed": "Supply confirmed for {material} (order {order})",
-  "@ordersSupplyConfirmed": {"placeholders":{"material":{"type":"Object"},"order":{"type":"Object"}}},
+  "@ordersSupplyConfirmed": {
+    "placeholders": {
+      "material": {
+        "type": "Object"
+      },
+      "order": {
+        "type": "Object"
+      }
+    }
+  },
   "ordersCountSummary": "{count} orders of {total}",
-  "@ordersCountSummary": {"placeholders":{"count":{"type":"Object"},"total":{"type":"Object"}}}
-,
+  "@ordersCountSummary": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
   "orderDetailsSubtitle": "Details of the materials order sent to the warehouse",
   "orderDetailsInfoSection": "Order Information",
   "orderDetailsItems": "Order Items",
@@ -725,16 +763,20 @@
   "orderTimelineReceived": "Received",
   "orderTimelinePartial": "Partial Supply",
   "orderDetailsTitle": "Supply Order Details {req}",
-  "@orderDetailsTitle": {"placeholders":{"req":{"type":"Object"}}}
-,
+  "@orderDetailsTitle": {
+    "placeholders": {
+      "req": {
+        "type": "Object"
+      }
+    }
+  },
   "notifEmptyTitle": "No Notifications",
   "notifEmptyMessage": "No notifications to show in this filter",
   "notifGroupToday": "Today",
   "notifGroupYesterday": "Yesterday",
   "notifGroupOlder": "Older",
   "notifBadgeOrder": "Order",
-  "notifBadgeDone": "Done"
-,
+  "notifBadgeDone": "Done",
   "reportRangeDaily": "Daily",
   "reportRangeWeekly": "Weekly",
   "reportRangeMonthly": "Monthly",
@@ -790,14 +832,40 @@
   "reportWeekdayFri": "Fri",
   "reportWeekdaySat": "Sat",
   "reportMonthlyTitle": "{period} — Monthly Report",
-  "@reportMonthlyTitle": {"placeholders":{"period":{"type":"Object"}}},
+  "@reportMonthlyTitle": {
+    "placeholders": {
+      "period": {
+        "type": "Object"
+      }
+    }
+  },
   "reportGeneratedAt": "Report generated {date}",
-  "@reportGeneratedAt": {"placeholders":{"date":{"type":"Object"}}},
+  "@reportGeneratedAt": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
   "reportDaysCount": "{days} days",
-  "@reportDaysCount": {"placeholders":{"days":{"type":"Object"}}},
+  "@reportDaysCount": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
   "reportSupplierSubtitle": "{invoices} invoices · avg {avgDays} days",
-  "@reportSupplierSubtitle": {"placeholders":{"invoices":{"type":"Object"},"avgDays":{"type":"Object"}}}
-,
+  "@reportSupplierSubtitle": {
+    "placeholders": {
+      "invoices": {
+        "type": "Object"
+      },
+      "avgDays": {
+        "type": "Object"
+      }
+    }
+  },
   "whBadgeTotal": "Total",
   "whStatOutMaterials": "Out of Stock",
   "whStatLowMaterials": "Low Stock",
@@ -818,8 +886,16 @@
   "whColBatches": "Batches",
   "whColStatus": "Status",
   "whMaterialsCount": "{count} materials of {total}",
-  "@whMaterialsCount": {"placeholders":{"count":{"type":"Object"},"total":{"type":"Object"}}}
-,
+  "@whMaterialsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
   "invStatusPaid": "Paid",
   "invStatusPending": "Pending",
   "invEmptyTitle": "No Invoices",
@@ -843,11 +919,32 @@
   "invCreatedByLabel": "Created by",
   "invGrandTotalLabel": "Total purchases (SYP)",
   "invInvoiceNumber": "Invoice #{id}",
-  "@invInvoiceNumber": { "placeholders": { "id": { "type": "String" } } },
+  "@invInvoiceNumber": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "invItemsCountLabel": "{count} material(s)",
-  "@invItemsCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@invItemsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "invCount": "{count} invoices of {total}",
-  "@invCount": {"placeholders":{"count":{"type":"Object"},"total":{"type":"Object"}}},
+  "@invCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
   "fieldRequired": "Required",
   "fieldOptional": "Optional",
   "fieldInvalidNumber": "Invalid number",
@@ -871,7 +968,13 @@
   "invCreateSuccess": "Invoice created successfully",
   "invUpdateSuccess": "Invoice updated successfully",
   "whGreeting": "Hello, {name}",
-  "@whGreeting": {"placeholders":{"name":{"type":"String"}}},
+  "@whGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "whSystemsNormal": "All systems operating normally",
   "whLastUpdateLabel": "Last update: ",
   "whTotalMaterials": "Total materials",
@@ -887,24 +990,55 @@
   "whBadgeThisMonth": "This month",
   "whNeedsSupply": "Needs supply",
   "whTrendThisWeek": "{count} this week",
-  "@whTrendThisWeek": {"placeholders":{"count":{"type":"String"}}},
+  "@whTrendThisWeek": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "whTrendToday": "{count} today",
-  "@whTrendToday": {"placeholders":{"count":{"type":"String"}}},
+  "@whTrendToday": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "whTrendVsLastMonth": "{value} from last month",
-  "@whTrendVsLastMonth": {"placeholders":{"value":{"type":"String"}}},
+  "@whTrendVsLastMonth": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "whExpiringTitle": "Materials expiring soon",
   "whExpiringSubtitle": "These materials must be handled before they expire",
   "whTodayOrdersCount": "{count} orders",
-  "@whTodayOrdersCount": {"placeholders":{"count":{"type":"Object"}}},
+  "@whTodayOrdersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "whInvMostRequestedTitle": "Most Requested",
   "whInvLowStockTitle": "Low Stock",
   "whInvNoItems": "No items right now",
   "whInvDaysRemaining": "{days} days",
-  "@whInvDaysRemaining": {"placeholders": {"days": {"type": "int"}}},
+  "@whInvDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "labNotifActionOpenOrder": "Open order",
   "labNotifActionReview": "Review",
   "labActionTrack": "Track",
   "labReqStatusUnavailable": "Unavailable",
+  "labReqStatusInProgress": "In Progress",
   "labReqRequestedBy": "Requested by",
   "labReqLabOrder": "Lab order",
   "labReqEmptyCategory": "No material requests in this category",
@@ -914,7 +1048,11 @@
   "labReqDeleteTitle": "Delete material request",
   "labReqDeleteConfirm": "Delete the \"{material}\" request? This cannot be undone.",
   "@labReqDeleteConfirm": {
-    "placeholders": { "material": { "type": "String" } }
+    "placeholders": {
+      "material": {
+        "type": "String"
+      }
+    }
   },
   "labReqFieldMaterial": "Material name",
   "labReqFieldUnit": "Unit",
@@ -926,6 +1064,7 @@
   "labReqSubmit": "Send request",
   "labReqSentSuccess": "Material request sent to the warehouse",
   "labTechPendingAssign": "Awaiting assignment",
+  "labTechWorkloadLoadFailed": "Couldn't load technicians' current workload — names and schedules are accurate, but task counts may not reflect reality",
   "techAddButton": "Add technician",
   "techAddTitle": "Add new technician",
   "techAddSubtitle": "Enter the technician's details to join the lab team",
@@ -955,7 +1094,13 @@
   "labProcessMissingDesc": "Material not available in the lab",
   "labAssignTitle": "Assign order",
   "labAssignSubtitle": "Choose the order for {name}",
-  "@labAssignSubtitle": {"placeholders":{"name":{"type":"String"}}},
+  "@labAssignSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "profilePageSubtitle": "Employee data and job information",
   "labInventory": "Lab Inventory",
   "labInvSearchHint": "Search lab materials...",
@@ -976,21 +1121,22 @@
   "labProducts": "Lab Products",
   "labProductsSearchHint": "Search products...",
   "labProdTotal": "Total products",
-  "labProdActiveCount": "Active products",
   "labProdAdd": "New product",
   "labProdAddTitle": "Add product",
   "labProdEditTitle": "Edit product",
   "labProdDeleteTitle": "Delete product",
   "labProdDeleteConfirm": "Delete \"{name}\"? This action cannot be undone.",
   "@labProdDeleteConfirm": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "labProdColType": "Type",
   "labProdColPrice": "Price (SYP)",
   "labProdColDuration": "Production time",
   "labProdDaysUnit": "days",
-  "labProdStatusActive": "Active",
-  "labProdStatusInactive": "Inactive",
   "labProdFieldName": "Product name",
   "labProdFieldType": "Type",
   "labProdFieldMaterial": "Material",
@@ -1006,12 +1152,23 @@
   "labCategoriesEmpty": "No categories yet",
   "labCategoryDeleteTitle": "Delete Category",
   "labCategoryDeleteConfirm": "Delete “{name}”?",
-  "@labCategoryDeleteConfirm": { "placeholders": { "name": { "type": "String" } } },
+  "@labCategoryDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "labProcessConsumeFailed": "Order completed, but stock deduction failed for: {materials}",
-  "@labProcessConsumeFailed": { "placeholders": { "materials": { "type": "String" } } },
+  "@labProcessConsumeFailed": {
+    "placeholders": {
+      "materials": {
+        "type": "String"
+      }
+    }
+  },
   "labProdNameRequired": "Product name is required",
   "labProcessCost": "Order cost (SYP)",
-  "labProcessCostHint": "Enter manufacturing cost",
   "labProcessTechnician": "Executing technician",
   "labProcessTechnicianNone": "Not specified",
   "labProcessTechnicianRequired": "Select the executing technician before changing the status",

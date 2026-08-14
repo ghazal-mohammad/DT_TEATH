@@ -28,7 +28,6 @@ abstract class LabMaterialRequestsRepository {
     required String material,
     required String quantity,
     required String unit,
-    required String requestedBy,
     int? materialId,
     String? company,
     String? reason,

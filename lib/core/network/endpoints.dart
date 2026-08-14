@@ -54,10 +54,9 @@ class ApiEndpoints {
   static const String employeeEditProfile = '/api/employee/editProfile';
 
   // ── Lab Manager (محمي بـ Bearer — صلاحية مدير المخبر أو الأدمن) ──────────
-  /// جلب كل فنيي المخبر (role=فني). محمي، صلاحية show-technicians.
-  /// يرجع: { success, data:[ { id, user_id, name, email, role,
-  ///                           profile_picture } ] }.
-  /// ملاحظة: ما في حقول دوام/عدد مخابر بالباك — غير متوفّرة بالداتا.
+  /// جلب كل فنيي المخبر. محمي، صلاحية show-technicians.
+  /// يرجع: { success, data:[ { id, name, email, phone, is_active, schedule,
+  ///                           created_at } ] } (تحقّق فعلي، TechnicianResource).
   static const String labManagerShowAllTechnicians =
       '/api/labManager/showAllTechnicians';
 

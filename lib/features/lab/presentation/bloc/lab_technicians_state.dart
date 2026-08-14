@@ -20,6 +20,7 @@ class LabTechniciansState {
     this.performance = const [],
     this.searchQuery = '',
     this.errorMessage,
+    this.ordersLoadFailed = false,
   });
 
   const LabTechniciansState.initial()
@@ -28,7 +29,8 @@ class LabTechniciansState {
         orders = const [],
         performance = const [],
         searchQuery = '',
-        errorMessage = null;
+        errorMessage = null,
+        ordersLoadFailed = false;
 
   final LabTechniciansStatus status;
   final List<TechnicianItem> technicians;
@@ -42,6 +44,11 @@ class LabTechniciansState {
   /// نص البحث المُوجَّه (اسم/دور/مهمة الفنّي).
   final String searchQuery;
   final String? errorMessage;
+
+  /// true إذا فشل جلب الطلبات (حمل عمل الفنّيين) بينما نجح جلب الفنّيين
+  /// أنفسهم — يميّز "تأكّدنا أن لا أحد لديه مهام" عن "لم نستطع معرفة ذلك".
+  /// عدم حجب عرض قائمة الفنّيين (أسماؤهم/جداولهم صحيحة رغم ذلك) — فقط تنبيه.
+  final bool ordersLoadFailed;
 
   /// الفنّيون بعد تطبيق نص البحث (للعرض في الجدول).
   List<TechnicianItem> get filteredTechnicians {
@@ -65,6 +72,7 @@ class LabTechniciansState {
     String? searchQuery,
     String? errorMessage,
     bool clearError = false,
+    bool? ordersLoadFailed,
   }) {
     return LabTechniciansState(
       status: status ?? this.status,
@@ -73,6 +81,7 @@ class LabTechniciansState {
       performance: performance ?? this.performance,
       searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      ordersLoadFailed: ordersLoadFailed ?? this.ordersLoadFailed,
     );
   }
 }

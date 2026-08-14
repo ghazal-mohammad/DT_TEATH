@@ -284,16 +284,8 @@ class _DoctorInfoCard extends StatelessWidget {
       title: context.l10n.orderDetailsDoctorData,
       rows: [
         (label: context.l10n.orderDetailsSenderDoctor, value: order.doctor, pillColor: null),
-        (
-          label: context.l10n.orderDetailsPriority,
-          value: order.isUrgent
-              ? context.l10n.priorityUrgent
-              : context.l10n.priorityNormal,
-          pillColor: order.isUrgent
-              ? AppColors.statusUrgent
-              : AppColors.lightText3,
-        ),
-        (label: context.l10n.orderDetailsReceivingLab, value: 'مختبر الشام', pillColor: null),
+        // "المختبر المستقبِل" حُذف — لا مصدر حقيقي له بالباك (كل التطبيق
+        // يخدم مختبراً واحداً، والباك لا يرجّع اسمه ضمن بيانات الطلبية).
         if (order.assignedTechnician != null)
           (
             label: context.l10n.orderDetailsExecutor,
@@ -459,7 +451,8 @@ class _ProgressTimeline extends StatelessWidget {
       context.l10n.statusManufacturing,
       context.l10n.orderDetailsReadyForDelivery,
     ];
-    final dates = <int, String>{0: '20-04-2026'};
+    // لا تواريخ حقيقية لكل خطوة بالباك (LabOrderResource لا يرجّع created_at/
+    // updated_at) — نعرض الخطوات بلا تاريخ بدل تاريخ ثابت وهمي لكل الطلبيات.
 
     return Row(
       children: [
@@ -475,7 +468,7 @@ class _ProgressTimeline extends StatelessWidget {
             ),
           _TimelineStep(
             label: steps[i],
-            date: dates[i],
+            date: null,
             isActive: i == _currentStep,
             isDone: i < _currentStep,
           ),

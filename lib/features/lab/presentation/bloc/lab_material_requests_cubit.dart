@@ -83,36 +83,40 @@ class LabMaterialRequestsCubit extends Cubit<LabMaterialRequestsState> {
   }
 
   /// إرسال طلب مادة جديد؛ يُدرَج بأعلى القائمة ويُعاد الفلتر لـ "الكل".
-  Future<void> addRequest({
+  /// يُرجع true عند النجاح، أو false مع تعبئة errorMessage عند الفشل.
+  Future<bool> addRequest({
     required String material,
     required String quantity,
     required String unit,
-    required String requestedBy,
     int? materialId,
     String? company,
     String? reason,
   }) async {
-    await _repository.addRequest(
-      material: material,
-      quantity: quantity,
-      unit: unit,
-      requestedBy: requestedBy,
-      materialId: materialId,
-      company: company,
-      reason: reason,
-    );
-    emit(state.copyWith(filterIndex: 0)); // ليظهر الطلب الجديد مباشرة
+    try {
+      await _repository.addRequest(
+        material: material,
+        quantity: quantity,
+        unit: unit,
+        materialId: materialId,
+        company: company,
+        reason: reason,
+      );
+      emit(state.copyWith(filterIndex: 0, clearError: true)); // ليظهر الطلب الجديد مباشرة
+      return true;
+    } catch (e) {
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
+    }
   }
 
-  /// حذف طلب مواد (الـ stream يحدّث القائمة تلقائياً).
-  Future<void> delete(String id) async {
+  /// حذف طلب مواد (الـ stream يحدّث القائمة تلقائياً). يُرجع true عند النجاح.
+  Future<bool> delete(String id) async {
     try {
       await _repository.delete(id);
+      return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: LabMatRequestsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
     }
   }
 

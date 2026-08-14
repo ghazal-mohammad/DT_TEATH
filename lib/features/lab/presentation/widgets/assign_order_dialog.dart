@@ -42,16 +42,9 @@ class AssignOrderDialog extends StatefulWidget {
 }
 
 class _AssignOrderDialogState extends State<AssignOrderDialog> {
+  // لا اختيار افتراضي — يجب على المستخدم اختيار الطلبية صراحةً (زر التوكيل
+  // معطّل حتى الاختيار)، تجنّباً لتوكيل طلبية خاطئة بسبب اختيار صامت.
   String? _selectedId;
-
-  @override
-  void initState() {
-    super.initState();
-    // اختيار الطلبية الثالثة افتراضياً (مطابقة للصورة المرجعية)
-    if (widget.orders.length >= 3) {
-      _selectedId = widget.orders[2].id;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -179,6 +179,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReports => 'تقارير المخبر';
 
   @override
+  String get reportsPreviousPeriod => 'الفترة السابقة';
+
+  @override
+  String get reportsNextPeriod => 'الفترة التالية';
+
+  @override
+  String get reportsBackToToday => 'اليوم';
+
+  @override
   String get materialRequests => 'طلبات المستودع';
 
   @override
@@ -1013,16 +1022,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labOrdersDueTodaySubtitle => 'يجب الانتهاء قبل المساء';
 
   @override
+  String get labOrdersDueTodayEmpty => 'لا توجد طلبات تنتهي اليوم';
+
+  @override
   String get labTeamTitle => 'إدارة المخبريين';
 
   @override
   String get labTeamTotal => 'إجمالي المخبريين';
-
-  @override
-  String get labTeamActive => 'نشط';
-
-  @override
-  String get labTeamAvailable => 'متاح';
 
   @override
   String get labTeamColumnName => 'المخبري';
@@ -1034,19 +1040,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labTeamColumnCurrentTask => 'المسؤولية الحالية';
 
   @override
-  String get labTeamColumnStatus => 'الحالة';
-
-  @override
   String get labTeamColumnAction => 'إجراء';
 
   @override
   String get labTeamAssign => 'توكيل';
-
-  @override
-  String get labTeamFree => 'متاح';
-
-  @override
-  String get labTeamBusy => 'مشغول';
 
   @override
   String get labReportTabByType => 'حسب النوع';
@@ -1191,13 +1188,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get priorityUrgent => 'عاجل';
 
   @override
-  String get priorityMedium => 'متوسطة';
-
-  @override
   String get priorityNormal => 'عادية';
-
-  @override
-  String get labStatNeedsFollowup => 'يحتاج متابعة';
 
   @override
   String get labChipThisMonth => 'هذا الشهر';
@@ -1209,17 +1200,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labStatReadyOrders => 'طلبات جاهزة';
 
   @override
-  String labTrendFromLastMonth(String value) {
-    return '$value من الشهر الماضي';
-  }
-
-  @override
-  String labTrendFromYesterday(String value) {
-    return '$value من أمس';
-  }
-
-  @override
   String get labTodayOrders => 'طلبات اليوم';
+
+  @override
+  String get labLastUpdatedJustNow => 'آخر تحديث: الآن';
+
+  @override
+  String labLastUpdatedMinutesAgo(int minutes) {
+    return 'آخر تحديث: منذ $minutes د';
+  }
+
+  @override
+  String labLastUpdatedHoursAgo(int hours) {
+    return 'آخر تحديث: منذ $hours س';
+  }
 
   @override
   String labOrdersCount(String count) {
@@ -1530,21 +1524,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get labTeamTotalChip => 'الإجمالي';
-
-  @override
-  String get labTeamActiveChip => 'يعمل الآن';
-
-  @override
-  String get labTeamReadyChip => 'جاهز للتوكيل';
-
-  @override
-  String get techStatActiveLabel => 'مخبريون نشطون';
-
-  @override
-  String get techStatusBreak => 'استراحة';
-
-  @override
-  String get labTeamAddTechnician => 'إضافة مخبري';
 
   @override
   String get notifMarkAllRead => 'تحديد الكل كمقروء';
@@ -2421,6 +2400,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqStatusUnavailable => 'غير متوفر';
 
   @override
+  String get labReqStatusInProgress => 'قيد المعالجة';
+
+  @override
   String get labReqRequestedBy => 'طلب بواسطة';
 
   @override
@@ -2476,6 +2458,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get labTechPendingAssign => 'بانتظار التوكيل';
+
+  @override
+  String get labTechWorkloadLoadFailed =>
+      'تعذّر تحميل حمل العمل الحالي للفنيين — الأسماء والجداول صحيحة، لكن عدّاد المهام قد لا يعكس الواقع';
 
   @override
   String get techAddButton => 'إضافة المخبري';
@@ -2629,9 +2615,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labProdTotal => 'إجمالي المنتجات';
 
   @override
-  String get labProdActiveCount => 'منتجات مفعّلة';
-
-  @override
   String get labProdAdd => 'منتج جديد';
 
   @override
@@ -2659,12 +2642,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get labProdDaysUnit => 'يوم';
-
-  @override
-  String get labProdStatusActive => 'مفعّل';
-
-  @override
-  String get labProdStatusInactive => 'متوقف';
 
   @override
   String get labProdFieldName => 'اسم المنتج';
@@ -2723,9 +2700,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get labProcessCost => 'تكلفة الطلبية (ل.س)';
-
-  @override
-  String get labProcessCostHint => 'أدخل تكلفة التصنيع';
 
   @override
   String get labProcessTechnician => 'المخبري المنفّذ';

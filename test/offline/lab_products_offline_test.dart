@@ -118,4 +118,17 @@ void main() {
     expect(created.id, startsWith('local_'));
     expect(outbox.pendingCount, 1);
   });
+
+  test('تحديث صنف بلا فئة (categoryId=null) ⇒ يرسل category_id فارغاً لا يحذفه '
+      'من الجسم (الباك يتجاهل المفتاح الغائب فلا يُصفَّر فعلياً)', () async {
+    when(() => ds.update(any(), any()))
+        .thenAnswer((_) async => row('9', 'صنف'));
+    await repo.update(product(id: '9', name: 'صنف بلا فئة'));
+
+    final captured =
+        verify(() => ds.update('9', captureAny())).captured.single
+            as Map<String, dynamic>;
+    expect(captured.containsKey('category_id'), isTrue);
+    expect(captured['category_id'], '');
+  });
 }

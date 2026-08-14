@@ -104,12 +104,14 @@ class LabOrdersCubit extends Cubit<LabOrdersState> {
     required String id,
     required LabOrderBadgeVariant status,
     String? technician,
+    List<({int materialId, double quantity})>? materials,
   }) async {
     try {
       await _repository.processOrder(
         id: id,
         status: status,
         technician: technician,
+        materials: materials,
       );
       return true;
     } catch (e) {

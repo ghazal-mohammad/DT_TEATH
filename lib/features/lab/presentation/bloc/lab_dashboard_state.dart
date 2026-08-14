@@ -14,16 +14,22 @@ class LabDashboardState {
     required this.status,
     this.orders = const [],
     this.errorMessage,
+    this.lastLoadedAt,
   });
 
   const LabDashboardState.initial()
       : status = LabDashboardStatus.initial,
         orders = const [],
-        errorMessage = null;
+        errorMessage = null,
+        lastLoadedAt = null;
 
   final LabDashboardStatus status;
   final List<LabOrderFull> orders;
   final String? errorMessage;
+
+  /// وقت آخر جلب ناجح للطلبات — تُستخدم لعرض "آخر تحديث" حقيقي بالـ hero
+  /// (بدل نص ثابت). null قبل أول جلب ناجح.
+  final DateTime? lastLoadedAt;
 
   // ── عدّادات مشتقّة من الطلبات الحقيقية ────────────────────────────────────
   int get total => orders.length;
@@ -40,13 +46,15 @@ class LabDashboardState {
       orders.where((o) => o.statusVariant == LabOrderBadgeVariant.ready).length;
 
   /// الطلبات التي موعد تسليمها اليوم (delivery_date_requested == تاريخ اليوم).
-  int get dueToday {
+  List<LabOrderFull> get ordersDueToday {
     final now = DateTime.now();
     final today = '${now.year.toString().padLeft(4, '0')}-'
         '${now.month.toString().padLeft(2, '0')}-'
         '${now.day.toString().padLeft(2, '0')}';
-    return orders.where((o) => o.date == today).length;
+    return orders.where((o) => o.date == today).toList();
   }
+
+  int get dueToday => ordersDueToday.length;
 
   bool get isInitialLoading =>
       status == LabDashboardStatus.loading && orders.isEmpty;
@@ -56,11 +64,13 @@ class LabDashboardState {
     List<LabOrderFull>? orders,
     String? errorMessage,
     bool clearError = false,
+    DateTime? lastLoadedAt,
   }) {
     return LabDashboardState(
       status: status ?? this.status,
       orders: orders ?? this.orders,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      lastLoadedAt: lastLoadedAt ?? this.lastLoadedAt,
     );
   }
 }

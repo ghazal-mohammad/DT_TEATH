@@ -100,6 +100,10 @@ class ReportsView extends StatelessWidget {
     this.byTypeTitle,
     this.byTypeUnit,
     this.byDayTitle,
+    this.onPrevious,
+    this.onNext,
+    this.onResetToday,
+    this.isAtToday = true,
   });
 
   final ReportsViewStatus status;
@@ -128,6 +132,17 @@ class ReportsView extends StatelessWidget {
   /// عنوان مخطّط الأيام (افتراضي: الطلبات حسب اليوم).
   final String? byDayTitle;
 
+  /// تنقّل زمني بين فترات سابقة/تالية (اختياري — null يخفي أزرار التنقّل
+  /// بالكامل، الوضع الافتراضي للمستودع الذي لا يستخدمه حالياً).
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+
+  /// رجوع فوري للفترة الحالية (اليوم) — يظهر فقط لو [isAtToday] false.
+  final VoidCallback? onResetToday;
+
+  /// هل الفترة المعروضة هي الحالية (اليوم)؟ true افتراضياً (لا زر "اليوم").
+  final bool isAtToday;
+
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
@@ -144,14 +159,7 @@ class ReportsView extends StatelessWidget {
           else if (status == ReportsViewStatus.error)
             _error(context)
           else ...[
-            Text(
-              periodLabel,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: isLight ? AppColors.lightText3 : AppColors.darkText3,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            _periodLabelRow(context, isLight),
             const SizedBox(height: AppSizes.spaceMD),
             _kpiRow(isLight),
             const SizedBox(height: AppSizes.spaceLG),
@@ -175,6 +183,46 @@ class ReportsView extends StatelessWidget {
     segmentsTitle: byTypeTitle,
     daysTitle: byDayTitle,
   );
+
+  /// نطاق التاريخ الحالي + تنقّل سابق/تالي/اليوم (يظهر بس لو [onPrevious]
+  /// مُمرَّر — المستودع ما بيمرّره حالياً فيضل بلا تنقّل، بلا أي تغيير بسلوكه).
+  Widget _periodLabelRow(BuildContext context, bool isLight) {
+    final label = Text(
+      periodLabel,
+      style: AppTextStyles.bodyMedium.copyWith(
+        color: isLight ? AppColors.lightText3 : AppColors.darkText3,
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+    if (onPrevious == null) return label;
+    final l10n = context.l10n;
+    return Row(
+      children: [
+        label,
+        const Spacer(),
+        if (!isAtToday && onResetToday != null)
+          Padding(
+            padding: const EdgeInsetsDirectional.only(end: 8),
+            child: AppButton.secondary(
+              label: l10n.reportsBackToToday,
+              onPressed: onResetToday,
+              size: AppButtonSize.small,
+            ),
+          ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right_rounded),
+          tooltip: l10n.reportsPreviousPeriod,
+          onPressed: onPrevious,
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_left_rounded),
+          tooltip: l10n.reportsNextPeriod,
+          onPressed: isAtToday ? null : onNext,
+        ),
+      ],
+    );
+  }
 
   // ── الأدوات: فترة + تصدير ────────────────────────────────────────────────
   Widget _controls(BuildContext context, bool isLight) {

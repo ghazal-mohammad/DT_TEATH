@@ -6,7 +6,10 @@
 // lab_mat_request_data.dart كي تبقى الملفات القديمة تعمل دون تعديل.
 // ════════════════════════════════════════════════════════════════════════════
 
-enum MatRequestStatus { newRequest, delivered, unavailable }
+// القيم الخمس تطابق enum الحالة الفعلي بالباك: new/in_progress/completed/
+// rejected/cancelled (تحقّق 2026-08-13) — كل حالة باك تُميَّز بحالة فرونت
+// مستقلة (بلا fallback مشترك) كي تُعرض شارة مختلفة لكل منها.
+enum MatRequestStatus { newRequest, inProgress, delivered, unavailable, cancelled }
 
 /// طلب مادة واحد أرسله المخبر للمستودع.
 class MatRequest {

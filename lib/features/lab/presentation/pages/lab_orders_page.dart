@@ -58,7 +58,8 @@ class LabOrdersPage extends StatelessWidget {
             sections: LabSidebarSections.buildWithBadges(
               context,
               newOrdersCount: state.newCount,
-              unreadNotifsCount: 2,
+              // لا مصدر إشعارات حقيقي متاح لهذه الصفحة بعد — 0 بدل رقم ثابت.
+              unreadNotifsCount: 0,
             ),
             pageTitle: context.l10n.doctorOrders,
             pageSubtitle: null,
@@ -66,7 +67,7 @@ class LabOrdersPage extends StatelessWidget {
             onSearchChanged: (q) =>
                 context.read<LabOrdersCubit>().setSearchQuery(q),
             userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
-            notificationCount: 2,
+            notificationCount: 0,
             body: _OrdersBody(state: state),
           );
         },
@@ -111,7 +112,6 @@ class _OrdersBody extends StatelessWidget {
           LabOrdersFilterBar(
             total: state.total,
             shown: filtered.length,
-            urgentCount: state.urgentCount,
             newCount: state.newCount,
             mfgCount: state.mfgCount,
             readyCount: state.readyCount,
@@ -170,50 +170,36 @@ class _OrdersBody extends StatelessWidget {
     if (choice == null) return;
     // تحديث الطلب عبر الـ Cubit/Repository. الباك يرفض بعض الانتقالات (مثلاً
     // "جاهز" على طلب لم يبدأ تصنيعه) — لازم نُظهر السبب، لا فشل صامت.
+    // المواد المستهلكة (حالة "جاهز" فقط) تُرسل ضمن نفس طلب الإكمال — الباك
+    // يخصم المخزون ويسجّل LabOrderMaterial (سجلّ ربط بالطلبية) ذرّياً بمعاملة
+    // واحدة، بدل استدعاء خصم منفصل بعد الإكمال (كان يفقد سجلّ الربط بالطلبية).
     final ok = await cubit.processOrder(
       id: order.id,
       status: choice.status,
       technician: choice.technician,
+      materials: _resolveMaterials(choice.consumption, stock),
     );
     if (!context.mounted) return;
     if (!ok) {
       GlassToast.show(context, message: cubit.state.errorMessage ?? context.l10n.error);
-      return;
-    }
-    // إنجاز الطلب → إنقاص المواد المستهلكة من مخزون المخبر الحقيقي (UC75).
-    // الطلب نفسه نجح فعلاً — فشل خصم مادة هنا side-effect لاحق، نُظهره بتنبيه
-    // بدل ما نتجاهله (كان قبلاً بيروح لمخزون وهمي بالذاكرة بصمت).
-    if (choice.consumption.isNotEmpty) {
-      final failed = await _consumeStock(choice.consumption, stock);
-      if (failed.isNotEmpty && context.mounted) {
-        GlassToast.show(context, message: context.l10n.labProcessConsumeFailed(failed.join('، ')));
-      }
     }
   }
 
-  /// يخصم كل سطر استهلاك من مخزون المخبر الحقيقي. يرجّع أسماء المواد التي
-  /// فشل خصمها (فارغة = نجح الكل).
-  Future<List<String>> _consumeStock(
+  /// يحوّل أسطر الاستهلاك (معرّف سجل مخزون) إلى {material_id, quantity} يلي
+  /// يتوقّعه الباك — بالبحث عن materialId الحقيقي لكل سجل مخزون بالقائمة.
+  List<({int materialId, double quantity})>? _resolveMaterials(
     List<LabConsumptionLine> lines,
     List<LabStock> stock,
-  ) async {
-    final repo = sl<LabStockRepository>();
-    final failed = <String>[];
+  ) {
+    if (lines.isEmpty) return null;
+    final out = <({int materialId, double quantity})>[];
     for (final line in lines) {
-      try {
-        await repo.subtractQuantity(
-          id: line.stockId,
-          quantity: line.quantity.toDouble(),
-        );
-      } catch (_) {
-        final name = stock
-            .where((s) => s.id == line.stockId)
-            .map((s) => s.material)
-            .firstOrNull;
-        failed.add(name ?? line.stockId);
+      final match = stock.where((s) => s.id == line.stockId).firstOrNull;
+      if (match != null) {
+        out.add((materialId: match.materialId, quantity: line.quantity.toDouble()));
       }
     }
-    return failed;
+    return out.isEmpty ? null : out;
   }
 
   /// مخزون المخبر الحقيقي لقائمة اختيار المواد المستهلكة (فارغة عند الفشل).

@@ -23,12 +23,16 @@ class LabDashboardCubit extends Cubit<LabDashboardState> {
     emit(state.copyWith(status: LabDashboardStatus.loading, clearError: true));
     try {
       final orders = await _orders.getAll();
-      emit(state.copyWith(status: LabDashboardStatus.loaded, orders: orders));
-    } on Failure catch (f) {
       emit(state.copyWith(
-          status: LabDashboardStatus.error, errorMessage: f.message));
-    } catch (_) {
-      emit(state.copyWith(status: LabDashboardStatus.error));
+        status: LabDashboardStatus.loaded,
+        orders: orders,
+        lastLoadedAt: DateTime.now(),
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: LabDashboardStatus.error,
+        errorMessage: userMessageFromError(e),
+      ));
     }
   }
 }

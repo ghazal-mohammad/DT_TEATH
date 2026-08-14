@@ -17,6 +17,7 @@ import '../offline/outbox_processor.dart';
 import '../offline/persistent_cache.dart';
 import '../../shared/bloc/locale_cubit.dart';
 import '../../shared/bloc/mock_system_cubit.dart';
+import '../../shared/bloc/compact_view_cubit.dart';
 import '../../shared/bloc/text_scale_cubit.dart';
 import '../../shared/bloc/theme_cubit.dart';
 
@@ -102,6 +103,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TextScaleCubit>(() => TextScaleCubit());
   sl.registerLazySingleton<LocaleCubit>(() => LocaleCubit());
   sl.registerLazySingleton<MockSystemCubit>(() => MockSystemCubit());
+  sl.registerLazySingleton<CompactViewCubit>(() => CompactViewCubit());
 
   // ── Auth: Data + Domain ────────────────────────────────────────────────
   sl.registerLazySingleton<AuthRemoteDataSource>(

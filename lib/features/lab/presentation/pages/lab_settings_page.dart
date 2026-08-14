@@ -17,6 +17,7 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../auth/presentation/logout_action.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/bloc/compact_view_cubit.dart';
 import '../../../../shared/bloc/theme_cubit.dart';
 import '../../../../shared/widgets/settings/app_text_size_selector.dart';
 import '../../../../shared/widgets/primitives/app_theme_option.dart';
@@ -25,6 +26,7 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../bloc/lab_settings_prefs_cubit.dart';
 import '../navigation/lab_sidebar_sections.dart';
 
 part '../widgets/settings/lab_settings_tab_nav.dart';
@@ -49,19 +51,23 @@ class _LabSettingsPageState extends State<LabSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AppShellLayout(
-      system: AppSystemType.lab,
-      currentRoute: RouteNames.labSettings,
-      sections: LabSidebarSections.build(context),
-      pageTitle: context.l10n.settings,
-      pageSubtitle: null,
-      // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
-      showSearch: false,
-      userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
-      notificationCount: 2,
-      body: _LabSettingsBody(
-        selectedTab: _selectedTab,
-        onTabChanged: (i) => setState(() => _selectedTab = i),
+    return BlocProvider(
+      create: (_) => LabSettingsPrefsCubit()..loadSaved(),
+      child: AppShellLayout(
+        system: AppSystemType.lab,
+        currentRoute: RouteNames.labSettings,
+        sections: LabSidebarSections.build(context),
+        pageTitle: context.l10n.settings,
+        pageSubtitle: null,
+        // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
+        showSearch: false,
+        userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
+        // بلا مصدر حقيقي رخيص لهالشاشة (نفس ملاحظة صفحة الفريق) — 0 بدل رقم وهمي.
+        notificationCount: 0,
+        body: _LabSettingsBody(
+          selectedTab: _selectedTab,
+          onTabChanged: (i) => setState(() => _selectedTab = i),
+        ),
       ),
     );
   }

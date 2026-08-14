@@ -17,6 +17,7 @@ class _MainColumn extends StatelessWidget {
     this.loading = false,
     this.loadError,
     this.onRetry,
+    this.statsFuture,
   });
 
   final _EmployeeData data;
@@ -31,12 +32,15 @@ class _MainColumn extends StatelessWidget {
   final String? loadError;
   final VoidCallback? onRetry;
 
+  /// عدّادات بطاقات الإحصاء الحقيقية (راجع [EmployeeProfileContent.statsLoader]).
+  final Future<ProfileOrderStats>? statsFuture;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _StatsRow(),
+        _StatsRow(statsFuture: statsFuture),
         if (loadError != null) ...[
           const SizedBox(height: 18),
           _LoadErrorBanner(message: loadError!, onRetry: onRetry),

@@ -51,12 +51,14 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
     // عند إعادة الزيارة نعرض الكاش فوراً (بلا شيمر) ثم نحدّث صامتاً (SWR).
     final cachedTechs = _repository.cachedTechnicians;
     if (cachedTechs != null) {
-      final cachedOrders = await _fetchOrders();
+      final cachedFetch = await _fetchOrders();
       emit(state.copyWith(
         status: LabTechniciansStatus.loaded,
-        technicians: _mapTechnicians(cachedTechs, cachedOrders, roleLabel, pendingLabel),
-        orders: _assignable(cachedOrders),
+        technicians: _mapTechnicians(
+            cachedTechs, cachedFetch.orders, roleLabel, pendingLabel),
+        orders: _assignable(cachedFetch.orders),
         clearError: true,
+        ordersLoadFailed: cachedFetch.failed,
       ));
     } else {
       emit(state.copyWith(
@@ -64,12 +66,14 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
     }
     try {
       final techs = await _repository.getTechnicians();
-      final orders = await _fetchOrders();
+      final fetch = await _fetchOrders();
       emit(state.copyWith(
         status: LabTechniciansStatus.loaded,
-        technicians: _mapTechnicians(techs, orders, roleLabel, pendingLabel),
-        orders: _assignable(orders),
+        technicians:
+            _mapTechnicians(techs, fetch.orders, roleLabel, pendingLabel),
+        orders: _assignable(fetch.orders),
         clearError: true,
+        ordersLoadFailed: fetch.failed,
       ));
     } on Failure catch (f) {
       if (cachedTechs == null) {
@@ -106,11 +110,13 @@ class LabTechniciansCubit extends Cubit<LabTechniciansState> {
     }
   }
 
-  Future<List<LabOrderFull>> _fetchOrders() async {
+  /// يجلب الطلبات، ويميّز صراحةً بين "لا طلبات" و"فشل الجلب" — حتى لا تُعرض
+  /// حمل عمل الفنّيين كصفر (بانتظار التوكيل) وكأنها حقيقة مؤكّدة عند فشل شبكي.
+  Future<({List<LabOrderFull> orders, bool failed})> _fetchOrders() async {
     try {
-      return await _ordersRepository.getAll();
+      return (orders: await _ordersRepository.getAll(), failed: false);
     } catch (_) {
-      return const [];
+      return (orders: const <LabOrderFull>[], failed: true);
     }
   }
 

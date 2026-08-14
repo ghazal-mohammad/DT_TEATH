@@ -3,6 +3,10 @@
 //
 // صندوق تنبيه "طلبات تنتهي اليوم" في لوحة تحكم المخبر.
 // مُستخرَج من lab_dashboard_page.dart ضمن تقسيم الصفحات العملاقة لودجات.
+//
+// يعرض الطلبات الحقيقية المُمرَّرة له (LabDashboardState.ordersDueToday) —
+// لا بيانات وهمية. لا يوجد حقل وقت حقيقي بالباك لهذه الطلبات (date تاريخ
+// فقط)، لذا لا نعرض وقتاً مُختلَقاً.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -11,13 +15,21 @@ import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../domain/entities/lab_order.dart';
 
-/// تنبيه برتقالي يعرض الطلبات التي يحين تسليمها اليوم مع وقت كل منها.
+/// صندوق تنبيه يعرض الطلبات الحقيقية التي يحين تسليمها اليوم.
 class LabEndingTodayAlert extends StatelessWidget {
-  const LabEndingTodayAlert({super.key});
+  const LabEndingTodayAlert({super.key, required this.ordersDueToday});
+
+  /// الطلبات الحقيقية المستحقّة اليوم (من LabDashboardState.ordersDueToday).
+  final List<LabOrderFull> ordersDueToday;
 
   @override
   Widget build(BuildContext context) {
+    if (ordersDueToday.isEmpty) {
+      return _buildEmpty(context);
+    }
+
     const Color accent = AppColors.chipOrangeAccentLight;
     final bool isLight = Theme.of(context).brightness == Brightness.light;
 
@@ -73,10 +85,10 @@ class LabEndingTodayAlert extends StatelessWidget {
                           color: AppColors.statusUrgent,
                           shape: BoxShape.circle,
                         ),
-                        child: const Text(
-                          '2',
+                        child: Text(
+                          '${ordersDueToday.length}',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
@@ -132,17 +144,46 @@ class LabEndingTodayAlert extends StatelessWidget {
     );
   }
 
+  /// حالة عدم وجود أي طلب مستحق اليوم — رسالة واضحة بدل صندوق برتقالي مضلِّل
+  /// أو فراغ صامت.
+  Widget _buildEmpty(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.baseComponent : AppColors.darkBg1,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+        border: Border.all(
+            color: isLight ? AppColors.lightBorder : AppColors.darkBorder),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.check_circle_rounded,
+            size: 20,
+            color: AppColors.statusSuccess,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              context.l10n.labOrdersDueTodayEmpty,
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// pills العرض السريع لكل طلب حقيقي مستحق اليوم — النوع + الطبيب
+  /// (لا وقت: date بالباك تاريخ فقط، بلا ساعة).
   List<Widget> _buildOrderPills(bool isLight) {
-    // ترتيب التصميم المرجعي (RTL يمين→يسار):
-    //   [16:00 جسر 3 وحدات — د. خالد] → [14:00 تلبيسة PFM — د. سارة]
-    // الأقرب لـ deadline (14:00) في الأقصى يسار، والأبعد (16:00) أقرب للترويسة.
-    const items = [
-      _PillData(time: '16:00', body: 'جسر 3 وحدات — د. خالد'),
-      _PillData(time: '14:00', body: 'تلبيسة PFM — د. سارة'),
-    ];
-    return items
+    return ordersDueToday
         .map(
-          (p) => Container(
+          (order) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: isLight ? Colors.white : AppColors.darkBg1,
@@ -155,7 +196,7 @@ class LabEndingTodayAlert extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  p.time,
+                  order.type,
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
@@ -170,7 +211,7 @@ class LabEndingTodayAlert extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  p.body,
+                  order.doctor,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: isLight ? AppColors.lightText2 : AppColors.darkText2,
                   ),
@@ -181,10 +222,4 @@ class LabEndingTodayAlert extends StatelessWidget {
         )
         .toList();
   }
-}
-
-class _PillData {
-  const _PillData({required this.time, required this.body});
-  final String time;
-  final String body;
 }

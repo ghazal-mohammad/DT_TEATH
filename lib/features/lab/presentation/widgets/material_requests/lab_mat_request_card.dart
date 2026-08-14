@@ -1,9 +1,3 @@
-// ════════════════════════════════════════════════════════════════════════════
-// lab_mat_request_card.dart
-//
-// بطاقة طلب مادة من المستودع (معرف + مادة + حالة + تفاصيل + سبب/ملاحظة)
-// — مُستخرَجة من lab_material_requests_page.dart ضمن تقسيم الصفحات.
-// ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 
@@ -13,7 +7,6 @@ import '../../../../../core/theme/app_icons.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/primitives/app_badge.dart';
-import '../../../../../shared/widgets/primitives/app_button.dart';
 import 'lab_mat_request_data.dart';
 
 /// بطاقة طلب مادة واحدة في قائمة طلبات المخبر من المستودع.
@@ -35,10 +28,14 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
     switch (widget.request.status) {
       case MatRequestStatus.newRequest:
         return AppColors.accent;
+      case MatRequestStatus.inProgress:
+        return AppColors.statusProgress;
       case MatRequestStatus.delivered:
         return AppColors.success;
       case MatRequestStatus.unavailable:
         return AppColors.error;
+      case MatRequestStatus.cancelled:
+        return AppColors.categoryGrey;
     }
   }
 
@@ -46,10 +43,14 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
     switch (widget.request.status) {
       case MatRequestStatus.newRequest:
         return AppBadgeVariant.cyan;
+      case MatRequestStatus.inProgress:
+        return AppBadgeVariant.violet;
       case MatRequestStatus.delivered:
         return AppBadgeVariant.green;
       case MatRequestStatus.unavailable:
         return AppBadgeVariant.redAnimated;
+      case MatRequestStatus.cancelled:
+        return AppBadgeVariant.gold;
     }
   }
 
@@ -57,10 +58,14 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
     switch (widget.request.status) {
       case MatRequestStatus.newRequest:
         return context.l10n.statusNew;
+      case MatRequestStatus.inProgress:
+        return context.l10n.labReqStatusInProgress;
       case MatRequestStatus.delivered:
         return context.l10n.statusDelivered;
       case MatRequestStatus.unavailable:
         return context.l10n.labReqStatusUnavailable;
+      case MatRequestStatus.cancelled:
+        return context.l10n.statusCancelled;
     }
   }
 
@@ -209,16 +214,8 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
                           ),
                         ],
                         const Spacer(),
-                        if (r.status == MatRequestStatus.newRequest)
-                          AppButton.secondary(
-                            label: context.l10n.labActionTrack,
-                            icon: AppIcons.eye,
-                            onPressed: () {},
-                            size: AppButtonSize.small,
-                          ),
                       ],
                     ),
-                    // سبب الطلب (للمواد الجديدة) — صندوق معلوماتي محايد.
                     if (r.reason != null && r.reason!.isNotEmpty) ...[
                       const SizedBox(height: AppSizes.spaceSM),
                       Container(

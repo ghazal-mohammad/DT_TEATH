@@ -222,12 +222,6 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
                     Text(item.date, style: AppTextStyles.bodySmall),
               ),
               AppDataColumn<LabOrderFull>(
-                label: context.l10n.colPriority,
-                flex: 2,
-                cellBuilder: (item) =>
-                    _priorityCell(context, item.isUrgent, isLight),
-              ),
-              AppDataColumn<LabOrderFull>(
                 label: context.l10n.colStatus,
                 flex: 2,
                 cellBuilder: (item) => _statusBadge(context, item, isLight),
@@ -277,47 +271,6 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
             displayName,
             style: AppTextStyles.bodyMedium,
             overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// الباك لا يعرف إلا حالتين (isUrgent bool) — لا "متوسطة" حقيقية. موحّد مع
-  /// شارة العجلة بالبطاقة (lab_order_card.dart).
-  Widget _priorityCell(BuildContext context, bool isUrgent, bool isLight) {
-    final l10n = context.l10n;
-    final ({Color color, String label, int bars}) data = isUrgent
-        ? (color: AppColors.statusUrgent, label: l10n.priorityUrgent, bars: 3)
-        : (
-            color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-            label: l10n.priorityNormal,
-            bars: 1,
-          );
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (int i = 0; i < 3; i++) ...[
-          if (i > 0) const SizedBox(width: 2),
-          Container(
-            width: 3,
-            height: 10 + i * 2.0,
-            decoration: BoxDecoration(
-              color: i < data.bars
-                  ? data.color
-                  : data.color.withValues(alpha: 0.22),
-              borderRadius: BorderRadius.circular(1),
-            ),
-          ),
-        ],
-        const SizedBox(width: 6),
-        Text(
-          data.label,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: data.color,
           ),
         ),
       ],

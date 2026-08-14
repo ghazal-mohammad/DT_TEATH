@@ -16,8 +16,7 @@
 //     - ready        → setStatusCompleted/{id}.
 //   ثم نُعيد الجلب من السيرفر ليعكس الـ stream حقيقة الباك (هو يفرض الانتقالات).
 //
-// قيود معروفة (تحتاج تطوّر UI لاحقاً): الطلب متعدّد العناصر يظهر بأول عنصر فقط،
-// وحالة cancelled تُعرض كـ ready (لا توجد شارة إلغاء في النموذج الحالي).
+// قيود معروفة (تحتاج تطوّر UI لاحقاً): الطلب متعدّد العناصر يظهر بأول عنصر فقط.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:async';
@@ -105,6 +104,7 @@ class RemoteLabOrdersRepository
     required String id,
     required LabOrderBadgeVariant status,
     String? technician,
+    List<({int materialId, double quantity})>? materials,
   }) async {
     try {
       switch (status) {
@@ -112,7 +112,15 @@ class RemoteLabOrdersRepository
           final techId = await _resolveTechnicianId(technician);
           await _remote.setInProgress(id, techId);
         case LabOrderBadgeVariant.ready:
-          await _remote.setCompleted(id);
+          await _remote.setCompleted(
+            id,
+            materials: materials
+                ?.map((m) => {
+                      'material_id': m.materialId,
+                      'quantity_used': m.quantity,
+                    })
+                .toList(),
+          );
         case LabOrderBadgeVariant.cancelled:
           await _remote.setCancelled(id);
         case LabOrderBadgeVariant.newOrder:

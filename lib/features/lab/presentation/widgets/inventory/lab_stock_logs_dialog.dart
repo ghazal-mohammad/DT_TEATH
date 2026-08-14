@@ -229,7 +229,8 @@ class _LogRow extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Text(
-            '$sign${log.quantity}${log.unit.isEmpty ? '' : ' ${log.unit}'}',
+            '$sign${log.quantity.abs()}'
+            '${log.unit.isEmpty ? '' : ' ${log.unit}'}',
             style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w800,
               color: accent,

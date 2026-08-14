@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 // lab_dashboard_stat_cards.dart
 //
-// صف بطاقات الإحصاء في لوحة تحكم المخبر (عاجل/جاهز/قيد التصنيع/جديد).
+// صف بطاقات الإحصاء في لوحة تحكم المخبر (اليوم/جاهز/قيد التصنيع/جديد).
 // مُستخرَج من lab_dashboard_page.dart ضمن تقسيم الصفحات العملاقة لودجات.
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -14,8 +14,9 @@ import '../../../../../core/theme/app_text_styles.dart';
 
 /// صف بطاقات الإحصاء الأربع في أعلى لوحة تحكم المخبر.
 ///
-/// القيم محسوبة من الطلبات الحقيقية (LabDashboardCubit). نصوص الـ trend تبقى
-/// إرشادية مؤقّتاً (الباك لا يوفّر بيانات تاريخية لحساب نِسَب حقيقية).
+/// القيم محسوبة بالكامل من الطلبات الحقيقية (LabDashboardCubit). لا يوجد صف
+/// اتجاه (trend) — الباك لا يوفّر بيانات تاريخية لحساب نِسَب حقيقية، وعرض
+/// أرقام مُختلَقة كـ"+18% من الشهر الماضي" كان يضلّل المستخدم.
 class LabDashboardStatCards extends StatelessWidget {
   const LabDashboardStatCards({
     super.key,
@@ -42,15 +43,14 @@ class LabDashboardStatCards extends StatelessWidget {
     final l10n = context.l10n;
     final cards = <Widget>[
       _DashboardStatCard(
-        chipLabel: l10n.priorityUrgent,
+        // "عاجل" كانت تصف قيمة dueToday بشكل خاطئ (مفهوم إلحاح غير موجود
+        // فعلياً بهذا العدّاد) — استُبدلت بتسمية صادقة: طلبات اليوم.
+        chipLabel: l10n.labTodayOrders,
         chipColor: AppColors.statusUrgent,
         accentColor: AppColors.statusUrgent,
         icon: Icons.local_fire_department_rounded,
         value: '$dueToday',
         label: l10n.labStatUrgentToday,
-        trendIcon: Icons.arrow_downward_rounded,
-        trendText: l10n.labStatNeedsFollowup,
-        trendColor: AppColors.statusUrgent,
       ),
       _DashboardStatCard(
         chipLabel: l10n.labChipThisMonth,
@@ -59,9 +59,6 @@ class LabDashboardStatCards extends StatelessWidget {
         icon: Icons.check_circle_rounded,
         value: '$ready',
         label: l10n.labStatReadyOrders,
-        trendIcon: Icons.arrow_upward_rounded,
-        trendText: l10n.labTrendFromLastMonth('+18%'),
-        trendColor: AppColors.statusSuccess,
       ),
       _DashboardStatCard(
         chipLabel: l10n.labChipActive,
@@ -70,9 +67,6 @@ class LabDashboardStatCards extends StatelessWidget {
         icon: Icons.adjust_rounded,
         value: '$manufacturing',
         label: l10n.labStatManufacturing,
-        trendIcon: Icons.arrow_upward_rounded,
-        trendText: l10n.labTrendFromYesterday('+1'),
-        trendColor: AppColors.statusProgress,
       ),
       _DashboardStatCard(
         chipLabel: l10n.statusNew,
@@ -81,9 +75,6 @@ class LabDashboardStatCards extends StatelessWidget {
         icon: Icons.add_rounded,
         value: '$newOrders',
         label: l10n.labStatNewOrders,
-        trendIcon: Icons.arrow_upward_rounded,
-        trendText: l10n.labTrendFromYesterday('+2'),
-        trendColor: AppColors.statusInfo,
       ),
     ];
 
@@ -132,9 +123,6 @@ class _DashboardStatCard extends StatefulWidget {
     required this.icon,
     required this.value,
     required this.label,
-    required this.trendIcon,
-    required this.trendText,
-    required this.trendColor,
   });
 
   final String chipLabel;
@@ -143,9 +131,6 @@ class _DashboardStatCard extends StatefulWidget {
   final IconData icon;
   final String value;
   final String label;
-  final IconData trendIcon;
-  final String trendText;
-  final Color trendColor;
 
   @override
   State<_DashboardStatCard> createState() => _DashboardStatCardState();
@@ -256,26 +241,6 @@ class _DashboardStatCardState extends State<_DashboardStatCard> {
                         color: isLight ? AppColors.lightText3 : AppColors.darkText3,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(widget.trendIcon, size: 12, color: widget.trendColor),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            widget.trendText,
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: widget.trendColor,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),

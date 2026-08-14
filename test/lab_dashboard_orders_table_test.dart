@@ -23,7 +23,6 @@ void main() {
   LabOrderFull order({
     required String id,
     required LabOrderBadgeVariant status,
-    bool isUrgent = false,
   }) =>
       LabOrderFull(
         id: id,
@@ -33,7 +32,6 @@ void main() {
         tooth: '#14',
         date: '2026-08-11',
         statusVariant: status,
-        isUrgent: isUrgent,
       );
 
   testWidgets('يعرض الطلبات الحقيقية المُمرَّرة له، لا بيانات mock ثابتة',

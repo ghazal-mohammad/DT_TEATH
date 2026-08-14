@@ -19,10 +19,6 @@ class _PreferencesTab extends StatefulWidget {
 }
 
 class _PreferencesTabState extends State<_PreferencesTab> {
-  bool _compact = false;
-  bool _autosave = true;
-
-
   @override
   Widget build(BuildContext context) {
     final divider = Divider(
@@ -142,16 +138,17 @@ class _PreferencesTabState extends State<_PreferencesTab> {
             _ToggleRow(
               title: context.l10n.settingsCompactView,
               subtitle: context.l10n.settingsCompactViewDesc,
-              value: _compact,
-              onChanged: (v) => setState(() => _compact = v),
+              value: context.watch<CompactViewCubit>().state,
+              onChanged: (v) => context.read<CompactViewCubit>().setCompact(v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
               title: context.l10n.settingsAutoSave,
               subtitle: context.l10n.settingsAutoSaveDesc,
-              value: _autosave,
-              onChanged: (v) => setState(() => _autosave = v),
+              value: context.watch<LabSettingsPrefsCubit>().state.autosave,
+              onChanged: (v) =>
+                  context.read<LabSettingsPrefsCubit>().setAutosave(v),
               isLight: widget.isLight,
             ),
           ]),

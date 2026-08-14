@@ -46,9 +46,20 @@ class LabOrdersRemoteDataSource {
   }
 
   /// POST /api/labManager/setStatusCompleted/{id} — إكمال الطلب.
-  /// (الباك يتطلّب الحالة = in_progress؛ materials اختيارية لخصم المخزون.)
-  Future<void> setCompleted(Object id) async {
-    await _dio.post<dynamic>(ApiEndpoints.labManagerSetOrderCompleted(id));
+  /// (الباك يتطلّب الحالة = in_progress.) [materials] اختيارية: كل عنصر
+  /// {material_id, quantity_used} — الباك بذاته يخصم من مخزون المخبر ويسجّل
+  /// LabOrderMaterial (سجلّ ربط المادة بالطلبية) ضمن معاملة واحدة ذرّية،
+  /// بعكس استدعاء subtractFromStock منفصلاً بعد الإكمال.
+  Future<void> setCompleted(
+    Object id, {
+    List<Map<String, dynamic>>? materials,
+  }) async {
+    await _dio.post<dynamic>(
+      ApiEndpoints.labManagerSetOrderCompleted(id),
+      data: (materials == null || materials.isEmpty)
+          ? null
+          : FormData.fromMap({'materials': materials}),
+    );
   }
 
   /// POST /api/labManager/setStatusCancelled/{id} — إلغاء الطلب.

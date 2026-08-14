@@ -4,9 +4,6 @@
 // تنفيذ Remote لـ [LabProductsRepository] — يجلب/ينشئ/يحدّث منتجات المخبر من
 // الباك عبر [LabProductsRemoteDataSource]، ويحوّل أخطاء Dio لـ Failure واضحة.
 //
-// يطابق عقد MockLabProductsRepository تماماً (نفس الواجهة + stream) فالـ UI لا
-// يلاحظ الفرق — التبديل بينهما يتمّ في الـ DI فقط.
-//
 // مطابقة العقد مع الباك (تحقّق فعلي 2026-06-24):
 //   - الصنف يرجع: {id, category{}, name, name_en, type, material,
 //                  price:"99000.00"(نص), duration:"3"(نص), is_active}.
@@ -319,13 +316,16 @@ class RemoteLabProductsRepository
   }
 
   /// جسم الطلب للإنشاء/التحديث (الحقول التي يقبلها الباك من نموذجنا).
+  /// category_id يُرسَل دايماً (حتى فارغاً) لا شرطياً — الباك يعتمد multipart
+  /// sometimes|nullable: غياب المفتاح = "لا تغيير"، ووجوده فارغاً = "امسح
+  /// الفئة". حذفه شرطياً كان يمنع تصفير الفئة من الحفظ فعلياً.
   Map<String, dynamic> _toBody(LabProduct p) => {
         'name': p.name,
         'type': p.type,
         'material': p.material,
         'price': p.price,
         'duration': p.productionDays,
-        if (p.categoryId != null) 'category_id': p.categoryId,
+        'category_id': p.categoryId?.toString() ?? '',
       };
 
   static int _toInt(Object? v) {

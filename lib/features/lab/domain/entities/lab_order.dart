@@ -5,13 +5,11 @@
 // نُقلت إلى domain ضمن بناء طبقة domain + Cubits؛ كانت سابقاً في presentation/data.
 // نقي (pure Dart) — بلا أي اعتماد على Flutter.
 //
-// ملاحظة توافقية: lab_order_models.dart و lab_dashboard_mock_data.dart يعيدان
-// تصدير هذه الرموز (export ... show) كي تبقى الملفات المستوردة القديمة تعمل
-// دون تعديل.
+// ملاحظة توافقية: lab_order_models.dart يعيد تصدير هذه الرموز (export ... show)
+// كي تبقى الملفات المستوردة القديمة تعمل دون تعديل.
 // ════════════════════════════════════════════════════════════════════════════
 
 /// نوع badge لطلبات المخبر.
-/// "مستعجل" ليست حالة — هي خاصية يحددها الطبيب وتُعرض كشارة منفصلة (isUrgent).
 enum LabOrderBadgeVariant {
   newOrder,
   manufacturing,
@@ -66,7 +64,6 @@ class LabOrderFull {
     required this.tooth,
     required this.date,
     required this.statusVariant,
-    this.isUrgent = false,
     this.notes = '',
     this.cost,
     this.assignedTechnician,
@@ -81,7 +78,6 @@ class LabOrderFull {
   final String tooth;
   final String date;
   LabOrderBadgeVariant statusVariant;
-  final bool isUrgent;
   final String notes;
 
   /// كل قطع الطلب (للعرض الكامل في مودال التفاصيل). الحقول المسطّحة

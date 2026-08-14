@@ -27,10 +27,15 @@ abstract class LabOrdersRepository {
 
   /// يعالج طلباً: يحدّث الحالة + المخبري المنفّذ (UC69/UC70/UC71). التكلفة
   /// يحسبها الباك تلقائياً من بنود الطلبية — لا تُرسل يدوياً.
+  ///
+  /// [materials] (لحالة ready فقط): المواد المستهلكة من مخزون المخبر —
+  /// الباك يخصمها ويسجّل LabOrderMaterial ضمن نفس معاملة الإكمال (ذرّي)،
+  /// بدل استدعاء خصم منفصل بعد الإكمال (UC75).
   Future<void> processOrder({
     required String id,
     required LabOrderBadgeVariant status,
     String? technician,
+    List<({int materialId, double quantity})>? materials,
   });
 
   /// stream للطلبات — لتحديث الـ UI تلقائياً عند أي تغيير.

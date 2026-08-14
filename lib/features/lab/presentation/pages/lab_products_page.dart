@@ -19,6 +19,7 @@ import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
+import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
@@ -100,13 +101,14 @@ class LabProductsPage extends StatelessWidget {
 
   Future<void> _onAdd(BuildContext context) async {
     final cubit = context.read<LabProductsCubit>();
+    final l10n = context.l10n;
     final result = await LabProductFormDialog.show(
       context,
       null,
       categories: cubit.state.categories,
     );
     if (result == null) return;
-    cubit.create(LabProduct(
+    final ok = await cubit.create(LabProduct(
       id: '',
       name: result.name,
       type: result.type,
@@ -115,17 +117,21 @@ class LabProductsPage extends StatelessWidget {
       productionDays: result.productionDays,
       categoryId: result.categoryId,
     ));
+    if (!ok && context.mounted) {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? l10n.error);
+    }
   }
 
   Future<void> _onEdit(BuildContext context, LabProduct product) async {
     final cubit = context.read<LabProductsCubit>();
+    final l10n = context.l10n;
     final result = await LabProductFormDialog.show(
       context,
       product,
       categories: cubit.state.categories,
     );
     if (result == null) return;
-    cubit.update(product.copyWith(
+    final ok = await cubit.update(product.copyWith(
       name: result.name,
       type: result.type,
       material: result.material,
@@ -134,6 +140,9 @@ class LabProductsPage extends StatelessWidget {
       categoryId: result.categoryId,
       clearCategory: result.categoryId == null,
     ));
+    if (!ok && context.mounted) {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? l10n.error);
+    }
   }
 
   Future<void> _onDelete(BuildContext context, LabProduct product) async {
@@ -159,6 +168,10 @@ class LabProductsPage extends StatelessWidget {
         ],
       ),
     );
-    if (confirmed == true) cubit.delete(product.id);
+    if (confirmed != true) return;
+    final ok = await cubit.delete(product.id);
+    if (!ok && context.mounted) {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? l10n.error);
+    }
   }
 }

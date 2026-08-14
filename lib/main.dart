@@ -39,6 +39,7 @@ import 'core/search/app_search_warmup.dart';
 import 'core/session/session_cache_registry.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
+import 'shared/bloc/compact_view_cubit.dart';
 import 'shared/bloc/locale_cubit.dart';
 import 'shared/bloc/mock_system_cubit.dart';
 import 'shared/bloc/text_scale_cubit.dart';
@@ -122,6 +123,7 @@ Future<void> main() async {
     di.sl<TextScaleCubit>().loadSaved(),
     di.sl<LocaleCubit>().loadSaved(),
     di.sl<MockSystemCubit>().loadSaved(),
+    di.sl<CompactViewCubit>().loadSaved(),
   ]);
 
   runApp(const DtTeethApp());
@@ -140,6 +142,7 @@ class DtTeethApp extends StatelessWidget {
         BlocProvider<TextScaleCubit>.value(value: di.sl<TextScaleCubit>()),
         BlocProvider<LocaleCubit>.value(value: di.sl<LocaleCubit>()),
         BlocProvider<MockSystemCubit>.value(value: di.sl<MockSystemCubit>()),
+        BlocProvider<CompactViewCubit>.value(value: di.sl<CompactViewCubit>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
@@ -171,6 +174,7 @@ class DtTeethApp extends StatelessWidget {
                     builder: (context, child) {
                       final scale =
                           context.watch<TextScaleCubit>().state.factor;
+                      final compact = context.watch<CompactViewCubit>().state;
                       final mq = MediaQuery.of(context);
                              return PrivacyGuard(
                         child: CallbackShortcuts(
@@ -193,7 +197,14 @@ class DtTeethApp extends StatelessWidget {
                               child: MediaQuery(
                                 data: mq.copyWith(
                                     textScaler: TextScaler.linear(scale)),
-                                child: child ?? const SizedBox.shrink(),
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                    visualDensity: compact
+                                        ? VisualDensity.compact
+                                        : VisualDensity.standard,
+                                  ),
+                                  child: child ?? const SizedBox.shrink(),
+                                ),
                               ),
                             ),
                           ),

@@ -539,8 +539,6 @@ class _AvatarState extends State<_Avatar> {
                 ),
               ),
             ),
-          // النقطة الخضراء (متصل) أعلى يسار الصورة.
-          const Positioned(top: 10, left: 10, child: _OnlineDot()),
           // زر "تغيير الصورة" أسفل وسط الصورة.
           Positioned(
             bottom: 4,
@@ -581,23 +579,6 @@ class _AvatarState extends State<_Avatar> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _OnlineDot extends StatelessWidget {
-  const _OnlineDot();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 18,
-      height: 18,
-      decoration: BoxDecoration(
-        color: AppColors.success,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 3),
       ),
     );
   }

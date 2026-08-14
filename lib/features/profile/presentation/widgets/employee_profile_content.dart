@@ -230,7 +230,14 @@ class _EmployeeData {
 // ══════════════════════════════════════════════════════════════════════════
 
 class EmployeeProfileContent extends StatefulWidget {
-  const EmployeeProfileContent({super.key});
+  const EmployeeProfileContent({super.key, this.statsLoader});
+
+  /// محمّل اختياري لعدّادات بطاقات الإحصاء الثلاث أعلى العمود الرئيسي —
+  /// تُحسب من بيانات حقيقية (راجع [ProfileOrderStats]) بدل أرقام ثابتة.
+  /// كل نظام (مخبر/مستودع) يمرّر منطق الحساب الخاص فيه؛ لو تُرك null (لا
+  /// مصدر بيانات حقيقي متاح بعد لهذا النظام) تُعرض البطاقات بقيم "—" بلا
+  /// أي رقم مُختلَق، بدل الادّعاء ببيانات غير موجودة.
+  final Future<ProfileOrderStats> Function()? statsLoader;
 
   @override
   State<EmployeeProfileContent> createState() => _EmployeeProfileContentState();
@@ -247,6 +254,10 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
   // الربط بالباك إند — ProfileCubit (مشترك مخبر/مستودع).
   late final ProfileCubit _cubit;
   bool _savingEdit = false;
+
+  /// يُحسب مرّة واحدة فقط عند إنشاء الحالة (لا يُعاد استدعاؤه مع كل rebuild
+  /// أثناء التعديل inline) — يُمرَّر كما هو لـ FutureBuilder داخل _StatsRow.
+  Future<ProfileOrderStats>? _statsFuture;
 
   /// حفظ صورة مستقل عن وضع "تعديل الملف" العام — لا يلمس _editing/_draft.
   bool _savingPhoto = false;
@@ -266,6 +277,7 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
       _data.email = u.email;
     }
     _cubit = sl<ProfileCubit>()..load();
+    _statsFuture = widget.statsLoader?.call();
   }
 
   @override
@@ -503,6 +515,7 @@ class _EmployeeProfileContentState extends State<EmployeeProfileContent> {
         loading: loading,
         loadError: loadError,
         onRetry: () => _cubit.load(),
+        statsFuture: _statsFuture,
       );
 
       if (isWide) {

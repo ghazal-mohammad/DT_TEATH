@@ -8,6 +8,7 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:excel/excel.dart' as xls;
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -255,17 +256,42 @@ class ReportExporter {
       }
     }
 
-    final uri = Uri(
-      scheme: 'mailto',
-      query:
-          'subject=${Uri.encodeComponent(data.title)}&body=${Uri.encodeComponent(buffer.toString())}',
+    final subject = Uri.encodeComponent(data.title);
+    final body = Uri.encodeComponent(buffer.toString());
+    final gmailUri = Uri.parse(
+      'https://mail.google.com/mail/?view=cm&fs=1&su=$subject&body=$body',
     );
-    // launchUrl يرجع false بصمت لو ما في عميل بريد افتراضي مُعرَّف بالنظام —
-    // بلا هالفحص كان الزر "يشتغل" بلا أي أثر ولا رسالة خطأ.
-    final launched =
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!launched) {
-      throw StateError('لا يوجد عميل بريد افتراضي على هذا الجهاز.');
+
+    // على الويب: mailto غير موثوق — المتصفّح أحياناً "ينجح" (launchUrl يرجع
+    // true) لكن فعلياً بيفتح تبويب فاضي يعرض رابط mailto: كنص خام بدل ما
+    // يشغّل عميل بريد (تحقّق فعلي 2026-08-14: هيك بالضبط صار). فبدل الاعتماد
+    // على قيمة الإرجاع غير الموثوقة، نفتح Gmail بالمتصفّح مباشرة دائماً على
+    // الويب — بريد حقيقي شغّال 100% بأي جهاز فيه متصفّح، بلا أي اعتماد على
+    // إعداد محلي قد يفشل بصمت.
+    if (kIsWeb) {
+      final opened =
+          await launchUrl(gmailUri, mode: LaunchMode.externalApplication);
+      if (!opened) {
+        throw StateError('تعذّر فتح Gmail — تحقّق من الاتصال بالإنترنت.');
+      }
+      return;
+    }
+
+    // على الموبايل/الديسكتوب: mailto موثوق (يفتح تطبيق البريد المثبّت فعلياً
+    // أو يرجع false بوضوح لو ما في تطبيق بريد مُعرَّف).
+    final mailtoUri = Uri(scheme: 'mailto', query: 'subject=$subject&body=$body');
+    var launched = false;
+    try {
+      launched = await launchUrl(mailtoUri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      launched = false;
+    }
+    if (launched) return;
+
+    final openedGmail =
+        await launchUrl(gmailUri, mode: LaunchMode.externalApplication);
+    if (!openedGmail) {
+      throw StateError('تعذّر فتح تطبيق أو صفحة بريد — تحقّق من الاتصال بالإنترنت.');
     }
   }
 }

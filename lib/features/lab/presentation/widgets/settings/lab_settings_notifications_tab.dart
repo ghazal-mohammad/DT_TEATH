@@ -19,20 +19,14 @@ class _NotificationsTab extends StatefulWidget {
 }
 
 class _NotificationsTabState extends State<_NotificationsTab> {
-  bool _urgent = true;
-  bool _newOrders = true;
-  bool _lowStock = true;
-  bool _warehouse = true;
-  bool _team = false;
-  bool _emailSummary = true;
-  bool _sounds = false;
-
   @override
   Widget build(BuildContext context) {
     final divider = Divider(
       height: 1,
       color: widget.isLight ? AppColors.lightBorder : AppColors.darkBorder,
     );
+    final prefs = context.watch<LabSettingsPrefsCubit>().state;
+    final cubit = context.read<LabSettingsPrefsCubit>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -45,40 +39,40 @@ class _NotificationsTabState extends State<_NotificationsTab> {
             _ToggleRow(
               title: context.l10n.labSettingsNotifUrgentOrders,
               subtitle: context.l10n.labSettingsNotifUrgentOrdersDesc,
-              value: _urgent,
-              onChanged: (v) => setState(() => _urgent = v),
+              value: prefs.urgent,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.urgent, v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
               title: context.l10n.labSettingsNotifNewFromDoctors,
               subtitle: context.l10n.labSettingsNotifNewFromDoctorsDesc,
-              value: _newOrders,
-              onChanged: (v) => setState(() => _newOrders = v),
+              value: prefs.newOrders,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.newOrders, v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
               title: context.l10n.settingsNotifLowMaterials,
               subtitle: context.l10n.settingsNotifLowMaterialsDesc,
-              value: _lowStock,
-              onChanged: (v) => setState(() => _lowStock = v),
+              value: prefs.lowStock,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.lowStock, v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
               title: context.l10n.labSettingsNotifWarehouseUpdates,
               subtitle: context.l10n.labSettingsNotifWarehouseUpdatesDesc,
-              value: _warehouse,
-              onChanged: (v) => setState(() => _warehouse = v),
+              value: prefs.warehouse,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.warehouse, v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
               title: context.l10n.labSettingsNotifTeamUpdates,
               subtitle: context.l10n.labSettingsNotifTeamUpdatesDesc,
-              value: _team,
-              onChanged: (v) => setState(() => _team = v),
+              value: prefs.team,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.team, v),
               isLight: widget.isLight,
             ),
           ]),
@@ -94,16 +88,16 @@ class _NotificationsTabState extends State<_NotificationsTab> {
             _ToggleRow(
               title: context.l10n.settingsNotifDailyEmail,
               subtitle: context.l10n.settingsNotifDailyEmailDesc,
-              value: _emailSummary,
-              onChanged: (v) => setState(() => _emailSummary = v),
+              value: prefs.emailSummary,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.emailSummary, v),
               isLight: widget.isLight,
             ),
             divider,
             _ToggleRow(
               title: context.l10n.settingsNotifSound,
               subtitle: context.l10n.settingsNotifSoundDesc,
-              value: _sounds,
-              onChanged: (v) => setState(() => _sounds = v),
+              value: prefs.sounds,
+              onChanged: (v) => cubit.setNotif(LabNotifPref.sounds, v),
               isLight: widget.isLight,
             ),
           ]),

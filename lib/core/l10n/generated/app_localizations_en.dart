@@ -181,6 +181,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReports => 'Lab Reports';
 
   @override
+  String get reportsPreviousPeriod => 'Previous period';
+
+  @override
+  String get reportsNextPeriod => 'Next period';
+
+  @override
+  String get reportsBackToToday => 'Today';
+
+  @override
   String get materialRequests => 'Material Requests';
 
   @override
@@ -1026,16 +1035,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labOrdersDueTodaySubtitle => 'Must be completed before evening';
 
   @override
+  String get labOrdersDueTodayEmpty => 'No orders due today';
+
+  @override
   String get labTeamTitle => 'Manage Technicians';
 
   @override
   String get labTeamTotal => 'Total Technicians';
-
-  @override
-  String get labTeamActive => 'Active';
-
-  @override
-  String get labTeamAvailable => 'Available';
 
   @override
   String get labTeamColumnName => 'Technician';
@@ -1047,19 +1053,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTeamColumnCurrentTask => 'Current Task';
 
   @override
-  String get labTeamColumnStatus => 'Status';
-
-  @override
   String get labTeamColumnAction => 'Action';
 
   @override
   String get labTeamAssign => 'Assign';
-
-  @override
-  String get labTeamFree => 'Free';
-
-  @override
-  String get labTeamBusy => 'Busy';
 
   @override
   String get labReportTabByType => 'By Type';
@@ -1204,13 +1201,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get priorityUrgent => 'Urgent';
 
   @override
-  String get priorityMedium => 'Medium';
-
-  @override
   String get priorityNormal => 'Normal';
-
-  @override
-  String get labStatNeedsFollowup => 'Needs follow-up';
 
   @override
   String get labChipThisMonth => 'This month';
@@ -1222,17 +1213,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labStatReadyOrders => 'Ready orders';
 
   @override
-  String labTrendFromLastMonth(String value) {
-    return '$value from last month';
-  }
-
-  @override
-  String labTrendFromYesterday(String value) {
-    return '$value from yesterday';
-  }
-
-  @override
   String get labTodayOrders => 'Today\'s Orders';
+
+  @override
+  String get labLastUpdatedJustNow => 'Last updated: just now';
+
+  @override
+  String labLastUpdatedMinutesAgo(int minutes) {
+    return 'Last updated: ${minutes}m ago';
+  }
+
+  @override
+  String labLastUpdatedHoursAgo(int hours) {
+    return 'Last updated: ${hours}h ago';
+  }
 
   @override
   String labOrdersCount(String count) {
@@ -1546,21 +1540,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTeamTotalChip => 'Total';
-
-  @override
-  String get labTeamActiveChip => 'Working now';
-
-  @override
-  String get labTeamReadyChip => 'Ready to assign';
-
-  @override
-  String get techStatActiveLabel => 'Active Technicians';
-
-  @override
-  String get techStatusBreak => 'On Break';
-
-  @override
-  String get labTeamAddTechnician => 'Add Technician';
 
   @override
   String get notifMarkAllRead => 'Mark all as read';
@@ -2442,6 +2421,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqStatusUnavailable => 'Unavailable';
 
   @override
+  String get labReqStatusInProgress => 'In Progress';
+
+  @override
   String get labReqRequestedBy => 'Requested by';
 
   @override
@@ -2499,6 +2481,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTechPendingAssign => 'Awaiting assignment';
+
+  @override
+  String get labTechWorkloadLoadFailed =>
+      'Couldn\'t load technicians\' current workload — names and schedules are accurate, but task counts may not reflect reality';
 
   @override
   String get techAddButton => 'Add technician';
@@ -2654,9 +2640,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labProdTotal => 'Total products';
 
   @override
-  String get labProdActiveCount => 'Active products';
-
-  @override
   String get labProdAdd => 'New product';
 
   @override
@@ -2684,12 +2667,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labProdDaysUnit => 'days';
-
-  @override
-  String get labProdStatusActive => 'Active';
-
-  @override
-  String get labProdStatusInactive => 'Inactive';
 
   @override
   String get labProdFieldName => 'Product name';
@@ -2748,9 +2725,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labProcessCost => 'Order cost (SYP)';
-
-  @override
-  String get labProcessCostHint => 'Enter manufacturing cost';
 
   @override
   String get labProcessTechnician => 'Executing technician';

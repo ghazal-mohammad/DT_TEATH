@@ -109,13 +109,11 @@ class RemoteLabMaterialRequestsRepository
     required String material,
     required String quantity,
     required String unit,
-    required String requestedBy,
     int? materialId,
     String? company,
     String? reason,
   }) async {
     try {
-      // requestedBy لا يُرسَل — الباك يعتمد المستخدم المُصادَق.
       // مادة موجودة (materialId) ⇒ مسار items؛ وإلا مادة جديدة ⇒ new_items.
       final Map<String, dynamic> body = materialId != null
           ? {
@@ -200,17 +198,20 @@ class RemoteLabMaterialRequestsRepository
     );
   }
 
-  /// خريطة حالة الباك → حالة الفرونت.
+  /// خريطة حالة الباك → حالة الفرونت. القيم الحقيقية بالباك (enum
+  /// material_requests.status): new | in_progress | completed | rejected |
+  /// cancelled — تحقّق مباشر من migration الباك، لا تخمين.
   MatRequestStatus _mapStatus(String s) {
     switch (s) {
-      case 'fulfilled':
-      case 'delivered':
-      case 'approved':
+      case 'in_progress':
+        return MatRequestStatus.inProgress;
+      case 'completed':
         return MatRequestStatus.delivered;
       case 'rejected':
-      case 'unavailable':
         return MatRequestStatus.unavailable;
-      case 'pending':
+      case 'cancelled':
+        return MatRequestStatus.cancelled;
+      case 'new':
       default:
         return MatRequestStatus.newRequest;
     }

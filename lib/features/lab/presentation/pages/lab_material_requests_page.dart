@@ -22,9 +22,9 @@ import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/feedback/glass_toast.dart';
-import '../../../../shared/widgets/core/mock_user_data.dart';
 import '../../../../shared/widgets/layout/app_page_action_bar.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../../shared/widgets/loading/app_shimmer_card.dart';
 import '../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../shared/widgets/primitives/app_filter_chip.dart';
 import '../../domain/entities/lab_material_request.dart';
@@ -74,6 +74,29 @@ class _MaterialRequestsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+
+    if (state.status == LabMatRequestsStatus.loading && state.requests.isEmpty) {
+      return const SingleChildScrollView(
+        padding: EdgeInsets.all(AppSizes.spaceLG),
+        child: Column(
+          children: [
+            AppShimmerCard(layout: AppShimmerCardLayout.basic),
+            SizedBox(height: AppSizes.spaceMD),
+            AppShimmerCard(layout: AppShimmerCardLayout.basic),
+            SizedBox(height: AppSizes.spaceMD),
+            AppShimmerCard(layout: AppShimmerCardLayout.basic),
+          ],
+        ),
+      );
+    }
+
+    if (state.status == LabMatRequestsStatus.error && state.requests.isEmpty) {
+      return _MatRequestsError(
+        message: state.errorMessage ?? l10n.error,
+        onRetry: () => context.read<LabMaterialRequestsCubit>().load(),
+      );
+    }
+
     final requests = state.filtered;
 
     return SingleChildScrollView(
@@ -111,7 +134,11 @@ class _MaterialRequestsBody extends StatelessWidget {
             for (final req in requests) ...[
               LabMatRequestCard(
                 request: req,
-                onDelete: () => _onDelete(context, req),
+                // الحذف مسموح فقط للطلبات "الجديدة" — الباك يرفض حذف أي طلب
+                // بدأ التنفيذ (422)، فلا نعرض زر حذف يفشل دايماً.
+                onDelete: req.status == MatRequestStatus.newRequest
+                    ? () => _onDelete(context, req)
+                    : null,
               ),
               const SizedBox(height: AppSizes.spaceMD),
             ],
@@ -123,27 +150,29 @@ class _MaterialRequestsBody extends StatelessWidget {
   /// فتح فورم "طلب مادة جديدة" وإرساله عبر الـ Cubit.
   Future<void> _onNewRequest(BuildContext context) async {
     final cubit = context.read<LabMaterialRequestsCubit>();
-    final successText = context.l10n.labReqSentSuccess;
+    final l10n = context.l10n;
     final r = await LabMaterialRequestDialog.show(
       context,
       catalog: cubit.state.catalog,
     );
     if (r == null) return;
-    await cubit.addRequest(
+    final ok = await cubit.addRequest(
       material: r.material,
       quantity: r.quantity,
       unit: r.unit,
-      requestedBy: MockUserData.labUserName,
       materialId: r.materialId,
       company: r.company,
       reason: r.reason,
     );
-    if (context.mounted) {
+    if (!context.mounted) return;
+    if (ok) {
       GlassToast.show(
         context,
-        message: successText,
+        message: l10n.labReqSentSuccess,
         icon: Icons.check_circle_rounded,
       );
+    } else {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? l10n.error);
     }
   }
 
@@ -171,6 +200,37 @@ class _MaterialRequestsBody extends StatelessWidget {
         ],
       ),
     );
-    if (confirmed == true) cubit.delete(req.id);
+    if (confirmed != true) return;
+    final ok = await cubit.delete(req.id);
+    if (!ok && context.mounted) {
+      GlassToast.show(context, message: cubit.state.errorMessage ?? l10n.error);
+    }
+  }
+}
+
+class _MatRequestsError extends StatelessWidget {
+  const _MatRequestsError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.cloud_off_rounded, size: 42),
+          const SizedBox(height: 12),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: Text(context.l10n.retry),
+          ),
+        ],
+      ),
+    );
   }
 }

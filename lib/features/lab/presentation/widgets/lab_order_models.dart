@@ -69,11 +69,6 @@ String labStatusLabel(BuildContext context, LabOrderBadgeVariant variant) {
 }
 
 /// لون شريط الـ accent على الحافة اليسرى للبطاقة.
-/// الأولوية الـ urgent تتقدّم على الـ status العادي.
-Color labOrderAccentColor({
-  required LabOrderBadgeVariant statusVariant,
-  required bool isUrgent,
-}) {
-  if (isUrgent) return AppColors.statusUrgent;
+Color labOrderAccentColor({required LabOrderBadgeVariant statusVariant}) {
   return LabStatusColors.of(statusVariant).fg;
 }

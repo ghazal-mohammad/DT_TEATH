@@ -1,14 +1,3 @@
-// ════════════════════════════════════════════════════════════════════════════
-// lab_dashboard_page.dart
-//
-// صفحة لوحة التحكم لنظام المخبر. الأقسام (بطاقات الإحصاء، تنبيه اليوم، جدول
-// الطلبات) ودجات مستقلة تحت widgets/dashboard/.
-//
-// العدّادات (البطاقات + hero + شارة السايدبار) وجدول الطلبات كلها محسوبة/معروضة
-// من الطلبات الحقيقية عبر LabDashboardCubit (لا من mock ولا من عدّادات الباك
-// التي ترجع أصفاراً). تنبيه اليوم (LabEndingTodayAlert) لسا سكوني (بند منفصل).
-// ════════════════════════════════════════════════════════════════════════════
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,7 +21,6 @@ import '../widgets/dashboard/lab_dashboard_orders_table.dart';
 import '../widgets/dashboard/lab_dashboard_stat_cards.dart';
 import '../widgets/dashboard/lab_ending_today_alert.dart';
 
-// ══════════════════════════════════════════════════════════════════════════
 
 class LabDashboardPage extends StatelessWidget {
   const LabDashboardPage({super.key});
@@ -55,17 +43,60 @@ class LabDashboardPage extends StatelessWidget {
             sections: LabSidebarSections.buildWithBadges(
               context,
               newOrdersCount: state.newOrders,
-              unreadNotifsCount: 2,
+              // لا مصدر حقيقي للإشعارات بهذه الصفحة بعد (نفس ملاحظة صفحة
+              // الفريق) — 0 بدل رقم وهمي مضلّل، لحين توحيد المصدر.
+              unreadNotifsCount: 0,
             ),
             pageTitle: l10n.dashboard,
             pageSubtitle: null,
             searchPlaceholder: l10n.labDashboardSearchHint,
             showThemeToggle: false,
             userRole: currentUserRoleLabel(context, fallback: l10n.roleLabManager),
-            notificationCount: 2,
-            body: _LabDashboardBody(state: state),
+            notificationCount: 0,
+            body: state.status == LabDashboardStatus.error && state.orders.isEmpty
+                ? _DashboardError(
+                    message: state.errorMessage ?? l10n.error,
+                    onRetry: () => context.read<LabDashboardCubit>().load(),
+                  )
+                : _LabDashboardBody(state: state),
           );
         },
+      ),
+    );
+  }
+}
+
+class _DashboardError extends StatelessWidget {
+  const _DashboardError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isLight = Theme.of(context).brightness == Brightness.light;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.cloud_off_rounded,
+              size: 42,
+              color: isLight ? AppColors.lightText3 : AppColors.darkText3),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isLight ? AppColors.lightText2 : AppColors.darkText2,
+            ),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: Text(context.l10n.retry),
+          ),
+        ],
       ),
     );
   }
@@ -108,7 +139,7 @@ class _LabDashboardBody extends StatelessWidget {
                 const SizedBox(height: AppSizes.spaceLG),
 
                 // ── 3. Ending Today Alert ───────────────────────────────
-                const LabEndingTodayAlert(),
+                LabEndingTodayAlert(ordersDueToday: state.ordersDueToday),
                 const SizedBox(height: AppSizes.spaceLG),
 
                 // ── 4. Orders Table ─────────────────────────────────────
@@ -132,9 +163,9 @@ class _LabDashboardBody extends StatelessWidget {
       greeting: l10n.labGreeting(
           CurrentUser.instance.name ?? MockUserData.labUserName),
       statusText: l10n.systemAllNormal,
-      metas: const [
-        AppHeroMeta('الاثنين، 18 مايو', faded: true),
-        AppHeroMeta('آخر تحديث: منذ 3 دقيقة', faded: true),
+      metas: [
+        AppHeroMeta(_todayLabel(context), faded: true),
+        AppHeroMeta(_lastUpdatedLabel(context), faded: true),
       ],
       stats: [
         // المنجزة/الجاهزة — أقرب مقياس حقيقي لـ"تم توصيلها" (لا حالة delivered).
@@ -159,5 +190,35 @@ class _LabDashboardBody extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// اسم اليوم الحقيقي (اليوم الفعلي، لا نص ثابت).
+  String _todayLabel(BuildContext context) {
+    final l10n = context.l10n;
+    final names = [
+      l10n.dayMonday,
+      l10n.dayTuesday,
+      l10n.dayWednesday,
+      l10n.dayThursday,
+      l10n.dayFriday,
+      l10n.daySaturday,
+      l10n.daySunday,
+    ];
+    final now = DateTime.now();
+    final dayName = names[now.weekday - 1];
+    final date = '${now.day.toString().padLeft(2, '0')}/'
+        '${now.month.toString().padLeft(2, '0')}/${now.year}';
+    return '$dayName، $date';
+  }
+
+  /// "آخر تحديث" حقيقي محسوب من وقت آخر جلب ناجح فعلي، لا نص ثابت.
+  String _lastUpdatedLabel(BuildContext context) {
+    final l10n = context.l10n;
+    final at = state.lastLoadedAt;
+    if (at == null) return l10n.labLastUpdatedJustNow;
+    final diff = DateTime.now().difference(at);
+    if (diff.inMinutes < 1) return l10n.labLastUpdatedJustNow;
+    if (diff.inMinutes < 60) return l10n.labLastUpdatedMinutesAgo(diff.inMinutes);
+    return l10n.labLastUpdatedHoursAgo(diff.inHours);
   }
 }

@@ -75,27 +75,25 @@ class LabProductsCubit extends Cubit<LabProductsState> {
     emit(state.copyWith(searchQuery: query));
   }
 
-  /// إنشاء منتج جديد (الـ stream يحدّث القائمة تلقائياً).
-  Future<void> create(LabProduct product) async {
+  /// إنشاء منتج جديد (الـ stream يحدّث القائمة تلقائياً). يُرجع true عند النجاح.
+  Future<bool> create(LabProduct product) async {
     try {
       await _repository.create(product);
+      return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: LabProductsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
     }
   }
 
-  /// تحديث منتج موجود.
-  Future<void> update(LabProduct product) async {
+  /// تحديث منتج موجود. يُرجع true عند النجاح.
+  Future<bool> update(LabProduct product) async {
     try {
       await _repository.update(product);
+      return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: LabProductsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
     }
   }
 
@@ -141,15 +139,14 @@ class LabProductsCubit extends Cubit<LabProductsState> {
     }
   }
 
-  /// حذف منتج (الـ stream يحدّث القائمة تلقائياً).
-  Future<void> delete(String id) async {
+  /// حذف منتج (الـ stream يحدّث القائمة تلقائياً). يُرجع true عند النجاح.
+  Future<bool> delete(String id) async {
     try {
       await _repository.delete(id);
+      return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: LabProductsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(errorMessage: userMessageFromError(e)));
+      return false;
     }
   }
 

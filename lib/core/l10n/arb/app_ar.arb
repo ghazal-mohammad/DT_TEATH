@@ -1,11 +1,9 @@
 {
   "@@locale": "ar",
-
   "appName": "DT.Teeth",
   "privacyScreenHint": "محتوى محمي",
   "appSubtitle": "نظام إدارة مركز طب الأسنان الشامل",
   "appVersion": "v1.0 · Flutter Web",
-
   "login": "تسجيل الدخول",
   "loginTitle": "أهلاً بعودتك",
   "loginSubtitle": "سجّل دخولك للمتابعة",
@@ -25,7 +23,6 @@
   "rememberMe": "تذكرني",
   "forgotPassword": "نسيت كلمة المرور؟",
   "logout": "تسجيل الخروج",
-
   "authEnterEmailTitle": "لنبدأ رحلتك معنا",
   "authEnterEmailSubtitle": "أدخل البريد الإلكتروني الذي سجّله المدير لك",
   "authNext": "التالي",
@@ -42,7 +39,6 @@
   "authSetPasswordSubtitle": "اختر كلمة مرور قوية لحماية حسابك",
   "authSaveAndLogin": "حفظ وتسجيل الدخول",
   "authCheckEmailSent": "إذا كان هذا البريد مسجّلاً، فقد تم إرسال كود التحقق",
-
   "labSystem": "نظام المخبر",
   "warehouseSystem": "نظام المستودع",
   "systemLabDesc": "إدارة طلبات التعويضات والمخبريين والتقارير",
@@ -51,23 +47,22 @@
   "systemSelectSubtitle": "حدد النظام الذي تريد العمل عليه",
   "systemPreviewNote": "وضع المعاينة — يمكنك التبديل في أي وقت",
   "switchSystem": "تبديل النظام",
-
   "dashboard": "الصفحة الرئيسية",
   "reports": "التقارير",
   "notifications": "الإشعارات",
   "settings": "الإعدادات",
-
   "doctorOrders": "طلبات الأطباء",
   "technicians": "إدارة المخبريين",
   "labReports": "تقارير المخبر",
+  "reportsPreviousPeriod": "الفترة السابقة",
+  "reportsNextPeriod": "الفترة التالية",
+  "reportsBackToToday": "اليوم",
   "materialRequests": "طلبات المستودع",
-
   "materials": "المواد",
   "orders": "الطلبيات",
   "invoices": "الفواتير",
   "suppliers": "الموردون",
   "inventory": "المخزون",
-
   "sectionMain": "الرئيسية",
   "sectionInventory": "المخزون",
   "sectionFinance": "المالية",
@@ -77,7 +72,6 @@
   "sectionOperations": "العمليات",
   "sectionAccount": "الحساب",
   "menu": "القائمة",
-
   "search": "بحث في النظام...",
   "commandPaletteHint": "ابحث أو انتقل... (طلب، منتج، فنّي، مادة)",
   "commandPaletteEmpty": "لا نتائج مطابقة",
@@ -101,13 +95,11 @@
   "viewAll": "عرض الكل",
   "viewDetails": "عرض التفاصيل",
   "retry": "إعادة المحاولة",
-
   "loading": "جاري التحميل...",
   "noData": "لا توجد بيانات",
   "noResults": "لا توجد نتائج",
   "error": "حدث خطأ",
   "success": "تمت العملية بنجاح",
-
   "statusNew": "جديد",
   "statusPendingMaterials": "معلّق — بانتظار مواد",
   "statusManufacturing": "قيد التصنيع",
@@ -115,17 +107,19 @@
   "statusCancelled": "ملغى",
   "statusDelivered": "تم التسليم",
   "statusRejected": "مرفوض",
-
   "statusReserved": "محجوز",
   "statusEmpty": "فارغ",
   "statusOccupied": "مشغول",
   "statusMaintenance": "صيانة",
-
   "errorNetwork": "لا يوجد اتصال بالإنترنت — تحقق من الشبكة",
   "networkOfflineBanner": "لا يوجد اتصال بالإنترنت",
   "syncPendingBanner": "{count} تعديل بانتظار المزامنة",
   "@syncPendingBanner": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "errorServer": "خطأ في السيرفر — حاول مرة أخرى بعد قليل",
   "errorTimeout": "انتهت مهلة الانتظار — السيرفر لا يستجيب",
@@ -135,7 +129,6 @@
   "errorValidation": "تحقق من الحقول المطلوبة",
   "errorMaintenance": "السيرفر في صيانة — عد لاحقاً",
   "errorCache": "خطأ في البيانات المحلية — حاول مجدداً",
-
   "theme": "الوضع",
   "darkMode": "داكن",
   "lightMode": "فاتح",
@@ -150,20 +143,16 @@
   "fontNormal": "عادي",
   "fontLarge": "كبير",
   "fontXLarge": "كبير جداً",
-
   "welcomeWarehouse": "مرحباً بك في نظام المستودع 📦",
   "welcomeLab": "مرحباً بك في نظام المخبر 🧪",
   "systemStatusOk": "آخر تحديث: اليوم — جميع الأنظمة تعمل بشكل طبيعي",
-
   "roleLabManager": "مدير المخبر",
   "roleWarehouseManager": "مدير المستودع",
   "roleDentist": "طبيب أسنان",
   "roleSecretary": "السكرتيرة",
   "roleAdmin": "المدير العام",
-
   "labSystemBadge": "نظام المخبر",
   "warehouseSystemBadge": "نظام المستودع",
-
   "emptyNoOrdersTitle": "لا توجد طلبات",
   "emptyNoOrdersMessage": "ستظهر الطلبات هنا عند إضافتها",
   "emptyNoMaterialsTitle": "لا توجد مواد",
@@ -180,13 +169,10 @@
   "emptyNoReportsMessage": "ستظهر التقارير بعد اكتمال البيانات",
   "emptyErrorTitle": "تعذّر تحميل البيانات",
   "emptyErrorMessage": "حدث خطأ أثناء الاتصال بالسيرفر",
-
   "actionAddFirst": "إضافة أول عنصر",
   "actionClearFilters": "إزالة الفلاتر",
-
   "loadingData": "جاري تحميل البيانات...",
   "loadingPleaseWait": "الرجاء الانتظار...",
-
   "systemSelectionTitle": "اختر النظام",
   "systemSelectionSubtitle": "حدد النظام الذي تريد العمل عليه",
   "systemSelectionLabTitle": "نظام المخبر",
@@ -197,11 +183,9 @@
   "systemSelectionDemoNotice": "وضع المعاينة — يمكنك التبديل بين النظامين في أي وقت",
   "systemSwitcherSwitchTo": "التبديل إلى",
   "systemSwitcherCurrentSystem": "النظام الحالي",
-
   "f4TopbarSubtitles": "─── عناوين فرعية للتوب بار ───",
   "warehouseTopbarSubtitle": "نظام إدارة المستودع · DT.Teeth",
   "labTopbarSubtitle": "نظام إدارة المخبر · DT.Teeth",
-
   "f4Dashboard": "─── لوحة التحكم — مستودع ───",
   "whDashboardTitle": "لوحة التحكم",
   "whDashboardHeroSubtitle": "آخر تحديث: اليوم — جميع الأنظمة تعمل بشكل طبيعي",
@@ -219,12 +203,20 @@
   "whAlertLowStockTitle": "نفاد مخزون",
   "whAlertLowStockSubtitle": "{count} مواد حرجة",
   "@whAlertLowStockSubtitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "whAlertNewOrdersTitle": "طلبيات جديدة",
   "whAlertNewOrdersSubtitle": "{count} تنتظر",
   "@whAlertNewOrdersSubtitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "whQuickActions": "إجراءات سريعة",
   "whQuickActionAddMaterial": "مادة",
@@ -243,7 +235,6 @@
   "errorRequired": "هذا الحقل مطلوب",
   "errorInvalidNumber": "يجب إدخال رقم صحيح",
   "whFullReport": "التقرير الكامل",
-
   "f4Materials": "─── إدارة المواد ───",
   "whMaterialsTitle": "المواد",
   "whMaterialsSearchHint": "فلترة مواد المستودع... (اسم، فئة)",
@@ -271,12 +262,11 @@
   "whStatusAvailable": "متوفر",
   "whStatusLow": "ينفد",
   "whStatusOut": "نفد",
-
   "f4Orders": "─── الطلبيات ───",
   "whOrdersTitle": "الطلبيات",
   "whOrderNumber": "رقم الطلب",
   "whOrderRequester": "الطالب",
-  "whOrderDate": "التاريخ",
+  "whOrderDate": "تاريخ الطلب",
   "whOrderStatus": "الحالة",
   "whOrderAction": "إجراء",
   "whOrderFilterNew": "جديد",
@@ -285,7 +275,6 @@
   "whOrderStatusNew": "جديد",
   "whOrderStatusFulfilled": "تم",
   "whOrderStatusMissing": "غير موجود",
-
   "f4Invoices": "─── الفواتير ───",
   "whInvoicesTitle": "الفواتير",
   "whInvoiceAdd": "فاتورة جديدة",
@@ -297,7 +286,6 @@
   "whInvoiceTotalUsage": "إجمالي استخدام",
   "whInvoiceTotalLoss": "خسارة — منتهية",
   "whInvoiceExportPdf": "تصدير PDF",
-
   "f4Reports": "─── التقارير ───",
   "whReportsTitle": "التقارير",
   "whReportTabTopMaterials": "أكثر 10 مواد",
@@ -311,7 +299,6 @@
   "whReportWeeklyPurchases": "مشتريات الأسبوع",
   "whReportUsageCost": "تكلفة الاستخدام",
   "whReportExpiredLoss": "مواد منتهية",
-
   "f4Notifications": "─── الإشعارات ───",
   "whNotificationsTitle": "الإشعارات",
   "whNotifFilterUnread": "غير مقروء",
@@ -319,7 +306,6 @@
   "whNotifFilterExpiry": "صلاحية",
   "whNotifFilterOrder": "طلبيات",
   "whNotifMarkAllRead": "تحديد الكل كمقروء",
-
   "f4Settings": "─── الإعدادات ───",
   "whSettingsTitle": "الإعدادات",
   "whSettingsTabProfile": "الملف الشخصي",
@@ -344,12 +330,10 @@
   "whSettingsUpdatePassword": "تحديث",
   "whSettingsAboutTitle": "DT.Teeth Repository",
   "whSettingsAboutVersion": "v1.0.0 · مارس 2026 · Flutter Web",
-
   "f4ComingSoon": "─── شارة قيد البناء ───",
   "comingSoonTitle": "قريباً",
   "comingSoonSubtitle": "هذه الشاشة قيد البناء — ستكتمل قريباً",
   "screenUnderConstruction": "قيد البناء",
-
   "f4Lab": "─── نظام المخبر ───",
   "labDashboardTitle": "لوحة التحكم",
   "labHeroWelcome": "مرحباً بك في نظام المخبر 🧪",
@@ -368,18 +352,14 @@
   "labOrdersFilterReady": "جاهز",
   "labOrdersDueToday": "تنتهي اليوم",
   "labOrdersDueTodaySubtitle": "يجب الانتهاء قبل المساء",
+  "labOrdersDueTodayEmpty": "لا توجد طلبات تنتهي اليوم",
   "labTeamTitle": "إدارة المخبريين",
   "labTeamTotal": "إجمالي المخبريين",
-  "labTeamActive": "نشط",
-  "labTeamAvailable": "متاح",
   "labTeamColumnName": "المخبري",
   "labTeamColumnShift": "أوقات الدوام",
   "labTeamColumnCurrentTask": "المسؤولية الحالية",
-  "labTeamColumnStatus": "الحالة",
   "labTeamColumnAction": "إجراء",
   "labTeamAssign": "توكيل",
-  "labTeamFree": "متاح",
-  "labTeamBusy": "مشغول",
   "labReportTabByType": "حسب النوع",
   "labReportTabByDate": "حسب التاريخ",
   "labReportTabTeam": "أداء الفريق",
@@ -401,6 +381,10 @@
   "labReportOrdersByType": "الطلبات حسب النوع",
   "labReportTeamPerf": "أداء الفريق",
   "labReportNoData": "لا توجد بيانات لهذه الفترة",
+  "labReportPrevPeriod": "الفترة السابقة",
+  "labReportNextPeriod": "الفترة التالية",
+  "labReportToday": "اليوم",
+  "labReportPickDate": "اختيار تاريخ",
   "ordersUnit": "طلب",
   "piecesUnit": "قطعة",
   "labReportCrownType": "تلبيسات",
@@ -423,21 +407,32 @@
   "labSettingsAboutTitle": "DT.Teeth Lab",
   "labSettingsAboutVersion": "v1.0.0 · Flutter Web · Laravel API",
   "labTopbarSubtitleFull": "نظام إدارة المخبر · DT.Teeth",
-
   "labProfile": "الملف الشخصي",
   "labManageTechnicians": "إدارة المخبريين",
-
   "labDashboardSearchHint": "فلترة طلبات هذه الصفحة... (رقم، طبيب، مادة)",
   "priorityUrgent": "عاجل",
-  "priorityMedium": "متوسطة",
   "priorityNormal": "عادية",
-  "labStatNeedsFollowup": "يحتاج متابعة",
   "labChipThisMonth": "هذا الشهر",
   "labChipActive": "نشط",
   "labStatReadyOrders": "طلبات جاهزة",
-  "labTrendFromLastMonth": "{value} من الشهر الماضي",
-  "labTrendFromYesterday": "{value} من أمس",
   "labTodayOrders": "طلبات اليوم",
+  "labLastUpdatedJustNow": "آخر تحديث: الآن",
+  "labLastUpdatedMinutesAgo": "آخر تحديث: منذ {minutes} د",
+  "@labLastUpdatedMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "labLastUpdatedHoursAgo": "آخر تحديث: منذ {hours} س",
+  "@labLastUpdatedHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "labOrdersCount": "{count} طلب",
   "colOrderNumber": "رقم الطلب",
   "colDoctor": "الطبيب",
@@ -450,13 +445,11 @@
   "labGreeting": "مرحباً، {name}",
   "systemAllNormal": "جميع الأنظمة تعمل بشكل طبيعي",
   "labLastUpdate": "آخر تحديث: {time}",
-
   "labOrdersSearchHint": "فلترة طلبات الأطباء... (رقم، طبيب، مادة، سن)",
   "labOrdersCountOfTotal": "{shown} طلب من أصل {total}",
   "labOrderProcess": "معالجة",
   "actionView": "عرض",
   "labNoOrdersInCategory": "لا توجد طلبيات في هذه الفئة",
-
   "settingsSearchHint": "بحث في هذه الصفحة...",
   "settingsTabSecurity": "الأمان",
   "settingsTabPreferences": "التفضيلات",
@@ -508,7 +501,6 @@
   "settingsCompactViewDesc": "إظهار مزيد من البيانات في الشاشة الواحدة",
   "settingsAutoSave": "الحفظ التلقائي",
   "settingsAutoSaveDesc": "حفظ التعديلات تلقائياً كل دقيقة",
-
   "notifSearchHint": "بحث في الإشعارات...",
   "sectionToday": "اليوم",
   "sectionYesterday": "أمس",
@@ -518,7 +510,6 @@
   "notifFilterOrders": "طلبات",
   "notifFilterMaterials": "مواد",
   "notifFilterSystem": "نظام",
-
   "techSearchHint": "بحث عن مخبري... (اسم، دور، مهمة)",
   "labTeamSectionTitle": "فريق المخبر",
   "techScheduleTitle": "جدول الدوام",
@@ -540,13 +531,7 @@
   "dayThursday": "الخميس",
   "dayFriday": "الجمعة",
   "labTeamTotalChip": "الإجمالي",
-  "labTeamActiveChip": "يعمل الآن",
-  "labTeamReadyChip": "جاهز للتوكيل",
-  "techStatActiveLabel": "مخبريون نشطون",
-  "techStatusBreak": "استراحة",
-  "labTeamAddTechnician": "إضافة مخبري",
   "notifMarkAllRead": "تحديد الكل كمقروء",
-
   "whNotifExpiry": "انتهاء الصلاحية",
   "whNotifExpiryDesc": "قبل انتهاء الصلاحية بـ 30 يوم",
   "whNotifNewSupply": "طلبيات توريد جديدة",
@@ -555,14 +540,11 @@
   "whNotifSupplierDelayDesc": "عند تأخر مورد عن موعد التسليم",
   "whNotifInvoicesDue": "فواتير بانتظار الدفع",
   "whNotifInvoicesDueDesc": "تذكير قبل تاريخ الاستحقاق",
-
   "whOrderPartial": "جزئي",
   "whOrderFulfilled": "تم التوريد",
   "whOrdersEmptyFilter": "لا يوجد طلبات بهذا الفلتر",
   "whOrderRequesterParty": "الجهة الطالبة",
   "colQuantity": "الكمية",
-  "whOrderDate": "تاريخ الطلب"
-,
   "profileGeneralInfo": "معلومات عامة",
   "profileHireDate": "تاريخ التوظيف",
   "profileLanguages": "اللغات",
@@ -571,7 +553,7 @@
   "profileEdit": "تعديل الملف الشخصي",
   "profileSaving": "جارٍ الحفظ…",
   "profileSaveChanges": "حفظ التغييرات",
-  "profileChangePhoto": "تغيير الصورة",
+  "profileChangePhoto": "تغيير الصورة الشخصية",
   "profilePersonalInfo": "المعلومات الشخصية",
   "profilePersonalInfoSubtitle": "البيانات التعريفية ومعلومات الاتصال",
   "profilePhone": "رقم الهاتف",
@@ -583,7 +565,6 @@
   "profileTrainings": "الدورات التدريبية",
   "profileSkills": "المهارات",
   "profileOngoing": "الآن",
-  "profileChangePhoto": "تغيير الصورة الشخصية",
   "profilePickDate": "اختر التاريخ",
   "profileNationalId": "الرقم الوطني",
   "profileBirthDate": "تاريخ الميلاد",
@@ -612,8 +593,7 @@
   "profileStatLowItems": "أصناف منخفضة",
   "profileStatStockAccuracy": "دقة المخزون",
   "profileBadgeAlert": "تنبيه",
-  "profilePhotoError": "تعذّر اختيار الصورة: {error}"
-,
+  "profilePhotoError": "تعذّر اختيار الصورة: {error}",
   "ordersFilterAll": "الكل",
   "ordersUrgent": "عاجل",
   "ordersStatusNew": "جديد",
@@ -638,9 +618,21 @@
   "whReqFulfillConfirm": "سيُخصم المطلوب من دفعات المخزون (FIFO). تأكيد التلبية؟",
   "whReqNotesHint": "ملاحظات (اختياري)",
   "whReqNumber": "طلب #{id}",
-  "@whReqNumber": { "placeholders": { "id": { "type": "String" } } },
+  "@whReqNumber": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "whReqItemsCount": "{count} عنصر",
-  "@whReqItemsCount": { "placeholders": { "count": { "type": "int" } } },
+  "@whReqItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "ordersQuantity": "الكمية",
   "ordersRequester": "الطالب",
   "ordersDate": "التاريخ",
@@ -649,8 +641,7 @@
   "ordersEmptyTitle": "لا توجد طلبيات",
   "ordersEmptyMessage": "لا يوجد طلبيات تطابق الفلتر الحالي",
   "ordersSupplyConfirmed": "تم تأكيد توريد {material} للطلبية {order}",
-  "ordersCountSummary": "{count} طلبية من أصل {total}"
-,
+  "ordersCountSummary": "{count} طلبية من أصل {total}",
   "orderDetailsSubtitle": "تفاصيل طلبية المواد المرسلة إلى المستودع",
   "orderDetailsInfoSection": "معلومات الطلبية",
   "orderDetailsItems": "عناصر الطلب",
@@ -669,16 +660,14 @@
   "orderDetailsRequestNumber": "رقم الطلب",
   "orderTimelineReceived": "تم الاستلام",
   "orderTimelinePartial": "توريد جزئي",
-  "orderDetailsTitle": "تفاصيل طلبية التوريد {req}"
-,
+  "orderDetailsTitle": "تفاصيل طلبية التوريد {req}",
   "notifEmptyTitle": "لا توجد إشعارات",
   "notifEmptyMessage": "لا يوجد إشعارات لعرضها في هذا الفلتر",
   "notifGroupToday": "اليوم",
   "notifGroupYesterday": "أمس",
   "notifGroupOlder": "أقدم",
   "notifBadgeOrder": "طلبية",
-  "notifBadgeDone": "إنجاز"
-,
+  "notifBadgeDone": "إنجاز",
   "reportRangeDaily": "يومي",
   "reportRangeWeekly": "أسبوعي",
   "reportRangeMonthly": "شهري",
@@ -736,8 +725,7 @@
   "reportMonthlyTitle": "{period} — التقرير الشهري",
   "reportGeneratedAt": "تم إنشاء التقرير {date}",
   "reportDaysCount": "{days} يوم",
-  "reportSupplierSubtitle": "{invoices} فاتورة · متوسط {avgDays} يوم"
-,
+  "reportSupplierSubtitle": "{invoices} فاتورة · متوسط {avgDays} يوم",
   "whBadgeTotal": "إجمالي",
   "whStatOutMaterials": "مواد نفدت",
   "whStatLowMaterials": "مواد ينفد رصيدها",
@@ -757,8 +745,7 @@
   "whColDosage": "الجرعة",
   "whColBatches": "الدفعات",
   "whColStatus": "الحالة",
-  "whMaterialsCount": "{count} مادة من أصل {total}"
-,
+  "whMaterialsCount": "{count} مادة من أصل {total}",
   "invStatusPaid": "مدفوعة",
   "invStatusPending": "بانتظار",
   "invEmptyTitle": "لا توجد فواتير",
@@ -782,9 +769,21 @@
   "invCreatedByLabel": "أُنشئت بواسطة",
   "invGrandTotalLabel": "إجمالي المشتريات (ل.س)",
   "invInvoiceNumber": "فاتورة #{id}",
-  "@invInvoiceNumber": { "placeholders": { "id": { "type": "String" } } },
+  "@invInvoiceNumber": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "invItemsCountLabel": "{count} مادة",
-  "@invItemsCountLabel": { "placeholders": { "count": { "type": "int" } } },
+  "@invItemsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "invCount": "{count} فاتورة من أصل {total}",
   "fieldRequired": "مطلوب",
   "fieldOptional": "اختياري",
@@ -833,11 +832,18 @@
   "whInvLowStockTitle": "منخفضة المخزون",
   "whInvNoItems": "لا توجد عناصر حالياً",
   "whInvDaysRemaining": "{days} يوم",
-  "@whInvDaysRemaining": {"placeholders": {"days": {"type": "int"}}},
+  "@whInvDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "labNotifActionOpenOrder": "فتح الطلب",
   "labNotifActionReview": "مراجعة",
   "labActionTrack": "تتبع",
   "labReqStatusUnavailable": "غير متوفر",
+  "labReqStatusInProgress": "قيد المعالجة",
   "labReqRequestedBy": "طلب بواسطة",
   "labReqLabOrder": "طلبية المخبر",
   "labReqEmptyCategory": "لا توجد طلبيات مواد في هذه الفئة",
@@ -847,7 +853,11 @@
   "labReqDeleteTitle": "حذف طلب المواد",
   "labReqDeleteConfirm": "هل تريد حذف طلب «{material}»؟ لا يمكن التراجع.",
   "@labReqDeleteConfirm": {
-    "placeholders": { "material": { "type": "String" } }
+    "placeholders": {
+      "material": {
+        "type": "String"
+      }
+    }
   },
   "labReqFieldMaterial": "اسم المادة",
   "labReqFieldUnit": "الوحدة",
@@ -859,6 +869,7 @@
   "labReqSubmit": "إرسال الطلب",
   "labReqSentSuccess": "تم إرسال طلب المادة للمستودع",
   "labTechPendingAssign": "بانتظار التوكيل",
+  "labTechWorkloadLoadFailed": "تعذّر تحميل حمل العمل الحالي للفنيين — الأسماء والجداول صحيحة، لكن عدّاد المهام قد لا يعكس الواقع",
   "techAddButton": "إضافة المخبري",
   "techAddTitle": "إضافة مخبري جديد",
   "techAddSubtitle": "أدخل بيانات المخبري للانضمام إلى فريق المخبر",
@@ -908,21 +919,22 @@
   "labProducts": "منتجات المخبر",
   "labProductsSearchHint": "ابحث عن منتج...",
   "labProdTotal": "إجمالي المنتجات",
-  "labProdActiveCount": "منتجات مفعّلة",
   "labProdAdd": "منتج جديد",
   "labProdAddTitle": "إضافة منتج",
   "labProdEditTitle": "تعديل منتج",
   "labProdDeleteTitle": "حذف المنتج",
   "labProdDeleteConfirm": "هل تريد حذف «{name}»؟ لا يمكن التراجع عن هذا الإجراء.",
   "@labProdDeleteConfirm": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "labProdColType": "النوع",
   "labProdColPrice": "السعر (ل.س)",
   "labProdColDuration": "مدة التصنيع",
   "labProdDaysUnit": "يوم",
-  "labProdStatusActive": "مفعّل",
-  "labProdStatusInactive": "متوقف",
   "labProdFieldName": "اسم المنتج",
   "labProdFieldType": "النوع",
   "labProdFieldMaterial": "المادة",
@@ -938,12 +950,23 @@
   "labCategoriesEmpty": "لا توجد فئات بعد",
   "labCategoryDeleteTitle": "حذف الفئة",
   "labCategoryDeleteConfirm": "هل تريد حذف «{name}»؟",
-  "@labCategoryDeleteConfirm": { "placeholders": { "name": { "type": "String" } } },
+  "@labCategoryDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "labProcessConsumeFailed": "تم إنجاز الطلبية، لكن تعذّر خصم من المخزون: {materials}",
-  "@labProcessConsumeFailed": { "placeholders": { "materials": { "type": "String" } } },
+  "@labProcessConsumeFailed": {
+    "placeholders": {
+      "materials": {
+        "type": "String"
+      }
+    }
+  },
   "labProdNameRequired": "اسم المنتج مطلوب",
   "labProcessCost": "تكلفة الطلبية (ل.س)",
-  "labProcessCostHint": "أدخل تكلفة التصنيع",
   "labProcessTechnician": "المخبري المنفّذ",
   "labProcessTechnicianNone": "بدون تحديد",
   "labProcessTechnicianRequired": "اختر المخبري المنفّذ قبل تغيير الحالة",

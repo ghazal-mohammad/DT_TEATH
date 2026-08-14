@@ -37,10 +37,7 @@ class _LabOrderCardState extends State<LabOrderCard> {
   Widget build(BuildContext context) {
     final o = widget.order;
     final bool isLight = Theme.of(context).brightness == Brightness.light;
-    final accent = labOrderAccentColor(
-      statusVariant: o.statusVariant,
-      isUrgent: o.isUrgent,
-    );
+    final accent = labOrderAccentColor(statusVariant: o.statusVariant);
     final initial =
         o.doctor.replaceAll('د. ', '').characters.firstOrNull ?? '';
     final radius = BorderRadius.circular(AppSizes.radiusLG);
@@ -138,7 +135,6 @@ class _LabOrderCardState extends State<LabOrderCard> {
                           ),
                         ),
                         const Spacer(),
-                        if (o.isUrgent) const _UrgentPill(),
                       ],
                     ),
                     const SizedBox(height: 14),
@@ -190,43 +186,6 @@ class _TypePill extends StatelessWidget {
           fontWeight: FontWeight.w700,
           color: isLight ? AppColors.lightText2 : AppColors.darkText2,
         ),
-      ),
-    );
-  }
-}
-
-class _UrgentPill extends StatelessWidget {
-  const _UrgentPill();
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: isLight ? AppColors.statusUrgentBg : AppColors.darkChipRedBg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.local_fire_department_rounded,
-            size: 13,
-            color: isLight ? AppColors.statusUrgent : AppColors.darkChipRedText,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            context.l10n.priorityUrgent,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              color:
-                  isLight ? AppColors.statusUrgent : AppColors.darkChipRedText,
-            ),
-          ),
-        ],
       ),
     );
   }

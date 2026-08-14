@@ -69,9 +69,18 @@ class LabReport {
   final List<ReportTeamPerf> teamPerformance;
   final List<ReportTypeCount> ordersByType;
 
-  /// نسبة الإنجاز في الوقت (مكتمل بالوقت ÷ إجمالي) — تُحسب أماميًا للعرض.
-  int get onTimePercent =>
-      totalOrders == 0 ? 0 : ((completedOnTime / totalOrders) * 100).round();
+  /// إجمالي الطلبات "المكتملة فعلاً" بالفترة — مجموع completed_orders لكل
+  /// فنّي بـ [teamPerformance]. هذا هو المقام الصحيح لنسبة الإنجاز بالوقت؛
+  /// [totalOrders] يشمل كل الطلبات المُنشأة بالفترة (أيّ حالة)، فاستخدامه
+  /// كمقام يُعطي نسبة مضلِّلة جداً (مثلاً 8% بدل 80% الحقيقية).
+  int get completedOrdersTotal =>
+      teamPerformance.fold<int>(0, (sum, t) => sum + t.completedOrders);
+
+  /// نسبة الإنجاز في الوقت (مكتمل بالوقت ÷ إجمالي المكتمل فعلاً) — تُحسب
+  /// أماميًا للعرض. لا طلبات مكتملة بالفترة ⇒ 0% (لا NaN/Infinity).
+  int get onTimePercent => completedOrdersTotal == 0
+      ? 0
+      : ((completedOnTime / completedOrdersTotal) * 100).round();
 
   factory LabReport.fromJson(Map<String, dynamic> root) {
     final d = root['data'] is Map

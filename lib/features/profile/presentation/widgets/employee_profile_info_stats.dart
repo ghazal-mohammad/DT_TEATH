@@ -10,38 +10,84 @@ part of 'employee_profile_content.dart';
 //                          بطاقات الإحصاء
 // ══════════════════════════════════════════════════════════════════════════
 
+/// عدّادات حقيقية لبطاقات الإحصاء الثلاث — تُحسب من طلبات المخبر الفعلية
+/// (نفس منطق الاشتقاق في LabDashboardState) بدل أرقام ثابتة مُختلَقة
+/// (كانت 142/5/7 دائماً بصرف النظر عن حجم طلبات المخبر الحقيقي).
+class ProfileOrderStats {
+  const ProfileOrderStats({
+    required this.completedThisMonth,
+    required this.inProgress,
+    required this.readyTotal,
+  });
+
+  /// طلبات "جاهزة" (LabOrderBadgeVariant.ready) خلال الشهر الحالي فقط —
+  /// مقياس مضبوط زمنياً فعلاً (بعكس السابق حيث كان الشارة "هذا الشهر"
+  /// تُعرض فوق رقم ثابت لا علاقة له بأي شهر).
+  final int completedThisMonth;
+
+  /// طلبات قيد التصنيع حالياً (LabOrderBadgeVariant.manufacturing).
+  final int inProgress;
+
+  /// إجمالي الطلبات الجاهزة حالياً (كل الوقت، لا شهر محدّد).
+  final int readyTotal;
+}
+
 class _StatsRow extends StatelessWidget {
-  const _StatsRow();
+  const _StatsRow({this.statsFuture});
+
+  /// مصدر العدّادات الحقيقية (راجع [EmployeeProfileContent.statsLoader]).
+  /// null يعني: لا مصدر بيانات حقيقي متاح لهذا النظام بعد — تُعرض قيم "—"
+  /// بدل أي رقم مختلَق.
+  final Future<ProfileOrderStats>? statsFuture;
+
+  @override
+  Widget build(BuildContext context) {
+    if (statsFuture == null) {
+      return const _StatsGrid(stats: null);
+    }
+    return FutureBuilder<ProfileOrderStats>(
+      future: statsFuture,
+      builder: (context, snapshot) => _StatsGrid(stats: snapshot.data),
+    );
+  }
+}
+
+class _StatsGrid extends StatelessWidget {
+  const _StatsGrid({required this.stats});
+  final ProfileOrderStats? stats;
 
   @override
   Widget build(BuildContext context) {
     // قرار الفريق 2026-06-12: لا ساعات ولا "وقت تنفيذ" بملف المدير —
     // المقاييس الزمنية تُستبدل بعدادات طلبات (مثل الواجهة الرئيسية).
     // الترتيب في RTL: أول عنصر = أقصى اليمين.
-    final stats = [
+    final s = stats;
+    final specs = [
       _StatSpec(
-        value: '142',
+        value: s != null ? '${s.completedThisMonth}' : '—',
         unit: '',
         label: context.l10n.profileStatCompletedOrders,
-        badge: context.l10n.profileBadgeThisMonth,
+        badge: s != null ? context.l10n.profileBadgeThisMonth : null,
         icon: Icons.check_circle_outline_rounded,
         accent: AppColors.profileGreenAccent,
         bg: AppColors.statusSuccessBg,
       ),
       _StatSpec(
-        value: '5',
+        value: s != null ? '${s.inProgress}' : '—',
         unit: '',
         label: context.l10n.labHeroStatInProgress,
-        badge: context.l10n.labChipActive,
+        badge: s != null ? context.l10n.labChipActive : null,
         icon: Icons.adjust_rounded,
         accent: AppColors.statusProgress,
         bg: AppColors.profileTintViolet2,
       ),
       _StatSpec(
-        value: '7',
+        value: s != null ? '${s.readyTotal}' : '—',
         unit: '',
         label: context.l10n.labStatReadyOrders,
-        badge: context.l10n.profileBadgeThisMonth,
+        // بدون "هذا الشهر": الرقم إجمالي كل الوقت لا شهر محدّد — شارة
+        // "الإجمالي" الموجودة أصلاً بدل ادّعاء نطاق زمني غير حقيقي.
+        badge: s != null ? context.l10n.labTeamTotalChip : null,
         icon: Icons.inventory_2_outlined,
         accent: AppColors.profileBlueAccent,
         bg: AppColors.profileTintBlue2,
@@ -53,9 +99,9 @@ class _StatsRow extends StatelessWidget {
       if (isNarrow) {
         return Column(
           children: [
-            for (var i = 0; i < stats.length; i++) ...[
-              _StatCard(spec: stats[i]),
-              if (i < stats.length - 1) const SizedBox(height: 12),
+            for (var i = 0; i < specs.length; i++) ...[
+              _StatCard(spec: specs[i]),
+              if (i < specs.length - 1) const SizedBox(height: 12),
             ],
           ],
         );
@@ -67,9 +113,9 @@ class _StatsRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            for (var i = 0; i < stats.length; i++) ...[
-              Expanded(child: _StatCard(spec: stats[i])),
-              if (i < stats.length - 1) const SizedBox(width: 14),
+            for (var i = 0; i < specs.length; i++) ...[
+              Expanded(child: _StatCard(spec: specs[i])),
+              if (i < specs.length - 1) const SizedBox(width: 14),
             ],
           ],
         ),
@@ -91,7 +137,10 @@ class _StatSpec {
   final String value;
   final String unit;
   final String label;
-  final String badge;
+
+  /// null = لا تُعرض شارة (لا بيانات، أو الرقم غير مضبوط زمنياً فلا نريد
+  /// الادّعاء بنطاق زمني وهمي).
+  final String? badge;
   final IconData icon;
   final Color accent;
   final Color bg;
@@ -138,24 +187,28 @@ class _StatCard extends StatelessWidget {
                 ),
                 child: Icon(spec.icon, size: 20, color: spec.accent),
               ),
-              // الطرف الآخر (اليسار) → شارة صغيرة.
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                decoration: BoxDecoration(
-                  color: spec.accent.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                ),
-                child: Text(
-                  spec.badge,
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: spec.accent,
+              // الطرف الآخر (اليسار) → شارة صغيرة (لا تُعرض بلا بيانات حقيقية
+              // أو لو الرقم غير مضبوط زمنياً — بدل ادّعاء نطاق زمني وهمي).
+              if (spec.badge != null)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: spec.accent.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                   ),
-                ),
-              ),
+                  child: Text(
+                    spec.badge!,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: spec.accent,
+                    ),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
             ],
           ),
           const SizedBox(height: 14),

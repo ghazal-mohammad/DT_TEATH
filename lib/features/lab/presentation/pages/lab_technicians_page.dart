@@ -42,11 +42,10 @@ import '../widgets/technicians/technician_schedule_dialog.dart';
 class LabTechniciansPage extends StatelessWidget {
   const LabTechniciansPage({super.key});
 
-  /// التسمية المترجمة لدور المخبري (الباك يرجّع الاسم فقط).
+  /// التسمية المترجمة لدور المخبري (الباك يرجّع الاسم فقط) — عبر l10n بدل
+  /// تبديل يدوي حسب لغة الجهاز.
   static String _roleLabel(BuildContext context) =>
-      Localizations.localeOf(context).languageCode == 'ar'
-          ? 'فني'
-          : 'Technician';
+      context.l10n.commandCatTechnician;
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +65,13 @@ class LabTechniciansPage extends StatelessWidget {
             currentRoute: RouteNames.labTechnicians,
             sections: LabSidebarSections.buildWithBadges(
               context,
-              newOrdersCount: 4,
-              unreadNotifsCount: 2,
+              // عدد الطلبات "الجديدة" القابلة للتوكيل — نفس القائمة المحمّلة
+              // فعلياً بالـ state (مفلترة newOrder بالفعل)، لا رقم وهمي.
+              newOrdersCount: state.orders.length,
+              // إشعارات المخبر مصدرها LabNotificationsCubit المنفصل (صفحة
+              // الإشعارات) — استحضاره هنا فقط لعدّاد السايدبار مكلف زيادة عن
+              // الحاجة لهذه الصفحة. 0 بدل رقم وهمي مضلّل، لحين توحيد المصدر.
+              unreadNotifsCount: 0,
             ),
             pageTitle: context.l10n.labManageTechnicians,
             pageSubtitle: null,
@@ -76,7 +80,8 @@ class LabTechniciansPage extends StatelessWidget {
                 context.read<LabTechniciansCubit>().setSearchQuery(q),
             showThemeToggle: false,
             userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
-            notificationCount: 2,
+            // نفس ملاحظة unreadNotifsCount أعلاه — لا مصدر حقيقي لهذه الصفحة.
+            notificationCount: 0,
             body: _buildBody(context, state),
           );
         },

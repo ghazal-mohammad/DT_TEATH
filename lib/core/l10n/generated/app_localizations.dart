@@ -422,6 +422,24 @@ abstract class AppLocalizations {
   /// **'Lab Reports'**
   String get labReports;
 
+  /// No description provided for @reportsPreviousPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous period'**
+  String get reportsPreviousPeriod;
+
+  /// No description provided for @reportsNextPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Next period'**
+  String get reportsNextPeriod;
+
+  /// No description provided for @reportsBackToToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get reportsBackToToday;
+
   /// No description provided for @materialRequests.
   ///
   /// In en, this message translates to:
@@ -2066,6 +2084,12 @@ abstract class AppLocalizations {
   /// **'Must be completed before evening'**
   String get labOrdersDueTodaySubtitle;
 
+  /// No description provided for @labOrdersDueTodayEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders due today'**
+  String get labOrdersDueTodayEmpty;
+
   /// No description provided for @labTeamTitle.
   ///
   /// In en, this message translates to:
@@ -2077,18 +2101,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total Technicians'**
   String get labTeamTotal;
-
-  /// No description provided for @labTeamActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Active'**
-  String get labTeamActive;
-
-  /// No description provided for @labTeamAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Available'**
-  String get labTeamAvailable;
 
   /// No description provided for @labTeamColumnName.
   ///
@@ -2108,12 +2120,6 @@ abstract class AppLocalizations {
   /// **'Current Task'**
   String get labTeamColumnCurrentTask;
 
-  /// No description provided for @labTeamColumnStatus.
-  ///
-  /// In en, this message translates to:
-  /// **'Status'**
-  String get labTeamColumnStatus;
-
   /// No description provided for @labTeamColumnAction.
   ///
   /// In en, this message translates to:
@@ -2125,18 +2131,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Assign'**
   String get labTeamAssign;
-
-  /// No description provided for @labTeamFree.
-  ///
-  /// In en, this message translates to:
-  /// **'Free'**
-  String get labTeamFree;
-
-  /// No description provided for @labTeamBusy.
-  ///
-  /// In en, this message translates to:
-  /// **'Busy'**
-  String get labTeamBusy;
 
   /// No description provided for @labReportTabByType.
   ///
@@ -2420,23 +2414,11 @@ abstract class AppLocalizations {
   /// **'Urgent'**
   String get priorityUrgent;
 
-  /// No description provided for @priorityMedium.
-  ///
-  /// In en, this message translates to:
-  /// **'Medium'**
-  String get priorityMedium;
-
   /// No description provided for @priorityNormal.
   ///
   /// In en, this message translates to:
   /// **'Normal'**
   String get priorityNormal;
-
-  /// No description provided for @labStatNeedsFollowup.
-  ///
-  /// In en, this message translates to:
-  /// **'Needs follow-up'**
-  String get labStatNeedsFollowup;
 
   /// No description provided for @labChipThisMonth.
   ///
@@ -2456,23 +2438,29 @@ abstract class AppLocalizations {
   /// **'Ready orders'**
   String get labStatReadyOrders;
 
-  /// No description provided for @labTrendFromLastMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'{value} from last month'**
-  String labTrendFromLastMonth(String value);
-
-  /// No description provided for @labTrendFromYesterday.
-  ///
-  /// In en, this message translates to:
-  /// **'{value} from yesterday'**
-  String labTrendFromYesterday(String value);
-
   /// No description provided for @labTodayOrders.
   ///
   /// In en, this message translates to:
   /// **'Today\'s Orders'**
   String get labTodayOrders;
+
+  /// No description provided for @labLastUpdatedJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: just now'**
+  String get labLastUpdatedJustNow;
+
+  /// No description provided for @labLastUpdatedMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {minutes}m ago'**
+  String labLastUpdatedMinutesAgo(int minutes);
+
+  /// No description provided for @labLastUpdatedHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {hours}h ago'**
+  String labLastUpdatedHoursAgo(int hours);
 
   /// No description provided for @labOrdersCount.
   ///
@@ -3061,36 +3049,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total'**
   String get labTeamTotalChip;
-
-  /// No description provided for @labTeamActiveChip.
-  ///
-  /// In en, this message translates to:
-  /// **'Working now'**
-  String get labTeamActiveChip;
-
-  /// No description provided for @labTeamReadyChip.
-  ///
-  /// In en, this message translates to:
-  /// **'Ready to assign'**
-  String get labTeamReadyChip;
-
-  /// No description provided for @techStatActiveLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Active Technicians'**
-  String get techStatActiveLabel;
-
-  /// No description provided for @techStatusBreak.
-  ///
-  /// In en, this message translates to:
-  /// **'On Break'**
-  String get techStatusBreak;
-
-  /// No description provided for @labTeamAddTechnician.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Technician'**
-  String get labTeamAddTechnician;
 
   /// No description provided for @notifMarkAllRead.
   ///
@@ -4754,6 +4712,12 @@ abstract class AppLocalizations {
   /// **'Unavailable'**
   String get labReqStatusUnavailable;
 
+  /// No description provided for @labReqStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get labReqStatusInProgress;
+
   /// No description provided for @labReqRequestedBy.
   ///
   /// In en, this message translates to:
@@ -4861,6 +4825,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Awaiting assignment'**
   String get labTechPendingAssign;
+
+  /// No description provided for @labTechWorkloadLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load technicians\' current workload — names and schedules are accurate, but task counts may not reflect reality'**
+  String get labTechWorkloadLoadFailed;
 
   /// No description provided for @techAddButton.
   ///
@@ -5156,12 +5126,6 @@ abstract class AppLocalizations {
   /// **'Total products'**
   String get labProdTotal;
 
-  /// No description provided for @labProdActiveCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Active products'**
-  String get labProdActiveCount;
-
   /// No description provided for @labProdAdd.
   ///
   /// In en, this message translates to:
@@ -5215,18 +5179,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'days'**
   String get labProdDaysUnit;
-
-  /// No description provided for @labProdStatusActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Active'**
-  String get labProdStatusActive;
-
-  /// No description provided for @labProdStatusInactive.
-  ///
-  /// In en, this message translates to:
-  /// **'Inactive'**
-  String get labProdStatusInactive;
 
   /// No description provided for @labProdFieldName.
   ///
@@ -5335,12 +5287,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order cost (SYP)'**
   String get labProcessCost;
-
-  /// No description provided for @labProcessCostHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter manufacturing cost'**
-  String get labProcessCostHint;
 
   /// No description provided for @labProcessTechnician.
   ///

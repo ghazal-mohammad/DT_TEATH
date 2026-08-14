@@ -37,7 +37,7 @@ class LabOrdersState {
   final bool todayOnly;
   final List<LabOrderFull> todayOrders;
 
-  /// الفلتر النشط: all | urgent | new | manufacturing | ready.
+  /// الفلتر النشط: all | new | manufacturing | ready.
   final String filter;
 
   /// نص البحث المُوجَّه (رقم الطلب/الطبيب/النوع/المادة).
@@ -51,8 +51,6 @@ class LabOrdersState {
   List<LabOrderFull> get filtered {
     Iterable<LabOrderFull> src = _source;
     switch (filter) {
-      case 'urgent':
-        src = src.where((o) => o.isUrgent);
       case 'new':
         src = src.where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder);
       case 'manufacturing':
@@ -73,7 +71,6 @@ class LabOrdersState {
   }
 
   int get total => _source.length;
-  int get urgentCount => _source.where((o) => o.isUrgent).length;
   int get newCount => _source
       .where((o) => o.statusVariant == LabOrderBadgeVariant.newOrder)
       .length;
