@@ -21,6 +21,8 @@ class _TableSection extends StatelessWidget {
     required this.onAddTap,
     required this.onRowTap,
     required this.onMovement,
+    required this.onDeactivate,
+    required this.onViewLogs,
   });
 
   final int total;
@@ -32,6 +34,8 @@ class _TableSection extends StatelessWidget {
   final VoidCallback onAddTap;
   final ValueChanged<WarehouseMaterial> onRowTap;
   final ValueChanged<WarehouseMaterial> onMovement;
+  final ValueChanged<WarehouseMaterial> onDeactivate;
+  final VoidCallback onViewLogs;
 
   int _statusCount(_StatusFilter s) =>
       all.where(s.matches).length;
@@ -68,6 +72,7 @@ class _TableSection extends StatelessWidget {
               isLight: isLight,
               onRowTap: onRowTap,
               onMovement: onMovement,
+              onDeactivate: onDeactivate,
             ),
         ],
       ),
@@ -106,6 +111,13 @@ class _TableSection extends StatelessWidget {
           onChanged: onStatusChange,
         );
 
+        final logsBtn = AppButton.secondary(
+          label: context.l10n.whStockLogButton,
+          onPressed: onViewLogs,
+          size: AppButtonSize.small,
+          icon: Icons.receipt_long_outlined,
+        );
+
         final addBtn = AppButton(
           label: '+ ${context.l10n.whMaterialsAdd}',
           onPressed: onAddTap,
@@ -117,14 +129,28 @@ class _TableSection extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(children: [title, const Spacer(), addBtn]),
+              Row(children: [
+                title,
+                const Spacer(),
+                logsBtn,
+                const SizedBox(width: 8),
+                addBtn,
+              ]),
               const SizedBox(height: 10),
               tabs,
             ],
           );
         }
         return Row(
-          children: [title, const Spacer(), tabs, const SizedBox(width: 10), addBtn],
+          children: [
+            title,
+            const Spacer(),
+            tabs,
+            const SizedBox(width: 10),
+            logsBtn,
+            const SizedBox(width: 10),
+            addBtn,
+          ],
         );
       }),
     );
@@ -166,11 +192,13 @@ class _MaterialsTable extends StatelessWidget {
     required this.isLight,
     required this.onRowTap,
     required this.onMovement,
+    required this.onDeactivate,
   });
   final List<WarehouseMaterial> rows;
   final bool isLight;
   final ValueChanged<WarehouseMaterial> onRowTap;
   final ValueChanged<WarehouseMaterial> onMovement;
+  final ValueChanged<WarehouseMaterial> onDeactivate;
 
   @override
   Widget build(BuildContext context) {
@@ -188,6 +216,7 @@ class _MaterialsTable extends StatelessWidget {
             isLast: i == rows.length - 1,
             onTap: () => onRowTap(rows[i]),
             onMovement: () => onMovement(rows[i]),
+            onDeactivate: () => onDeactivate(rows[i]),
           ),
       ],
     );
@@ -245,12 +274,14 @@ class _TableDataRow extends StatelessWidget {
     required this.isLast,
     required this.onTap,
     required this.onMovement,
+    required this.onDeactivate,
   });
   final WarehouseMaterial material;
   final bool isLight;
   final bool isLast;
   final VoidCallback onTap;
   final VoidCallback onMovement;
+  final VoidCallback onDeactivate;
 
   String get _code => 'MAT-${material.id.padLeft(3, '0').substring(material.id.length > 3 ? material.id.length - 3 : 0)}';
 
@@ -359,10 +390,53 @@ class _TableDataRow extends StatelessWidget {
               flex: 2,
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
-                child: _MovementButton(onTap: onMovement, isLight: isLight),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _MovementButton(onTap: onMovement, isLight: isLight),
+                    const SizedBox(width: 6),
+                    _DeactivateButton(onTap: onDeactivate, isLight: isLight),
+                  ],
+                ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// زر إلغاء تفعيل المادة (حذف ناعم — المادة تختفي من القائمة النشطة).
+class _DeactivateButton extends StatelessWidget {
+  const _DeactivateButton({required this.onTap, required this.isLight});
+  final VoidCallback onTap;
+  final bool isLight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: context.l10n.whMaterialDeactivate,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Semantics(
+          button: true,
+          label: context.l10n.whMaterialDeactivate,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: isLight ? Colors.white : AppColors.darkBg1,
+                border: Border.all(
+                    color:
+                        isLight ? AppColors.lightBorder : AppColors.darkBorder),
+                borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+              ),
+              child: const Icon(Icons.block_rounded,
+                  size: 15, color: AppColors.alertRed),
+            ),
+          ),
         ),
       ),
     );

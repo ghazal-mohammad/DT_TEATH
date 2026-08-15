@@ -104,38 +104,32 @@ class MaterialsCubit extends Cubit<MaterialsState> {
 
   /// إنشاء مادة جديدة.
   Future<void> create(WarehouseMaterial material) async {
+    emit(state.copyWith(clearActionError: true));
     try {
       await _repository.create(material);
       // الـ stream subscription بـ load() رح يحدّث الـ list تلقائياً
     } catch (e) {
-      emit(state.copyWith(
-        status: MaterialsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(actionError: userMessageFromError(e)));
     }
   }
 
   /// تحديث مادة موجودة.
   Future<void> update(WarehouseMaterial material) async {
+    emit(state.copyWith(clearActionError: true));
     try {
       await _repository.update(material);
     } catch (e) {
-      emit(state.copyWith(
-        status: MaterialsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(actionError: userMessageFromError(e)));
     }
   }
 
-  /// حذف مادة بالـ id.
+  /// حذف (إلغاء تفعيل) مادة بالـ id.
   Future<void> delete(String id) async {
+    emit(state.copyWith(clearActionError: true));
     try {
       await _repository.delete(id);
     } catch (e) {
-      emit(state.copyWith(
-        status: MaterialsStatus.error,
-        errorMessage: userMessageFromError(e),
-      ));
+      emit(state.copyWith(actionError: userMessageFromError(e)));
     }
   }
 

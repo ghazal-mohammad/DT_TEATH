@@ -27,14 +27,16 @@ class WarehouseProfilePage extends StatelessWidget {
       currentRoute: RouteNames.warehouseProfile,
       sections: WarehouseSidebarSections.buildWithBadges(
         context,
-        lowStockCount: 8,
-        pendingOrdersCount: 3,
-        unreadNotifsCount: 5,
+        // هذه الصفحة لا تحمّل InventoryCubit/WarehouseRequestsCubit — 0 بدل
+        // رقم وهمي مضلّل (نفس اتفاقية لوحة التحكم/المواد/الطلبيات).
+        lowStockCount: 0,
+        pendingOrdersCount: 0,
+        unreadNotifsCount: 0,
       ),
       pageTitle: context.l10n.labProfile,
       pageSubtitle: context.l10n.profilePageSubtitle,
       userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
-      notificationCount: 5,
+      notificationCount: 0,
       // صفحة الملف الشخصي: بلا حقل بحث وبلا أيقونات جانبية في التوب بار.
       showTopbarActions: false,
       showSearch: false,

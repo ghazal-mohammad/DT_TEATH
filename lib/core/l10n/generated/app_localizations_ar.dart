@@ -742,6 +742,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whMaterialNotes => 'ملاحظات';
 
   @override
+  String get whMaterialDeactivate => 'إلغاء التفعيل';
+
+  @override
+  String get whMaterialDeactivateConfirmTitle => 'إلغاء تفعيل المادة';
+
+  @override
+  String whMaterialDeactivateConfirmMessage(String materialName) {
+    return 'متأكد من إلغاء تفعيل \"$materialName\"؟ لن تظهر بعدها في قائمة المواد النشطة.';
+  }
+
+  @override
   String get whStatusAvailable => 'متوفر';
 
   @override
@@ -2813,6 +2824,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whStockCreatedAt => 'أُضيفت';
+
+  @override
+  String get whStockLogButton => 'سجل الحركة';
+
+  @override
+  String get whStockLogTitle => 'سجل حركة المخزون';
+
+  @override
+  String get whStockLogFilterLabel => 'تصفية حسب المادة';
+
+  @override
+  String get whStockLogEmpty => 'لا توجد حركات مسجّلة';
+
+  @override
+  String get whStockLogLowBadge => 'منخفض';
 
   @override
   String get labProcessConsumedSection => 'المواد المستهلكة من المخزون';

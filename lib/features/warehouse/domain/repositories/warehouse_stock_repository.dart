@@ -9,6 +9,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/material_stock.dart';
+import '../entities/stock_overview.dart';
 
 abstract class WarehouseStockRepository {
   /// تفاصيل مخزون مادة (بياناتها + دفعاتها + الإجمالي).
@@ -22,4 +23,12 @@ abstract class WarehouseStockRepository {
     required StockMovementReason reason,
     String? notes,
   });
+
+  /// نظرة عامة على مخزون كل المواد (showAllStock) — تتضمّن is_low المحسوبة
+  /// بالباك، الإشارة الحقيقية الوحيدة لـ"منخفض" (minStock بـ WarehouseMaterial
+  /// قيمة UI محلية لا يرسلها الباك أبداً).
+  Future<List<StockOverviewItem>> getAllStock();
+
+  /// سجل حركة المخزون (showStockLogs)، بفلتر مادة اختياري.
+  Future<List<StockLogEntry>> getLogs({String? materialId});
 }

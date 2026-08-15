@@ -1526,6 +1526,24 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get whMaterialNotes;
 
+  /// No description provided for @whMaterialDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get whMaterialDeactivate;
+
+  /// No description provided for @whMaterialDeactivateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Material'**
+  String get whMaterialDeactivateConfirmTitle;
+
+  /// No description provided for @whMaterialDeactivateConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate \"{materialName}\"? It will no longer appear in the active materials list.'**
+  String whMaterialDeactivateConfirmMessage(String materialName);
+
   /// No description provided for @whStatusAvailable.
   ///
   /// In en, this message translates to:
@@ -5509,6 +5527,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added'**
   String get whStockCreatedAt;
+
+  /// No description provided for @whStockLogButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement log'**
+  String get whStockLogButton;
+
+  /// No description provided for @whStockLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock movement log'**
+  String get whStockLogTitle;
+
+  /// No description provided for @whStockLogFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by material'**
+  String get whStockLogFilterLabel;
+
+  /// No description provided for @whStockLogEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No movements recorded'**
+  String get whStockLogEmpty;
+
+  /// No description provided for @whStockLogLowBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get whStockLogLowBadge;
 
   /// No description provided for @labProcessConsumedSection.
   ///

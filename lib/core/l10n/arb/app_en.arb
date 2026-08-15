@@ -307,6 +307,16 @@
   "whMaterialSupplier": "Supplier",
   "whMaterialPrice": "Price",
   "whMaterialNotes": "Notes",
+  "whMaterialDeactivate": "Deactivate",
+  "whMaterialDeactivateConfirmTitle": "Deactivate Material",
+  "whMaterialDeactivateConfirmMessage": "Deactivate \"{materialName}\"? It will no longer appear in the active materials list.",
+  "@whMaterialDeactivateConfirmMessage": {
+    "placeholders": {
+      "materialName": {
+        "type": "String"
+      }
+    }
+  },
   "whStatusAvailable": "Available",
   "whStatusLow": "Low",
   "whStatusOut": "Out of Stock",
@@ -1206,6 +1216,11 @@
   "whStockReasonReturn": "Return",
   "whStockBatchLabel": "Batch",
   "whStockCreatedAt": "Added",
+  "whStockLogButton": "Movement log",
+  "whStockLogTitle": "Stock movement log",
+  "whStockLogFilterLabel": "Filter by material",
+  "whStockLogEmpty": "No movements recorded",
+  "whStockLogLowBadge": "Low",
   "labProcessConsumedSection": "Materials consumed from inventory",
   "labProcessConsumedHint": "These materials are deducted from lab inventory on save",
   "labProcessAddMaterial": "Add material",

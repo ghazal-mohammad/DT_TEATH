@@ -754,6 +754,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whMaterialNotes => 'Notes';
 
   @override
+  String get whMaterialDeactivate => 'Deactivate';
+
+  @override
+  String get whMaterialDeactivateConfirmTitle => 'Deactivate Material';
+
+  @override
+  String whMaterialDeactivateConfirmMessage(String materialName) {
+    return 'Deactivate \"$materialName\"? It will no longer appear in the active materials list.';
+  }
+
+  @override
   String get whStatusAvailable => 'Available';
 
   @override
@@ -2839,6 +2850,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whStockCreatedAt => 'Added';
+
+  @override
+  String get whStockLogButton => 'Movement log';
+
+  @override
+  String get whStockLogTitle => 'Stock movement log';
+
+  @override
+  String get whStockLogFilterLabel => 'Filter by material';
+
+  @override
+  String get whStockLogEmpty => 'No movements recorded';
+
+  @override
+  String get whStockLogLowBadge => 'Low';
 
   @override
   String get labProcessConsumedSection => 'Materials consumed from inventory';

@@ -134,5 +134,23 @@ void main() {
       expect(cubit.state.status, InventoryStatus.error);
       expect(cubit.state.summary, isNull);
     });
+
+    test('load ينجح ⇒ lastLoadedAt يُسجَّل (لعرض "آخر تحديث" حقيقي بالهيرو)',
+        () async {
+      when(() => repo.getSummary()).thenAnswer((_) async => const InventorySummary(
+            mostRequested: [],
+            expiringBatches: [],
+            lowStockItems: [],
+          ));
+      final cubit = InventoryCubit(repo);
+      expect(cubit.state.lastLoadedAt, isNull);
+      final before = DateTime.now();
+      await cubit.load();
+      expect(cubit.state.lastLoadedAt, isNotNull);
+      expect(
+          cubit.state.lastLoadedAt!.isAfter(before) ||
+              cubit.state.lastLoadedAt!.isAtSameMomentAs(before),
+          isTrue);
+    });
   });
 }

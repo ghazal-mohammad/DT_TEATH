@@ -31,6 +31,7 @@ class MaterialsState {
     required this.activeFilter,
     required this.searchQuery,
     this.errorMessage,
+    this.actionError,
   });
 
   /// الـ initial state عند تشغيل التطبيق.
@@ -39,7 +40,8 @@ class MaterialsState {
       materials = const [],
       activeFilter = MaterialFilter.all,
       searchQuery = '',
-      errorMessage = null;
+      errorMessage = null,
+      actionError = null;
 
   /// مرحلة التحميل الحالية.
   final MaterialsStatus status;
@@ -55,6 +57,11 @@ class MaterialsState {
 
   /// رسالة الخطأ (إذا status == error).
   final String? errorMessage;
+
+  /// خطأ عملية CRUD لحظي (create/update/delete) — منفصل عن [errorMessage]
+  /// (خطأ التحميل الأساسي) حتى لا يُخفي فشل إجراء واحد القائمة المحمّلة
+  /// أصلاً. تعرضه الواجهة كـ toast ثم تُصفّيه.
+  final String? actionError;
 
   // ────────────────────────────────────────────────────────────────────────
   //                          COMPUTED PROPERTIES
@@ -118,6 +125,8 @@ class MaterialsState {
     String? searchQuery,
     String? errorMessage,
     bool clearError = false,
+    String? actionError,
+    bool clearActionError = false,
   }) {
     return MaterialsState(
       status: status ?? this.status,
@@ -125,6 +134,8 @@ class MaterialsState {
       activeFilter: activeFilter ?? this.activeFilter,
       searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      actionError:
+          clearActionError ? null : (actionError ?? this.actionError),
     );
   }
 }

@@ -259,6 +259,16 @@
   "whMaterialSupplier": "المورد",
   "whMaterialPrice": "السعر",
   "whMaterialNotes": "ملاحظات",
+  "whMaterialDeactivate": "إلغاء التفعيل",
+  "whMaterialDeactivateConfirmTitle": "إلغاء تفعيل المادة",
+  "whMaterialDeactivateConfirmMessage": "متأكد من إلغاء تفعيل \"{materialName}\"؟ لن تظهر بعدها في قائمة المواد النشطة.",
+  "@whMaterialDeactivateConfirmMessage": {
+    "placeholders": {
+      "materialName": {
+        "type": "String"
+      }
+    }
+  },
   "whStatusAvailable": "متوفر",
   "whStatusLow": "ينفد",
   "whStatusOut": "نفد",
@@ -1004,6 +1014,11 @@
   "whStockReasonReturn": "إرجاع",
   "whStockBatchLabel": "دفعة",
   "whStockCreatedAt": "أُضيفت",
+  "whStockLogButton": "سجل الحركة",
+  "whStockLogTitle": "سجل حركة المخزون",
+  "whStockLogFilterLabel": "تصفية حسب المادة",
+  "whStockLogEmpty": "لا توجد حركات مسجّلة",
+  "whStockLogLowBadge": "منخفض",
   "labProcessConsumedSection": "المواد المستهلكة من المخزون",
   "labProcessConsumedHint": "تُنقص هذه المواد من مخزون المخبر عند الحفظ",
   "labProcessAddMaterial": "إضافة مادة",

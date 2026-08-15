@@ -1,13 +1,15 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_reports_content.dart
 //
-// 3 تبويبات تقارير مستودع بنفس روح تقارير المخبر (ReportsView الموحّد):
-//   • المشتريات — **مربوط بالباك فعلاً** (purchase-invoices، مؤكَّد شغّال).
-//   • حركة المخزون / طلبات المواد — الباك ما أكّد بعد جهوزية هالـ2 endpoints
-//     (stock-movement/material-requests موجودان بالكود بس مو موثَّقين
-//     بالكولكشن المرجعي) — فهاي التبويبات بـ**بيانات تجريبية محلية فقط**
-//     (whReportMockNote) لتوضيح الشكل المطلوب للباك، بلا أي نداء شبكة. لا
-//     تُربط فعلياً إلا بعد تأكيد الـ endpoints.
+// 3 تبويبات تقارير مستودع بنفس روح تقارير المخبر (ReportsView الموحّد) —
+// الثلاثة مربوطة بالباك فعلاً:
+//   • المشتريات — purchase-invoices.
+//   • حركة المخزون — stock-movement (قُرئ الكونترولر مباشرة 2026-08-15
+//     لتأكيد الشكل، كان بيانات تجريبية محلية فقط قبل هيك).
+//   • طلبات المواد — material-requests (نفس الشيء؛ ⚠️ باغ حقيقي موثَّق
+//     بالباك: fulfilled_count/fulfillment_rate يرجعوا 0 دائماً لأن الكونترولر
+//     يفلتر status=='fulfilled' غير الموجودة أصلاً بالـ enum — القيمة
+//     الحقيقية 'completed'. نعرض ما يرجعه الباك بأمانة، لا "نصلحه" بالفرونت).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -16,12 +18,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_sizes.dart';
-import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../../../shared/widgets/reports/reports_view.dart';
 import '../../bloc/warehouse_reports_cubit.dart';
+import '../../../domain/entities/warehouse_material_requests_report.dart';
 import '../../../domain/entities/warehouse_purchases_report.dart';
+import '../../../domain/entities/warehouse_stock_movement_report.dart';
 
 enum _ReportTab { purchases, stockMovement, materialRequests }
 
@@ -55,52 +57,9 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
         const SizedBox(height: 12),
         switch (_tab) {
           _ReportTab.purchases => const _PurchasesReportTab(),
-          _ReportTab.stockMovement => _MockNoticeWrap(
-              child: _StockMovementMockTab(sample: _stockMovementSample()),
-            ),
-          _ReportTab.materialRequests => _MockNoticeWrap(
-              child:
-                  _MaterialRequestsMockTab(sample: _materialRequestsSample()),
-            ),
+          _ReportTab.stockMovement => const _StockMovementReportTab(),
+          _ReportTab.materialRequests => const _MaterialRequestsReportTab(),
         },
-      ],
-    );
-  }
-}
-
-/// شارة "بيانات تجريبية" فوق التبويبات غير المربوطة بعد.
-class _MockNoticeWrap extends StatelessWidget {
-  const _MockNoticeWrap({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.statusWarn.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-            border:
-                Border.all(color: AppColors.statusWarn.withValues(alpha: 0.3)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.info_outline_rounded,
-                  size: 15, color: AppColors.statusWarn),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(context.l10n.whReportMockNote,
-                    style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.statusWarn)),
-              ),
-            ],
-          ),
-        ),
-        child,
       ],
     );
   }
@@ -205,184 +164,199 @@ String _compact(num v) {
   return v.toStringAsFixed(0);
 }
 
-// ── تبويب حركة المخزون — بيانات تجريبية ──────────────────────────────────
+// ── تبويب حركة المخزون — مربوط بالباك (stock-movement) ───────────────────
 
-class _StockMovementSample {
-  const _StockMovementSample({
-    required this.incoming,
-    required this.outgoing,
-    required this.movements,
-    required this.byDay,
-  });
-  final int incoming;
-  final int outgoing;
-  final int movements;
-  final List<ReportDay> byDay;
-}
-
-_StockMovementSample _stockMovementSample() => const _StockMovementSample(
-      incoming: 1240,
-      outgoing: 860,
-      movements: 47,
-      byDay: [
-        ReportDay(label: '٠٤-٠٨', count: 120),
-        ReportDay(label: '٠٥-٠٨', count: 260),
-        ReportDay(label: '٠٦-٠٨', count: 180),
-        ReportDay(label: '٠٧-٠٨', count: 310),
-        ReportDay(label: '٠٨-٠٨', count: 90),
-        ReportDay(label: '٠٩-٠٨', count: 140),
-      ],
-    );
-
-class _StockMovementMockTab extends StatelessWidget {
-  const _StockMovementMockTab({required this.sample});
-  final _StockMovementSample sample;
+class _StockMovementReportTab extends StatelessWidget {
+  const _StockMovementReportTab();
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final total = sample.incoming + sample.outgoing;
-    return ReportsView(
-      status: ReportsViewStatus.loaded,
-      selectedPeriod: 0,
-      onPeriodChanged: (_) {},
-      onRetry: () {},
-      periodLabel: l10n.whReportStockMovementTitle,
-      exportTitle: l10n.whReportStockMovementTitle,
-      kpis: [
-        ReportKpi(
-            icon: '📥',
-            value: _compact(sample.incoming),
-            label: l10n.whReportStatIncoming,
-            accent: AppColors.statusSuccess),
-        ReportKpi(
-            icon: '📤',
-            value: _compact(sample.outgoing),
-            label: l10n.whReportStatOutgoing,
-            accent: AppColors.statusUrgent),
-        ReportKpi(
-            icon: '🔄',
-            value: sample.movements.toString(),
-            label: l10n.whReportStatMovements,
-            accent: AppColors.statusInfo),
-      ],
-      ordersByType: total == 0
-          ? const []
-          : [
-              ReportSegment(
-                label: l10n.whReportIncoming,
-                percentage: (sample.incoming / total * 100).round(),
-                count: sample.incoming,
-                color: AppColors.statusSuccess,
-              ),
-              ReportSegment(
-                label: l10n.whReportOutgoing,
-                percentage: (sample.outgoing / total * 100).round(),
-                count: sample.outgoing,
-                color: AppColors.statusUrgent,
-              ),
-            ],
-      ordersByDay: sample.byDay,
-      teamPerformance: null,
-      byTypeTitle: l10n.whReportIncomingVsOutgoing,
-      byDayTitle: l10n.whReportMovementsByDay,
+    return BlocBuilder<WarehouseReportsCubit, WarehouseReportsState>(
+      builder: (context, state) {
+        final cubit = context.read<WarehouseReportsCubit>();
+        final report = state.stockMovementReport;
+        final loading = report == null && state.stockMovementError == null;
+        return ReportsView(
+          status: loading
+              ? ReportsViewStatus.loading
+              : (report == null
+                  ? ReportsViewStatus.error
+                  : ReportsViewStatus.loaded),
+          selectedPeriod: state.period,
+          onPeriodChanged: (p) {
+            cubit.changePeriod(p);
+            cubit.loadStockMovement();
+          },
+          onRetry: cubit.loadStockMovement,
+          periodLabel: l10n.whReportStockMovementTitle,
+          exportTitle: l10n.whReportStockMovementTitle,
+          errorMessage: state.stockMovementError,
+          kpis: _kpis(l10n, report),
+          ordersByType: _byType(l10n, report),
+          ordersByDay: _byDay(report),
+          teamPerformance: null,
+          byTypeTitle: l10n.whReportIncomingVsOutgoing,
+          byDayTitle: l10n.whReportMovementsByDay,
+        );
+      },
     );
+  }
+
+  List<ReportKpi> _kpis(AppLocalizations l10n, WarehouseStockMovementReport? r) {
+    return [
+      ReportKpi(
+          icon: '📥',
+          value: _compact(r?.totalIncoming ?? 0),
+          label: l10n.whReportStatIncoming,
+          accent: AppColors.statusSuccess),
+      ReportKpi(
+          icon: '📤',
+          value: _compact(r?.totalOutgoing ?? 0),
+          label: l10n.whReportStatOutgoing,
+          accent: AppColors.statusUrgent),
+      ReportKpi(
+          icon: '🔄',
+          value: (r?.totalMovements ?? 0).toString(),
+          label: l10n.whReportStatMovements,
+          accent: AppColors.statusInfo),
+    ];
+  }
+
+  List<ReportSegment> _byType(
+      AppLocalizations l10n, WarehouseStockMovementReport? r) {
+    final inQty = r?.totalIncoming ?? 0;
+    final outQty = r?.totalOutgoing ?? 0;
+    final total = inQty + outQty;
+    if (total <= 0) return const [];
+    return [
+      ReportSegment(
+        label: l10n.whReportIncoming,
+        percentage: (inQty / total * 100).round(),
+        count: inQty.round(),
+        color: AppColors.statusSuccess,
+      ),
+      ReportSegment(
+        label: l10n.whReportOutgoing,
+        percentage: (outQty / total * 100).round(),
+        count: outQty.round(),
+        color: AppColors.statusUrgent,
+      ),
+    ];
+  }
+
+  /// تجميع incoming+outgoing حسب اليوم (الباك لا يرجّع تجميعاً يومياً جاهزاً
+  /// لهالتقرير — نحسبه من التواريخ الحقيقية بالسطور).
+  List<ReportDay> _byDay(WarehouseStockMovementReport? r) {
+    if (r == null) return const [];
+    final totals = <String, int>{};
+    for (final item in [...r.incoming, ...r.outgoing]) {
+      final d = item.date;
+      if (d == null) continue;
+      final key = _dayLabel(d);
+      totals[key] = (totals[key] ?? 0) + item.quantity;
+    }
+    final keys = totals.keys.toList()..sort();
+    return [for (final k in keys) ReportDay(label: k, count: totals[k]!)];
   }
 }
 
-// ── تبويب طلبات المواد — بيانات تجريبية ──────────────────────────────────
+String _dayLabel(DateTime d) =>
+    '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
-class _MaterialRequestsSample {
-  const _MaterialRequestsSample({
-    required this.total,
-    required this.fulfilled,
-    required this.rejected,
-    required this.fulfillmentRate,
-    required this.byRequester,
-    required this.byDay,
-  });
-  final int total;
-  final int fulfilled;
-  final int rejected;
-  final String fulfillmentRate;
-  final List<ReportSegment> byRequester;
-  final List<ReportDay> byDay;
-}
+// ── تبويب طلبات المواد — مربوط بالباك (material-requests) ────────────────
 
-_MaterialRequestsSample _materialRequestsSample() =>
-    const _MaterialRequestsSample(
-      total: 32,
-      fulfilled: 24,
-      rejected: 3,
-      fulfillmentRate: '75%',
-      byRequester: [
-        ReportSegment(
-            label: 'مخبر الأسنان',
-            percentage: 56,
-            count: 18,
-            color: AppColors.dashCyan),
-        ReportSegment(
-            label: 'عيادة د. سامر',
-            percentage: 28,
-            count: 9,
-            color: AppColors.secondary),
-        ReportSegment(
-            label: 'عيادة د. لين',
-            percentage: 16,
-            count: 5,
-            color: AppColors.dashOrange),
-      ],
-      byDay: [
-        ReportDay(label: '٠٤-٠٨', count: 5),
-        ReportDay(label: '٠٥-٠٨', count: 8),
-        ReportDay(label: '٠٦-٠٨', count: 3),
-        ReportDay(label: '٠٧-٠٨', count: 7),
-        ReportDay(label: '٠٨-٠٨', count: 4),
-        ReportDay(label: '٠٩-٠٨', count: 5),
-      ],
-    );
-
-class _MaterialRequestsMockTab extends StatelessWidget {
-  const _MaterialRequestsMockTab({required this.sample});
-  final _MaterialRequestsSample sample;
+class _MaterialRequestsReportTab extends StatelessWidget {
+  const _MaterialRequestsReportTab();
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return ReportsView(
-      status: ReportsViewStatus.loaded,
-      selectedPeriod: 0,
-      onPeriodChanged: (_) {},
-      onRetry: () {},
-      periodLabel: l10n.whReportMaterialRequestsTitle,
-      exportTitle: l10n.whReportMaterialRequestsTitle,
-      kpis: [
-        ReportKpi(
-            icon: '📋',
-            value: sample.total.toString(),
-            label: l10n.whReportStatTotalRequests,
-            accent: AppColors.statusInfo),
-        ReportKpi(
-            icon: '✅',
-            value: sample.fulfilled.toString(),
-            label: l10n.whReportStatFulfilled,
-            accent: AppColors.statusSuccess),
-        ReportKpi(
-            icon: '❌',
-            value: sample.rejected.toString(),
-            label: l10n.whReportStatRejected,
-            accent: AppColors.statusUrgent),
-        ReportKpi(
-            icon: '📈',
-            value: sample.fulfillmentRate,
-            label: l10n.whReportStatFulfillmentRate,
-            accent: AppColors.statusProgress),
-      ],
-      ordersByType: sample.byRequester,
-      ordersByDay: sample.byDay,
-      teamPerformance: null,
-      byTypeTitle: l10n.whReportByRequester,
-      byDayTitle: l10n.whReportRequestsByDay,
+    return BlocBuilder<WarehouseReportsCubit, WarehouseReportsState>(
+      builder: (context, state) {
+        final cubit = context.read<WarehouseReportsCubit>();
+        final report = state.materialRequestsReport;
+        final loading = report == null && state.materialRequestsError == null;
+        return ReportsView(
+          status: loading
+              ? ReportsViewStatus.loading
+              : (report == null
+                  ? ReportsViewStatus.error
+                  : ReportsViewStatus.loaded),
+          selectedPeriod: state.period,
+          onPeriodChanged: (p) {
+            cubit.changePeriod(p);
+            cubit.loadMaterialRequests();
+          },
+          onRetry: cubit.loadMaterialRequests,
+          periodLabel: l10n.whReportMaterialRequestsTitle,
+          exportTitle: l10n.whReportMaterialRequestsTitle,
+          errorMessage: state.materialRequestsError,
+          kpis: _kpis(l10n, report),
+          ordersByType: _byRequester(report),
+          ordersByDay: _byDay(report),
+          teamPerformance: null,
+          byTypeTitle: l10n.whReportByRequester,
+          byDayTitle: l10n.whReportRequestsByDay,
+        );
+      },
     );
+  }
+
+  List<ReportKpi> _kpis(
+      AppLocalizations l10n, WarehouseMaterialRequestsReport? r) {
+    return [
+      ReportKpi(
+          icon: '📋',
+          value: (r?.totalRequests ?? 0).toString(),
+          label: l10n.whReportStatTotalRequests,
+          accent: AppColors.statusInfo),
+      ReportKpi(
+          icon: '✅',
+          value: (r?.fulfilledCount ?? 0).toString(),
+          label: l10n.whReportStatFulfilled,
+          accent: AppColors.statusSuccess),
+      ReportKpi(
+          icon: '❌',
+          value: (r?.rejectedCount ?? 0).toString(),
+          label: l10n.whReportStatRejected,
+          accent: AppColors.statusUrgent),
+      ReportKpi(
+          icon: '📈',
+          value: r?.fulfillmentRate ?? '0%',
+          label: l10n.whReportStatFulfillmentRate,
+          accent: AppColors.statusProgress),
+    ];
+  }
+
+  List<ReportSegment> _byRequester(WarehouseMaterialRequestsReport? r) {
+    if (r == null || r.byRequester.isEmpty) return const [];
+    final total = r.totalRequests > 0 ? r.totalRequests : 1;
+    final buckets = [...r.byRequester]
+      ..sort((a, b) => b.totalRequests.compareTo(a.totalRequests));
+    return [
+      for (var i = 0; i < buckets.length; i++)
+        ReportSegment(
+          label: buckets[i].requester,
+          percentage: (buckets[i].totalRequests / total * 100).round(),
+          count: buckets[i].totalRequests,
+          color: kReportPalette[i % kReportPalette.length],
+        ),
+    ];
+  }
+
+  /// تجميع الطلبات حسب اليوم من created_at الحقيقي (الباك لا يرجّع تجميعاً
+  /// يومياً جاهزاً لهالتقرير).
+  List<ReportDay> _byDay(WarehouseMaterialRequestsReport? r) {
+    if (r == null) return const [];
+    final counts = <String, int>{};
+    for (final row in r.requests) {
+      final d = row.createdAt;
+      if (d == null) continue;
+      final key = _dayLabel(d);
+      counts[key] = (counts[key] ?? 0) + 1;
+    }
+    final keys = counts.keys.toList()..sort();
+    return [for (final k in keys) ReportDay(label: k, count: counts[k]!)];
   }
 }

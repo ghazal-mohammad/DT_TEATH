@@ -39,14 +39,16 @@ class WarehouseSettingsPage extends StatelessWidget {
       currentRoute: RouteNames.warehouseSettings,
       sections: WarehouseSidebarSections.buildWithBadges(
         context,
-        lowStockCount: 8,
-        pendingOrdersCount: 3,
-        unreadNotifsCount: 5,
+        // هذه الصفحة لا تحمّل InventoryCubit/WarehouseRequestsCubit — 0 بدل
+        // رقم وهمي مضلّل (نفس اتفاقية لوحة التحكم/المواد/الطلبيات).
+        lowStockCount: 0,
+        pendingOrdersCount: 0,
+        unreadNotifsCount: 0,
       ),
       pageTitle: context.l10n.whSettingsTitle,
       pageSubtitle: context.l10n.warehouseTopbarSubtitle,
       userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
-      notificationCount: 5,
+      notificationCount: 0,
       // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
       showSearch: false,
       body: const Padding(

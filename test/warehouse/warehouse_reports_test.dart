@@ -1,5 +1,7 @@
 import 'package:dt_teeth/core/network/failure.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_purchases_report.dart';
+import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_stock_movement_report.dart';
+import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_material_requests_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_reports_repository.dart';
 import 'package:dt_teeth/features/warehouse/presentation/bloc/warehouse_reports_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -76,6 +78,50 @@ void main() {
       final cubit = WarehouseReportsCubit(repo);
       await cubit.load();
       expect(cubit.state.status, ReportsStatus.error);
+    });
+
+    test('loadStockMovement ينجح ⇒ stockMovementReport محمّل', () async {
+      when(() => repo.getStockMovementReport(
+              from: any(named: 'from'), to: any(named: 'to')))
+          .thenAnswer((_) async => const WarehouseStockMovementReport(
+                totalIncoming: 500,
+                totalOutgoing: 320,
+                totalMovements: 47,
+                incoming: [],
+                outgoing: [],
+              ));
+      final cubit = WarehouseReportsCubit(repo);
+      await cubit.loadStockMovement();
+      expect(cubit.state.stockMovementReport?.totalMovements, 47);
+      expect(cubit.state.stockMovementError, isNull);
+    });
+
+    test('loadStockMovement يفشل ⇒ stockMovementError برسالة', () async {
+      when(() => repo.getStockMovementReport(
+              from: any(named: 'from'), to: any(named: 'to')))
+          .thenThrow(const NetworkFailure());
+      final cubit = WarehouseReportsCubit(repo);
+      await cubit.loadStockMovement();
+      expect(cubit.state.stockMovementReport, isNull);
+      expect(cubit.state.stockMovementError, isNotNull);
+    });
+
+    test('loadMaterialRequests ينجح ⇒ materialRequestsReport محمّل', () async {
+      when(() => repo.getMaterialRequestsReport(
+              from: any(named: 'from'), to: any(named: 'to')))
+          .thenAnswer((_) async => const WarehouseMaterialRequestsReport(
+                totalRequests: 32,
+                fulfilledCount: 0,
+                rejectedCount: 3,
+                pendingCount: 5,
+                fulfillmentRate: '0%',
+                byRequester: [],
+                requests: [],
+              ));
+      final cubit = WarehouseReportsCubit(repo);
+      await cubit.loadMaterialRequests();
+      expect(cubit.state.materialRequestsReport?.totalRequests, 32);
+      expect(cubit.state.materialRequestsError, isNull);
     });
   });
 }

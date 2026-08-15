@@ -13,3 +13,4 @@ export 'warehouse_orders_page.dart';
 export 'warehouse_profile_page.dart';
 export 'warehouse_reports_page.dart';
 export 'warehouse_settings_page.dart';
+export 'warehouse_stock_log_page.dart';

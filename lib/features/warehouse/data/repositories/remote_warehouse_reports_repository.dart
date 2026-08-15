@@ -7,7 +7,9 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../domain/entities/warehouse_material_requests_report.dart';
 import '../../domain/entities/warehouse_purchases_report.dart';
+import '../../domain/entities/warehouse_stock_movement_report.dart';
 import '../../domain/repositories/warehouse_reports_repository.dart';
 import '../datasources/warehouse_reports_remote_datasource.dart';
 
@@ -27,6 +29,38 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
         to: to != null ? _ymd(to) : null,
       );
       return WarehousePurchasesReport.fromJson(json);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<WarehouseStockMovementReport> getStockMovementReport({
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    try {
+      final json = await _remote.stockMovement(
+        from: from != null ? _ymd(from) : null,
+        to: to != null ? _ymd(to) : null,
+      );
+      return WarehouseStockMovementReport.fromJson(json);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<WarehouseMaterialRequestsReport> getMaterialRequestsReport({
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    try {
+      final json = await _remote.materialRequests(
+        from: from != null ? _ymd(from) : null,
+        to: to != null ? _ymd(to) : null,
+      );
+      return WarehouseMaterialRequestsReport.fromJson(json);
     } on DioException catch (e) {
       throw _mapDioError(e);
     }

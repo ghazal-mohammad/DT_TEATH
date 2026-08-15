@@ -44,14 +44,16 @@ class WarehouseInvoicesPage extends StatelessWidget {
         currentRoute: RouteNames.warehouseInvoices,
         sections: WarehouseSidebarSections.buildWithBadges(
           context,
-          lowStockCount: 8,
-          pendingOrdersCount: 3,
-          unreadNotifsCount: 5,
+          // هذه الصفحة لا تحمّل InventoryCubit/WarehouseRequestsCubit — 0 بدل
+          // رقم وهمي مضلّل (نفس اتفاقية لوحة التحكم/المواد/الطلبيات).
+          lowStockCount: 0,
+          pendingOrdersCount: 0,
+          unreadNotifsCount: 0,
         ),
         pageTitle: context.l10n.whInvoicesTitle,
         pageSubtitle: context.l10n.warehouseTopbarSubtitle,
         userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
-        notificationCount: 5,
+        notificationCount: 0,
         body: const AppScrollView(child: WarehouseInvoicesContent()),
       ),
     );

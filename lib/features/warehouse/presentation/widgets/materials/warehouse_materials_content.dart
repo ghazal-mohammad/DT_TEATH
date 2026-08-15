@@ -30,6 +30,7 @@ import '../../../domain/entities/material_status.dart';
 import '../../../domain/entities/warehouse_material.dart';
 import '../../bloc/materials_cubit.dart';
 import '../../bloc/materials_state.dart';
+import '../../pages/warehouse_stock_log_page.dart';
 import 'warehouse_material_form_dialog.dart';
 import 'warehouse_material_stock_dialog.dart';
 
@@ -111,7 +112,15 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    return BlocBuilder<MaterialsCubit, MaterialsState>(
+    return BlocConsumer<MaterialsCubit, MaterialsState>(
+      listenWhen: (p, c) =>
+          p.actionError != c.actionError && c.actionError != null,
+      listener: (context, state) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(state.actionError!),
+          backgroundColor: AppColors.alertRed,
+        ));
+      },
       builder: (context, state) {
         final all = state.materials;
         final filtered = _applyFilters(all);
@@ -139,6 +148,12 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
               onAddTap: () => _openForm(context),
               onRowTap: (m) => _openForm(context, initial: m),
               onMovement: (m) => _openMovement(context, m),
+              onDeactivate: (m) => _confirmDeactivate(context, m),
+              onViewLogs: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const WarehouseStockLogPage(),
+                ),
+              ),
             ),
           ],
         );
@@ -167,5 +182,31 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
     final changed =
         await WarehouseMaterialStockDialog.show(context, material);
     if (changed) await cubit.load();
+  }
+
+  /// إلغاء تفعيل المادة (حذف ناعم — is_active=false بالباك) بعد تأكيد.
+  Future<void> _confirmDeactivate(
+      BuildContext context, WarehouseMaterial material) async {
+    final l10n = context.l10n;
+    final cubit = context.read<MaterialsCubit>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.whMaterialDeactivateConfirmTitle),
+        content: Text(
+            l10n.whMaterialDeactivateConfirmMessage(material.name)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(l10n.cancel)),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.alertRed),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.whMaterialDeactivate),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await cubit.delete(material.id);
   }
 }

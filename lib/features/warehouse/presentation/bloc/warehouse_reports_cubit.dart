@@ -9,7 +9,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../domain/entities/warehouse_material_requests_report.dart';
 import '../../domain/entities/warehouse_purchases_report.dart';
+import '../../domain/entities/warehouse_stock_movement_report.dart';
 import '../../domain/repositories/warehouse_reports_repository.dart';
 
 enum ReportsStatus { initial, loading, loaded, error }
@@ -20,6 +22,10 @@ class WarehouseReportsState extends Equatable {
     this.report,
     this.period = 0,
     this.errorMessage,
+    this.stockMovementReport,
+    this.stockMovementError,
+    this.materialRequestsReport,
+    this.materialRequestsError,
   });
 
   final ReportsStatus status;
@@ -29,21 +35,48 @@ class WarehouseReportsState extends Equatable {
   final int period;
   final String? errorMessage;
 
+  /// تبويب حركة المخزون (stock-movement) — تحميل مستقل عن تبويب المشتريات.
+  final WarehouseStockMovementReport? stockMovementReport;
+  final String? stockMovementError;
+
+  /// تبويب طلبات المواد (material-requests) — تحميل مستقل عن تبويب المشتريات.
+  final WarehouseMaterialRequestsReport? materialRequestsReport;
+  final String? materialRequestsError;
+
   WarehouseReportsState copyWith({
     ReportsStatus? status,
     WarehousePurchasesReport? report,
     int? period,
     String? errorMessage,
+    WarehouseStockMovementReport? stockMovementReport,
+    String? stockMovementError,
+    WarehouseMaterialRequestsReport? materialRequestsReport,
+    String? materialRequestsError,
   }) =>
       WarehouseReportsState(
         status: status ?? this.status,
         report: report ?? this.report,
         period: period ?? this.period,
         errorMessage: errorMessage ?? this.errorMessage,
+        stockMovementReport: stockMovementReport ?? this.stockMovementReport,
+        stockMovementError: stockMovementError ?? this.stockMovementError,
+        materialRequestsReport:
+            materialRequestsReport ?? this.materialRequestsReport,
+        materialRequestsError:
+            materialRequestsError ?? this.materialRequestsError,
       );
 
   @override
-  List<Object?> get props => [status, report, period, errorMessage];
+  List<Object?> get props => [
+        status,
+        report,
+        period,
+        errorMessage,
+        stockMovementReport,
+        stockMovementError,
+        materialRequestsReport,
+        materialRequestsError,
+      ];
 }
 
 class WarehouseReportsCubit extends Cubit<WarehouseReportsState> {
@@ -67,6 +100,28 @@ class WarehouseReportsCubit extends Cubit<WarehouseReportsState> {
   void changePeriod(int period) {
     if (period == state.period) return;
     load(period);
+  }
+
+  /// تبويب حركة المخزون — يستخدم نفس نطاق الفترة الحالية (state.period).
+  Future<void> loadStockMovement() async {
+    final (from, to) = _range(state.period);
+    try {
+      final report = await _repo.getStockMovementReport(from: from, to: to);
+      emit(state.copyWith(stockMovementReport: report));
+    } on Failure catch (f) {
+      emit(state.copyWith(stockMovementError: f.message));
+    }
+  }
+
+  /// تبويب طلبات المواد — يستخدم نفس نطاق الفترة الحالية (state.period).
+  Future<void> loadMaterialRequests() async {
+    final (from, to) = _range(state.period);
+    try {
+      final report = await _repo.getMaterialRequestsReport(from: from, to: to);
+      emit(state.copyWith(materialRequestsReport: report));
+    } on Failure catch (f) {
+      emit(state.copyWith(materialRequestsError: f.message));
+    }
   }
 
   /// يحوّل مؤشّر الفترة إلى نطاق (from, to).

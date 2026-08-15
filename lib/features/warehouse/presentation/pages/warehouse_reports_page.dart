@@ -38,21 +38,25 @@ class WarehouseReportsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          WarehouseReportsCubit(sl<WarehouseReportsRepository>())..load(),
+      create: (_) => WarehouseReportsCubit(sl<WarehouseReportsRepository>())
+        ..load()
+        ..loadStockMovement()
+        ..loadMaterialRequests(),
       child: AppShellLayout(
         system: AppSystemType.warehouse,
         currentRoute: RouteNames.warehouseReports,
         sections: WarehouseSidebarSections.buildWithBadges(
           context,
-          lowStockCount: 8,
-          pendingOrdersCount: 3,
-          unreadNotifsCount: 5,
+          // هذه الصفحة لا تحمّل InventoryCubit/WarehouseRequestsCubit — 0 بدل
+          // رقم وهمي مضلّل (نفس اتفاقية لوحة التحكم/المواد/الطلبيات).
+          lowStockCount: 0,
+          pendingOrdersCount: 0,
+          unreadNotifsCount: 0,
         ),
         pageTitle: context.l10n.whReportsTitle,
         pageSubtitle: context.l10n.warehouseTopbarSubtitle,
         userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
-        notificationCount: 5,
+        notificationCount: 0,
         body: const AppScrollView(child: WarehouseReportsContent()),
       ),
     );

@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/material_stock.dart';
+import '../../domain/entities/stock_overview.dart';
 import '../../domain/repositories/warehouse_stock_repository.dart';
 import '../datasources/warehouse_stock_remote_datasource.dart';
 
@@ -42,6 +43,26 @@ class RemoteWarehouseStockRepository implements WarehouseStockRepository {
         'reason': reason.apiKey,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       });
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<List<StockOverviewItem>> getAllStock() async {
+    try {
+      final raw = await _remote.getAllStock();
+      return raw.map(StockOverviewItem.fromJson).toList(growable: false);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<List<StockLogEntry>> getLogs({String? materialId}) async {
+    try {
+      final raw = await _remote.getLogs(materialId: materialId);
+      return raw.map(StockLogEntry.fromJson).toList(growable: false);
     } on DioException catch (e) {
       throw _mapDioError(e);
     }

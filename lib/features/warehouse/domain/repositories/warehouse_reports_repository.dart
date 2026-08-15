@@ -5,11 +5,25 @@
 // ملاحظة: تقريرا حركة المخزون والطلبات متوفّران بالباك للتوسيع لاحقاً.
 // ════════════════════════════════════════════════════════════════════════════
 
+import '../entities/warehouse_material_requests_report.dart';
 import '../entities/warehouse_purchases_report.dart';
+import '../entities/warehouse_stock_movement_report.dart';
 
 abstract class WarehouseReportsRepository {
   /// تقرير المشتريات ضمن نطاق [from]–[to] (null ⇒ الافتراضي: هذا الشهر).
   Future<WarehousePurchasesReport> getPurchasesReport({
+    DateTime? from,
+    DateTime? to,
+  });
+
+  /// تقرير حركة المخزون ضمن نطاق [from]–[to] (null ⇒ الافتراضي: هذا الشهر).
+  Future<WarehouseStockMovementReport> getStockMovementReport({
+    DateTime? from,
+    DateTime? to,
+  });
+
+  /// تقرير طلبات المواد ضمن نطاق [from]–[to] (null ⇒ الافتراضي: هذا الشهر).
+  Future<WarehouseMaterialRequestsReport> getMaterialRequestsReport({
     DateTime? from,
     DateTime? to,
   });
