@@ -199,11 +199,12 @@ class RemoteLabMaterialRequestsRepository
   }
 
   /// خريطة حالة الباك → حالة الفرونت. القيم الحقيقية بالباك (enum
-  /// material_requests.status): new | in_progress | completed | rejected |
-  /// cancelled — تحقّق مباشر من migration الباك، لا تخمين.
+  /// material_requests.status، تحقّق مباشر من migration الباك بتاريخ
+  /// 2026-08-14 بعد إعادة تسمية الباك لـ in_progress ⇒ pending):
+  /// new | pending | completed | rejected | cancelled.
   MatRequestStatus _mapStatus(String s) {
     switch (s) {
-      case 'in_progress':
+      case 'pending':
         return MatRequestStatus.inProgress;
       case 'completed':
         return MatRequestStatus.delivered;

@@ -6,32 +6,52 @@
 // المستودع يلبّي الطلب كاملاً (خصم FIFO) أو يرفضه.
 // ════════════════════════════════════════════════════════════════════════════
 
-/// حالة طلب المواد (تطابق قيم status في الباك).
-enum WarehouseRequestStatus { newReq, inProgress, completed, rejected, unknown }
+/// حالة طلب المواد (تطابق قيم status في الباك: enum material_requests.status
+/// = new|pending|completed|cancelled|rejected — من migration الباك مباشرة).
+enum WarehouseRequestStatus {
+  newReq,
+  inProgress,
+  completed,
+  rejected,
+  cancelled,
+  unknown
+}
 
 WarehouseRequestStatus warehouseRequestStatusFromApi(String v) {
   switch (v.trim().toLowerCase()) {
     case 'new':
       return WarehouseRequestStatus.newReq;
-    case 'in_progress':
+    // الباك أعاد تسمية in_progress ⇒ pending (تحقّق مباشر من migration الباك
+    // بتاريخ 2026-08-14) — القيمة الفعلية بالـ enum صارت pending.
+    case 'pending':
       return WarehouseRequestStatus.inProgress;
     case 'completed':
       return WarehouseRequestStatus.completed;
     case 'rejected':
       return WarehouseRequestStatus.rejected;
+    case 'cancelled':
+      return WarehouseRequestStatus.cancelled;
     default:
       return WarehouseRequestStatus.unknown;
   }
 }
 
 extension WarehouseRequestStatusX on WarehouseRequestStatus {
-  /// هل يمكن تلبية هذا الطلب؟ (new أو in_progress).
+  /// هل يمكن تلبية هذا الطلب؟ (new أو pending) — يطابق
+  /// MaterialRequestController::fulfill (['new', 'pending']).
   bool get canFulfill =>
       this == WarehouseRequestStatus.newReq ||
       this == WarehouseRequestStatus.inProgress;
 
-  /// هل يمكن رفض هذا الطلب؟ (new فقط).
-  bool get canReject => this == WarehouseRequestStatus.newReq;
+  /// هل يمكن رفض هذا الطلب؟ (new أو pending) — يطابق
+  /// MaterialRequestController::reject (['new', 'pending']).
+  bool get canReject =>
+      this == WarehouseRequestStatus.newReq ||
+      this == WarehouseRequestStatus.inProgress;
+
+  /// هل يمكن تحويله إلى "قيد المعالجة"؟ (new فقط) — يطابق
+  /// MaterialRequestController::markPending (status !== 'new' يُرفض).
+  bool get canMarkPending => this == WarehouseRequestStatus.newReq;
 }
 
 /// عنصر مادة موجودة ضمن الطلب.

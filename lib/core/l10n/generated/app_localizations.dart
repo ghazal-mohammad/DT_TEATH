@@ -3482,6 +3482,18 @@ abstract class AppLocalizations {
   /// **'Rejected'**
   String get whReqStatusRejected;
 
+  /// No description provided for @whReqStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get whReqStatusCancelled;
+
+  /// No description provided for @whReqMarkPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Start processing'**
+  String get whReqMarkPending;
+
   /// No description provided for @whReqRequester.
   ///
   /// In en, this message translates to:

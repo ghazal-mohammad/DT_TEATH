@@ -1762,6 +1762,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whReqStatusRejected => 'Rejected';
 
   @override
+  String get whReqStatusCancelled => 'Cancelled';
+
+  @override
+  String get whReqMarkPending => 'Start processing';
+
+  @override
   String get whReqRequester => 'Requester';
 
   @override

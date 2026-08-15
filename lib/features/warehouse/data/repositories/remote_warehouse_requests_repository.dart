@@ -86,6 +86,15 @@ class RemoteWarehouseRequestsRepository
   }
 
   @override
+  Future<void> markPending(String id) async {
+    try {
+      await _remote.markPending(id);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
   Stream<List<WarehouseRequest>> watchAll() => _controller.stream;
 
   Failure _mapDioError(DioException e) {

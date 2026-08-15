@@ -115,6 +115,8 @@ class WarehouseRequestsCubit extends Cubit<WarehouseRequestsState> {
   Future<bool> reject(String id, {required String reason}) =>
       _act(id, () => _repo.reject(id, reason: reason));
 
+  Future<bool> markPending(String id) => _act(id, () => _repo.markPending(id));
+
   Future<bool> _act(String id, Future<void> Function() action) async {
     emit(state.copyWith(busyId: id, clearActionError: true));
     try {

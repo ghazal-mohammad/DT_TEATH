@@ -16,5 +16,8 @@ abstract class WarehouseRequestsRepository {
   /// رفض الطلب مع سبب.
   Future<void> reject(String id, {required String reason});
 
+  /// تحويل الطلب إلى "قيد المعالجة" (من "جديد" فقط).
+  Future<void> markPending(String id);
+
   Stream<List<WarehouseRequest>> watchAll();
 }

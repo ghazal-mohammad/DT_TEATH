@@ -1745,6 +1745,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whReqStatusRejected => 'مرفوض';
 
   @override
+  String get whReqStatusCancelled => 'ملغى';
+
+  @override
+  String get whReqMarkPending => 'بدء المعالجة';
+
+  @override
   String get whReqRequester => 'الطالب';
 
   @override

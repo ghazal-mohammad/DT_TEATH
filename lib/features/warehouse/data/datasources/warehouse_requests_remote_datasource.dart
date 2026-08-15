@@ -33,6 +33,10 @@ class WarehouseRequestsRemoteDataSource {
     );
   }
 
+  Future<void> markPending(Object id) async {
+    await _dio.post<dynamic>(ApiEndpoints.warehouseMarkMaterialRequestPending(id));
+  }
+
   List<Map<String, dynamic>> _asList(Object? data) {
     final list = (data is Map) ? data['data'] : null;
     if (list is! List) return <Map<String, dynamic>>[];

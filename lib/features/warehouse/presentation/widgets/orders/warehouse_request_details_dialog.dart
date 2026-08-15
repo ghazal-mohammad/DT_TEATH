@@ -179,31 +179,38 @@ class WarehouseRequestDetailsDialog extends StatelessWidget {
     return BlocBuilder<WarehouseRequestsCubit, WarehouseRequestsState>(
       builder: (context, state) {
         final busy = state.busyId == request.id;
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        // Wrap لا Row: طلب "جديد" يعرض حتى 4 أزرار معاً (إلغاء/بدء
+        // المعالجة/رفض/تلبية) — Row ثابت كان يفيض بعرض الديالوج الضيّق.
+        return Wrap(
+          alignment: WrapAlignment.end,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             AppButton.secondary(
               label: l10n.cancel,
               onPressed: () => Navigator.of(context).pop(),
               size: AppButtonSize.small,
             ),
-            if (request.status.canReject) ...[
-              const SizedBox(width: 8),
+            if (request.status.canMarkPending)
+              AppButton.secondary(
+                label: l10n.whReqMarkPending,
+                onPressed: busy ? null : () => _markPending(context),
+                size: AppButtonSize.small,
+                icon: Icons.hourglass_top_rounded,
+              ),
+            if (request.status.canReject)
               AppButton.danger(
                 label: l10n.whReqReject,
                 onPressed: busy ? null : () => _reject(context),
                 size: AppButtonSize.small,
               ),
-            ],
-            if (request.status.canFulfill) ...[
-              const SizedBox(width: 8),
+            if (request.status.canFulfill)
               AppButton.primary(
                 label: l10n.whReqFulfill,
                 onPressed: busy ? null : () => _fulfill(context),
                 size: AppButtonSize.small,
                 icon: Icons.check_rounded,
               ),
-            ],
           ],
         );
       },
@@ -230,6 +237,12 @@ class WarehouseRequestDetailsDialog extends StatelessWidget {
     );
     if (confirmed != true) return;
     final ok = await cubit.fulfill(request.id);
+    if (ok && context.mounted) Navigator.of(context).pop();
+  }
+
+  Future<void> _markPending(BuildContext context) async {
+    final cubit = context.read<WarehouseRequestsCubit>();
+    final ok = await cubit.markPending(request.id);
     if (ok && context.mounted) Navigator.of(context).pop();
   }
 

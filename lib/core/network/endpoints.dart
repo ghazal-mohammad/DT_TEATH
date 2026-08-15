@@ -196,6 +196,10 @@ class ApiEndpoints {
   static String warehouseRejectMaterialRequest(Object id) =>
       '/api/warehouseManager/materialRequestReject/$id';
 
+  /// POST — تحويل الطلب لـ"قيد المعالجة" (من "جديد" فقط). بلا body.
+  static String warehouseMarkMaterialRequestPending(Object id) =>
+      '/api/warehouseManager/materialRequestPending/$id';
+
   // ── Warehouse Manager — فواتير الشراء (أعيدت تسميتها بالباك 2026-08-08) ───
   static const String warehousePurchaseInvoices =
       '/api/warehouseManager/showAllPurchaseInvoices';

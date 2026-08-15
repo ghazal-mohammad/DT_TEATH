@@ -32,6 +32,8 @@ import 'warehouse_request_details_dialog.dart';
       return (label: l10n.whReqStatusCompleted, color: AppColors.dashGreen);
     case WarehouseRequestStatus.rejected:
       return (label: l10n.whReqStatusRejected, color: AppColors.alertRed);
+    case WarehouseRequestStatus.cancelled:
+      return (label: l10n.whReqStatusCancelled, color: AppColors.categoryGrey);
     case WarehouseRequestStatus.unknown:
       return (label: '—', color: AppColors.categoryGrey);
   }

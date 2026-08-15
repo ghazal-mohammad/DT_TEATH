@@ -30,6 +30,11 @@ void main() {
       expect(r.notes, 'عاجل');
     });
 
+    test('status="pending" (الباك الحقيقي، لا in_progress) ⇒ inProgress', () {
+      final r = WarehouseRequest.fromJson({'id': 2, 'status': 'pending'});
+      expect(r.status, WarehouseRequestStatus.inProgress);
+    });
+
     test('حالة غير معروفة ⇒ unknown، وقوائم غائبة ⇒ فارغة', () {
       final r = WarehouseRequest.fromJson({'id': 1, 'status': 'weird'});
       expect(r.status, WarehouseRequestStatus.unknown);
@@ -37,20 +42,34 @@ void main() {
       expect(r.newItems, isEmpty);
       expect(r.itemsCount, 0);
     });
+
+    test('status="cancelled" (قيمة حقيقية بـ enum الباك) ⇒ cancelled لا unknown', () {
+      final r = WarehouseRequest.fromJson({'id': 5, 'status': 'cancelled'});
+      expect(r.status, WarehouseRequestStatus.cancelled);
+    });
   });
 
-  group('صلاحيات الحالة', () {
-    test('new: يمكن التلبية والرفض', () {
+  group('صلاحيات الحالة (مطابقة MaterialRequestController الحقيقي: fulfill/reject يقبلان new+pending، pending يقبل من new فقط)', () {
+    test('new: يمكن التلبية والرفض والتحويل لقيد المعالجة', () {
       expect(WarehouseRequestStatus.newReq.canFulfill, isTrue);
       expect(WarehouseRequestStatus.newReq.canReject, isTrue);
+      expect(WarehouseRequestStatus.newReq.canMarkPending, isTrue);
     });
-    test('in_progress: يمكن التلبية لا الرفض', () {
+    test('inProgress (pending بالباك): يمكن التلبية والرفض، لا التحويل لقيد المعالجة مجدداً', () {
       expect(WarehouseRequestStatus.inProgress.canFulfill, isTrue);
-      expect(WarehouseRequestStatus.inProgress.canReject, isFalse);
+      expect(WarehouseRequestStatus.inProgress.canReject, isTrue);
+      expect(WarehouseRequestStatus.inProgress.canMarkPending, isFalse);
     });
-    test('completed/rejected: لا تلبية ولا رفض', () {
+    test('completed/rejected: لا تلبية ولا رفض ولا تحويل', () {
       expect(WarehouseRequestStatus.completed.canFulfill, isFalse);
+      expect(WarehouseRequestStatus.completed.canMarkPending, isFalse);
       expect(WarehouseRequestStatus.rejected.canReject, isFalse);
+      expect(WarehouseRequestStatus.rejected.canMarkPending, isFalse);
+    });
+    test('cancelled: لا تلبية ولا رفض ولا تحويل (حالة نهائية)', () {
+      expect(WarehouseRequestStatus.cancelled.canFulfill, isFalse);
+      expect(WarehouseRequestStatus.cancelled.canReject, isFalse);
+      expect(WarehouseRequestStatus.cancelled.canMarkPending, isFalse);
     });
   });
 }

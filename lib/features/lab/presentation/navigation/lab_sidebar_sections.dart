@@ -9,9 +9,12 @@
 //   2. الملف الشخصي     (labProfile)
 //   3. طلبات الأطباء    (labOrders)
 //   4. إدارة المخبريين  (labTechnicians)
-//   5. التقارير          (labReports)
-//   6. الإشعارات         (labNotifications)
-//   7. الإعدادات         (labSettings)
+//   5. مخزون المخبر      (labInventory)
+//   6. طلبات المستودع    (labMaterialRequests) — طلب مواد ناقصة من المستودع
+//   7. المنتجات          (labProducts)
+//   8. التقارير          (labReports)
+//   9. الإشعارات         (labNotifications)
+//   10. الإعدادات        (labSettings)
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/widgets.dart';
@@ -63,6 +66,11 @@ class LabSidebarSections {
             icon: AppIcons.materials,
             label: context.l10n.labInventory,
             route: RouteNames.labInventory,
+          ),
+          SidebarItemData(
+            icon: AppIcons.orders,
+            label: context.l10n.materialRequests,
+            route: RouteNames.labMaterialRequests,
           ),
           SidebarItemData(
             icon: AppIcons.tooth,

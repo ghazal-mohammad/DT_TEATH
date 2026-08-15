@@ -685,6 +685,8 @@
   "whReqStatusInProgress": "In progress",
   "whReqStatusCompleted": "Fulfilled",
   "whReqStatusRejected": "Rejected",
+  "whReqStatusCancelled": "Cancelled",
+  "whReqMarkPending": "Start processing",
   "whReqRequester": "Requester",
   "whReqItems": "Items",
   "whReqExistingMaterials": "Catalog materials",

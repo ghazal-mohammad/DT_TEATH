@@ -603,6 +603,8 @@
   "whReqStatusInProgress": "قيد المعالجة",
   "whReqStatusCompleted": "تمّت التلبية",
   "whReqStatusRejected": "مرفوض",
+  "whReqStatusCancelled": "ملغى",
+  "whReqMarkPending": "بدء المعالجة",
   "whReqRequester": "الطالب",
   "whReqItems": "العناصر",
   "whReqExistingMaterials": "مواد من الكتالوج",
