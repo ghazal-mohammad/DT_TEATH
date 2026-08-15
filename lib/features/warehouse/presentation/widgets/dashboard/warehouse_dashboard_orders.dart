@@ -509,13 +509,16 @@ class _StatusPillSmall extends StatelessWidget {
             decoration: BoxDecoration(color: c, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
-          Text(
-            status.label(context),
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: c,
+          Flexible(
+            child: Text(
+              status.label(context),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: c,
+              ),
             ),
           ),
         ],

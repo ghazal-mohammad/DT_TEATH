@@ -1,21 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_dashboard_page.dart
 //
-// صفحة لوحة التحكم لنظام المستودع (Phase 4.2 — مكتملة).
-//
-// 🎯 Phase 4.2 (الحالي):
-//   استبدال ComingSoonContent بـ WarehouseDashboardContent الفعلي:
-//     - Hero section (مرحباً بك + 3 إحصائيات)
-//     - 4 stat cards ملوّنة
-//     - 2 جداول (مواد أكثر طلباً + صلاحيات)
-//     - 2 alert boxes (نفاد + طلبيات جديدة)
-//     - Quick Actions (4 أزرار)
-//     - Donut chart (توزيع المخزون)
-//
-// 🔮 Phases المستقبلية:
-//   - Phase 6: ربط بـ WarehouseRepository + WarehouseBloc لـ live data
-//
-// المرجع: DT_Teeth_Warehouse_v6_Enhanced.html — pg-d (السطور 2127–2204)
+// صفحة لوحة التحكم لنظام المستودع — مربوطة بـ InventoryCubit (مؤشّرات حقيقية:
+// المواد الأكثر طلباً، قريبة الصلاحية، منخفضة المخزون). شارة السايدبار
+// "مواد منخفضة" تُقرأ من نفس الملخّص reactive عبر BlocBuilder.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -42,20 +30,24 @@ class WarehouseDashboardPage extends StatelessWidget {
     return BlocProvider(
       create: (_) =>
           InventoryCubit(sl<WarehouseInventoryRepository>())..load(),
-      child: AppShellLayout(
-        system: AppSystemType.warehouse,
-        currentRoute: RouteNames.warehouseDashboard,
-        sections: WarehouseSidebarSections.buildWithBadges(
-          context,
-          lowStockCount: 8,
-          pendingOrdersCount: 3,
-          unreadNotifsCount: 5,
+      child: BlocBuilder<InventoryCubit, InventoryState>(
+        builder: (context, state) => AppShellLayout(
+          system: AppSystemType.warehouse,
+          currentRoute: RouteNames.warehouseDashboard,
+          sections: WarehouseSidebarSections.buildWithBadges(
+            context,
+            lowStockCount: state.summary?.lowStockCount,
+            // هذه الصفحة لا تحمّل WarehouseRequestsCubit ولا مصدر إشعارات —
+            // 0 بدل رقم وهمي مضلّل (نفس اتفاقية لوحة المخبر).
+            pendingOrdersCount: 0,
+            unreadNotifsCount: 0,
+          ),
+          pageTitle: context.l10n.whDashboardTitle,
+          pageSubtitle: context.l10n.warehouseTopbarSubtitle,
+          userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
+          notificationCount: 0,
+          body: const AppScrollView(child: WarehouseDashboardContent()),
         ),
-        pageTitle: context.l10n.whDashboardTitle,
-        pageSubtitle: context.l10n.warehouseTopbarSubtitle,
-        userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
-        notificationCount: 5,
-        body: const AppScrollView(child: WarehouseDashboardContent()),
       ),
     );
   }

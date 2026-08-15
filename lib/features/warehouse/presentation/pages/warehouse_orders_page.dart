@@ -1,18 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_orders_page.dart
 //
-// صفحة الطلبيات الواردة لنظام المستودع — Phase 4.4 مكتملة.
-//
-// 🎯 Phase 4.4 (الحالي):
-//   استبدال ComingSoonContent بـ WarehouseOrdersContent الفعلي:
-//     - 4 filter chips (الكل / جديد / تم / غير موجود)
-//     - جدول 7 أعمدة: رقم الطلب / المادة / الكمية / الطالب / التاريخ / الحالة / إجراء
-//     - Modal: تفاصيل الطلب + إجراءات (تأكيد / رفض / مادة بديلة)
-//
-// 🔮 Phases المستقبلية:
-//   - Phase 6: ربط بـ WarehouseOrdersBloc + Repository لـ live data
-//
-// المرجع: DT_Teeth_Warehouse_v6_Enhanced.html — pg-o
+// صفحة الطلبيات الواردة لنظام المستودع — مربوطة بـ WarehouseRequestsCubit.
+// شارة السايدبار "الطلبيات" تُقرأ من عدد الطلبات "الجديدة" الحقيقي عبر
+// BlocBuilder.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -39,20 +30,24 @@ class WarehouseOrdersPage extends StatelessWidget {
     return BlocProvider(
       create: (_) =>
           WarehouseRequestsCubit(sl<WarehouseRequestsRepository>())..load(),
-      child: AppShellLayout(
-        system: AppSystemType.warehouse,
-        currentRoute: RouteNames.warehouseOrders,
-        sections: WarehouseSidebarSections.buildWithBadges(
-          context,
-          lowStockCount: 8,
-          pendingOrdersCount: 3,
-          unreadNotifsCount: 5,
+      child: BlocBuilder<WarehouseRequestsCubit, WarehouseRequestsState>(
+        builder: (context, state) => AppShellLayout(
+          system: AppSystemType.warehouse,
+          currentRoute: RouteNames.warehouseOrders,
+          sections: WarehouseSidebarSections.buildWithBadges(
+            context,
+            // هذه الصفحة لا تحمّل InventoryCubit ولا مصدر إشعارات — 0 بدل
+            // رقم وهمي مضلّل (نفس اتفاقية لوحة المخبر).
+            lowStockCount: 0,
+            pendingOrdersCount: state.countOf(RequestsFilter.newReq),
+            unreadNotifsCount: 0,
+          ),
+          pageTitle: context.l10n.whOrdersTitle,
+          pageSubtitle: context.l10n.warehouseTopbarSubtitle,
+          userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
+          notificationCount: 0,
+          body: const AppScrollView(child: WarehouseOrdersContent()),
         ),
-        pageTitle: context.l10n.whOrdersTitle,
-        pageSubtitle: context.l10n.warehouseTopbarSubtitle,
-        userRole: currentUserRoleLabel(context, fallback: context.l10n.roleWarehouseManager),
-        notificationCount: 5,
-        body: const AppScrollView(child: WarehouseOrdersContent()),
       ),
     );
   }
