@@ -2425,6 +2425,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get whRecentOrdersTitle => 'أحدث الطلبات';
+
+  @override
   String get whInvMostRequestedTitle => 'الأكثر طلباً';
 
   @override

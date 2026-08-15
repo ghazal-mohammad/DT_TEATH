@@ -1052,6 +1052,7 @@
   "whExpiringTitle": "Materials expiring soon",
   "whExpiringSubtitle": "These materials must be handled before they expire",
   "whTodayOrdersCount": "{count} orders",
+  "whRecentOrdersTitle": "Recent Orders",
   "@whTodayOrdersCount": {
     "placeholders": {
       "count": {

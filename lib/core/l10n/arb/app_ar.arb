@@ -850,6 +850,7 @@
   "whExpiringTitle": "مواد ستنتهي صلاحيتها قريباً",
   "whExpiringSubtitle": "يجب التصرف بهذه المواد قبل انتهاء صلاحيتها",
   "whTodayOrdersCount": "{count} طلب",
+  "whRecentOrdersTitle": "أحدث الطلبات",
   "whInvMostRequestedTitle": "الأكثر طلباً",
   "whInvLowStockTitle": "منخفضة المخزون",
   "whInvNoItems": "لا توجد عناصر حالياً",

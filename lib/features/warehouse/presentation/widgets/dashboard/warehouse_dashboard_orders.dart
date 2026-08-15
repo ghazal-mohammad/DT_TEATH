@@ -1,18 +1,21 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_dashboard_orders.dart
 //
-// قسم طلبات اليوم + الجدول — part of warehouse_dashboard_content.dart (تقسيم
+// قسم أحدث الطلبات + الجدول — part of warehouse_dashboard_content.dart (تقسيم
 // الصفحات العملاقة). تشارك نفس الاستيرادات المعرّفة في الملف الرئيسي.
 //
 // مربوط بـ WarehouseRequestsCubit الحقيقي (كان جدولاً ثابتاً بالكامل ببيانات
 // وهمية وحالة "جزئي" غير موجودة أصلاً بالباك — أُزيلت الفلاتر المكرَّرة مع
 // صفحة الطلبيات الفعلية، وأصبحت الحالة تُعرَض عبر requestStatusStyle الحقيقي).
+// اسم القسم "أحدث الطلبات" لا "طلبات اليوم" عمداً: الجدول يعرض آخر N طلب بلا
+// تصفية بالتاريخ (تفادياً لقسم فارغ بيوم هادئ)، والشارة تعرض إجمالي الطلبات
+// الحقيقي (لا عدد الأسطر المعروضة) — لا تناقض بين العنوان والمحتوى.
 // ════════════════════════════════════════════════════════════════════════════
 
 part of 'warehouse_dashboard_content.dart';
 
 // ══════════════════════════════════════════════════════════════════════════
-//  4) TODAY ORDERS SECTION
+//  4) RECENT ORDERS SECTION
 // ══════════════════════════════════════════════════════════════════════════
 
 /// عدد أحدث الطلبات المعروضة بلوحة التحكم (التفاصيل الكاملة بصفحة الطلبيات).
@@ -67,7 +70,7 @@ class _TodayOrdersSection extends StatelessWidget {
               size: 18, color: AppColors.primary),
           const SizedBox(width: 6),
           Text(
-            context.l10n.labTodayOrders,
+            context.l10n.whRecentOrdersTitle,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
               fontSize: 15,

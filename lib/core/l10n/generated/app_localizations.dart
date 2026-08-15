@@ -4754,6 +4754,12 @@ abstract class AppLocalizations {
   /// **'{count} orders'**
   String whTodayOrdersCount(Object count);
 
+  /// No description provided for @whRecentOrdersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Orders'**
+  String get whRecentOrdersTitle;
+
   /// No description provided for @whInvMostRequestedTitle.
   ///
   /// In en, this message translates to:

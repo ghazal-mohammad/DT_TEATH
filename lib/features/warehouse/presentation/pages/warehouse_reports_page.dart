@@ -1,19 +1,8 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_reports_page.dart
 //
-// صفحة التقارير لنظام المستودع — Phase 4.6 مكتملة.
-//
-// 🎯 Phase 4.6 (الحالي):
-//   استبدال ComingSoonContent بـ WarehouseReportsContent الفعلي:
-//     - 2 tabs: أكثر 10 مواد / المالي
-//     - جدول المواد الأكثر طلباً مع Rank badges
-//     - Bar chart للطلبات الشهرية
-//     - ملخص مالي (3 stat cards)
-//
-// 🔮 Phases المستقبلية:
-//   - Phase 6: ربط بـ ReportsBloc + Repository لـ live data
-//
-// المرجع: DT_Teeth_Warehouse_v6_Enhanced.html — pg-rep
+// صفحة التقارير لنظام المستودع — 4 تبويبات، كلها مربوطة بالباك فعلاً:
+// نظرة عامة (reports/dashboard)، المشتريات، حركة المخزون، طلبات المواد.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';

@@ -31,7 +31,7 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       );
       return WarehousePurchasesReport.fromJson(json);
     } on DioException catch (e) {
-      throw _mapDioError(e);
+      throw _mapDioError(e, 'تعذّر جلب تقرير المشتريات.');
     }
   }
 
@@ -47,7 +47,7 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       );
       return WarehouseStockMovementReport.fromJson(json);
     } on DioException catch (e) {
-      throw _mapDioError(e);
+      throw _mapDioError(e, 'تعذّر جلب تقرير حركة المخزون.');
     }
   }
 
@@ -63,7 +63,7 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       );
       return WarehouseMaterialRequestsReport.fromJson(json);
     } on DioException catch (e) {
-      throw _mapDioError(e);
+      throw _mapDioError(e, 'تعذّر جلب تقرير طلبات المواد.');
     }
   }
 
@@ -79,7 +79,7 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       );
       return WarehouseDashboardReport.fromJson(json);
     } on DioException catch (e) {
-      throw _mapDioError(e);
+      throw _mapDioError(e, 'تعذّر جلب تقرير النظرة العامة.');
     }
   }
 
@@ -88,7 +88,7 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 
-  Failure _mapDioError(DioException e) {
+  Failure _mapDioError(DioException e, String fallbackMessage) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout) {
@@ -102,6 +102,6 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       return ServerFailure(data['message'] as String,
           code: '${e.response?.statusCode ?? ''}');
     }
-    return const ServerFailure('تعذّر جلب تقرير المشتريات.');
+    return ServerFailure(fallbackMessage);
   }
 }

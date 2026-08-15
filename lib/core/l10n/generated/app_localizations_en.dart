@@ -2446,6 +2446,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get whRecentOrdersTitle => 'Recent Orders';
+
+  @override
   String get whInvMostRequestedTitle => 'Most Requested';
 
   @override
