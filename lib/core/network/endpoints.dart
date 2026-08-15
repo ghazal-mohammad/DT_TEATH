@@ -183,10 +183,10 @@ class ApiEndpoints {
   // حصراً عبر warehouseAddPurchaseInvoice (الباك ينشئ الدفعة تلقائياً).
 
   // ── Warehouse Manager — طلبات المواد (لبّي/ارفض) ─────────────────────────
+  // showMaterialRequestDetails غير مستخدَم — الديالوج يعرض الكائن الكامل
+  // القادم من showAllMaterialRequests مباشرة، بلا حاجة لجلب تفاصيل منفصل.
   static const String warehouseShowAllMaterialRequests =
       '/api/warehouseManager/showAllMaterialRequests';
-  static String warehouseShowMaterialRequest(Object id) =>
-      '/api/warehouseManager/showMaterialRequestDetails/$id';
 
   /// POST — تلبية الطلب (يخصم من الدفعات FIFO). body: {notes?}.
   static String warehouseFulfillMaterialRequest(Object id) =>
@@ -225,6 +225,11 @@ class ApiEndpoints {
       '/api/warehouseManager/purchase-invoices';
   static const String warehouseReportMaterialRequests =
       '/api/warehouseManager/material-requests';
+
+  // تقرير التحليلات العام — يحمل بادئة reports/ فعلاً (خلافاً للـ3 أعلاه) —
+  // تحقّق مباشر من routes/api.php بتاريخ 2026-08-15، لا افتراضاً.
+  static const String warehouseReportDashboard =
+      '/api/warehouseManager/reports/dashboard';
 
   // ── Warehouse Manager — الإشعارات ────────────────────────────────────────
   static const String warehouseNotifications =

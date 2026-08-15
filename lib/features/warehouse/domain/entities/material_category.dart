@@ -11,7 +11,6 @@ import 'package:flutter/widgets.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../presentation/widgets/dashboard/warehouse_table_badge.dart';
 
 /// جهة استخدام المادة — تطابق قيم الباك (clinic|lab|both).
 enum MaterialCategory {
@@ -35,18 +34,6 @@ extension MaterialCategoryX on MaterialCategory {
         return context.l10n.whCategoryLab;
       case MaterialCategory.both:
         return context.l10n.whCategoryBoth;
-    }
-  }
-
-  /// نوع الـ badge variant لعرض الفئة في البطاقة/الجدول.
-  WarehouseBadgeVariant get badgeVariant {
-    switch (this) {
-      case MaterialCategory.clinic:
-        return WarehouseBadgeVariant.cyan;
-      case MaterialCategory.lab:
-        return WarehouseBadgeVariant.violet;
-      case MaterialCategory.both:
-        return WarehouseBadgeVariant.green;
     }
   }
 

@@ -11,7 +11,6 @@ import '../entities/purchase_invoice.dart';
 
 abstract class PurchaseInvoicesRepository {
   Future<List<PurchaseInvoice>> getAll();
-  Stream<List<PurchaseInvoice>> watchAll();
 
   /// POST addPurchaseInvoice — ينشئ الفاتورة + دفعات مخزون جديدة لكل بند.
   Future<PurchaseInvoice> create({

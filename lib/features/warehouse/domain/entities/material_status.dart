@@ -17,7 +17,6 @@ import 'package:flutter/widgets.dart';
 
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../presentation/widgets/dashboard/warehouse_table_badge.dart';
 
 /// تعداد حالات المواد في المخزون.
 enum MaterialStatus {
@@ -52,21 +51,6 @@ extension MaterialStatusX on MaterialStatus {
         return context.l10n.whFilterExpiring;
       case MaterialStatus.expired:
         return context.l10n.whStatusOut;
-    }
-  }
-
-  /// نوع badge variant للحالة.
-  WarehouseBadgeVariant get badgeVariant {
-    switch (this) {
-      case MaterialStatus.available:
-        return WarehouseBadgeVariant.green;
-      case MaterialStatus.low:
-        return WarehouseBadgeVariant.orange;
-      case MaterialStatus.outOfStock:
-      case MaterialStatus.expired:
-        return WarehouseBadgeVariant.red;
-      case MaterialStatus.expiringSoon:
-        return WarehouseBadgeVariant.orange;
     }
   }
 

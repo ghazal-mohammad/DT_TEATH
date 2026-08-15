@@ -18,6 +18,4 @@ abstract class WarehouseRequestsRepository {
 
   /// تحويل الطلب إلى "قيد المعالجة" (من "جديد" فقط).
   Future<void> markPending(String id);
-
-  Stream<List<WarehouseRequest>> watchAll();
 }
