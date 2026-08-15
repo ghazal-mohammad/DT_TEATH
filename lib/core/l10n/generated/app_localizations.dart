@@ -4058,6 +4058,42 @@ abstract class AppLocalizations {
   /// **'Requests by Day'**
   String get whReportRequestsByDay;
 
+  /// No description provided for @whReportTypeOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get whReportTypeOverview;
+
+  /// No description provided for @whReportOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview Report'**
+  String get whReportOverviewTitle;
+
+  /// No description provided for @whReportStatTotalConsumption.
+  ///
+  /// In en, this message translates to:
+  /// **'Total consumption'**
+  String get whReportStatTotalConsumption;
+
+  /// No description provided for @whReportStatTopConsumed.
+  ///
+  /// In en, this message translates to:
+  /// **'Top consumed'**
+  String get whReportStatTopConsumed;
+
+  /// No description provided for @whReportStatActiveDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Active days'**
+  String get whReportStatActiveDays;
+
+  /// No description provided for @whReportTopCompanies.
+  ///
+  /// In en, this message translates to:
+  /// **'Top supplying companies'**
+  String get whReportTopCompanies;
+
   /// No description provided for @reportStatTotalMaterials.
   ///
   /// In en, this message translates to:
@@ -4585,6 +4621,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last update: '**
   String get whLastUpdateLabel;
+
+  /// No description provided for @whLastUpdateJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get whLastUpdateJustNow;
+
+  /// No description provided for @whLastUpdateMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m ago'**
+  String whLastUpdateMinutesAgo(int minutes);
+
+  /// No description provided for @whLastUpdateHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h ago'**
+  String whLastUpdateHoursAgo(int hours);
+
+  /// No description provided for @whMiniExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring soon'**
+  String get whMiniExpiringSoon;
 
   /// No description provided for @whTotalMaterials.
   ///

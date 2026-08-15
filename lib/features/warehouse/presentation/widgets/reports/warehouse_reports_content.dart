@@ -21,11 +21,12 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../../../shared/widgets/reports/reports_view.dart';
 import '../../bloc/warehouse_reports_cubit.dart';
+import '../../../domain/entities/warehouse_dashboard_report.dart';
 import '../../../domain/entities/warehouse_material_requests_report.dart';
 import '../../../domain/entities/warehouse_purchases_report.dart';
 import '../../../domain/entities/warehouse_stock_movement_report.dart';
 
-enum _ReportTab { purchases, stockMovement, materialRequests }
+enum _ReportTab { overview, purchases, stockMovement, materialRequests }
 
 class WarehouseReportsContent extends StatefulWidget {
   const WarehouseReportsContent({super.key});
@@ -48,6 +49,7 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
           values: _ReportTab.values,
           selected: _tab,
           labelOf: (t) => switch (t) {
+            _ReportTab.overview => l10n.whReportTypeOverview,
             _ReportTab.purchases => l10n.whReportTypePurchases,
             _ReportTab.stockMovement => l10n.whReportTypeStockMovement,
             _ReportTab.materialRequests => l10n.whReportTypeMaterialRequests,
@@ -56,12 +58,123 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
         ),
         const SizedBox(height: 12),
         switch (_tab) {
+          _ReportTab.overview => const _DashboardOverviewReportTab(),
           _ReportTab.purchases => const _PurchasesReportTab(),
           _ReportTab.stockMovement => const _StockMovementReportTab(),
           _ReportTab.materialRequests => const _MaterialRequestsReportTab(),
         },
       ],
     );
+  }
+}
+
+// ── تبويب نظرة عامة — مربوط بالباك (reports/dashboard) ────────────────────
+//
+// الباك يقبل period=week|month فقط (لا يوافق مؤشّر ReportsView 0..3)، فلا
+// يوجد تنقّل فترة تفاعلي هون — يُحمَّل مرة واحدة بـ 'month' عند فتح الصفحة.
+// خريطة الاستهلاك اليومية (calendar) غير معروضة عمداً — summary_bars يغطّي
+// نفس المفهوم ("الأيام الأنشط") ضمن مكوّنات ReportsView الموحّدة الحالية.
+
+class _DashboardOverviewReportTab extends StatelessWidget {
+  const _DashboardOverviewReportTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return BlocBuilder<WarehouseReportsCubit, WarehouseReportsState>(
+      builder: (context, state) {
+        final cubit = context.read<WarehouseReportsCubit>();
+        final report = state.dashboardReport;
+        final loading = report == null && state.dashboardError == null;
+        return ReportsView(
+          status: loading
+              ? ReportsViewStatus.loading
+              : (report == null
+                  ? ReportsViewStatus.error
+                  : ReportsViewStatus.loaded),
+          selectedPeriod: 0,
+          onPeriodChanged: (_) {},
+          onRetry: cubit.loadDashboard,
+          periodLabel: l10n.whReportOverviewTitle,
+          exportTitle: l10n.whReportOverviewTitle,
+          errorMessage: state.dashboardError,
+          kpis: _kpis(l10n, report),
+          ordersByType: _byCategory(report),
+          ordersByDay: _byDay(report),
+          teamPerformance: _companies(report),
+          teamPerformanceTitle: l10n.whReportTopCompanies,
+          byTypeTitle: l10n.whReportByCategory,
+          byDayTitle: l10n.whReportActivityByDay,
+        );
+      },
+    );
+  }
+
+  List<ReportKpi> _kpis(AppLocalizations l10n, WarehouseDashboardReport? r) {
+    final totalConsumption =
+        r?.consumption.items.fold<int>(0, (sum, e) => sum + e.quantity) ?? 0;
+    final topConsumed = (r?.mostConsumed.isNotEmpty ?? false)
+        ? r!.mostConsumed.first.name
+        : '—';
+    return [
+      ReportKpi(
+          icon: '📦',
+          value: totalConsumption.toString(),
+          label: l10n.whReportStatTotalConsumption,
+          accent: AppColors.statusInfo),
+      ReportKpi(
+          icon: '⭐',
+          value: topConsumed,
+          label: l10n.whReportStatTopConsumed,
+          accent: AppColors.statusProgress),
+      ReportKpi(
+          icon: '🏭',
+          value: (r?.companies.length ?? 0).toString(),
+          label: l10n.whReportStatSuppliers,
+          accent: AppColors.statusWarn),
+      ReportKpi(
+          icon: '📅',
+          value: (r?.summaryBars.length ?? 0).toString(),
+          label: l10n.whReportStatActiveDays,
+          accent: AppColors.statusSuccess),
+    ];
+  }
+
+  List<ReportSegment> _byCategory(WarehouseDashboardReport? r) {
+    final items = r?.consumption.items ?? const [];
+    if (items.isEmpty) return const [];
+    return [
+      for (var i = 0; i < items.length; i++)
+        ReportSegment(
+          label: items[i].label,
+          percentage: items[i].percentage.round(),
+          count: items[i].quantity,
+          color: kReportPalette[i % kReportPalette.length],
+        ),
+    ];
+  }
+
+  List<ReportDay> _byDay(WarehouseDashboardReport? r) {
+    final bars = r?.summaryBars ?? const [];
+    return [for (final b in bars) ReportDay(label: b.label, count: b.value)];
+  }
+
+  List<ReportTeamRow> _companies(WarehouseDashboardReport? r) {
+    final companies = r?.companies ?? const [];
+    if (companies.isEmpty) return const [];
+    final max = companies
+        .map((c) => c.totalSpending)
+        .fold<double>(0, (m, v) => v > m ? v : m);
+    final safeMax = max > 0 ? max : 1;
+    return [
+      for (var i = 0; i < companies.length; i++)
+        ReportTeamRow(
+          name: companies[i].companyName,
+          trailing: _compact(companies[i].totalSpending),
+          fraction: (companies[i].totalSpending / safeMax).clamp(0, 1),
+          color: kReportPalette[i % kReportPalette.length],
+        ),
+    ];
   }
 }
 

@@ -5,6 +5,7 @@
 // ملاحظة: تقريرا حركة المخزون والطلبات متوفّران بالباك للتوسيع لاحقاً.
 // ════════════════════════════════════════════════════════════════════════════
 
+import '../entities/warehouse_dashboard_report.dart';
 import '../entities/warehouse_material_requests_report.dart';
 import '../entities/warehouse_purchases_report.dart';
 import '../entities/warehouse_stock_movement_report.dart';
@@ -26,5 +27,12 @@ abstract class WarehouseReportsRepository {
   Future<WarehouseMaterialRequestsReport> getMaterialRequestsReport({
     DateTime? from,
     DateTime? to,
+  });
+
+  /// تقرير التحليلات العام (استهلاك حسب الفئة/أكثر الشركات/أكثر المواد
+  /// استهلاكاً). [period] "week" أو "month" فقط (يرفضه الباك بغيرها).
+  Future<WarehouseDashboardReport> getDashboardReport({
+    required String period,
+    DateTime? date,
   });
 }

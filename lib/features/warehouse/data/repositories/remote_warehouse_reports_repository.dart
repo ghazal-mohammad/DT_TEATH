@@ -7,6 +7,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../domain/entities/warehouse_dashboard_report.dart';
 import '../../domain/entities/warehouse_material_requests_report.dart';
 import '../../domain/entities/warehouse_purchases_report.dart';
 import '../../domain/entities/warehouse_stock_movement_report.dart';
@@ -61,6 +62,22 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
         to: to != null ? _ymd(to) : null,
       );
       return WarehouseMaterialRequestsReport.fromJson(json);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<WarehouseDashboardReport> getDashboardReport({
+    required String period,
+    DateTime? date,
+  }) async {
+    try {
+      final json = await _remote.dashboard(
+        period: period,
+        date: date != null ? _ymd(date) : null,
+      );
+      return WarehouseDashboardReport.fromJson(json);
     } on DioException catch (e) {
       throw _mapDioError(e);
     }

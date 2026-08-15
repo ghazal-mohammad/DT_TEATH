@@ -96,6 +96,7 @@ class ReportsView extends StatelessWidget {
     required this.ordersByDay,
     required this.exportTitle,
     this.teamPerformance,
+    this.teamPerformanceTitle,
     this.errorMessage,
     this.byTypeTitle,
     this.byTypeUnit,
@@ -122,6 +123,11 @@ class ReportsView extends StatelessWidget {
 
   /// أداء الفريق — null يُخفي القسم (المستودع).
   final List<ReportTeamRow>? teamPerformance;
+
+  /// عنوان قسم [teamPerformance] (افتراضي: "أداء الفريق" — المخبر). يسمح
+  /// لمستهلكين آخرين (كالمستودع) بإعادة استخدام القسم لبيانات مرتَّبة غير
+  /// أداء فريق فعلياً (مثل ترتيب الشركات) بعنوان مطابق.
+  final String? teamPerformanceTitle;
 
   final String? errorMessage;
 
@@ -525,7 +531,7 @@ class ReportsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            context.l10n.labReportTeamPerf,
+            teamPerformanceTitle ?? context.l10n.labReportTeamPerf,
             style: AppTextStyles.headlineSmall,
           ),
           const SizedBox(height: AppSizes.spaceMD),

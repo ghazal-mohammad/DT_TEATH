@@ -2065,6 +2065,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whReportRequestsByDay => 'Requests by Day';
 
   @override
+  String get whReportTypeOverview => 'Overview';
+
+  @override
+  String get whReportOverviewTitle => 'Overview Report';
+
+  @override
+  String get whReportStatTotalConsumption => 'Total consumption';
+
+  @override
+  String get whReportStatTopConsumed => 'Top consumed';
+
+  @override
+  String get whReportStatActiveDays => 'Active days';
+
+  @override
+  String get whReportTopCompanies => 'Top supplying companies';
+
+  @override
   String get reportStatTotalMaterials => 'Total Materials';
 
   @override
@@ -2347,6 +2365,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whLastUpdateLabel => 'Last update: ';
+
+  @override
+  String get whLastUpdateJustNow => 'Just now';
+
+  @override
+  String whLastUpdateMinutesAgo(int minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String whLastUpdateHoursAgo(int hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String get whMiniExpiringSoon => 'Expiring soon';
 
   @override
   String get whTotalMaterials => 'Total materials';

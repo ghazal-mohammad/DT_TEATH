@@ -1,4 +1,5 @@
 import 'package:dt_teeth/core/network/failure.dart';
+import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_dashboard_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_purchases_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_stock_movement_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_material_requests_report.dart';
@@ -122,6 +123,25 @@ void main() {
       await cubit.loadMaterialRequests();
       expect(cubit.state.materialRequestsReport?.totalRequests, 32);
       expect(cubit.state.materialRequestsError, isNull);
+    });
+
+    test('loadDashboard ينجح ⇒ dashboardReport محمّل (افتراضياً period=month)',
+        () async {
+      when(() => repo.getDashboardReport(
+              period: any(named: 'period'), date: any(named: 'date')))
+          .thenAnswer((_) async => const WarehouseDashboardReport(
+                periodType: 'month',
+                saved: false,
+                consumption: ConsumptionByCategory.empty,
+                companies: [],
+                mostConsumed: [],
+                summaryBars: [],
+              ));
+      final cubit = WarehouseReportsCubit(repo);
+      await cubit.loadDashboard();
+      expect(cubit.state.dashboardReport?.periodType, 'month');
+      verify(() => repo.getDashboardReport(
+          period: 'month', date: any(named: 'date'))).called(1);
     });
   });
 }

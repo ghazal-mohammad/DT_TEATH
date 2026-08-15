@@ -9,13 +9,16 @@ import 'package:dt_teeth/core/di/injection_container.dart';
 import 'package:dt_teeth/core/l10n/generated/app_localizations.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/inventory_summary.dart';
 import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_inventory_repository.dart';
+import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_requests_repository.dart';
 import 'package:dt_teeth/features/warehouse/presentation/pages/warehouse_dashboard_page.dart';
 import 'package:dt_teeth/shared/widgets/navigation/app_sidebar_item.dart';
 
 class _MockInventoryRepo extends Mock implements WarehouseInventoryRepository {}
+class _MockRequestsRepo extends Mock implements WarehouseRequestsRepository {}
 
 void main() {
   late _MockInventoryRepo repo;
+  late _MockRequestsRepo requestsRepo;
 
   setUp(() {
     repo = _MockInventoryRepo();
@@ -23,11 +26,21 @@ void main() {
       sl.unregister<WarehouseInventoryRepository>();
     }
     sl.registerFactory<WarehouseInventoryRepository>(() => repo);
+
+    requestsRepo = _MockRequestsRepo();
+    when(() => requestsRepo.getAll()).thenAnswer((_) async => const []);
+    if (sl.isRegistered<WarehouseRequestsRepository>()) {
+      sl.unregister<WarehouseRequestsRepository>();
+    }
+    sl.registerFactory<WarehouseRequestsRepository>(() => requestsRepo);
   });
 
   tearDown(() {
     if (sl.isRegistered<WarehouseInventoryRepository>()) {
       sl.unregister<WarehouseInventoryRepository>();
+    }
+    if (sl.isRegistered<WarehouseRequestsRepository>()) {
+      sl.unregister<WarehouseRequestsRepository>();
     }
   });
 

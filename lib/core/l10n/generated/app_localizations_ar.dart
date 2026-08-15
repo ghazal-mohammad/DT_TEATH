@@ -2046,6 +2046,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whReportRequestsByDay => 'الطلبات حسب اليوم';
 
   @override
+  String get whReportTypeOverview => 'نظرة عامة';
+
+  @override
+  String get whReportOverviewTitle => 'تقرير نظرة عامة';
+
+  @override
+  String get whReportStatTotalConsumption => 'إجمالي الاستهلاك';
+
+  @override
+  String get whReportStatTopConsumed => 'الأكثر استهلاكاً';
+
+  @override
+  String get whReportStatActiveDays => 'أيام نشطة';
+
+  @override
+  String get whReportTopCompanies => 'أكثر الشركات توريداً';
+
+  @override
   String get reportStatTotalMaterials => 'إجمالي المواد';
 
   @override
@@ -2327,6 +2345,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whLastUpdateLabel => 'آخر تحديث: ';
+
+  @override
+  String get whLastUpdateJustNow => 'الآن';
+
+  @override
+  String whLastUpdateMinutesAgo(int minutes) {
+    return 'منذ $minutes د';
+  }
+
+  @override
+  String whLastUpdateHoursAgo(int hours) {
+    return 'منذ $hours س';
+  }
+
+  @override
+  String get whMiniExpiringSoon => 'قريبة الانتهاء';
 
   @override
   String get whTotalMaterials => 'إجمالي المواد';

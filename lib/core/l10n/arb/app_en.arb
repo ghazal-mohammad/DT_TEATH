@@ -829,6 +829,12 @@
   "whReportStatFulfillmentRate": "Fulfillment Rate",
   "whReportByRequester": "By Requester",
   "whReportRequestsByDay": "Requests by Day",
+  "whReportTypeOverview": "Overview",
+  "whReportOverviewTitle": "Overview Report",
+  "whReportStatTotalConsumption": "Total consumption",
+  "whReportStatTopConsumed": "Top consumed",
+  "whReportStatActiveDays": "Active days",
+  "whReportTopCompanies": "Top supplying companies",
   "reportStatTotalMaterials": "Total Materials",
   "reportUnitDay": "day",
   "reportConsumptionByCategory": "Consumption by Category",
@@ -989,6 +995,24 @@
   },
   "whSystemsNormal": "All systems operating normally",
   "whLastUpdateLabel": "Last update: ",
+  "whLastUpdateJustNow": "Just now",
+  "whLastUpdateMinutesAgo": "{minutes}m ago",
+  "@whLastUpdateMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "whLastUpdateHoursAgo": "{hours}h ago",
+  "@whLastUpdateHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "whMiniExpiringSoon": "Expiring soon",
   "whTotalMaterials": "Total materials",
   "whMiniOrdersToday": "Today's orders",
   "whSupplyRate": "Supply rate",

@@ -54,4 +54,18 @@ class WarehouseReportsRemoteDataSource {
         ? Map<String, dynamic>.from(res.data as Map)
         : <String, dynamic>{};
   }
+
+  /// GET reports/dashboard?period=week|month&date= — يرجّع الاستجابة الخام.
+  Future<Map<String, dynamic>> dashboard({required String period, String? date}) async {
+    final res = await _dio.get<dynamic>(
+      ApiEndpoints.warehouseReportDashboard,
+      queryParameters: {
+        'period': period,
+        if (date != null) 'date': date,
+      },
+    );
+    return res.data is Map
+        ? Map<String, dynamic>.from(res.data as Map)
+        : <String, dynamic>{};
+  }
 }

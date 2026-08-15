@@ -9,6 +9,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/failure.dart';
+import '../../domain/entities/warehouse_dashboard_report.dart';
 import '../../domain/entities/warehouse_material_requests_report.dart';
 import '../../domain/entities/warehouse_purchases_report.dart';
 import '../../domain/entities/warehouse_stock_movement_report.dart';
@@ -26,6 +27,8 @@ class WarehouseReportsState extends Equatable {
     this.stockMovementError,
     this.materialRequestsReport,
     this.materialRequestsError,
+    this.dashboardReport,
+    this.dashboardError,
   });
 
   final ReportsStatus status;
@@ -43,6 +46,10 @@ class WarehouseReportsState extends Equatable {
   final WarehouseMaterialRequestsReport? materialRequestsReport;
   final String? materialRequestsError;
 
+  /// تقرير التحليلات العام (تبويب "نظرة عامة") — تحميل مستقل عن باقي التبويبات.
+  final WarehouseDashboardReport? dashboardReport;
+  final String? dashboardError;
+
   WarehouseReportsState copyWith({
     ReportsStatus? status,
     WarehousePurchasesReport? report,
@@ -52,6 +59,8 @@ class WarehouseReportsState extends Equatable {
     String? stockMovementError,
     WarehouseMaterialRequestsReport? materialRequestsReport,
     String? materialRequestsError,
+    WarehouseDashboardReport? dashboardReport,
+    String? dashboardError,
   }) =>
       WarehouseReportsState(
         status: status ?? this.status,
@@ -64,6 +73,8 @@ class WarehouseReportsState extends Equatable {
             materialRequestsReport ?? this.materialRequestsReport,
         materialRequestsError:
             materialRequestsError ?? this.materialRequestsError,
+        dashboardReport: dashboardReport ?? this.dashboardReport,
+        dashboardError: dashboardError ?? this.dashboardError,
       );
 
   @override
@@ -76,6 +87,8 @@ class WarehouseReportsState extends Equatable {
         stockMovementError,
         materialRequestsReport,
         materialRequestsError,
+        dashboardReport,
+        dashboardError,
       ];
 }
 
@@ -121,6 +134,17 @@ class WarehouseReportsCubit extends Cubit<WarehouseReportsState> {
       emit(state.copyWith(materialRequestsReport: report));
     } on Failure catch (f) {
       emit(state.copyWith(materialRequestsError: f.message));
+    }
+  }
+
+  /// تبويب "نظرة عامة" (reports/dashboard) — الباك يقبل week|month فقط (لا
+  /// يوافق مؤشّر الفترة 0..3 المستخدم بباقي التبويبات)، لذا افتراضياً 'month'.
+  Future<void> loadDashboard([String period = 'month']) async {
+    try {
+      final report = await _repo.getDashboardReport(period: period);
+      emit(state.copyWith(dashboardReport: report));
+    } on Failure catch (f) {
+      emit(state.copyWith(dashboardError: f.message));
     }
   }
 

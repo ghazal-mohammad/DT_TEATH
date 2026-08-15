@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('StockOverviewItem.fromJson (WarehouseStockController::index)', () {
     test('يقرأ كل الحقول', () {
-      
+
       final item = StockOverviewItem.fromJson({
         'material_id': 1,
         'name': 'قفازات',

@@ -41,7 +41,8 @@ class WarehouseReportsPage extends StatelessWidget {
       create: (_) => WarehouseReportsCubit(sl<WarehouseReportsRepository>())
         ..load()
         ..loadStockMovement()
-        ..loadMaterialRequests(),
+        ..loadMaterialRequests()
+        ..loadDashboard(),
       child: AppShellLayout(
         system: AppSystemType.warehouse,
         currentRoute: RouteNames.warehouseReports,
