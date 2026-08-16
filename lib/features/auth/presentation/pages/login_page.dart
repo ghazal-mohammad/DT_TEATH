@@ -35,6 +35,7 @@ import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../bloc/login_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
 import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_tooth_jump.dart';
 import '../widgets/auth_underline_field.dart';
 
 part '../widgets/login/login_branding_panel.dart';
@@ -186,11 +187,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             AuthEntryAnimator(
               controller: _entryCtrl,
               delay: AuthStaggerDelays.logo,
-              child: const AppLogo(
-                size: 140,
-                variant: AppLogoVariant.darkTheme,
-                showText: true,
-                semanticLabel: 'DT.Teeth',
+              child: const AuthToothJump(
+                child: AppLogo(
+                  size: 140,
+                  variant: AppLogoVariant.darkTheme,
+                  showText: true,
+                  semanticLabel: 'DT.Teeth',
+                ),
               ),
             ),
             const SizedBox(height: 16),

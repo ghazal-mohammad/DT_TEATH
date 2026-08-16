@@ -14,6 +14,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import 'auth_layout_painters.dart';
@@ -141,14 +142,14 @@ class _AuthFlowShellState extends State<AuthFlowShell>
 //   ROTATING BACKGROUND — قطر مائل ينزلق (skew sweep) لا يدور كالمروحة
 // ══════════════════════════════════════════════════════════════════════════
 
-/// خلفية الدخول: كحلي متدرّج + لوحة بيضاء بقطر **مائل بحدّة** ينزلق أفقياً
-/// وينعكس ميله بين الخطوتين — مطابقةً لحركة مرجع AuthScreen (skewY على الأشكال)
-/// لا دورانًا كاملاً يمرّ بالوضع الأفقي (windmill) الذي كان يبدو خاطئاً.
+/// خلفية الدخول: كحلي متدرّج + لوحة فاتحة بنمط DT.Teeth بقطر **مائل بحدّة**
+/// ينزلق أفقياً وينعكس ميله بين الخطوتين — مطابقةً لحركة مرجع AuthScreen
+/// (skewY على الأشكال) لا دورانًا كاملاً يمرّ بالوضع الأفقي (windmill).
 ///
-/// [progress] 0 = الأبيض على اليمين (email/login/setPassword)،
-///            1 = الأبيض على اليسار (verify).
-/// القطر يبقى قريبًا من العمودي طوال الحركة (لا يصبح أفقيًا أبدًا)، والأبيض
-/// يتبادل جهته عبر تلاشٍ متقاطع قصير عند المنتصف حيث يكون الفاصل عموديًا.
+/// [progress] 0 = اللوحة الفاتحة على اليمين (email/login/setPassword)،
+///            1 = اللوحة الفاتحة على اليسار (verify).
+/// القطر يبقى قريبًا من العمودي طوال الحركة (لا يصبح أفقيًا أبدًا)، واللوحة
+/// تتبادل جهتها عبر تلاشٍ متقاطع قصير عند المنتصف حيث يكون الفاصل عموديًا.
 class AuthRotatingBackground extends StatelessWidget {
   const AuthRotatingBackground({
     super.key,
@@ -183,25 +184,25 @@ class AuthRotatingBackground extends StatelessWidget {
             // الكحلي المتدرّج الأصلي — أساس دائم.
             const AuthNavyBackground(),
 
-            // الأبيض على اليمين (يتلاشى قرب المنتصف).
+            // اللوحة الفاتحة بنمط DT.Teeth على اليمين (تتلاشى قرب المنتصف).
             if (rightOp > 0.001)
               Opacity(
                 opacity: rightOp,
                 child: ClipPath(
                   clipper:
                       AuthDiagRightClipper(topX: topX, botX: botX, W: w, H: h),
-                  child: const ColoredBox(color: Colors.white),
+                  child: const _AuthFormPatternPanel(),
                 ),
               ),
 
-            // الأبيض على اليسار (يظهر بعد المنتصف).
+            // اللوحة الفاتحة بنمط DT.Teeth على اليسار (تظهر بعد المنتصف).
             if (leftOp > 0.001)
               Opacity(
                 opacity: leftOp,
                 child: ClipPath(
                   clipper:
                       AuthDiagLeftClipper(topX: topX, botX: botX, W: w, H: h),
-                  child: const ColoredBox(color: Colors.white),
+                  child: const _AuthFormPatternPanel(),
                 ),
               ),
 
@@ -223,4 +224,24 @@ class AuthRotatingBackground extends StatelessWidget {
   }
 
   static double _lerp(double a, double b, double t) => a + (b - a) * t;
+}
+
+/// اللوحة الفاتحة لجهة الفورم — خلفية نمط DT.Teeth المتكرّرة من مرجع React.
+/// تُقصّ بـ [ClipPath] القطري في [AuthRotatingBackground] دون لمس منطق الدوران.
+class _AuthFormPatternPanel extends StatelessWidget {
+  const _AuthFormPatternPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        color: Color(0xFFF3EEF8),
+        image: DecorationImage(
+          image: AssetImage(AppAssets.authFormPattern),
+          fit: BoxFit.cover,
+          alignment: Alignment.center,
+        ),
+      ),
+    );
+  }
 }

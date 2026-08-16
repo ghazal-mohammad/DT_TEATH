@@ -32,6 +32,9 @@ class AppAssets {
   @Deprecated('استخدم AppLogo widget')
   static const String logoIcon = logoDarkNoText;
 
+  // ── Auth — خلفية نمط الفورم (اللوحة الفاتحة) ─────────────────────────────
+  static const String authFormPattern = '$_imagesPath/auth/auth_form_pattern.png';
+
   // ── الحالات الفارغة ──────────────────────────────────────────────────────
   static const String emptyNoOrders         = '$_imagesPath/empty_states/no_orders.svg';
   static const String emptyNoMaterials      = '$_imagesPath/empty_states/no_materials.svg';

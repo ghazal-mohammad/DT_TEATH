@@ -5,8 +5,8 @@
 // نفس منطق الـ pulse (2400ms TweenSequence) ويضيف تعبئة متدرّجة تزحف عند
 // hover على الديسكتوب فقط (MouseRegion — لا تأثير على اللمس/الموبايل).
 //
-// الزحف يستخدم AlignmentDirectional.centerStart/centerEnd فيتبع اتجاه RTL/LTR
-// تلقائياً بلا فرع منطقي يدوي.
+// التعبئة تنمو عمودياً من الأسفل للأعلى (FractionallySizedBox) مع انزلاق
+// لون النص/الأيقونة من الكحلي إلى الأبيض فوق الخلفية الغامقة.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -18,6 +18,7 @@ import '../../../../core/theme/app_text_styles.dart';
 
 const Duration _kAuthTapCooldown = Duration(milliseconds: 600);
 const Duration _kHoverSweepDuration = Duration(milliseconds: 220);
+const double _kButtonHeight = 50.0;
 
 class AuthOutlineButton extends StatefulWidget {
   const AuthOutlineButton({
@@ -101,9 +102,6 @@ class _AuthOutlineButtonState extends State<AuthOutlineButton>
     final Listenable pulse = widget.withPulseAnimation
         ? _pulseAnim
         : const AlwaysStoppedAnimation<double>(0.0);
-    final Color fg = active
-        ? AppColors.authBorderBlue
-        : AppColors.authBorderBlue.withValues(alpha: 0.35);
 
     return Semantics(
       button: true,
@@ -135,77 +133,101 @@ class _AuthOutlineButtonState extends State<AuthOutlineButton>
                 final double glow = (active && widget.withPulseAnimation)
                     ? _pulseAnim.value
                     : 0.0;
-                final double sweep = _hoverCtrl.value;
+                final double sweep = _hoverCtrl.value.clamp(0.0, 1.0);
+                final Color borderColor = active
+                    ? AppColors.authBorderBlue
+                    : AppColors.authBorderBlue.withValues(alpha: 0.35);
+                final Color fg = active
+                    ? Color.lerp(AppColors.authBorderBlue, Colors.white, sweep)!
+                    : AppColors.authBorderBlue.withValues(alpha: 0.35);
 
-                return Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-                    border: Border.all(
-                      color: active
-                          ? AppColors.authBorderBlue
-                          : AppColors.authBorderBlue.withValues(alpha: 0.35),
-                      width: 2,
-                    ),
-                    gradient: sweep > 0
-                        ? LinearGradient(
-                            begin: AlignmentDirectional.centerStart,
-                            end: AlignmentDirectional.centerEnd,
-                            colors: [
-                              AppColors.authGlowBlue.withValues(alpha: 0.20),
-                              AppColors.authGlowBlue.withValues(alpha: 0.20),
-                              Colors.transparent,
-                            ],
-                            stops: [
-                              0.0,
-                              sweep.clamp(0.0, 1.0),
-                              (sweep + 0.15).clamp(0.0, 1.0),
-                            ],
-                          )
-                        : null,
-                    boxShadow: (active && widget.withPulseAnimation && glow > 0)
-                        ? [
-                            BoxShadow(
-                              color: AppColors.authPulsePeak.withValues(
-                                alpha: 0.45 * glow,
-                              ),
-                              blurRadius: 20 + 10 * glow,
-                              spreadRadius: 2 * glow,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Center(
-                    child: widget.isLoading
-                        ? SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: fg,
-                            ),
-                          )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                widget.label,
-                                style: AppTextStyles.buttonText.copyWith(
-                                  fontSize: AppSizes.fontLG,
-                                  fontWeight: FontWeight.w800,
-                                  color: fg,
-                                ),
-                              ),
-                              if (widget.icon != null) ...[
-                                const SizedBox(width: AppSizes.spaceSM),
-                                Icon(
-                                  widget.icon,
-                                  size: AppSizes.iconMD,
-                                  color: fg,
-                                ),
-                              ],
-                            ],
+                final Widget content = Center(
+                  child: widget.isLoading
+                      ? SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: fg,
                           ),
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              widget.label,
+                              style: AppTextStyles.buttonText.copyWith(
+                                fontSize: AppSizes.fontLG,
+                                fontWeight: FontWeight.w800,
+                                color: fg,
+                              ),
+                            ),
+                            if (widget.icon != null) ...[
+                              const SizedBox(width: AppSizes.spaceSM),
+                              Icon(
+                                widget.icon,
+                                size: AppSizes.iconMD,
+                                color: fg,
+                              ),
+                            ],
+                          ],
+                        ),
+                );
+
+                return SizedBox(
+                  height: _kButtonHeight,
+                  child: Stack(
+                    children: [
+                      // طبقة التعبئة — مقصوصة بشكل الحبة (pill)، تنمو من
+                      // الأسفل للأعلى مع تقدّم hover.
+                      ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(_kButtonHeight / 2),
+                        child: SizedBox(
+                          height: _kButtonHeight,
+                          width: double.infinity,
+                          child: sweep > 0
+                              ? FractionallySizedBox(
+                                  heightFactor: sweep,
+                                  alignment: Alignment.bottomCenter,
+                                  child: const DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                          AppColors.authHoverFillStart,
+                                          AppColors.authGlowBlue,
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                      // الحدّ + التوهّج + المحتوى — فوق طبقة التعبئة.
+                      Container(
+                        height: _kButtonHeight,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(_kButtonHeight / 2),
+                          border: Border.all(color: borderColor, width: 2),
+                          boxShadow:
+                              (active && widget.withPulseAnimation && glow > 0)
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.authPulsePeak
+                                            .withValues(alpha: 0.45 * glow),
+                                        blurRadius: 20 + 10 * glow,
+                                        spreadRadius: 2 * glow,
+                                      ),
+                                    ]
+                                  : null,
+                        ),
+                        child: content,
+                      ),
+                    ],
                   ),
                 );
               },

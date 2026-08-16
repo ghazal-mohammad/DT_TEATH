@@ -28,11 +28,13 @@ class _BrandingPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.logo,
-            child: const AppLogo(
-              size: 280,
-              variant: AppLogoVariant.darkTheme,
-              showText: true,
-              semanticLabel: 'DT.Teeth',
+            child: const AuthToothJump(
+              child: AppLogo(
+                size: 280,
+                variant: AppLogoVariant.darkTheme,
+                showText: true,
+                semanticLabel: 'DT.Teeth',
+              ),
             ),
           ),
           const SizedBox(height: AppSizes.space2XL),

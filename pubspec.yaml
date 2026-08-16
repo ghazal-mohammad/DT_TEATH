@@ -82,6 +82,7 @@ flutter:
 
   assets:
     - assets/images/logo/
+    - assets/images/auth/
     - assets/images/empty_states/
     - assets/images/onboarding/
     - assets/icons/

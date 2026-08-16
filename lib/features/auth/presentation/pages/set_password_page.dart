@@ -16,6 +16,7 @@ import '../../../../shared/widgets/feedback/glass_toast.dart';
 import '../../../../shared/widgets/navigation/app_language_toggle.dart';
 import '../widgets/auth_entry_animator.dart';
 import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_tooth_jump.dart';
 import '../widgets/auth_underline_field.dart';
 import '../widgets/password_strength_meter.dart';
 
@@ -227,11 +228,13 @@ class _SetPasswordPageState extends State<SetPasswordPage>
             AuthEntryAnimator(
               controller: _entryCtrl,
               delay: AuthStaggerDelays.logo,
-              child: const AppLogo(
-                size: 140,
-                variant: AppLogoVariant.darkTheme,
-                showText: true,
-                semanticLabel: 'DT.Teeth',
+              child: const AuthToothJump(
+                child: AppLogo(
+                  size: 140,
+                  variant: AppLogoVariant.darkTheme,
+                  showText: true,
+                  semanticLabel: 'DT.Teeth',
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -297,11 +300,13 @@ class _BrandingPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.logo,
-            child: const AppLogo(
-              size: 280,
-              variant: AppLogoVariant.darkTheme,
-              showText: true,
-              semanticLabel: 'DT.Teeth',
+            child: const AuthToothJump(
+              child: AppLogo(
+                size: 280,
+                variant: AppLogoVariant.darkTheme,
+                showText: true,
+                semanticLabel: 'DT.Teeth',
+              ),
             ),
           ),
           const SizedBox(height: AppSizes.space2XL),

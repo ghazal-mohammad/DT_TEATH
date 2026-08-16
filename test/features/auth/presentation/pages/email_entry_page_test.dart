@@ -84,4 +84,30 @@ void main() {
     );
     expect(fittedBoxAncestor, findsOneWidget);
   });
+
+  testWidgets(
+      'does not show the manager-email subtitle anywhere on activation screen',
+      (tester) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('ar'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      home: BlocProvider<LocaleCubit>(
+        create: (_) => LocaleCubit(),
+        child: const EmailEntryPage(),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(
+      find.text('أدخل البريد الإلكتروني الذي سجّله المدير لك'),
+      findsNothing,
+    );
+    expect(find.byIcon(Icons.info_outline_rounded), findsNothing);
+  });
 }

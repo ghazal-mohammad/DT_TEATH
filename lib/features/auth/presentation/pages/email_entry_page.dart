@@ -18,6 +18,7 @@ import '../../domain/auth_flow_mode.dart';
 import '../bloc/email_entry_cubit.dart';
 import '../widgets/auth_entry_animator.dart';
 import '../widgets/auth_outline_button.dart';
+import '../widgets/auth_tooth_jump.dart';
 import '../widgets/auth_underline_field.dart';
 import '../widgets/email_suggestion_engine.dart';
 
@@ -190,11 +191,13 @@ class _BrandingPanel extends StatelessWidget {
           AuthEntryAnimator(
             controller: entryCtrl,
             delay: AuthStaggerDelays.logo,
-            child: const AppLogo(
-              size: 280,
-              variant: AppLogoVariant.darkTheme,
-              showText: true,
-              semanticLabel: 'DT.Teeth',
+            child: const AuthToothJump(
+              child: AppLogo(
+                size: 280,
+                variant: AppLogoVariant.darkTheme,
+                showText: true,
+                semanticLabel: 'DT.Teeth',
+              ),
             ),
           ),
           const SizedBox(height: AppSizes.space2XL),
@@ -355,11 +358,13 @@ class _FormContent extends StatelessWidget {
         final String titleText = isReset
             ? (isAr ? 'إعادة تعيين كلمة المرور' : 'Reset Password')
             : context.l10n.authEnterEmailTitle;
-        final String subtitleText = isReset
+        // نص "أدخل البريد الذي سجّله المدير" حُذف بالكامل من شاشة التفعيل
+        // (كان مكرّراً فوق الحقل + تحت الزر). وضع reset يبقي شرحه الوظيفي.
+        final String? subtitleText = isReset
             ? (isAr
                 ? 'أدخل بريدك المسجَّل ونرسل لك كود التحقق'
                 : 'Enter your registered email to receive a verification code')
-            : context.l10n.authEnterEmailSubtitle;
+            : null;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -389,16 +394,18 @@ class _FormContent extends StatelessWidget {
                 style: AppTextStyles.authFormTitle.copyWith(color: titleColor),
               ),
             ),
-            const SizedBox(height: AppSizes.spaceXS + 2),
-
-            AuthEntryAnimator(
-              controller: entryCtrl,
-              delay: AuthStaggerDelays.subtitle,
-              child: Text(
-                subtitleText,
-                style: AppTextStyles.authFormSubtitle.copyWith(color: subColor),
+            if (subtitleText != null) ...[
+              const SizedBox(height: AppSizes.spaceXS + 2),
+              AuthEntryAnimator(
+                controller: entryCtrl,
+                delay: AuthStaggerDelays.subtitle,
+                child: Text(
+                  subtitleText,
+                  style:
+                      AppTextStyles.authFormSubtitle.copyWith(color: subColor),
+                ),
               ),
-            ),
+            ],
             const SizedBox(height: AppSizes.space2XL),
 
             AuthEntryAnimator(
@@ -429,26 +436,6 @@ class _FormContent extends StatelessWidget {
                 isEnabled: !state.isSubmitDisabled,
                 withPulseAnimation: true,
                 icon: Icons.arrow_forward_rounded,
-              ),
-            ),
-            const SizedBox(height: AppSizes.spaceLG),
-
-            AuthEntryAnimator(
-              controller: entryCtrl,
-              delay: AuthStaggerDelays.footer,
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline_rounded,
-                      size: AppSizes.iconXS + 1, color: subColor),
-                  const SizedBox(width: AppSizes.spaceXS + 2),
-                  Expanded(
-                    child: Text(
-                      context.l10n.authEnterEmailSubtitle,
-                      style: AppTextStyles.authFooterNote
-                          .copyWith(color: subColor),
-                    ),
-                  ),
-                ],
               ),
             ),
             const SizedBox(height: AppSizes.spaceXL),
