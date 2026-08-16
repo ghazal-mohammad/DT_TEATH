@@ -375,15 +375,20 @@ class AppColors {
   /// لون العنوان الكبير في cards panel (system_selection).
   static const Color authCardTitleLight = Color(0xFF111111);
 
-  /// أزرق فاتح مطابق لحدّ الكارت بالمرجع (React: `border-[#05B4D7]`) —
+  /// كحلي مطابق لحدّ الكارت/الزر بمرجع React الحالي (`border-[#141455]`) —
   /// للخطوط الصلبة (حدّ الكارت، حدّ الحقل عند التركيز، حدّ/نص الزر، الأيقونة).
   /// خاصّ بشاشات auth (login/email/verify/setPassword) — لا يُستخدم عالمياً
   /// مثل AppColors.accent، فتغييره لا يمسّ بقية التطبيق.
-  static const Color authBorderBlue = Color(0xFF05B4D7);
+  static const Color authBorderBlue = Color(0xFF141455);
 
-  /// أزرق فاتح أسطع مطابق لتوهّج الكارت بالمرجع (React: `shadow-[0_0_25px_#4DE1FF]`) —
-  /// للتأثيرات الضبابية فقط (BoxShadow، خط التوهج، تدرّج hover). خاصّ بـ auth.
-  static const Color authGlowBlue = Color(0xFF4DE1FF);
+  /// بنفسجي-أزرق مطابق لتوهّج الكارت وتدرّج تعبئة الزر بمرجع React الحالي
+  /// (`linear-gradient(#1a1a2e,#5959B3,...)`) — للتأثيرات الضبابية (BoxShadow،
+  /// خط التوهج) ولطرف تدرّج تعبئة الـ hover. خاصّ بـ auth.
+  static const Color authGlowBlue = Color(0xFF5959B3);
+
+  /// طرف البداية (الأسفل) لتدرّج تعبئة الزر عند hover — مطابق لأول قيمة
+  /// بتدرّج المرجع (`linear-gradient(#1a1a2e, #5959B3, ...)`). خاصّ بـ auth.
+  static const Color authHoverFillStart = Color(0xFF1A1A2E);
 
   // ── AUTH FORM — ألوان الـ form في Mobile (خلفية داكنة) ─────────────────
   // على الـ mobile كل الـ form يكون على خلفية navy — الألوان معكوسة.
@@ -412,7 +417,7 @@ class AppColors {
   // الباليتة الدلالية عند اعتماد التصميم.
 
   // ── Auth — خلفية متحركة وسبلاش ──────────────────────────────────────────
-  static const Color authPulsePeak = Color(0xFF1C6377); // teal عميق
+  static const Color authPulsePeak = Color(0xFF5959B3); // موحَّد مع authGlowBlue الجديد
   static const Color authPulseRest = Color(0xFF090D1B); // navy داكن
   static const Color authParticle = Color(0xFFB8BCC8); // رمادي-أزرق محايد
   static const Color splashSurface = Color(0xFFEFF0F7); // خلفية السبلاش
