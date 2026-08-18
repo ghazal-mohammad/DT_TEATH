@@ -61,4 +61,68 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'hasDot: false → true (didUpdateWidget) — تبدأ الأنيميشن من غير كراش',
+    (tester) async {
+      Future<void> pumpWithDot(bool hasDot) => tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: AppTopbarAction(
+                  key: const ValueKey('bell'),
+                  icon: Icons.notifications,
+                  onPressed: () {},
+                  hasDot: hasDot,
+                ),
+              ),
+            ),
+          );
+
+      // نفس الـ Key عشان Flutter يعيد استخدام نفس الـ State ويستدعي
+      // didUpdateWidget بدل ما يعمل State جديدة (createState).
+      await pumpWithDot(false);
+      await tester.pumpAndSettle();
+
+      await pumpWithDot(true);
+
+      // ما نستخدم pumpAndSettle هنا — بعد didUpdateWidget الأنيميشن
+      // المفروض تشتغل لا نهائياً طالما hasDot: true، فهذا شرعي.
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(AppTopbarAction), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'hasDot: true → false (didUpdateWidget) — توقف الأنيميشن، pumpAndSettle يكمل من غير timeout',
+    (tester) async {
+      Future<void> pumpWithDot(bool hasDot) => tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: AppTopbarAction(
+                  key: const ValueKey('bell'),
+                  icon: Icons.notifications,
+                  onPressed: () {},
+                  hasDot: hasDot,
+                ),
+              ),
+            ),
+          );
+
+      await pumpWithDot(true);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await pumpWithDot(false);
+
+      // لو didUpdateWidget ما استدعى .stop() لما hasDot رجعت false، هذا
+      // السطر يعلّق (timeout) بنفس شكل العلة الأصلية — هذا هو الدليل
+      // الحقيقي إن مسار الإيقاف شغّال صح.
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppTopbarAction), findsOneWidget);
+    },
+  );
 }
