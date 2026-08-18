@@ -55,6 +55,7 @@ import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../core/mock_user_data.dart';
 import '../../../core/theme/app_sizes.dart';
+import '../../../features/auth/presentation/logout_action.dart';
 import '../../bloc/mock_system_cubit.dart';
 import '../core/app_system_type.dart';
 import '../navigation/app_sidebar.dart';
@@ -296,6 +297,10 @@ class AppShellLayout extends StatelessWidget {
               _handleSystemSwitch(context);
             }
           : null,
+      onLogout: () {
+        if (insideDrawer) Scaffold.of(context).closeDrawer();
+        performLogout(context);
+      },
     );
   }
 

@@ -58,6 +58,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/l10n/build_context_l10n.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../brand/app_logo.dart';
@@ -117,6 +118,7 @@ class AppSidebar extends StatelessWidget {
     required this.userRole,
     required this.onItemTap,
     required this.onSystemSwitch,
+    required this.onLogout,
     this.collapsed = false,
     // اسم وإصدار التطبيق ثابتان (علامة تجارية + رقم نسخة) — ليسا نصّ واجهة قابل
     // للترجمة، لذا يبقيان literals وليس عبر l10n.
@@ -137,6 +139,11 @@ class AppSidebar extends StatelessWidget {
   /// null = بلا زر تبديل نظام (دور المستخدم مقصور على نظام واحد — الأدمن فقط
   /// يملك أكثر من نظام يبدّل بينه).
   final VoidCallback? onSystemSwitch;
+
+  /// القيمة لما المستخدم يضغط على "تسجيل الخروج" — عنصر ثابت بأسفل السايدبار
+  /// (خارج منطقة السكرول)، بنفس تنسيق باقي عناصر التنقّل (AppSidebarItem)
+  /// لكن isActive دائماً false ولا يغيّر currentRoute.
+  final VoidCallback onLogout;
   final bool collapsed;
   final String appVersion;
   final String appName;
@@ -226,6 +233,7 @@ class AppSidebar extends StatelessWidget {
                 Expanded(child: _buildNavScroll(context)),
                 if (!collapsed && showSystemSeparator)
                   _buildSystemSeparator(context, isLight),
+                _buildLogoutItem(context),
                 AppSidebarSystemSwitcher(
                   currentSystem: system,
                   userName: userName,
@@ -425,6 +433,23 @@ class AppSidebar extends StatelessWidget {
           ),
           Expanded(child: Container(height: 1, color: lineColor)),
         ],
+      ),
+    );
+  }
+
+  /// عنصر "تسجيل الخروج" — ثابت بأسفل السايدبار، خارج منطقة السكرول، بنفس
+  /// widget وتنسيق عناصر التنقّل العادية (AppSidebarItem). isActive دائماً
+  /// false لأنه ليس صفحة تنقّل، وonTap يستدعي performLogout مباشرة (وليس
+  /// context.go متل باقي العناصر).
+  Widget _buildLogoutItem(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: AppSidebarItem(
+        icon: AppIcons.logout,
+        label: context.l10n.logout,
+        system: system,
+        collapsed: collapsed,
+        onTap: onLogout,
       ),
     );
   }
