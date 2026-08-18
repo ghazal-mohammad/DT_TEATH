@@ -79,11 +79,30 @@ class _AppTopbarActionState extends State<AppTopbarAction>
   @override
   void initState() {
     super.initState();
-    // glow pulse animation: 2s infinite
+    // glow pulse animation: 2s infinite — تشتغل فقط لو فيه نقطة إشعار
+    // (hasDot: true)، عشان ما تعلّق pumpAndSettle بالاختبارات ولا تستهلك
+    // موارد لأزرار من غير إشعارات.
     _dotPulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
-    )..repeat(reverse: true);
+    );
+    if (widget.hasDot) {
+      _dotPulseController.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant AppTopbarAction oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.hasDot && !oldWidget.hasDot) {
+      // النقطة ظهرت الآن — ابدأ النبض (لو مش شغّالة أصلاً).
+      if (!_dotPulseController.isAnimating) {
+        _dotPulseController.repeat(reverse: true);
+      }
+    } else if (!widget.hasDot && oldWidget.hasDot) {
+      // النقطة اختفت — وقّف النبض.
+      _dotPulseController.stop();
+    }
   }
 
   @override
