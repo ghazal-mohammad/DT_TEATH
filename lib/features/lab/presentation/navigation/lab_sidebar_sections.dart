@@ -6,15 +6,13 @@
 //
 // التبويبات بالترتيب:
 //   1. الصفحة الرئيسية   (labDashboard)
-//   2. الملف الشخصي     (labProfile)
-//   3. طلبات الأطباء    (labOrders)
-//   4. إدارة المخبريين  (labTechnicians)
-//   5. مخزون المخبر      (labInventory)
-//   6. طلبات المستودع    (labMaterialRequests) — طلب مواد ناقصة من المستودع
-//   7. المنتجات          (labProducts)
-//   8. التقارير          (labReports)
-//   9. الإشعارات         (labNotifications)
-//   10. الإعدادات        (labSettings)
+//   2. طلبات الأطباء    (labOrders)
+//   3. إدارة المخبريين  (labTechnicians)
+//   4. مخزون المخبر      (labInventory)
+//   5. طلبات المستودع    (labMaterialRequests) — طلب مواد ناقصة من المستودع
+//   6. المنتجات          (labProducts)
+//   7. التقارير          (labReports)
+//   8. الإعدادات         (labSettings)
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/widgets.dart';
@@ -47,11 +45,6 @@ class LabSidebarSections {
             route: RouteNames.labDashboard,
           ),
           SidebarItemData(
-            icon: AppIcons.profile,
-            label: context.l10n.labProfile,
-            route: RouteNames.labProfile,
-          ),
-          SidebarItemData(
             icon: AppIcons.labOrders,
             label: context.l10n.doctorOrders,
             route: RouteNames.labOrders,
@@ -81,12 +74,6 @@ class LabSidebarSections {
             icon: AppIcons.reports,
             label: context.l10n.labReports,
             route: RouteNames.labReports,
-          ),
-          SidebarItemData(
-            icon: AppIcons.notifications,
-            label: context.l10n.notifications,
-            route: RouteNames.labNotifications,
-            badge: _badgeOrNull(unreadNotifsCount),
           ),
           SidebarItemData(
             icon: AppIcons.settings,

@@ -81,7 +81,7 @@ class AppSearch {
         SearchHit(category: SearchCategory.navigation, icon: Icons.inventory_2_outlined, title: 'المواد', subtitle: 'مواد المستودع', route: RouteNames.warehouseMaterials),
         SearchHit(category: SearchCategory.navigation, icon: Icons.receipt_long_outlined, title: 'الطلبات', subtitle: 'طلبات المستودع', route: RouteNames.warehouseOrders),
         SearchHit(category: SearchCategory.navigation, icon: Icons.description_outlined, title: 'الفواتير', subtitle: 'فواتير المستودع', route: RouteNames.warehouseInvoices),
-        SearchHit(category: SearchCategory.navigation, icon: Icons.person_outline, title: 'الملف الشخصي', subtitle: '', route: RouteNames.warehouseProfile),
+        SearchHit(category: SearchCategory.navigation, icon: Icons.person_outline, title: 'الملف الشخصي', subtitle: '', route: RouteNames.warehouseSettings),
         SearchHit(category: SearchCategory.navigation, icon: Icons.settings_outlined, title: 'الإعدادات', subtitle: '', route: RouteNames.warehouseSettings),
       ];
     }
@@ -93,7 +93,7 @@ class AppSearch {
       SearchHit(category: SearchCategory.navigation, icon: Icons.inventory_2_outlined, title: 'مخزون المخبر', subtitle: 'المخزون', route: RouteNames.labInventory),
       SearchHit(category: SearchCategory.navigation, icon: Icons.category_outlined, title: 'منتجات المخبر', subtitle: 'الكتالوج', route: RouteNames.labProducts),
       SearchHit(category: SearchCategory.navigation, icon: Icons.local_shipping_outlined, title: 'طلبات المواد', subtitle: 'طلب مواد للمخبر', route: RouteNames.labMaterialRequests),
-      SearchHit(category: SearchCategory.navigation, icon: Icons.person_outline, title: 'الملف الشخصي', subtitle: '', route: RouteNames.labProfile),
+      SearchHit(category: SearchCategory.navigation, icon: Icons.person_outline, title: 'الملف الشخصي', subtitle: '', route: RouteNames.labSettings),
       SearchHit(category: SearchCategory.navigation, icon: Icons.settings_outlined, title: 'الإعدادات', subtitle: '', route: RouteNames.labSettings),
     ];
   }
