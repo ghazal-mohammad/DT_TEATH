@@ -235,8 +235,8 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
 
   /// بناء مجموعة الإجراءات (Search + Actions).
   Widget _buildActions(BuildContext context) {
-    // البحث فقط. أزرار الثيم/اللغة ليست هنا (مكانها صفحة الإعدادات حصراً)،
-    // والإشعارات/البروفايل صفحات في السايدبار — فلا نكرّر الوصول لنفس الفيتشر.
+    // البحث + جرس الإشعارات. أزرار الثيم/اللغة ليست هنا (مكانها صفحة
+    // الإعدادات حصراً)، والبروفايل صار تبويباً داخل الإعدادات فلا زر له هنا.
     final bool wide = MediaQuery.of(context).size.width > 900;
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -248,6 +248,17 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
           AppTopbarSearch(
             onChanged: onSearchChanged,
             placeholder: searchPlaceholder,
+          ),
+          const SizedBox(width: AppSizes.spaceSM),
+        ],
+        // جرس الإشعارات — يظهر فقط لو الصفحة مررت معالجاً فعلياً (نفس منطق
+        // إخفاء البحث)، والنقطة الحمراء تعكس notificationCount > 0.
+        if (onNotificationTap != null) ...[
+          AppTopbarAction(
+            icon: AppIcons.notifications,
+            onPressed: onNotificationTap,
+            hasDot: notificationCount > 0,
+            tooltip: context.l10n.notifications,
           ),
           const SizedBox(width: AppSizes.spaceSM),
         ],
