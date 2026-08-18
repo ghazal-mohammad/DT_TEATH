@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -67,8 +69,7 @@ void main() {
     final SemanticsData data = node.getSemanticsData();
     expect(data.flagsCollection.isButton, isTrue);
     expect(data.hasAction(SemanticsAction.tap), isTrue);
-    expect(data.flagsCollection.hasEnabledState, isTrue);
-    expect(data.flagsCollection.isEnabled, isTrue);
+    expect(data.flagsCollection.isEnabled, Tristate.isTrue);
     expect(node.label, contains('Sign In'));
 
     handle.dispose();
@@ -87,7 +88,7 @@ void main() {
         tester.getSemantics(find.byType(AuthOutlineButton));
     final SemanticsData data = node.getSemanticsData();
     expect(data.flagsCollection.isButton, isTrue);
-    expect(data.flagsCollection.isEnabled, isFalse);
+    expect(data.flagsCollection.isEnabled, Tristate.isFalse);
 
     handle.dispose();
   });
