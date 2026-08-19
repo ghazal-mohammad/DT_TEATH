@@ -41,7 +41,6 @@ class WarehouseReportsPage extends StatelessWidget {
           // رقم وهمي مضلّل (نفس اتفاقية لوحة التحكم/المواد/الطلبيات).
           lowStockCount: 0,
           pendingOrdersCount: 0,
-          unreadNotifsCount: 0,
         ),
         pageTitle: context.l10n.whReportsTitle,
         pageSubtitle: context.l10n.warehouseTopbarSubtitle,

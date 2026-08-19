@@ -16,25 +16,17 @@ class _SettingCard extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.child,
-    this.trailing,
-    this.tint,
-    this.tintBorder,
   });
 
   final bool isLight;
   final String title;
   final String? subtitle;
   final Widget? child;
-  final Widget? trailing;
-  final Color? tint;
-  final Color? tintBorder;
 
   @override
   Widget build(BuildContext context) {
-    final bg = tint ??
-        (isLight ? AppColors.lightSurface : AppColors.darkSurface);
-    final border = tintBorder ??
-        (isLight ? AppColors.lightBorder : AppColors.darkBorder);
+    final bg = isLight ? AppColors.lightSurface : AppColors.darkSurface;
+    final border = isLight ? AppColors.lightBorder : AppColors.darkBorder;
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.spaceLG),
@@ -46,7 +38,7 @@ class _SettingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header: title + subtitle ← يمين (start) | trailing ← يسار (end)
+          // Header: title + subtitle ← يمين (start)
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -82,10 +74,6 @@ class _SettingCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: AppSizes.spaceMD),
-                trailing!,
-              ],
             ],
           ),
           if (child != null) ...[
@@ -432,22 +420,16 @@ class _SecondaryButton extends StatelessWidget {
     required this.label,
     required this.onTap,
     required this.isLight,
-    this.danger = false,
   });
 
   final String label;
   final VoidCallback onTap;
   final bool isLight;
-  final bool danger;
 
   @override
   Widget build(BuildContext context) {
-    final fg = danger
-        ? AppColors.dangerStrong
-        : (isLight ? AppColors.lightText1 : AppColors.darkText1);
-    final border = danger
-        ? AppColors.dashPink
-        : (isLight ? AppColors.lightBorder : AppColors.darkBorder);
+    final fg = isLight ? AppColors.lightText1 : AppColors.darkText1;
+    final border = isLight ? AppColors.lightBorder : AppColors.darkBorder;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -455,7 +437,7 @@ class _SecondaryButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsetsDirectional.fromSTEB(16, 11, 16, 11),
           decoration: BoxDecoration(
-            color: danger ? AppColors.dangerTintLight : Colors.transparent,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(AppSizes.radiusMD),
             border: Border.all(color: border),
           ),

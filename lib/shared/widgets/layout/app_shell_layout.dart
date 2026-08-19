@@ -313,9 +313,8 @@ class AppShellLayout extends StatelessWidget {
     // معاملات مشتركة — نُعرّفها مرة واحدة لتجنّب التكرار.
     void onMenuTap() => Scaffold.of(context).openDrawer();
     void onNotificationTap() => _handleNotificationTap(context);
-    void onProfileTap() => _handleProfileTap(context);
 
-    // البحث وزرّا الإشعارات/البروفايل فقط. الثيم واللغة في صفحة الإعدادات حصراً.
+    // البحث وزرّ الإشعارات فقط. الثيم واللغة في صفحة الإعدادات حصراً.
     // نمرّر الـ placeholder كما هو (قد يكون null)؛ AppTopbar يحلّ الافتراضي
     // عبر context.l10n.search عند العرض.
     return AppTopbar(
@@ -328,7 +327,6 @@ class AppShellLayout extends StatelessWidget {
       onMenuTap: isMobile ? onMenuTap : null,
       showMenuButton: isMobile,
       onNotificationTap: showTopbarActions ? onNotificationTap : null,
-      onProfileTap: showTopbarActions ? onProfileTap : null,
     );
   }
 
@@ -339,16 +337,6 @@ class AppShellLayout extends StatelessWidget {
         : RouteNames.labNotifications;
     if (currentRoute != notifRoute) {
       context.go(notifRoute);
-    }
-  }
-
-  /// التوجّه لصفحة الإعدادات الصحيحة حسب النظام.
-  void _handleProfileTap(BuildContext context) {
-    final settingsRoute = system == AppSystemType.warehouse
-        ? RouteNames.warehouseSettings
-        : RouteNames.labSettings;
-    if (currentRoute != settingsRoute) {
-      context.go(settingsRoute);
     }
   }
 

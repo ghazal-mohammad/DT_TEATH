@@ -43,9 +43,6 @@ class LabDashboardPage extends StatelessWidget {
             sections: LabSidebarSections.buildWithBadges(
               context,
               newOrdersCount: state.newOrders,
-              // لا مصدر حقيقي للإشعارات بهذه الصفحة بعد (نفس ملاحظة صفحة
-              // الفريق) — 0 بدل رقم وهمي مضلّل، لحين توحيد المصدر.
-              unreadNotifsCount: 0,
             ),
             pageTitle: l10n.dashboard,
             pageSubtitle: null,

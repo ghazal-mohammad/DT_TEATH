@@ -54,8 +54,6 @@ class WarehouseDashboardPage extends StatelessWidget {
               lowStockCount: inventoryState.summary?.lowStockCount,
               pendingOrdersCount:
                   requestsState.countOf(RequestsFilter.newReq),
-              // هذه الصفحة لا تحمّل مصدر إشعارات — 0 بدل رقم وهمي مضلّل.
-              unreadNotifsCount: 0,
             ),
             pageTitle: context.l10n.whDashboardTitle,
             pageSubtitle: context.l10n.warehouseTopbarSubtitle,

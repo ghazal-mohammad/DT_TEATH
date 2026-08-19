@@ -58,8 +58,6 @@ class LabOrdersPage extends StatelessWidget {
             sections: LabSidebarSections.buildWithBadges(
               context,
               newOrdersCount: state.newCount,
-              // لا مصدر إشعارات حقيقي متاح لهذه الصفحة بعد — 0 بدل رقم ثابت.
-              unreadNotifsCount: 0,
             ),
             pageTitle: context.l10n.doctorOrders,
             pageSubtitle: null,

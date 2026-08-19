@@ -29,11 +29,9 @@ class LabSidebarSections {
   /// يبني قائمة الأقسام مع badges ديناميكية.
   ///
   /// [newOrdersCount]: عدد الطلبات الجديدة (يظهر على "طلبات الأطباء").
-  /// [unreadNotifsCount]: عدد الإشعارات غير المقروءة.
   static List<SidebarSectionData> buildWithBadges(
     BuildContext context, {
     int? newOrdersCount,
-    int? unreadNotifsCount,
   }) {
     return [
       SidebarSectionData(

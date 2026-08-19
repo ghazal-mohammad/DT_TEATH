@@ -56,7 +56,6 @@ class WarehouseMaterialsPage extends StatelessWidget {
               // هذه الصفحة لا تحمّل WarehouseRequestsCubit ولا مصدر إشعارات —
               // 0 بدل رقم وهمي مضلّل (نفس اتفاقية لوحة المخبر).
               pendingOrdersCount: 0,
-              unreadNotifsCount: 0,
             ),
             pageTitle: context.l10n.whMaterialsTitle,
             pageSubtitle: context.l10n.warehouseTopbarSubtitle,

@@ -32,7 +32,6 @@ class WarehouseSidebarSections {
     BuildContext context, {
     int? lowStockCount,
     int? pendingOrdersCount,
-    int? unreadNotifsCount,
   }) {
     return [
       SidebarSectionData(

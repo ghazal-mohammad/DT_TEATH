@@ -181,10 +181,6 @@ class AppColors {
   /// من CSS: `--amber: #FBBF24`.
   static const Color dashAmber = Color(0xFFFBBF24);
 
-  /// وردي فاتح — للـ stat cards "expiry" و alerts الناعمة.
-  /// من CSS: `--pink: #FCA5A5`.
-  static const Color dashPink = Color(0xFFFCA5A5);
-
   /// برتقالي ناعم — لنصوص العناوين في Alert Boxes البرتقالية.
   /// من CSS: `.ab-o .ab-title { color: #fdba74 }`.
   static const Color dashOrangeSoft = Color(0xFFFDBA74);
@@ -451,7 +447,6 @@ class AppColors {
   static const Color progressSoft = Color(0xFFC084FC); // بنفسجي فاتح
   static const Color successSoft = Color(0xFF86EFAC); // أخضر فاتح
   static const Color dangerStrong = Color(0xFFDC2626); // أحمر صريح
-  static const Color dangerTintLight = Color(0xFFFEF2F2); // خلفية خطر فاتحة
 
   // ── تنبيهات تحذير برتقالية فاتحة (warehouse) ────────────────────────────
   static const Color warnTintLight = Color(0xFFFEF5EC);

@@ -68,10 +68,6 @@ class LabTechniciansPage extends StatelessWidget {
               // عدد الطلبات "الجديدة" القابلة للتوكيل — نفس القائمة المحمّلة
               // فعلياً بالـ state (مفلترة newOrder بالفعل)، لا رقم وهمي.
               newOrdersCount: state.orders.length,
-              // إشعارات المخبر مصدرها LabNotificationsCubit المنفصل (صفحة
-              // الإشعارات) — استحضاره هنا فقط لعدّاد السايدبار مكلف زيادة عن
-              // الحاجة لهذه الصفحة. 0 بدل رقم وهمي مضلّل، لحين توحيد المصدر.
-              unreadNotifsCount: 0,
             ),
             pageTitle: context.l10n.labManageTechnicians,
             pageSubtitle: null,
@@ -80,7 +76,7 @@ class LabTechniciansPage extends StatelessWidget {
                 context.read<LabTechniciansCubit>().setSearchQuery(q),
             showThemeToggle: false,
             userRole: currentUserRoleLabel(context, fallback: context.l10n.roleLabManager),
-            // نفس ملاحظة unreadNotifsCount أعلاه — لا مصدر حقيقي لهذه الصفحة.
+            // لا مصدر إشعارات حقيقي متاح لهذه الصفحة بعد — 0 بدل رقم وهمي مضلّل.
             notificationCount: 0,
             body: _buildBody(context, state),
           );

@@ -47,7 +47,6 @@ class LabNotificationsPage extends StatelessWidget {
             sections: LabSidebarSections.buildWithBadges(
               context,
               newOrdersCount: 4,
-              unreadNotifsCount: state.unread,
             ),
             pageTitle: context.l10n.notifications,
             pageSubtitle: null,

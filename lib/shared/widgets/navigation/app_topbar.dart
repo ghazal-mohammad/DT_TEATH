@@ -46,7 +46,7 @@ import 'app_topbar_search.dart';
 /// 1. زر قائمة (للموبايل فقط) — يفتح السايدبار كـ Drawer
 /// 2. عنوان الصفحة + عنوان فرعي اختياري
 /// 3. حقل بحث (إذا مُفعّل)
-/// 4. أزرار إجراءات: ثيم، إشعارات، بروفايل
+/// 4. أزرار إجراءات: جرس الإشعارات، مركز الأوامر (Ctrl+K)
 ///
 /// يدعم backdrop blur لإعطاء تأثير زجاجي فوق المحتوى.
 /// يدعم Light/Dark mode تلقائياً.
@@ -72,7 +72,6 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
     this.searchPlaceholder,
     this.onNotificationTap,
     this.notificationCount = 0,
-    this.onProfileTap,
     this.onMenuTap,
     this.showMenuButton = false,
   });
@@ -97,9 +96,6 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
 
   /// عدد الإشعارات غير المقروءة — لو > 0 تظهر نقطة حمراء.
   final int notificationCount;
-
-  /// callback للضغط على أيقونة البروفايل.
-  final VoidCallback? onProfileTap;
 
   /// callback لفتح السايدبار (في الموبايل).
   final VoidCallback? onMenuTap;
@@ -161,7 +157,7 @@ class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
                   // (يسار) بدل أن يطفو في الوسط.
                   Expanded(child: _buildTitle(isLight)),
 
-                  // ── الأدوات (البحث فقط) ───────────────────────────────
+                  // ── الأدوات (بحث + جرس إشعارات + مركز أوامر) ──────────
                   _buildActions(context),
                 ],
               ),
