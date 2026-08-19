@@ -124,22 +124,6 @@ class _SecurityTabState extends State<_SecurityTab> {
           ),
         ),
 
-        const SizedBox(height: AppSizes.spaceLG),
-
-        // ── 3) تسجيل الخروج من كل الأجهزة ───────────────────────
-        _SettingCard(
-          isLight: widget.isLight,
-          tint: AppColors.dangerTintLight,
-          tintBorder: AppColors.dashPink,
-          title: context.l10n.settingsLogoutAll,
-          subtitle: context.l10n.settingsLogoutAllDesc,
-          trailing: _SecondaryButton(
-            label: context.l10n.logout,
-            isLight: widget.isLight,
-            danger: true,
-            onTap: () => performLogout(context),
-          ),
-        ),
       ],
     );
   }

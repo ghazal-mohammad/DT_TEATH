@@ -29,10 +29,30 @@ class _TabNav extends StatelessWidget {
       (Icons.lock_outline, context.l10n.settingsTabSecurity),
       (Icons.notifications_none, context.l10n.notifications),
       (Icons.tune, context.l10n.settingsTabPreferences),
+      (Icons.person_outline, context.l10n.labProfile),
     ];
 
     Widget buildItem(int i, IconData icon, String label) {
       final isSelected = selectedIndex == i;
+      final labelText = Text(
+        label,
+        // تسمية "الملف الشخصي" أطول من باقي التبويبات، فتفيض بضع بكسلات
+        // بالعرض الثابت (220) بوضع العمود (!horizontal). نلفّها بـ Flexible
+        // بذاك الوضع فقط (Row مضبوط العرض من الأب)؛ بوضع الصف الأفقي
+        // (horizontal، داخل SingleChildScrollView بعرض لا نهائي) لازم تبقى
+        // Text عادية بلا Flexible/Expanded، وإلّا بترمي "RenderFlex...
+        // incoming width constraints are unbounded".
+        overflow: horizontal ? null : TextOverflow.ellipsis,
+        softWrap: horizontal ? null : false,
+        style: TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: isSelected
+              ? Colors.white
+              : (isLight ? AppColors.lightText1 : AppColors.darkText1),
+        ),
+      );
       return MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
@@ -71,19 +91,7 @@ class _TabNav extends StatelessWidget {
                           : AppColors.darkText2),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: isSelected
-                        ? Colors.white
-                        : (isLight
-                            ? AppColors.lightText1
-                            : AppColors.darkText1),
-                  ),
-                ),
+                horizontal ? labelText : Flexible(child: labelText),
               ],
             ),
           ),

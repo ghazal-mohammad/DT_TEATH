@@ -1,10 +1,11 @@
 // ════════════════════════════════════════════════════════════════════════════
 // lab_settings_page.dart  — Phase 6 ✅
 //
-// شاشة الإعدادات — مطابقة للتصميم الجديد (3 تبويبات):
-//   1) 🔒 الأمان: تغيير كلمة المرور + المصادقة الثنائية + تسجيل خروج
+// شاشة الإعدادات — مطابقة للتصميم الجديد (4 تبويبات):
+//   1) 🔒 الأمان: تغيير كلمة المرور + المصادقة الثنائية
 //   2) 🔔 الإشعارات: تفضيلات الإشعارات + قنوات الإشعار
 //   3) ⚙️ التفضيلات: السمة + اللغة + العرض والأداء
+//   4) 👤 الملف الشخصي: نفس محتوى /lab/profile (EmployeeProfileContent)
 //
 // كل الـ paddings و alignments بتستخدم Directional → آمنة بـ RTL/LTR.
 // ════════════════════════════════════════════════════════════════════════════
@@ -15,7 +16,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/auth/employee_role_label.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
-import '../../../auth/presentation/logout_action.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/bloc/compact_view_cubit.dart';
 import '../../../../shared/bloc/theme_cubit.dart';
@@ -26,8 +26,10 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/core/app_system_type.dart';
 import '../../../../shared/widgets/layout/app_shell_layout.dart';
+import '../../../profile/presentation/widgets/employee_profile_content.dart';
 import '../bloc/lab_settings_prefs_cubit.dart';
 import '../navigation/lab_sidebar_sections.dart';
+import 'lab_profile_page.dart';
 
 part '../widgets/settings/lab_settings_tab_nav.dart';
 part '../widgets/settings/lab_settings_security_tab.dart';
@@ -47,7 +49,7 @@ class LabSettingsPage extends StatefulWidget {
 }
 
 class _LabSettingsPageState extends State<LabSettingsPage> {
-  int _selectedTab = 0; // 0=الأمان 1=الإشعارات 2=التفضيلات
+  int _selectedTab = 0; // 0=الأمان 1=الإشعارات 2=التفضيلات 3=الملف الشخصي
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +144,8 @@ class _LabSettingsBody extends StatelessWidget {
         return _NotificationsTab(isLight: isLight);
       case 2:
         return _PreferencesTab(isLight: isLight);
+      case 3:
+        return const EmployeeProfileContent(statsLoader: LabProfilePage.loadStats);
       default:
         return _SecurityTab(isLight: isLight);
     }
