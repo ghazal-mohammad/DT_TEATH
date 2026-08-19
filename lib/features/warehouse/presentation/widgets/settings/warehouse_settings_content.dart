@@ -1,16 +1,18 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_settings_content.dart
 //
-// محتوى صفحة إعدادات المستودع — مطابقة كاملة لـ mockup التصميم.
+// محتوى صفحة إعدادات المستودع.
 //
 // 🎯 البنية:
-//   - Sidebar عمودي يميناً (RTL) بـ 3 تابات: الأمان / الإشعارات / التفضيلات
-//   - محتوى التاب في العمود الأيسر (Expanded) كبطاقات متعددة
+//   - شريط تبويب أفقي فوق المحتوى دائماً (بكل الأحجام) بـ 4 تبويبات — كل
+//     عنصر ياخد عرضه الطبيعي مع تمرير أفقي لو لزم، بلا عمود جانبي عمودي.
+//   - محتوى التبويب النشط تحته مباشرة (Expanded، قابل للسكرول).
 //
 // التابات:
-//   1. الأمان        → تغيير كلمة المرور + المصادقة الثنائية + الخروج من كل الأجهزة
+//   1. الأمان        → تغيير كلمة المرور + المصادقة الثنائية
 //   2. الإشعارات     → تفضيلات الإشعارات (5 toggles) + قنوات الإشعار (2 toggles)
 //   3. التفضيلات    → السمة (3 خيارات) + اللغة (خياران) + العرض والأداء (toggles)
+//   4. الملف الشخصي  → EmployeeProfileContent المشترك
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -38,8 +40,6 @@ part 'warehouse_settings_widgets.dart';
 //  CONSTANTS
 // ══════════════════════════════════════════════════════════════════════════
 
-const double _kSidebarWidth = 220;
-const double _kSidebarGap = 18;
 const double _kCardGap = 18;
 
 enum _SettingsTab { security, notifications, preferences, profile }
@@ -96,48 +96,16 @@ _SettingsTab _settingsTabFromQuery(String? tab) =>
 class _WarehouseSettingsContentState extends State<WarehouseSettingsContent> {
   late _SettingsTab _activeTab = _settingsTabFromQuery(widget.initialTab);
 
+  // شريط تبويب أفقي فوق المحتوى دائماً (بكل الأحجام) — الأربع تبويبات
+  // بسطر واحد جنب بعض، بدل عمود جانبي عمودي بعرض سطح المكتب.
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isNarrow = constraints.maxWidth < 760;
-        if (isNarrow) {
-          return _buildNarrowLayout(isLight);
-        }
-        return _buildWideLayout(isLight);
-      },
-    );
-  }
-
-  // ── Wide layout: sidebar + content ───────────────────────────────────
-  // RTL: أوّل child=يمين، آخر=يسار.
-  // المطلوب: Sidebar يمين، Content يسار → [Sidebar, Gap, Content].
-  Widget _buildWideLayout(bool isLight) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: _kSidebarWidth,
-          child: _Sidebar(
-            isLight: isLight,
-            active: _activeTab,
-            onSelect: (t) => setState(() => _activeTab = t),
-          ),
-        ),
-        const SizedBox(width: _kSidebarGap),
-        Expanded(child: _buildTabContent(isLight)),
-      ],
-    );
-  }
-
-  // ── Narrow layout: top tab bar + content ─────────────────────────────
-  Widget _buildNarrowLayout(bool isLight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _NarrowTabBar(
+        _TabBar(
           isLight: isLight,
           active: _activeTab,
           onSelect: (t) => setState(() => _activeTab = t),

@@ -1,6 +1,8 @@
 // اختبار: WarehouseSettingsPage(initialTab: 'profile') يفتح مباشرة على تبويب
-// الملف الشخصي بلا نقر (نفس آلية Lab) — ونظام التبويب الأفقي بعرض ضيق (4
-// تبويبات بعد إضافة "الملف الشخصي") ما عاد يرمي RenderFlex overflow.
+// الملف الشخصي بلا نقر (نفس آلية Lab) — وشريط التبويب الأفقي (4 تبويبات بعد
+// إضافة "الملف الشخصي") يبقى بسطر واحد جنب بعض بلا RenderFlex overflow،
+// بعرض موبايل ضيق وبعرض سطح مكتب واسع كمان (كان قبل الإصلاح عمود تبويبات
+// عمودي تحت بعض بالعرض الواسع).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,32 +57,42 @@ void main() {
     expect(find.byType(EmployeeProfileContent), findsOneWidget);
   });
 
-  testWidgets('شريط التبويب الأفقي بعرض ضيق (4 تبويبات) بلا RenderFlex overflow',
-      (tester) async {
-    // عرض موبايل ضيق (مطابق لما بلّغ عنه المستخدم) — يفعّل _NarrowTabBar
-    // (constraints.maxWidth < 760 بملف warehouse_settings_content.dart) وكل
-    // نظام السايدبار Drawer بـ AppShellLayout (< 900).
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.reset);
+  for (final size in [const Size(390, 844), const Size(1920, 1080)]) {
+    testWidgets(
+        'شريط التبويب الأفقي بعرض ${size.width.toInt()} — 4 تبويبات بسطر واحد بلا overflow',
+        (tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        locale: Locale('ar'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: WarehouseSettingsPage(),
-      ),
-    );
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        const MaterialApp(
+          locale: Locale('ar'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: WarehouseSettingsPage(),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // لا استثناء RenderFlex أثناء البناء (لو صار overflow، pumpAndSettle
-    // أعلاه كان رح يفشل الاختبار عبر FlutterError مباشرة بلا حاجة نلتقطه
-    // يدوياً — تركه بلا catch يخلّي الطباعة الكاملة لتشخيص الـ overflow
-    // تظهر بمخرجات الاختبار لو صار).
-    expect(find.text('الأمان'), findsOneWidget);
-    expect(find.text('الإشعارات'), findsOneWidget);
-    expect(find.text('التفضيلات'), findsOneWidget);
-    expect(find.text('الملف الشخصي'), findsOneWidget);
-  });
+      // لا استثناء RenderFlex أثناء البناء (لو صار overflow، pumpAndSettle
+      // أعلاه كان رح يفشل الاختبار عبر FlutterError مباشرة بلا حاجة نلتقطه
+      // يدوياً — تركه بلا catch يخلّي الطباعة الكاملة لتشخيص الـ overflow
+      // تظهر بمخرجات الاختبار لو صار).
+      expect(find.text('الأمان'), findsOneWidget);
+      expect(find.text('الإشعارات'), findsOneWidget);
+      expect(find.text('التفضيلات'), findsOneWidget);
+      expect(find.text('الملف الشخصي'), findsOneWidget);
+
+      // "جنب بعض بسطر واحد" — نفس الارتفاع العمودي (dy) للأربع تبويبات،
+      // يعني صف واحد أفقي وليس عمود تبويبات تحت بعض.
+      final dyAman = tester.getTopLeft(find.text('الأمان')).dy;
+      final dyNotif = tester.getTopLeft(find.text('الإشعارات')).dy;
+      final dyPrefs = tester.getTopLeft(find.text('التفضيلات')).dy;
+      final dyProfile = tester.getTopLeft(find.text('الملف الشخصي')).dy;
+      expect(dyNotif, dyAman);
+      expect(dyPrefs, dyAman);
+      expect(dyProfile, dyAman);
+    });
+  }
 }

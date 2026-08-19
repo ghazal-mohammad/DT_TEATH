@@ -77,5 +77,35 @@ void main() {
 
       expect(find.byType(EmployeeProfileContent), findsOneWidget);
     });
+
+    for (final size in [const Size(390, 844), const Size(1920, 1080)]) {
+      testWidgets(
+          'شريط التبويب بعرض ${size.width.toInt()} — 4 تبويبات بسطر واحد جنب بعض',
+          (tester) async {
+        // قبل الإصلاح: بعرض سطح مكتب واسع (>720) كانت التبويبات تظهر كعمود
+        // جانبي عمودي تحت بعض بدل صف أفقي واحد جنب بعض.
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            locale: Locale('ar'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: LabSettingsPage(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final dySecurity = tester.getTopLeft(find.text('الأمان')).dy;
+        final dyNotif = tester.getTopLeft(find.text('الإشعارات')).dy;
+        final dyPrefs = tester.getTopLeft(find.text('التفضيلات')).dy;
+        final dyProfile = tester.getTopLeft(find.text('الملف الشخصي')).dy;
+        expect(dyNotif, dySecurity);
+        expect(dyPrefs, dySecurity);
+        expect(dyProfile, dySecurity);
+      });
+    }
   });
 }

@@ -95,29 +95,34 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
               const SizedBox(height: 20),
               // RTL: للنسخة المطلوبة (الأساسي أقصى يسار، الثانوي يمينه)
               // نضع الأساسي آخر child والثانوي قبله.
-              // Wrap بدل Row — بعرض ضيق (موبايل) ما بيسع الزرّان جنب بعض
-              // بدون overflow، فـ Wrap بينزّل الثاني لسطر جديد بدل ما يفيض.
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  AppButton(
-                    label: context.l10n.cancel,
-                    onPressed: () {
-                      _currentPass.clear();
-                      _newPass.clear();
-                      _confirmPass.clear();
-                    },
-                    variant: AppButtonVariant.secondary,
-                    size: AppButtonSize.small,
-                  ),
-                  AppButton(
-                    label: context.l10n.settingsUpdatePassword,
-                    onPressed: () {},
-                    variant: AppButtonVariant.primary,
-                    size: AppButtonSize.small,
-                  ),
-                ],
+              // SingleChildScrollView أفقي بدل Row مباشرة — بعرض ضيق
+              // (موبايل) ما بيسع الزرّان جنب بعض بدون overflow، فيتمرّرو
+              // أفقياً بدل ما يفيضو. (Wrap كان بديل بديهي بس تبيّن إنه يمدّد
+              // AppButton لعرض الحاوية كاملاً — Row داخل تمرير أفقي بيحافظ
+              // على العرض الطبيعي للزرّين.)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    AppButton(
+                      label: context.l10n.cancel,
+                      onPressed: () {
+                        _currentPass.clear();
+                        _newPass.clear();
+                        _confirmPass.clear();
+                      },
+                      variant: AppButtonVariant.secondary,
+                      size: AppButtonSize.small,
+                    ),
+                    const SizedBox(width: 10),
+                    AppButton(
+                      label: context.l10n.settingsUpdatePassword,
+                      onPressed: () {},
+                      variant: AppButtonVariant.primary,
+                      size: AppButtonSize.small,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

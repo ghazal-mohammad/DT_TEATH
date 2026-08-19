@@ -104,48 +104,21 @@ class _LabSettingsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
 
+    // شريط تبويب أفقي فوق المحتوى دائماً (بكل الأحجام) — الأربع تبويبات
+    // بسطر واحد جنب بعض، بدل عمود جانبي عمودي بعرض سطح المكتب.
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSizes.spaceLG),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 720;
-
-          if (isWide) {
-            // التصميم: TabNav على اليمين (بين السايدبار الرئيسي والفورم)،
-            // الفورم على اليسار. في RTL: أوّل child = يمين، فالـ TabNav أوّلاً.
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 220,
-                  child: _TabNav(
-                    selectedIndex: selectedTab,
-                    onTap: onTabChanged,
-                    isLight: isLight,
-                  ),
-                ),
-                const SizedBox(width: AppSizes.spaceLG),
-                Expanded(
-                  child: _buildContent(context, isLight),
-                ),
-              ],
-            );
-          }
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _TabNav(
-                selectedIndex: selectedTab,
-                onTap: onTabChanged,
-                isLight: isLight,
-                horizontal: true,
-              ),
-              const SizedBox(height: AppSizes.spaceLG),
-              _buildContent(context, isLight),
-            ],
-          );
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _TabNav(
+            selectedIndex: selectedTab,
+            onTap: onTabChanged,
+            isLight: isLight,
+          ),
+          const SizedBox(height: AppSizes.spaceLG),
+          _buildContent(context, isLight),
+        ],
       ),
     );
   }

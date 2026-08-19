@@ -10,18 +10,19 @@ part of '../../pages/lab_settings_page.dart';
 //  TAB NAV
 // ══════════════════════════════════════════════════════════════════════════
 
+// شريط تبويب أفقي دائماً (بكل الأحجام) — كل عنصر ياخد عرضه الطبيعي ضمن Row
+// قابلة للتمرير أفقياً بدل عمود جانبي عمودي، فتبقى التبويبات الأربعة بسطر
+// واحد جنب بعض بغض النظر عن عرض الشاشة.
 class _TabNav extends StatelessWidget {
   const _TabNav({
     required this.selectedIndex,
     required this.onTap,
     required this.isLight,
-    this.horizontal = false,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onTap;
   final bool isLight;
-  final bool horizontal;
 
   @override
   Widget build(BuildContext context) {
@@ -34,34 +35,13 @@ class _TabNav extends StatelessWidget {
 
     Widget buildItem(int i, IconData icon, String label) {
       final isSelected = selectedIndex == i;
-      final labelText = Text(
-        label,
-        // تسمية "الملف الشخصي" أطول من باقي التبويبات، فتفيض بضع بكسلات
-        // بالعرض الثابت (220) بوضع العمود (!horizontal). نلفّها بـ Flexible
-        // بذاك الوضع فقط (Row مضبوط العرض من الأب)؛ بوضع الصف الأفقي
-        // (horizontal، داخل SingleChildScrollView بعرض لا نهائي) لازم تبقى
-        // Text عادية بلا Flexible/Expanded، وإلّا بترمي "RenderFlex...
-        // incoming width constraints are unbounded".
-        overflow: horizontal ? null : TextOverflow.ellipsis,
-        softWrap: horizontal ? null : false,
-        style: TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: isSelected
-              ? Colors.white
-              : (isLight ? AppColors.lightText1 : AppColors.darkText1),
-        ),
-      );
       return MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () => onTap(i),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 160),
-            margin: horizontal
-                ? const EdgeInsetsDirectional.only(end: AppSizes.spaceSM)
-                : const EdgeInsetsDirectional.only(bottom: AppSizes.spaceSM),
+            margin: const EdgeInsetsDirectional.only(end: AppSizes.spaceSM),
             padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 14, 12),
             decoration: BoxDecoration(
               color: isSelected
@@ -79,7 +59,7 @@ class _TabNav extends StatelessWidget {
                     ),
             ),
             child: Row(
-              mainAxisSize: horizontal ? MainAxisSize.min : MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   icon,
@@ -91,7 +71,17 @@ class _TabNav extends StatelessWidget {
                           : AppColors.darkText2),
                 ),
                 const SizedBox(width: 10),
-                horizontal ? labelText : Flexible(child: labelText),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isSelected
+                        ? Colors.white
+                        : (isLight ? AppColors.lightText1 : AppColors.darkText1),
+                  ),
+                ),
               ],
             ),
           ),
@@ -99,24 +89,14 @@ class _TabNav extends StatelessWidget {
       );
     }
 
-    if (horizontal) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            for (int i = 0; i < items.length; i++)
-              buildItem(i, items[i].$1, items[i].$2),
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (int i = 0; i < items.length; i++)
-          buildItem(i, items[i].$1, items[i].$2),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (int i = 0; i < items.length; i++)
+            buildItem(i, items[i].$1, items[i].$2),
+        ],
+      ),
     );
   }
 }
