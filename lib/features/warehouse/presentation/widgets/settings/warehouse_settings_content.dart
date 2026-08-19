@@ -26,7 +26,7 @@ import '../../../../../shared/bloc/locale_cubit.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/forms/app_form_field.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
-import '../../../../auth/presentation/logout_action.dart';
+import '../../../../profile/presentation/widgets/employee_profile_content.dart';
 
 part 'warehouse_settings_nav.dart';
 part 'warehouse_settings_security_tab.dart';
@@ -42,7 +42,7 @@ const double _kSidebarWidth = 220;
 const double _kSidebarGap = 18;
 const double _kCardGap = 18;
 
-enum _SettingsTab { security, notifications, preferences }
+enum _SettingsTab { security, notifications, preferences, profile }
 
 extension on _SettingsTab {
   String label(BuildContext context) {
@@ -53,6 +53,8 @@ extension on _SettingsTab {
         return context.l10n.notifications;
       case _SettingsTab.preferences:
         return context.l10n.settingsTabPreferences;
+      case _SettingsTab.profile:
+        return context.l10n.labProfile;
     }
   }
 
@@ -64,6 +66,8 @@ extension on _SettingsTab {
         return Icons.notifications_outlined;
       case _SettingsTab.preferences:
         return Icons.tune_rounded;
+      case _SettingsTab.profile:
+        return Icons.person_outline_rounded;
     }
   }
 }
@@ -143,6 +147,7 @@ class _WarehouseSettingsContentState extends State<WarehouseSettingsContent> {
         _SettingsTab.notifications =>
           _NotificationsPrefsTabContent(isLight: isLight),
         _SettingsTab.preferences => _PreferencesTabContent(isLight: isLight),
+        _SettingsTab.profile => const EmployeeProfileContent(),
       },
     );
   }

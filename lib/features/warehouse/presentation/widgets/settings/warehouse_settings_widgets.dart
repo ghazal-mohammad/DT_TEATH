@@ -288,27 +288,3 @@ class _SettingsCard extends StatelessWidget {
     );
   }
 }
-
-class _DangerCard extends StatelessWidget {
-  const _DangerCard({required this.isLight, required this.child});
-  final bool isLight;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    // لون برتقالي/تحذير خفيف يطابق الـ mockup
-    const dangerTint = AppColors.warnTintLight2;
-    const dangerBorder = AppColors.warnBorderLight2;
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.spaceLG),
-      decoration: BoxDecoration(
-        color: isLight ? dangerTint : AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(AppSizes.radiusMD),
-        border: Border.all(
-          color: isLight ? dangerBorder : AppColors.darkBorder,
-        ),
-      ),
-      child: child,
-    );
-  }
-}

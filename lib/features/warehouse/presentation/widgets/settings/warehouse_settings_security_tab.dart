@@ -145,53 +145,6 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
           ),
         ),
 
-        const SizedBox(height: _kCardGap),
-
-        // ── بطاقة 3: تسجيل الخروج من كل الأجهزة ─────────────────────────
-        _DangerCard(
-          isLight: widget.isLight,
-          // RTL: text أوّل=يمين، الزر آخر=يسار.
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n.settingsLogoutAll,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: widget.isLight
-                            ? AppColors.lightText1
-                            : AppColors.darkText1,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.l10n.settingsLogoutAllDesc,
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 13,
-                        color: widget.isLight
-                            ? AppColors.lightText3
-                            : AppColors.darkText3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              AppButton(
-                label: context.l10n.logout,
-                onPressed: () => performLogout(context),
-                variant: AppButtonVariant.secondary,
-                size: AppButtonSize.small,
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
