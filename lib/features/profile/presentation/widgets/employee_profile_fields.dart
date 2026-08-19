@@ -145,13 +145,20 @@ class _FieldPillState extends State<_FieldPill> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            widget.spec.label,
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: _Palette.of(context).label,
+                          // Flexible + ellipsis: بعض التسميات ("الحالة
+                          // الاجتماعية"...) تفيض عند عرض عمود ضيّق نسبياً
+                          // (مثلاً حاوية _FieldPill ضمن تبويب الملف الشخصي
+                          // بإعدادات المخبر) — بلا أثر على العرض الطبيعي.
+                          Flexible(
+                            child: Text(
+                              widget.spec.label,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.fontFamily,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: _Palette.of(context).label,
+                              ),
                             ),
                           ),
                           // قفل صغير للحقول غير القابلة للتعديل (عند وضع التعديل).
