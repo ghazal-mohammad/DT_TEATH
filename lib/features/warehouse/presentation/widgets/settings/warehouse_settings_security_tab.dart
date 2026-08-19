@@ -95,7 +95,11 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
               const SizedBox(height: 20),
               // RTL: للنسخة المطلوبة (الأساسي أقصى يسار، الثانوي يمينه)
               // نضع الأساسي آخر child والثانوي قبله.
-              Row(
+              // Wrap بدل Row — بعرض ضيق (موبايل) ما بيسع الزرّان جنب بعض
+              // بدون overflow، فـ Wrap بينزّل الثاني لسطر جديد بدل ما يفيض.
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
                 children: [
                   AppButton(
                     label: context.l10n.cancel,
@@ -107,7 +111,6 @@ class _SecurityTabContentState extends State<_SecurityTabContent> {
                     variant: AppButtonVariant.secondary,
                     size: AppButtonSize.small,
                   ),
-                  const SizedBox(width: 10),
                   AppButton(
                     label: context.l10n.settingsUpdatePassword,
                     onPressed: () {},

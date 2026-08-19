@@ -30,7 +30,10 @@ import '../widgets/settings/warehouse_settings_content.dart';
 
 /// صفحة الإعدادات — نظام المستودع.
 class WarehouseSettingsPage extends StatelessWidget {
-  const WarehouseSettingsPage({super.key});
+  const WarehouseSettingsPage({super.key, this.initialTab});
+
+  /// يُمرَّر من الراوتر عبر `?tab=` (راجع [WarehouseSettingsContent.initialTab]).
+  final String? initialTab;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +53,9 @@ class WarehouseSettingsPage extends StatelessWidget {
       notificationCount: 0,
       // صفحة الإعدادات لا تحتاج حقل بحث في التوب بار.
       showSearch: false,
-      body: const Padding(
-        padding: EdgeInsets.all(AppSizes.spaceLG),
-        child: WarehouseSettingsContent(),
+      body: Padding(
+        padding: const EdgeInsets.all(AppSizes.spaceLG),
+        child: WarehouseSettingsContent(initialTab: initialTab),
       ),
     );
   }

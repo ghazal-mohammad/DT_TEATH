@@ -75,14 +75,14 @@ void main() {
     expect(routes.contains(RouteNames.warehouseSettings), isTrue);
   });
 
-  test('نتيجة بحث "الملف الشخصي" لمدير المخبر تشاور لصفحة الإعدادات', () {
+  test('نتيجة بحث "الملف الشخصي" لمدير المخبر تشاور لتبويب الملف الشخصي بالإعدادات', () {
     CurrentUser.instance.setUser(_testUser);
     final hit = AppSearch.query('الملف الشخصي')
         .firstWhere((h) => h.title == 'الملف الشخصي');
-    expect(hit.route, RouteNames.labSettings);
+    expect(hit.route, '${RouteNames.labSettings}?tab=profile');
   });
 
-  test('نتيجة بحث "الملف الشخصي" لمدير المستودع تشاور لصفحة الإعدادات', () {
+  test('نتيجة بحث "الملف الشخصي" لمدير المستودع تشاور لتبويب الملف الشخصي بالإعدادات', () {
     CurrentUser.instance.setUser(
       const EmployeeUser(
         id: 2,
@@ -95,6 +95,6 @@ void main() {
     );
     final hit = AppSearch.query('الملف الشخصي')
         .firstWhere((h) => h.title == 'الملف الشخصي');
-    expect(hit.route, RouteNames.warehouseSettings);
+    expect(hit.route, '${RouteNames.warehouseSettings}?tab=profile');
   });
 }

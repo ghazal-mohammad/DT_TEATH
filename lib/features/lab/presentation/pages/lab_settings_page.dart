@@ -37,19 +37,31 @@ part '../widgets/settings/lab_settings_notifications_tab.dart';
 part '../widgets/settings/lab_settings_preferences_tab.dart';
 part '../widgets/settings/lab_settings_widgets.dart';
 
+/// يحوّل قيمة `?tab=` من رابط الراوت لفهرس تبويب [LabSettingsPage.initialTab].
+/// حالياً القيمة الوحيدة المدعومة "profile" (تبويب الملف الشخصي) — أي قيمة
+/// تانية أو null تعطي 0 (تبويب الأمان الافتراضي).
+int labSettingsTabFromQuery(String? tab) => tab == 'profile' ? 3 : 0;
+
 // ══════════════════════════════════════════════════════════════════════════
 //  PAGE
 // ══════════════════════════════════════════════════════════════════════════
 
 class LabSettingsPage extends StatefulWidget {
-  const LabSettingsPage({super.key});
+  const LabSettingsPage({super.key, this.initialTab = 0});
+
+  /// التبويب المبدئي (0=الأمان 1=الإشعارات 2=التفضيلات 3=الملف الشخصي) —
+  /// يُمرَّر من الراوتر عبر `?tab=profile` (راجع [labSettingsTabFromQuery])
+  /// لما يوصل المستخدم من نتيجة بحث "الملف الشخصي" أو من إعادة توجيه
+  /// `/lab/profile` القديم، بدل ما يفتح دايماً على تبويب الأمان الافتراضي.
+  final int initialTab;
 
   @override
   State<LabSettingsPage> createState() => _LabSettingsPageState();
 }
 
 class _LabSettingsPageState extends State<LabSettingsPage> {
-  int _selectedTab = 0; // 0=الأمان 1=الإشعارات 2=التفضيلات 3=الملف الشخصي
+  // 0=الأمان 1=الإشعارات 2=التفضيلات 3=الملف الشخصي
+  late int _selectedTab = widget.initialTab;
 
   @override
   Widget build(BuildContext context) {

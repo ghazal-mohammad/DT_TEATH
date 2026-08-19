@@ -77,15 +77,24 @@ extension on _SettingsTab {
 // ══════════════════════════════════════════════════════════════════════════
 
 class WarehouseSettingsContent extends StatefulWidget {
-  const WarehouseSettingsContent({super.key});
+  const WarehouseSettingsContent({super.key, this.initialTab});
+
+  /// اسم التبويب المبدئي ("profile" فقط مدعوم حالياً؛ أي قيمة تانية أو null
+  /// تفتح على تبويب الأمان الافتراضي) — يُمرَّر من الراوتر عبر `?tab=` لما
+  /// يوصل المستخدم من نتيجة بحث "الملف الشخصي" أو من إعادة توجيه
+  /// `/warehouse/profile` القديم.
+  final String? initialTab;
 
   @override
   State<WarehouseSettingsContent> createState() =>
       _WarehouseSettingsContentState();
 }
 
+_SettingsTab _settingsTabFromQuery(String? tab) =>
+    tab == 'profile' ? _SettingsTab.profile : _SettingsTab.security;
+
 class _WarehouseSettingsContentState extends State<WarehouseSettingsContent> {
-  _SettingsTab _activeTab = _SettingsTab.security;
+  late _SettingsTab _activeTab = _settingsTabFromQuery(widget.initialTab);
 
   @override
   Widget build(BuildContext context) {

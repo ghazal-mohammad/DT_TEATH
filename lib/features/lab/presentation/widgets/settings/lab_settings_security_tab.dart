@@ -81,7 +81,11 @@ class _SecurityTabState extends State<_SecurityTab> {
               // → في الكود: primary ثم secondary بحيث Row first child = يمين بصرياً.
               // المطلوب: primary يسار، فالـ Row يبدأ بـ primary أوّلاً يخلّيه يمين — غلط.
               // الصحيح: secondary أوّل (يصير يمين)، primary آخر (يصير يسار).
-              Row(
+              // Wrap بدل Row — بعرض ضيق (موبايل) ما بيسع الزرّان جنب بعض
+              // بدون overflow، فـ Wrap بينزّل الثاني لسطر جديد بدل ما يفيض.
+              Wrap(
+                spacing: AppSizes.spaceSM,
+                runSpacing: AppSizes.spaceSM,
                 children: [
                   _SecondaryButton(
                     label: context.l10n.cancel,
@@ -92,7 +96,6 @@ class _SecurityTabState extends State<_SecurityTab> {
                       _confirmPwd.clear();
                     },
                   ),
-                  const SizedBox(width: AppSizes.spaceSM),
                   _PrimaryButton(
                     label: context.l10n.settingsUpdatePassword,
                     icon: Icons.check_rounded,

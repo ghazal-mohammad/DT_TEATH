@@ -251,7 +251,10 @@ class AppRouter {
       GoRoute(
         path: RouteNames.labProfile,
         name: 'labProfile',
-        builder: (context, state) => const LabProfilePage(),
+        // الملف الشخصي صار تبويباً داخل الإعدادات (راجع LabSettingsPage) —
+        // هالمسار يبقى صالح لأي رابط قديم، بس يوجّه فوراً للتبويب الجديد
+        // بدل صفحة مستقلة.
+        redirect: (context, state) => '${RouteNames.labSettings}?tab=profile',
       ),
       GoRoute(
         path: RouteNames.labOrders,
@@ -276,7 +279,9 @@ class AppRouter {
       GoRoute(
         path: RouteNames.labSettings,
         name: 'labSettings',
-        builder: (context, state) => const LabSettingsPage(),
+        builder: (context, state) => LabSettingsPage(
+          initialTab: labSettingsTabFromQuery(state.uri.queryParameters['tab']),
+        ),
       ),
       GoRoute(
         path: RouteNames.labMaterialRequests,
@@ -303,7 +308,10 @@ class AppRouter {
       GoRoute(
         path: RouteNames.warehouseProfile,
         name: 'warehouseProfile',
-        builder: (context, state) => const WarehouseProfilePage(),
+        // الملف الشخصي صار تبويباً داخل الإعدادات (راجع WarehouseSettingsPage)
+        // — هالمسار يبقى صالح لأي رابط قديم، بس يوجّه فوراً للتبويب الجديد.
+        redirect: (context, state) =>
+            '${RouteNames.warehouseSettings}?tab=profile',
       ),
       GoRoute(
         path: RouteNames.warehouseMaterials,
@@ -333,7 +341,8 @@ class AppRouter {
       GoRoute(
         path: RouteNames.warehouseSettings,
         name: 'warehouseSettings',
-        builder: (context, state) => const WarehouseSettingsPage(),
+        builder: (context, state) =>
+            WarehouseSettingsPage(initialTab: state.uri.queryParameters['tab']),
       ),
 
       // ── Error pages ───────────────────────────────────────────────────
