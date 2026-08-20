@@ -161,7 +161,7 @@ class _LabInvoiceFromWarehouseDialogState extends State<LabInvoiceFromWarehouseD
                   ),
                   child: Row(
                     children: [
-                      Expanded(child: Text(widget.catalogError!, style: TextStyle(color: AppColors.error))),
+                      Expanded(child: Text(widget.catalogError!, style: const TextStyle(color: AppColors.error))),
                       TextButton(onPressed: widget.onRetryCatalog, child: Text(l10n.labReqCatalogRetry)),
                     ],
                   ),
@@ -242,7 +242,7 @@ class _LabInvoiceFromWarehouseDialogState extends State<LabInvoiceFromWarehouseD
               ),
               if (_errorText != null) ...[
                 const SizedBox(height: AppSizes.spaceSM),
-                Text(_errorText!, style: TextStyle(color: AppColors.error, fontSize: 12)),
+                Text(_errorText!, style: const TextStyle(color: AppColors.error, fontSize: 12)),
               ],
               const SizedBox(height: AppSizes.spaceMD),
               TextField(

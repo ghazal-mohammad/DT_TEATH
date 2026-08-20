@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
-import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -150,7 +149,7 @@ class _LabInvoiceFromCompanyDialogState extends State<LabInvoiceFromCompanyDialo
                 const SizedBox(height: AppSizes.spaceMD),
               ],
               if (_rowsError != null)
-                Text(_rowsError!, style: TextStyle(color: AppColors.error, fontSize: 12)),
+                Text(_rowsError!, style: const TextStyle(color: AppColors.error, fontSize: 12)),
               TextButton.icon(
                 onPressed: _addRow,
                 icon: const Icon(Icons.add_rounded, size: 18),
