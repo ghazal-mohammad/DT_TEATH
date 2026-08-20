@@ -30,7 +30,7 @@ void main() {
     await tester.pumpWidget(wrap(LabMatRequestCard(request: req)));
     await tester.pump();
 
-    expect(find.textContaining('2'), findsWidgets);
+    expect(find.textContaining('مادة'), findsOneWidget);
     expect(find.text('من المستودع'), findsOneWidget);
   });
 
