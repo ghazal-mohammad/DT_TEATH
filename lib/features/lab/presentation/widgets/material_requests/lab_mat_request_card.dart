@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
@@ -9,13 +8,16 @@ import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/primitives/app_badge.dart';
 import 'lab_mat_request_data.dart';
 
-/// بطاقة طلب مادة واحدة في قائمة طلبات المخبر من المستودع.
+/// بطاقة فاتورة واحدة في قائمة فواتير المخبر.
 class LabMatRequestCard extends StatefulWidget {
-  const LabMatRequestCard({super.key, required this.request, this.onDelete});
+  const LabMatRequestCard({super.key, required this.request, this.onDelete, this.onTap});
   final MatRequest request;
 
   /// عند تمريره يظهر زر حذف في رأس البطاقة (null = بلا حذف).
   final VoidCallback? onDelete;
+
+  /// يُستدعى عند الدوس على البطاقة (لفتح تفاصيل الفاتورة).
+  final VoidCallback? onTap;
 
   @override
   State<LabMatRequestCard> createState() => _LabMatRequestCardState();
@@ -73,224 +75,141 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
   Widget build(BuildContext context) {
     final r = widget.request;
     final isLight = Theme.of(context).brightness == Brightness.light;
+    final l10n = context.l10n;
+    final typeLabel = r.isFromCompany ? l10n.labReqTypeCompany : l10n.labReqTypeWarehouse;
+    final typeIcon = r.isFromCompany ? AppIcons.supplier : AppIcons.materials;
+    final firstMaterialName = r.isFromCompany
+        ? (r.newItems.isNotEmpty ? r.newItems.first.materialName : '')
+        : (r.items.isNotEmpty ? r.items.first.materialName : '');
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       // ClipRRect + شريط لوني منفصل بدل Border رباعي الألوان: Flutter يرمي
-      // استثناء عند الرسم لو Border له borderRadius وألوان أضلاع مختلفة
-      // ("A borderRadius can only be given on borders with uniform colors")
-      // — كانت البطاقة تفشل بالرسم بصمت بكل تحميل (تظهر فاضية فعلياً).
+      // استثناء عند الرسم لو Border له borderRadius وألوان أضلاع مختلفة.
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
-            border: Border.all(
-              color: _hovered
-                  ? (isLight
-                        ? AppColors.lightBorderHover
-                        : AppColors.darkBorderHover)
-                  : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
-            ),
-            boxShadow: _hovered
-                ? [
-                    BoxShadow(
-                      color: _accentColor.withValues(alpha: 0.08),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                bottom: 0,
-                left: 0,
-                child: Container(width: 3, color: _accentColor),
+        child: InkWell(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              color: isLight ? AppColors.lightSurface : AppColors.darkSurface,
+              border: Border.all(
+                color: _hovered
+                    ? (isLight ? AppColors.lightBorderHover : AppColors.darkBorderHover)
+                    : (isLight ? AppColors.lightBorder : AppColors.darkBorder),
               ),
-              Padding(
-                padding: const EdgeInsets.all(AppSizes.spaceLG),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Row 1: معرف الطلب + المادة + الحالة
-                    Row(
-                      children: [
-                        Text(
-                          r.id,
-                          style: const TextStyle(
-                            fontFamily: AppTextStyles.fontFamily,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.accent,
-                          ),
-                        ),
-                        const SizedBox(width: AppSizes.spaceSM),
-                        Expanded(
-                          child: Text(
-                            r.material,
-                            style: AppTextStyles.bodyLarge.copyWith(
-                              fontWeight: FontWeight.w700,
+              boxShadow: _hovered
+                  ? [BoxShadow(color: _accentColor.withValues(alpha: 0.08), blurRadius: 16, offset: const Offset(0, 4))]
+                  : null,
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  child: Container(width: 3, color: _accentColor),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(AppSizes.spaceLG),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Row 1: رقم الفاتورة + أول مادة (+الباقي) + الحالة
+                      Row(
+                        children: [
+                          Text(
+                            l10n.labReqInvoiceNumber(r.id),
+                            style: const TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.accent,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        AppBadge(
-                          text: _badgeText(context),
-                          variant: _badgeVariant,
-                        ),
-                        if (widget.onDelete != null) ...[
                           const SizedBox(width: AppSizes.spaceSM),
-                          Tooltip(
-                            message: context.l10n.delete,
-                            child: Semantics(
-                              button: true,
-                              label: context.l10n.delete,
-                              child: InkResponse(
-                                onTap: widget.onDelete,
-                                radius: 18,
-                                child: const Padding(
-                                  padding: EdgeInsets.all(4),
-                                  child: Icon(
-                                    Icons.delete_outline_rounded,
-                                    size: 18,
-                                    color: AppColors.error,
+                          Expanded(
+                            child: Text(
+                              r.itemsCount > 1
+                                  ? '$firstMaterialName +${r.itemsCount - 1}'
+                                  : firstMaterialName,
+                              style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w700),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          AppBadge(text: _badgeText(context), variant: _badgeVariant),
+                          if (widget.onDelete != null) ...[
+                            const SizedBox(width: AppSizes.spaceSM),
+                            Tooltip(
+                              message: context.l10n.delete,
+                              child: Semantics(
+                                button: true,
+                                label: context.l10n.delete,
+                                child: InkResponse(
+                                  onTap: widget.onDelete,
+                                  radius: 18,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(4),
+                                    child: Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.error),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
-                      ],
-                    ),
-                    const SizedBox(height: AppSizes.spaceMD),
-                    const Divider(height: 1, color: AppColors.darkBorder),
-                    const SizedBox(height: AppSizes.spaceMD),
-                    // Row 2: التفاصيل
-                    Row(
-                      children: [
-                        _cell(
-                          context,
-                          icon: AppIcons.box,
-                          label: context.l10n.colQuantity,
-                          value: '${r.quantity} ${r.unit}',
-                        ),
-                        const SizedBox(width: AppSizes.spaceXL),
-                        _cell(
-                          context,
-                          icon: AppIcons.profile,
-                          label: context.l10n.labReqRequestedBy,
-                          value: r.requestedBy,
-                          valueColor: AppColors.secondary,
-                        ),
-                        const SizedBox(width: AppSizes.spaceXL),
-                        _cell(
-                          context,
-                          icon: AppIcons.calendar,
-                          label: context.l10n.ordersDate,
-                          value: r.date,
-                        ),
-                        if (r.company != null && r.company!.isNotEmpty) ...[
+                      ),
+                      const SizedBox(height: AppSizes.spaceMD),
+                      const Divider(height: 1, color: AppColors.darkBorder),
+                      const SizedBox(height: AppSizes.spaceMD),
+                      // Row 2: التفاصيل
+                      Row(
+                        children: [
+                          _cell(context, icon: typeIcon, label: '', value: typeLabel),
+                          const SizedBox(width: AppSizes.spaceXL),
+                          _cell(context, icon: AppIcons.box, label: l10n.labReqItemsCount(r.itemsCount), value: ''),
                           const SizedBox(width: AppSizes.spaceXL),
                           _cell(
                             context,
-                            icon: AppIcons.box,
-                            label: context.l10n.labReqFieldCompany,
-                            value: r.company!,
+                            icon: AppIcons.profile,
+                            label: context.l10n.labReqRequestedBy,
+                            value: r.requestedBy,
+                            valueColor: AppColors.secondary,
                           ),
-                        ],
-                        if (r.labOrderId != null) ...[
                           const SizedBox(width: AppSizes.spaceXL),
-                          _cell(
-                            context,
-                            icon: AppIcons.labOrders,
-                            label: context.l10n.labReqLabOrder,
-                            value: r.labOrderId!,
-                            valueColor: AppColors.accent,
-                          ),
+                          _cell(context, icon: AppIcons.calendar, label: context.l10n.ordersDate, value: r.date),
+                          const Spacer(),
                         ],
-                        const Spacer(),
-                      ],
-                    ),
-                    if (r.reason != null && r.reason!.isNotEmpty) ...[
-                      const SizedBox(height: AppSizes.spaceSM),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.spaceMD,
-                          vertical: AppSizes.spaceXS,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.statusInfo.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusSM,
+                      ),
+                      if (r.notes != null && r.notes!.isNotEmpty) ...[
+                        const SizedBox(height: AppSizes.spaceSM),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: AppSizes.spaceMD, vertical: AppSizes.spaceXS),
+                          decoration: BoxDecoration(
+                            color: AppColors.statusInfo.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                            border: Border.all(color: AppColors.statusInfo.withValues(alpha: 0.18)),
                           ),
-                          border: Border.all(
-                            color: AppColors.statusInfo.withValues(alpha: 0.18),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.info_outline_rounded,
-                              size: 12,
-                              color: AppColors.statusInfo,
-                            ),
-                            const SizedBox(width: AppSizes.spaceXS),
-                            Expanded(
-                              child: Text(
-                                '${context.l10n.labReqFieldReason}: ${r.reason!}',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.statusInfo,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.info_outline_rounded, size: 12, color: AppColors.statusInfo),
+                              const SizedBox(width: AppSizes.spaceXS),
+                              Expanded(
+                                child: Text(
+                                  r.notes!,
+                                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.statusInfo),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    // Note if unavailable
-                    if (r.note != null) ...[
-                      const SizedBox(height: AppSizes.spaceSM),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.spaceMD,
-                          vertical: AppSizes.spaceXS,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusSM,
-                          ),
-                          border: Border.all(
-                            color: AppColors.error.withValues(alpha: 0.2),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              AppIcons.warning,
-                              size: 12,
-                              color: AppColors.error,
-                            ),
-                            const SizedBox(width: AppSizes.spaceXS),
-                            Text(
-                              r.note!,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.error,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -305,34 +224,16 @@ class _LabMatRequestCardState extends State<LabMatRequestCard> {
     Color? valueColor,
   }) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final text = label.isEmpty ? value : (value.isEmpty ? label : '$label: $value');
+    return Row(
       children: [
-        Row(
-          children: [
-            Icon(
-              icon,
-              size: 11,
-              color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-            ),
-            const SizedBox(width: 3),
-            Text(
-              label,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: isLight ? AppColors.lightText4 : AppColors.darkText4,
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 2),
+        Icon(icon, size: 11, color: isLight ? AppColors.lightText4 : AppColors.darkText4),
+        const SizedBox(width: 3),
         Text(
-          value,
+          text,
           style: AppTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
-            color:
-                valueColor ??
-                (isLight ? AppColors.lightText1 : AppColors.darkText1),
+            color: valueColor ?? (isLight ? AppColors.lightText1 : AppColors.darkText1),
           ),
         ),
       ],
