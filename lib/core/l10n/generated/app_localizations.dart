@@ -443,7 +443,7 @@ abstract class AppLocalizations {
   /// No description provided for @materialRequests.
   ///
   /// In en, this message translates to:
-  /// **'Material Requests'**
+  /// **'Invoices'**
   String get materialRequests;
 
   /// No description provided for @materials.
@@ -4829,13 +4829,13 @@ abstract class AppLocalizations {
   /// No description provided for @labReqEmptyCategory.
   ///
   /// In en, this message translates to:
-  /// **'No material requests in this category'**
+  /// **'No invoices in this category'**
   String get labReqEmptyCategory;
 
   /// No description provided for @labReqNewRequest.
   ///
   /// In en, this message translates to:
-  /// **'New material request'**
+  /// **'New invoice'**
   String get labReqNewRequest;
 
   /// No description provided for @labReqSearchHint.
@@ -4853,14 +4853,14 @@ abstract class AppLocalizations {
   /// No description provided for @labReqDeleteTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete material request'**
+  /// **'Delete invoice'**
   String get labReqDeleteTitle;
 
   /// No description provided for @labReqDeleteConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Delete the \"{material}\" request? This cannot be undone.'**
-  String labReqDeleteConfirm(String material);
+  /// **'Delete invoice #{id}? This cannot be undone.'**
+  String labReqDeleteConfirm(String id);
 
   /// No description provided for @labReqFieldMaterial.
   ///
@@ -4913,8 +4913,152 @@ abstract class AppLocalizations {
   /// No description provided for @labReqSentSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Material request sent to the warehouse'**
+  /// **'Invoice sent to the warehouse'**
   String get labReqSentSuccess;
+
+  /// No description provided for @labReqChooseTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice type'**
+  String get labReqChooseTypeTitle;
+
+  /// No description provided for @labReqFromWarehouseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From warehouse materials'**
+  String get labReqFromWarehouseTitle;
+
+  /// No description provided for @labReqFromWarehouseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose materials already in the warehouse stock'**
+  String get labReqFromWarehouseDesc;
+
+  /// No description provided for @labReqFromCompanyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From a company (new material)'**
+  String get labReqFromCompanyTitle;
+
+  /// No description provided for @labReqFromCompanyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials not in the warehouse — requested from an external company'**
+  String get labReqFromCompanyDesc;
+
+  /// No description provided for @labReqSearchMaterialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by material name...'**
+  String get labReqSearchMaterialHint;
+
+  /// No description provided for @labReqAddToInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get labReqAddToInvoice;
+
+  /// No description provided for @labReqInvoiceItemsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials added yet'**
+  String get labReqInvoiceItemsEmpty;
+
+  /// No description provided for @labReqAddMaterialRow.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add material'**
+  String get labReqAddMaterialRow;
+
+  /// No description provided for @labReqRemoveRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get labReqRemoveRow;
+
+  /// No description provided for @labReqCompanyNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Company name is required'**
+  String get labReqCompanyNameRequired;
+
+  /// No description provided for @labReqAtLeastOneItemRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one material'**
+  String get labReqAtLeastOneItemRequired;
+
+  /// No description provided for @labReqNotesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get labReqNotesOptional;
+
+  /// No description provided for @labReqCatalogLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load warehouse materials'**
+  String get labReqCatalogLoadFailed;
+
+  /// No description provided for @labReqCatalogRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get labReqCatalogRetry;
+
+  /// No description provided for @labReqItemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} materials'**
+  String labReqItemsCount(int count);
+
+  /// No description provided for @labReqTypeWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'From warehouse'**
+  String get labReqTypeWarehouse;
+
+  /// No description provided for @labReqTypeCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'From company'**
+  String get labReqTypeCompany;
+
+  /// No description provided for @labReqInvoiceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice #{id}'**
+  String labReqInvoiceNumber(String id);
+
+  /// No description provided for @labReqDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice details'**
+  String get labReqDetailsTitle;
+
+  /// No description provided for @labReqPrint.
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get labReqPrint;
+
+  /// No description provided for @labReqQuantityColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get labReqQuantityColumn;
+
+  /// No description provided for @labReqUnitColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get labReqUnitColumn;
+
+  /// No description provided for @labReqCompanyColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get labReqCompanyColumn;
 
   /// No description provided for @labTechPendingAssign.
   ///

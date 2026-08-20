@@ -57,7 +57,7 @@
   "reportsPreviousPeriod": "الفترة السابقة",
   "reportsNextPeriod": "الفترة التالية",
   "reportsBackToToday": "اليوم",
-  "materialRequests": "طلبات المستودع",
+  "materialRequests": "الفواتير",
   "materials": "المواد",
   "orders": "الطلبيات",
   "invoices": "الفواتير",
@@ -869,15 +869,15 @@
   "labReqStatusInProgress": "قيد المعالجة",
   "labReqRequestedBy": "طلب بواسطة",
   "labReqLabOrder": "طلبية المخبر",
-  "labReqEmptyCategory": "لا توجد طلبيات مواد في هذه الفئة",
-  "labReqNewRequest": "طلب مادة جديدة",
+  "labReqEmptyCategory": "لا توجد فواتير في هذه الفئة",
+  "labReqNewRequest": "طلب فاتورة جديدة",
   "labReqSearchHint": "فلترة طلبات المواد... (مادة، رقم، شركة)",
   "labReqMaterialPickHint": "اكتب للبحث في مواد المستودع أو أدخل مادة جديدة",
-  "labReqDeleteTitle": "حذف طلب المواد",
-  "labReqDeleteConfirm": "هل تريد حذف طلب «{material}»؟ لا يمكن التراجع.",
+  "labReqDeleteTitle": "حذف الفاتورة",
+  "labReqDeleteConfirm": "هل تريد حذف الفاتورة #{id}؟ لا يمكن التراجع.",
   "@labReqDeleteConfirm": {
     "placeholders": {
-      "material": {
+      "id": {
         "type": "String"
       }
     }
@@ -890,7 +890,45 @@
   "labReqMaterialRequired": "اسم المادة مطلوب",
   "labReqQuantityRequired": "أدخل كمية صحيحة",
   "labReqSubmit": "إرسال الطلب",
-  "labReqSentSuccess": "تم إرسال طلب المادة للمستودع",
+  "labReqSentSuccess": "تم إرسال الفاتورة للمستودع",
+  "labReqChooseTypeTitle": "نوع الفاتورة",
+  "labReqFromWarehouseTitle": "من مواد المستودع",
+  "labReqFromWarehouseDesc": "اختر مواد موجودة أصلاً بمخزون المستودع",
+  "labReqFromCompanyTitle": "من شركة (مادة جديدة)",
+  "labReqFromCompanyDesc": "مواد غير موجودة بالمستودع — تُطلب من شركة خارجية",
+  "labReqSearchMaterialHint": "ابحث باسم المادة...",
+  "labReqAddToInvoice": "إضافة",
+  "labReqInvoiceItemsEmpty": "لم تُضَف أي مادة بعد",
+  "labReqAddMaterialRow": "+ إضافة مادة",
+  "labReqRemoveRow": "حذف",
+  "labReqCompanyNameRequired": "اسم الشركة مطلوب",
+  "labReqAtLeastOneItemRequired": "أضف مادة واحدة على الأقل",
+  "labReqNotesOptional": "ملاحظات (اختياري)",
+  "labReqCatalogLoadFailed": "تعذّر تحميل مواد المستودع",
+  "labReqCatalogRetry": "إعادة المحاولة",
+  "labReqItemsCount": "{count} مادة",
+  "@labReqItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labReqTypeWarehouse": "من المستودع",
+  "labReqTypeCompany": "من شركة",
+  "labReqInvoiceNumber": "فاتورة #{id}",
+  "@labReqInvoiceNumber": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "labReqDetailsTitle": "تفاصيل الفاتورة",
+  "labReqPrint": "طباعة",
+  "labReqQuantityColumn": "الكمية",
+  "labReqUnitColumn": "الوحدة",
+  "labReqCompanyColumn": "الشركة",
   "labTechPendingAssign": "بانتظار التوكيل",
   "labTechWorkloadLoadFailed": "تعذّر تحميل حمل العمل الحالي للفنيين — الأسماء والجداول صحيحة، لكن عدّاد المهام قد لا يعكس الواقع",
   "techAddButton": "إضافة المخبري",

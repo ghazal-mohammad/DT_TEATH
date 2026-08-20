@@ -99,7 +99,7 @@
   "reportsPreviousPeriod": "Previous period",
   "reportsNextPeriod": "Next period",
   "reportsBackToToday": "Today",
-  "materialRequests": "Material Requests",
+  "materialRequests": "Invoices",
   "materials": "Materials",
   "orders": "Orders",
   "invoices": "Invoices",
@@ -1078,15 +1078,15 @@
   "labReqStatusInProgress": "In Progress",
   "labReqRequestedBy": "Requested by",
   "labReqLabOrder": "Lab order",
-  "labReqEmptyCategory": "No material requests in this category",
-  "labReqNewRequest": "New material request",
+  "labReqEmptyCategory": "No invoices in this category",
+  "labReqNewRequest": "New invoice",
   "labReqSearchHint": "Filter material requests... (material, id, company)",
   "labReqMaterialPickHint": "Type to search warehouse materials or enter a new one",
-  "labReqDeleteTitle": "Delete material request",
-  "labReqDeleteConfirm": "Delete the \"{material}\" request? This cannot be undone.",
+  "labReqDeleteTitle": "Delete invoice",
+  "labReqDeleteConfirm": "Delete invoice #{id}? This cannot be undone.",
   "@labReqDeleteConfirm": {
     "placeholders": {
-      "material": {
+      "id": {
         "type": "String"
       }
     }
@@ -1099,7 +1099,45 @@
   "labReqMaterialRequired": "Material name is required",
   "labReqQuantityRequired": "Enter a valid quantity",
   "labReqSubmit": "Send request",
-  "labReqSentSuccess": "Material request sent to the warehouse",
+  "labReqSentSuccess": "Invoice sent to the warehouse",
+  "labReqChooseTypeTitle": "Invoice type",
+  "labReqFromWarehouseTitle": "From warehouse materials",
+  "labReqFromWarehouseDesc": "Choose materials already in the warehouse stock",
+  "labReqFromCompanyTitle": "From a company (new material)",
+  "labReqFromCompanyDesc": "Materials not in the warehouse — requested from an external company",
+  "labReqSearchMaterialHint": "Search by material name...",
+  "labReqAddToInvoice": "Add",
+  "labReqInvoiceItemsEmpty": "No materials added yet",
+  "labReqAddMaterialRow": "+ Add material",
+  "labReqRemoveRow": "Remove",
+  "labReqCompanyNameRequired": "Company name is required",
+  "labReqAtLeastOneItemRequired": "Add at least one material",
+  "labReqNotesOptional": "Notes (optional)",
+  "labReqCatalogLoadFailed": "Failed to load warehouse materials",
+  "labReqCatalogRetry": "Retry",
+  "labReqItemsCount": "{count} materials",
+  "@labReqItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labReqTypeWarehouse": "From warehouse",
+  "labReqTypeCompany": "From company",
+  "labReqInvoiceNumber": "Invoice #{id}",
+  "@labReqInvoiceNumber": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "labReqDetailsTitle": "Invoice details",
+  "labReqPrint": "Print",
+  "labReqQuantityColumn": "Quantity",
+  "labReqUnitColumn": "Unit",
+  "labReqCompanyColumn": "Company",
   "labTechPendingAssign": "Awaiting assignment",
   "labTechWorkloadLoadFailed": "Couldn't load technicians' current workload — names and schedules are accurate, but task counts may not reflect reality",
   "techAddButton": "Add technician",

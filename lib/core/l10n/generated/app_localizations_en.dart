@@ -190,7 +190,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportsBackToToday => 'Today';
 
   @override
-  String get materialRequests => 'Material Requests';
+  String get materialRequests => 'Invoices';
 
   @override
   String get materials => 'Materials';
@@ -2484,10 +2484,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqLabOrder => 'Lab order';
 
   @override
-  String get labReqEmptyCategory => 'No material requests in this category';
+  String get labReqEmptyCategory => 'No invoices in this category';
 
   @override
-  String get labReqNewRequest => 'New material request';
+  String get labReqNewRequest => 'New invoice';
 
   @override
   String get labReqSearchHint =>
@@ -2498,11 +2498,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Type to search warehouse materials or enter a new one';
 
   @override
-  String get labReqDeleteTitle => 'Delete material request';
+  String get labReqDeleteTitle => 'Delete invoice';
 
   @override
-  String labReqDeleteConfirm(String material) {
-    return 'Delete the \"$material\" request? This cannot be undone.';
+  String labReqDeleteConfirm(String id) {
+    return 'Delete invoice #$id? This cannot be undone.';
   }
 
   @override
@@ -2531,7 +2531,85 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqSubmit => 'Send request';
 
   @override
-  String get labReqSentSuccess => 'Material request sent to the warehouse';
+  String get labReqSentSuccess => 'Invoice sent to the warehouse';
+
+  @override
+  String get labReqChooseTypeTitle => 'Invoice type';
+
+  @override
+  String get labReqFromWarehouseTitle => 'From warehouse materials';
+
+  @override
+  String get labReqFromWarehouseDesc =>
+      'Choose materials already in the warehouse stock';
+
+  @override
+  String get labReqFromCompanyTitle => 'From a company (new material)';
+
+  @override
+  String get labReqFromCompanyDesc =>
+      'Materials not in the warehouse — requested from an external company';
+
+  @override
+  String get labReqSearchMaterialHint => 'Search by material name...';
+
+  @override
+  String get labReqAddToInvoice => 'Add';
+
+  @override
+  String get labReqInvoiceItemsEmpty => 'No materials added yet';
+
+  @override
+  String get labReqAddMaterialRow => '+ Add material';
+
+  @override
+  String get labReqRemoveRow => 'Remove';
+
+  @override
+  String get labReqCompanyNameRequired => 'Company name is required';
+
+  @override
+  String get labReqAtLeastOneItemRequired => 'Add at least one material';
+
+  @override
+  String get labReqNotesOptional => 'Notes (optional)';
+
+  @override
+  String get labReqCatalogLoadFailed => 'Failed to load warehouse materials';
+
+  @override
+  String get labReqCatalogRetry => 'Retry';
+
+  @override
+  String labReqItemsCount(int count) {
+    return '$count materials';
+  }
+
+  @override
+  String get labReqTypeWarehouse => 'From warehouse';
+
+  @override
+  String get labReqTypeCompany => 'From company';
+
+  @override
+  String labReqInvoiceNumber(String id) {
+    return 'Invoice #$id';
+  }
+
+  @override
+  String get labReqDetailsTitle => 'Invoice details';
+
+  @override
+  String get labReqPrint => 'Print';
+
+  @override
+  String get labReqQuantityColumn => 'Quantity';
+
+  @override
+  String get labReqUnitColumn => 'Unit';
+
+  @override
+  String get labReqCompanyColumn => 'Company';
 
   @override
   String get labTechPendingAssign => 'Awaiting assignment';

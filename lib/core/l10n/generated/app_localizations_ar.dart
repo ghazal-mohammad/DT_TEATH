@@ -188,7 +188,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reportsBackToToday => 'اليوم';
 
   @override
-  String get materialRequests => 'طلبات المستودع';
+  String get materialRequests => 'الفواتير';
 
   @override
   String get materials => 'المواد';
@@ -2463,10 +2463,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqLabOrder => 'طلبية المخبر';
 
   @override
-  String get labReqEmptyCategory => 'لا توجد طلبيات مواد في هذه الفئة';
+  String get labReqEmptyCategory => 'لا توجد فواتير في هذه الفئة';
 
   @override
-  String get labReqNewRequest => 'طلب مادة جديدة';
+  String get labReqNewRequest => 'طلب فاتورة جديدة';
 
   @override
   String get labReqSearchHint => 'فلترة طلبات المواد... (مادة، رقم، شركة)';
@@ -2476,11 +2476,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'اكتب للبحث في مواد المستودع أو أدخل مادة جديدة';
 
   @override
-  String get labReqDeleteTitle => 'حذف طلب المواد';
+  String get labReqDeleteTitle => 'حذف الفاتورة';
 
   @override
-  String labReqDeleteConfirm(String material) {
-    return 'هل تريد حذف طلب «$material»؟ لا يمكن التراجع.';
+  String labReqDeleteConfirm(String id) {
+    return 'هل تريد حذف الفاتورة #$id؟ لا يمكن التراجع.';
   }
 
   @override
@@ -2508,7 +2508,85 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqSubmit => 'إرسال الطلب';
 
   @override
-  String get labReqSentSuccess => 'تم إرسال طلب المادة للمستودع';
+  String get labReqSentSuccess => 'تم إرسال الفاتورة للمستودع';
+
+  @override
+  String get labReqChooseTypeTitle => 'نوع الفاتورة';
+
+  @override
+  String get labReqFromWarehouseTitle => 'من مواد المستودع';
+
+  @override
+  String get labReqFromWarehouseDesc =>
+      'اختر مواد موجودة أصلاً بمخزون المستودع';
+
+  @override
+  String get labReqFromCompanyTitle => 'من شركة (مادة جديدة)';
+
+  @override
+  String get labReqFromCompanyDesc =>
+      'مواد غير موجودة بالمستودع — تُطلب من شركة خارجية';
+
+  @override
+  String get labReqSearchMaterialHint => 'ابحث باسم المادة...';
+
+  @override
+  String get labReqAddToInvoice => 'إضافة';
+
+  @override
+  String get labReqInvoiceItemsEmpty => 'لم تُضَف أي مادة بعد';
+
+  @override
+  String get labReqAddMaterialRow => '+ إضافة مادة';
+
+  @override
+  String get labReqRemoveRow => 'حذف';
+
+  @override
+  String get labReqCompanyNameRequired => 'اسم الشركة مطلوب';
+
+  @override
+  String get labReqAtLeastOneItemRequired => 'أضف مادة واحدة على الأقل';
+
+  @override
+  String get labReqNotesOptional => 'ملاحظات (اختياري)';
+
+  @override
+  String get labReqCatalogLoadFailed => 'تعذّر تحميل مواد المستودع';
+
+  @override
+  String get labReqCatalogRetry => 'إعادة المحاولة';
+
+  @override
+  String labReqItemsCount(int count) {
+    return '$count مادة';
+  }
+
+  @override
+  String get labReqTypeWarehouse => 'من المستودع';
+
+  @override
+  String get labReqTypeCompany => 'من شركة';
+
+  @override
+  String labReqInvoiceNumber(String id) {
+    return 'فاتورة #$id';
+  }
+
+  @override
+  String get labReqDetailsTitle => 'تفاصيل الفاتورة';
+
+  @override
+  String get labReqPrint => 'طباعة';
+
+  @override
+  String get labReqQuantityColumn => 'الكمية';
+
+  @override
+  String get labReqUnitColumn => 'الوحدة';
+
+  @override
+  String get labReqCompanyColumn => 'الشركة';
 
   @override
   String get labTechPendingAssign => 'بانتظار التوكيل';
