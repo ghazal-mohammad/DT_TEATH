@@ -1,15 +1,12 @@
 // ════════════════════════════════════════════════════════════════════════════
-// lab_material_requests_page.dart  — طلبات المواد من المستودع (منظور المخبر)
+// lab_material_requests_page.dart  — فواتير طلب المواد (منظور المخبر)
 //
-// المخبر يرسل طلبات للمستودع عند نقص المواد.
+// المخبر يرسل فواتير للمستودع: إما من مواد كتالوج المستودع (items[])، أو من
+// شركة خارجية لمواد جديدة (new_items[]) — كل فاتورة نوع واحد بس.
 //   - 4 filter chips (الكل / جديد / تم التسليم / غير متوفر)
-//   - قائمة طلبات + زر "طلب مادة جديدة" → فورم
+//   - قائمة فواتير + زر "طلب فاتورة جديدة" → خطوة اختيار النوع → فورم مناسب
 //
 // المعمارية: UI → LabMaterialRequestsCubit → LabMaterialRequestsRepository.
-//   - الكيان في domain/entities/lab_material_request.dart
-//   - العقد + تنفيذ mock في domain/data — يُستبدل بـ Remote عند ربط الباك.
-//
-// المرجع: DT_Teeth_Technical_Decision_Guide_v5.md — القرار 30 (Reference Integrity)
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -32,11 +29,15 @@ import '../../domain/repositories/lab_material_requests_repository.dart';
 import '../bloc/lab_material_requests_cubit.dart';
 import '../bloc/lab_material_requests_state.dart';
 import '../navigation/lab_sidebar_sections.dart';
+import '../widgets/material_requests/lab_invoice_details_dialog.dart';
+import '../widgets/material_requests/lab_invoice_from_company_dialog.dart';
+import '../widgets/material_requests/lab_invoice_from_warehouse_dialog.dart';
+import '../widgets/material_requests/lab_invoice_printer.dart';
+import '../widgets/material_requests/lab_invoice_type_chooser_dialog.dart';
 import '../widgets/material_requests/lab_mat_request_card.dart';
-import '../widgets/material_requests/lab_mat_request_dialog.dart';
 import '../widgets/material_requests/lab_mat_requests_empty.dart';
 
-/// صفحة طلبات المواد — تُنشئ [LabMaterialRequestsCubit] وتزوّده للـ subtree.
+/// صفحة الفواتير — تُنشئ [LabMaterialRequestsCubit] وتزوّده للـ subtree.
 class LabMaterialRequestsPage extends StatelessWidget {
   const LabMaterialRequestsPage({super.key});
 
@@ -104,7 +105,6 @@ class _MaterialRequestsBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Filter Bar + Action ────────────────────────────────────
           AppPageActionBar(
             filter: AppFilterChipRow(
               options: [
@@ -120,22 +120,25 @@ class _MaterialRequestsBody extends StatelessWidget {
             actions: [
               AppButton.primary(
                 label: '+ ${l10n.labReqNewRequest}',
-                onPressed: () => _onNewRequest(context),
+                onPressed: () => _onNewInvoice(context),
                 size: AppButtonSize.small,
               ),
             ],
           ),
           const SizedBox(height: AppSizes.spaceLG),
-
-          // ── Requests List ──────────────────────────────────────────
           if (requests.isEmpty)
             const LabMatRequestsEmpty()
           else
             for (final req in requests) ...[
               LabMatRequestCard(
                 request: req,
-                // الحذف مسموح فقط للطلبات "الجديدة" — الباك يرفض حذف أي طلب
-                // بدأ التنفيذ (422)، فلا نعرض زر حذف يفشل دايماً.
+                onTap: () => LabInvoiceDetailsDialog.show(
+                  context,
+                  req,
+                  onPrint: () => LabInvoicePrinter.print(req),
+                ),
+                // الحذف مسموح فقط للفواتير "الجديدة" — الباك يرفض حذف أي فاتورة
+                // بدأ تنفيذها (422)، فلا نعرض زر حذف يفشل دايماً.
                 onDelete: req.status == MatRequestStatus.newRequest
                     ? () => _onDelete(context, req)
                     : null,
@@ -147,36 +150,43 @@ class _MaterialRequestsBody extends StatelessWidget {
     );
   }
 
-  /// فتح فورم "طلب مادة جديدة" وإرساله عبر الـ Cubit.
-  Future<void> _onNewRequest(BuildContext context) async {
+  /// خطوة اختيار نوع الفاتورة ثم الفورم المناسب، وإرسالها عبر الـ Cubit.
+  Future<void> _onNewInvoice(BuildContext context) async {
     final cubit = context.read<LabMaterialRequestsCubit>();
     final l10n = context.l10n;
-    final r = await LabMaterialRequestDialog.show(
-      context,
-      catalog: cubit.state.catalog,
-    );
-    if (r == null) return;
-    final ok = await cubit.addRequest(
-      material: r.material,
-      quantity: r.quantity,
-      unit: r.unit,
-      materialId: r.materialId,
-      company: r.company,
-      reason: r.reason,
-    );
+
+    final type = await LabInvoiceTypeChooserDialog.show(context);
+    if (type == null || !context.mounted) return;
+
+    bool ok;
+    if (type == LabInvoiceType.warehouse) {
+      final r = await LabInvoiceFromWarehouseDialog.show(
+        context,
+        catalog: cubit.state.catalog,
+        catalogError: cubit.state.catalogError,
+        onRetryCatalog: cubit.loadCatalog,
+      );
+      if (r == null || !context.mounted) return;
+      ok = await cubit.addRequestFromWarehouse(items: r.items, notes: r.notes);
+    } else {
+      final r = await LabInvoiceFromCompanyDialog.show(context);
+      if (r == null || !context.mounted) return;
+      ok = await cubit.addRequestFromCompany(
+        companyName: r.companyName,
+        items: r.items,
+        notes: r.notes,
+      );
+    }
+
     if (!context.mounted) return;
     if (ok) {
-      GlassToast.show(
-        context,
-        message: l10n.labReqSentSuccess,
-        icon: Icons.check_circle_rounded,
-      );
+      GlassToast.show(context, message: l10n.labReqSentSuccess, icon: Icons.check_circle_rounded);
     } else {
       GlassToast.show(context, message: cubit.state.errorMessage ?? l10n.error);
     }
   }
 
-  /// تأكيد ثم حذف طلب مواد عبر الـ Cubit.
+  /// تأكيد ثم حذف فاتورة عبر الـ Cubit.
   Future<void> _onDelete(BuildContext context, MatRequest req) async {
     final cubit = context.read<LabMaterialRequestsCubit>();
     final l10n = context.l10n;
@@ -184,16 +194,11 @@ class _MaterialRequestsBody extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.labReqDeleteTitle),
-        content: Text(l10n.labReqDeleteConfirm(req.material)),
+        content: Text(l10n.labReqDeleteConfirm(req.id)),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.cancel),
-          ),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l10n.cancel)),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(l10n.delete),
           ),
