@@ -1,32 +1,38 @@
-// اختبار وحدة: فلترة طلبات المواد — فلتر الحالة + البحث النصّي معًا.
+// اختبار وحدة: فلترة الفواتير — فلتر الحالة + البحث النصّي معًا (بمواد
+// items[]/newItems[] كاملة، مو حقول مسطّحة).
 
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dt_teeth/features/lab/domain/entities/lab_material_request.dart';
 import 'package:dt_teeth/features/lab/presentation/bloc/lab_material_requests_state.dart';
 
-MatRequest _req(
-  String id,
-  String material,
-  MatRequestStatus status, {
-  String? company,
-}) =>
-    MatRequest(
+MatRequest _fromWarehouse(String id, String material, MatRequestStatus status) => MatRequest(
       id: id,
-      material: material,
-      quantity: '1',
-      unit: 'قطعة',
-      requestedBy: 'x',
-      date: '2026-01-01',
       status: status,
-      company: company,
+      requestedBy: 'x',
+      requesterType: 'lab',
+      date: '2026-01-01',
+      items: [MatRequestItem(id: '1', materialName: material, quantityRequested: 1)],
+      newItems: const [],
+    );
+
+MatRequest _fromCompany(String id, String material, String company, MatRequestStatus status) => MatRequest(
+      id: id,
+      status: status,
+      requestedBy: 'x',
+      requesterType: 'lab',
+      date: '2026-01-01',
+      items: const [],
+      newItems: [
+        MatRequestNewItem(id: '1', materialName: material, quantity: 1, unit: 'قطعة', companyName: company),
+      ],
     );
 
 void main() {
   final data = [
-    _req('MR-001', 'زركون', MatRequestStatus.newRequest, company: 'شام'),
-    _req('MR-002', 'جبس', MatRequestStatus.delivered),
-    _req('MR-003', 'زركون بلوك', MatRequestStatus.unavailable),
+    _fromWarehouse('MR-001', 'زركون', MatRequestStatus.newRequest),
+    _fromWarehouse('MR-002', 'جبس', MatRequestStatus.delivered),
+    _fromCompany('MR-003', 'زركون بلوك', 'شام', MatRequestStatus.unavailable),
   ];
 
   LabMaterialRequestsState state({int filter = 0, String q = ''}) =>
@@ -47,19 +53,21 @@ void main() {
     expect(f.first.id, 'MR-001');
   });
 
-  test('البحث بالمادة يطابق جزئيًا', () {
+  test('البحث بمادة items[] يطابق جزئيًا', () {
     final f = state(q: 'زركون').filtered;
     expect(f.map((r) => r.id), containsAll(['MR-001', 'MR-003']));
     expect(f.length, 2);
   });
 
-  test('البحث بالرقم وبالشركة', () {
-    expect(state(q: 'MR-002').filtered.single.material, 'جبس');
-    expect(state(q: 'شام').filtered.single.id, 'MR-001');
+  test('البحث برقم الفاتورة', () {
+    expect(state(q: 'MR-002').filtered.single.items.single.materialName, 'جبس');
+  });
+
+  test('البحث باسم الشركة (newItems فقط)', () {
+    expect(state(q: 'شام').filtered.single.id, 'MR-003');
   });
 
   test('الحالة + البحث معًا (تقاطع)', () {
-    // جديد + "زركون" ⇒ MR-001 فقط (MR-003 غير متوفّر لا جديد).
     final f = state(filter: 1, q: 'زركون').filtered;
     expect(f.single.id, 'MR-001');
   });
