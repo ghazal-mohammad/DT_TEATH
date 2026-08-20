@@ -1,16 +1,18 @@
 // ════════════════════════════════════════════════════════════════════════════
 // remote_lab_material_requests_repository.dart
 //
-// تنفيذ Remote لـ [LabMaterialRequestsRepository] — يجلب/ينشئ طلبات المواد عبر
-// [LabMaterialRequestsRemoteDataSource]، ويطابق عقد الـ Mock (نفس الواجهة + stream).
+// تنفيذ Remote لـ [LabMaterialRequestsRepository] — يجلب/ينشئ فواتير طلب مواد
+// عبر [LabMaterialRequestsRemoteDataSource].
 //
-// مطابقة العقد مع الباك (تحقّق فعلي 2026-06-24):
-//   الطلب: {id, status(pending/...), requester_type, notes, items:[{material,
-//           quantity_requested, status, notes}], new_items:[{material_name,
-//           quantity, unit, company_name, reason, status}], created_at}.
-//   نموذج الفرونت MatRequest مسطّح (مادة واحدة) ⇒ نأخذ أول new_item وإلا أول item.
-//   الإضافة من الفرونت (اسم/كمية/وحدة/شركة/سبب بلا material_id) تُرسَل كـ
-//   new_items[0] — يطابق مسار "مادة جديدة" بالباك تماماً.
+// مطابقة العقد مع الباك (نفس مورد MaterialRequestResource المستخدم بجهة
+// المستودع warehouseManager — تحقّق عبر warehouse_request.dart الشغّال):
+//   {id, status(new/pending/completed/rejected/cancelled), requester:{name},
+//    requester_type, notes,
+//    items:[{id, material, quantity_requested, notes}],
+//    new_items:[{id, material_name, quantity, unit, company_name, reason}],
+//    created_at}.
+//   الإرسال: items[] لمواد كتالوج المستودع (material_id)، new_items[] لمواد
+//   شركة خارجية (material_name) — جسم JSON خام (Map)، ليس FormData.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'dart:async';
@@ -88,56 +90,89 @@ class RemoteLabMaterialRequestsRepository
   }
 
   @override
-  Future<List<WarehouseMaterialRef>> getWarehouseMaterials() async {
+  Future<MatRequest> getOne(String id) async {
     try {
-      final raw = await _remote.getWarehouseMaterials();
-      return raw
-          .map((m) => WarehouseMaterialRef(
-                materialId: int.tryParse('${m['material_id'] ?? ''}') ?? 0,
-                name: '${m['material'] ?? ''}'.trim(),
-                unit: '${m['unit'] ?? ''}'.trim(),
-              ))
-          .where((m) => m.materialId > 0 && m.name.isNotEmpty)
-          .toList(growable: false);
+      // id (String) → int حين يكون رقمياً محضاً (الحالة الشائعة)، وإلا يُترك
+      // كما هو؛ التحويل نفسه يفيد أيضاً في بناء الـ URL بشكل نظيف.
+      final raw = await _remote.getOne(int.tryParse(id) ?? id);
+      return _fromJson(raw);
     } on DioException catch (e) {
       throw _mapDioError(e);
     }
   }
 
   @override
-  Future<void> addRequest({
-    required String material,
-    required String quantity,
-    required String unit,
-    int? materialId,
-    String? company,
-    String? reason,
+  Future<List<WarehouseMaterialRef>> getWarehouseMaterials() async {
+    try {
+      final raw = await _remote.getWarehouseMaterials();
+      return raw.map(_refFromJson).where((m) => m.materialId > 0 && m.name.isNotEmpty).toList(growable: false);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<WarehouseMaterialRef> getWarehouseMaterial(int id) async {
+    try {
+      final raw = await _remote.getWarehouseMaterial(id);
+      return _refFromJson(raw);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  WarehouseMaterialRef _refFromJson(Map<String, dynamic> m) => WarehouseMaterialRef(
+        materialId: int.tryParse('${m['material_id'] ?? ''}') ?? 0,
+        name: '${m['material'] ?? ''}'.trim(),
+        unit: '${m['unit'] ?? ''}'.trim(),
+      );
+
+  @override
+  Future<void> addRequestFromWarehouse({
+    required List<({int materialId, int quantity, String? notes})> items,
+    String? notes,
   }) async {
     try {
-      // مادة موجودة (materialId) ⇒ مسار items؛ وإلا مادة جديدة ⇒ new_items.
-      final Map<String, dynamic> body = materialId != null
-          ? {
-              'items': [
-                {
-                  'material_id': materialId,
-                  'quantity_requested': quantity,
-                },
-              ],
-            }
-          : {
-              'new_items': [
-                {
-                  'material_name': material,
-                  'quantity': quantity,
-                  if (unit.isNotEmpty) 'unit': unit,
-                  if (company != null && company.isNotEmpty)
-                    'company_name': company,
-                  if (reason != null && reason.isNotEmpty) 'reason': reason,
-                },
-              ],
-            };
+      final body = <String, dynamic>{
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+        'items': [
+          for (final it in items)
+            {
+              'material_id': it.materialId,
+              'quantity_requested': it.quantity,
+              if (it.notes != null && it.notes!.isNotEmpty) 'notes': it.notes,
+            },
+        ],
+      };
       await _remote.create(body);
-      await getAll(); // إعادة الجلب ليعكس الـ stream القائمة بعد الإضافة.
+      await getAll();
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  @override
+  Future<void> addRequestFromCompany({
+    required String companyName,
+    required List<({String materialName, int quantity, String unit, String? reason})> items,
+    String? notes,
+  }) async {
+    try {
+      final body = <String, dynamic>{
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+        'new_items': [
+          for (final it in items)
+            {
+              'material_name': it.materialName,
+              'quantity': it.quantity,
+              'unit': it.unit,
+              'company_name': companyName,
+              if (it.reason != null && it.reason!.isNotEmpty) 'reason': it.reason,
+            },
+        ],
+      };
+      await _remote.create(body);
+      await getAll();
     } on DioException catch (e) {
       throw _mapDioError(e);
     }
@@ -160,43 +195,45 @@ class RemoteLabMaterialRequestsRepository
   // ── تحويل JSON → entity ──────────────────────────────────────────────────
 
   MatRequest _fromJson(Map<String, dynamic> j) {
-    final newItems =
-        (j['new_items'] is List) ? j['new_items'] as List : const <dynamic>[];
-    final items =
-        (j['items'] is List) ? j['items'] as List : const <dynamic>[];
-
-    // الأولوية لمادة جديدة (new_item)، وإلا مادة موجودة (item).
-    final Map<String, dynamic> newItem =
-        newItems.isNotEmpty && newItems.first is Map
-            ? Map<String, dynamic>.from(newItems.first as Map)
-            : const {};
-    final Map<String, dynamic> item = items.isNotEmpty && items.first is Map
-        ? Map<String, dynamic>.from(items.first as Map)
-        : const {};
-
     final requester = j['requester'] is Map
         ? Map<String, dynamic>.from(j['requester'] as Map)
         : const <String, dynamic>{};
 
-    final bool isNew = newItem.isNotEmpty;
-
     return MatRequest(
       id: '${j['id'] ?? ''}',
-      material: (isNew ? newItem['material_name'] : item['material'] ?? '')
-          .toString(),
-      quantity:
-          '${isNew ? newItem['quantity'] : item['quantity_requested'] ?? ''}',
-      unit: (isNew ? (newItem['unit'] ?? '') : '').toString(),
-      requestedBy: (requester['name'] ?? '').toString(),
-      date: '${j['created_at'] ?? ''}'.split(' ').first,
       status: _mapStatus('${j['status'] ?? ''}'),
-      note: (j['notes'] as String?)?.isNotEmpty == true
-          ? j['notes'] as String
-          : null,
-      company: isNew ? newItem['company_name']?.toString() : null,
-      reason: isNew ? newItem['reason']?.toString() : null,
+      requestedBy: (requester['name'] ?? '').toString(),
+      requesterType: (j['requester_type'] ?? '').toString(),
+      date: '${j['created_at'] ?? ''}'.split(' ').first,
+      notes: (j['notes']?.toString().isEmpty ?? true) ? null : j['notes'].toString(),
+      items: _asList(j['items']).map(_itemFromJson).toList(growable: false),
+      newItems: _asList(j['new_items']).map(_newItemFromJson).toList(growable: false),
     );
   }
+
+  MatRequestItem _itemFromJson(Map<String, dynamic> j) => MatRequestItem(
+        id: '${j['id'] ?? ''}',
+        materialName: (j['material'] ?? '').toString(),
+        quantityRequested: _toInt(j['quantity_requested']),
+        notes: (j['notes']?.toString().isEmpty ?? true) ? null : j['notes'].toString(),
+      );
+
+  MatRequestNewItem _newItemFromJson(Map<String, dynamic> j) => MatRequestNewItem(
+        id: '${j['id'] ?? ''}',
+        materialName: (j['material_name'] ?? '').toString(),
+        quantity: _toInt(j['quantity']),
+        unit: (j['unit'] ?? '').toString(),
+        companyName: _nn(j['company_name']),
+        reason: _nn(j['reason']),
+      );
+
+  static List<Map<String, dynamic>> _asList(Object? v) => (v is List)
+      ? v.whereType<Map<dynamic, dynamic>>().map((e) => Map<String, dynamic>.from(e)).toList()
+      : const [];
+
+  static int _toInt(Object? v) => v is num ? v.toInt() : int.tryParse('${v ?? ''}') ?? 0;
+
+  static String? _nn(Object? v) => (v == null || v.toString().isEmpty) ? null : v.toString();
 
   /// خريطة حالة الباك → حالة الفرونت. القيم الحقيقية بالباك (enum
   /// material_requests.status، تحقّق مباشر من migration الباك بتاريخ
