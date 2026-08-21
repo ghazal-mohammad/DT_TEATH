@@ -11,13 +11,13 @@ void main() {
       final stopwatch = Stopwatch()..start();
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Center(
               child: AppDashboardHero(
                 title: 'مرحباً، د.خالد',
                 subtitle: 'اختبار بداية التطبيق — benchmark',
-                stats: const [
+                stats: [
                   AppDashboardHeroStat(value: '247', label: 'مادة'),
                   AppDashboardHeroStat(value: '12', label: 'طلب جديد'),
                   AppDashboardHeroStat(value: '98%', label: 'معدل إنجاز'),
@@ -30,6 +30,7 @@ void main() {
 
       stopwatch.stop();
       final startupMs = stopwatch.elapsedMilliseconds;
+      // ignore: avoid_print
       print('startup_simulated_ms=$startupMs');
 
       expect(find.text('مرحباً، د.خالد'), findsOneWidget);
@@ -78,6 +79,7 @@ void main() {
 
       stopwatch.stop();
       final dashboardMs = stopwatch.elapsedMilliseconds;
+      // ignore: avoid_print
       print('dashboard_heavy_ms=$dashboardMs');
 
       // Append dashboard measurement to the same file

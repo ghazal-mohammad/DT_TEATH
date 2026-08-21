@@ -22,7 +22,7 @@ void main() {
           data: any(named: 'data'),
         )).thenAnswer((_) async => Response(
           requestOptions: RequestOptions(path: ApiEndpoints.labManagerAddMaterialRequest),
-          data: {'data': {}},
+          data: {'data': <String, dynamic>{}},
           statusCode: 200,
         ));
 

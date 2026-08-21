@@ -14,20 +14,20 @@ void main() {
       );
 
   testWidgets('فاتورة مستودع بمادتين — تعرض عدد المواد ونوع "من المستودع"', (tester) async {
-    final req = MatRequest(
+    const req = MatRequest(
       id: '5',
       status: MatRequestStatus.newRequest,
       requestedBy: 'أحمد',
       requesterType: 'lab',
       date: '2026-08-19',
-      items: const [
+      items: [
         MatRequestItem(id: '1', materialName: 'زركون', quantityRequested: 10),
         MatRequestItem(id: '2', materialName: 'جبس', quantityRequested: 5),
       ],
-      newItems: const [],
+      newItems: [],
     );
 
-    await tester.pumpWidget(wrap(LabMatRequestCard(request: req)));
+    await tester.pumpWidget(wrap(const LabMatRequestCard(request: req)));
     await tester.pump();
 
     expect(find.textContaining('مادة'), findsOneWidget);
@@ -35,14 +35,14 @@ void main() {
   });
 
   testWidgets('فاتورة شركة — تعرض نوع "من شركة"، والدوس عليها يستدعي onTap', (tester) async {
-    final req = MatRequest(
+    const req = MatRequest(
       id: '6',
       status: MatRequestStatus.newRequest,
       requestedBy: 'سارة',
       requesterType: 'lab',
       date: '2026-08-19',
-      items: const [],
-      newItems: const [
+      items: [],
+      newItems: [
         MatRequestNewItem(id: '1', materialName: 'صمغ', quantity: 3, unit: 'علبة', companyName: 'دنتال'),
       ],
     );

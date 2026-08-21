@@ -19,7 +19,6 @@
 // `empty_states/`, `onboarding/`, and `icons/` only contain `.gitkeep`
 // placeholders and have no real images to load yet.
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Real bundled image assets that exist on disk today, taken from a live

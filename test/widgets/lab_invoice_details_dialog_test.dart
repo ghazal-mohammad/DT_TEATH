@@ -7,17 +7,17 @@ import 'package:dt_teeth/features/lab/presentation/widgets/material_requests/lab
 
 void main() {
   testWidgets('يعرض كل عناصر الفاتورة (مو أول واحد بس) + زر طباعة', (tester) async {
-    final req = MatRequest(
+    const req = MatRequest(
       id: '10',
       status: MatRequestStatus.newRequest,
       requestedBy: 'أحمد',
       requesterType: 'lab',
       date: '2026-08-19',
-      items: const [
+      items: [
         MatRequestItem(id: '1', materialName: 'زركون', quantityRequested: 10),
         MatRequestItem(id: '2', materialName: 'جبس', quantityRequested: 5),
       ],
-      newItems: const [],
+      newItems: [],
     );
     var printed = false;
 

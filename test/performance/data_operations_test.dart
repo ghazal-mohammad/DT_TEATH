@@ -30,7 +30,7 @@ void main() {
         // quantity is real, non-trivial work (not already-sorted input).
         // Category cycles across every real MaterialCategory enum value
         // (clinic, lab, both) so grouping exercises all buckets.
-        final categories = MaterialCategory.values;
+        const categories = MaterialCategory.values;
         final materials = List<WarehouseMaterial>.generate(total, (i) {
           return WarehouseMaterial(
             id: 'MAT-$i',

@@ -25,6 +25,7 @@ void main() {
         stopwatch.stop();
 
         final datasetProcessingMs = stopwatch.elapsedMilliseconds;
+        // ignore: avoid_print
         print('dataset_processing_ms=$datasetProcessingMs');
 
         expect(processed.length, 500);
@@ -60,6 +61,7 @@ void main() {
         stopwatch.stop();
 
         final listRenderMs = stopwatch.elapsedMilliseconds;
+        // ignore: avoid_print
         print('list_render_ms=$listRenderMs');
 
         expect(find.text('Item 0'), findsOneWidget);

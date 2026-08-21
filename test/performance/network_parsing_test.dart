@@ -146,7 +146,7 @@ void main() {
 
         // Spot-check a nested real StockBatch parse (record 3 has batchCount
         // = 3, i.e. index 3, 7, 11, ... -> use index 7: batchCount = 3).
-        final nestedIndex = 7;
+        const nestedIndex = 7;
         expect(expectedBatchCounts[nestedIndex], 3);
         expect(parsed[nestedIndex].batches.length, 3);
         expect(parsed[nestedIndex].batches[0].quantity, (nestedIndex + 0) % 500);
