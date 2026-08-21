@@ -511,7 +511,6 @@
       }
     }
   },
-  "systemAllNormal": "All systems operating normally",
   "labLastUpdate": "Last update: {time}",
   "@labLastUpdate": {
     "placeholders": {
@@ -993,7 +992,6 @@
       }
     }
   },
-  "whSystemsNormal": "All systems operating normally",
   "whLastUpdateLabel": "Last update: ",
   "whLastUpdateJustNow": "Just now",
   "whLastUpdateMinutesAgo": "{minutes}m ago",

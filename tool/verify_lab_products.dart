@@ -41,48 +41,56 @@ class _MemStore implements LocalStore {
 
 Future<void> main(List<String> args) async {
   // التوكن من LAB_TOKEN بالبيئة (آمن مع | في sanctum tokens)، أو args[0].
-  final token = Platform.environment['LAB_TOKEN'] ??
-      (args.isNotEmpty ? args[0] : '');
+  final token =
+      Platform.environment['LAB_TOKEN'] ?? (args.isNotEmpty ? args[0] : '');
   if (token.isEmpty) {
     print('Set LAB_TOKEN env var (or pass token as arg).');
     return;
   }
   final baseUrl = Platform.environment['LAB_BASE'] ?? 'http://127.0.0.1:8000';
 
-  final dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    },
-  ));
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: baseUrl,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    ),
+  );
 
   final memStore = _MemStore();
   final cache = PersistentCache(memStore);
   final repo = RemoteLabProductsRepository(
-      LabProductsRemoteDataSource(dio), cache, Outbox(memStore));
+    LabProductsRemoteDataSource(dio),
+    cache,
+    Outbox(memStore),
+  );
 
   print('── getAll() عبر LabProductsRepository ───────────────────────────');
   final products = await repo.getAll();
   print('عدد المنتجات: ${products.length}');
   for (final p in products.take(4)) {
-    print('  • #${p.id} ${p.name} | ${p.type}/${p.material} '
-        '| ${p.price} ل.س | ${p.productionDays} يوم');
+    print(
+      '  • #${p.id} ${p.name} | ${p.type}/${p.material} '
+      '| ${p.price} ل.س | ${p.productionDays} يوم',
+    );
   }
 
   // الكتابة لا تُنفَّذ افتراضياً (تجنّباً لتلويث الداتا) — فعّلها بـ VERIFY_WRITE=1.
   if (Platform.environment['VERIFY_WRITE'] == '1') {
     print('\n── create() منتج جديد ─────────────────────────────────────────');
-    final created = await repo.create(const LabProduct(
-      id: '',
-      name: 'منتج تحقّق الربط (احذفني)',
-      type: 'تلبيسة',
-      material: 'E-max',
-      price: 88000,
-      productionDays: 2,
-    ));
-    print('أُنشئ: #${created.id} ${created.name} '
-        '| ${created.price} ل.س | ${created.productionDays} يوم');
+    final created = await repo.create(
+      const LabProduct(
+        id: '',
+        name: 'منتج تحقّق الربط (احذفني)',
+        type: 'تلبيسة',
+        material: 'E-max',
+        price: 88000,
+        productionDays: 2,
+      ),
+    );
+    print(
+      'أُنشئ: #${created.id} ${created.name} '
+      '| ${created.price} ل.س | ${created.productionDays} يوم',
+    );
   }
 
   print('\n── getAll() عبر LabOrdersRepository ─────────────────────────────');
@@ -94,9 +102,11 @@ Future<void> main(List<String> args) async {
   final orders = await ordersRepo.getAll();
   print('عدد الطلبات: ${orders.length}');
   for (final o in orders.take(4)) {
-    print('  • #${o.id} ${o.doctor} | ${o.type}/${o.material} '
-        '${o.tooth} | ${o.statusVariant.name} | ${o.cost} ل.س '
-        '| فنّي: ${o.assignedTechnician ?? "—"}');
+    print(
+      '  • #${o.id} ${o.doctor} | ${o.type}/${o.material} '
+      '${o.tooth} | ${o.statusVariant.name} | ${o.cost} ل.س '
+      '| فنّي: ${o.assignedTechnician ?? "—"}',
+    );
   }
 
   print('\n── getAll() عبر LabMaterialRequestsRepository ──────────────────');
@@ -107,18 +117,32 @@ Future<void> main(List<String> args) async {
   final reqs = await mrRepo.getAll();
   print('عدد طلبات المواد: ${reqs.length}');
   for (final r in reqs.take(4)) {
-    print('  • #${r.id} ${r.material} ×${r.quantity} ${r.unit} '
-        '| ${r.status.name} | شركة: ${r.company ?? "—"}');
+    final materialDisplay = r.isFromCompany
+        ? (r.newItems.isNotEmpty ? r.newItems.first.materialName : '')
+        : (r.items.isNotEmpty ? r.items.first.materialName : '');
+    final qtyUnit = r.isFromCompany
+        ? (r.newItems.isNotEmpty
+              ? '${r.newItems.first.quantity} ${r.newItems.first.unit}'
+              : '')
+        : (r.items.isNotEmpty ? '${r.items.first.quantityRequested}' : '');
+    print(
+      '  • #${r.id} ${materialDisplay.isNotEmpty ? materialDisplay : r.id} '
+      '${qtyUnit.isNotEmpty ? '×$qtyUnit' : ''} | ${r.status.name} | شركة: ${r.newItems.isNotEmpty ? (r.newItems.first.companyName ?? "—") : "—"}',
+    );
   }
 
   print('\n── getAll() عبر LabStockRepository ─────────────────────────────');
-  final stockRepo =
-      RemoteLabStockRepository(LabStockRemoteDataSource(dio), cache);
+  final stockRepo = RemoteLabStockRepository(
+    LabStockRemoteDataSource(dio),
+    cache,
+  );
   final stock = await stockRepo.getAll();
   print('عدد مواد المخزون: ${stock.length}');
   for (final s in stock.take(4)) {
-    print('  • #${s.id} ${s.material} | ${s.quantity} ${s.unit} '
-        '| ${s.status.name}${s.isLow ? " (منخفض)" : ""}');
+    print(
+      '  • #${s.id} ${s.material} | ${s.quantity} ${s.unit} '
+      '| ${s.status.name}${s.isLow ? " (منخفض)" : ""}',
+    );
   }
 
   print('\n✅ مسار الفرونت يطابق الباك الحي.');

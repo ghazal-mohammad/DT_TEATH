@@ -63,8 +63,6 @@ class AppWelcomeHero extends StatelessWidget {
     super.key,
     required this.emoji,
     required this.greeting,
-    required this.statusText,
-    this.statusColor = AppColors.statusSuccess,
     this.metas = const [],
     this.stats = const [],
   });
@@ -75,13 +73,7 @@ class AppWelcomeHero extends StatelessWidget {
   /// نص الترحيب الرئيسي.
   final String greeting;
 
-  /// نص الـ status pill (مثل "الأنظمة تعمل بشكل طبيعي").
-  final String statusText;
-
-  /// لون الـ status pill.
-  final Color statusColor;
-
-  /// نصوص الـ meta بعد الـ pill (آخر تحديث، التاريخ...).
+  /// نصوص الـ meta (آخر تحديث، التاريخ...).
   final List<AppHeroMeta> metas;
 
   /// الإحصاءات المصغّرة على يسار الـ hero.
@@ -173,7 +165,6 @@ class AppWelcomeHero extends StatelessWidget {
           runSpacing: 6,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            _StatusPill(text: statusText, color: statusColor),
             for (final m in metas) ...[
               if (m.dotBefore) const _DotSep(),
               _MetaText(m, isLight: isLight),
@@ -193,43 +184,6 @@ class AppWelcomeHero extends StatelessWidget {
           _MiniStat(stat: stats[i], isLight: isLight),
         ],
       ],
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.text, required this.color});
-  final String text;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

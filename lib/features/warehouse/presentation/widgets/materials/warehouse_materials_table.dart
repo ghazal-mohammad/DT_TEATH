@@ -16,6 +16,7 @@ class _TableSection extends StatelessWidget {
     required this.all,
     required this.filtered,
     required this.status,
+    required this.lowStockIds,
     required this.onStatusChange,
     required this.isLight,
     required this.onAddTap,
@@ -29,6 +30,7 @@ class _TableSection extends StatelessWidget {
   final List<WarehouseMaterial> all;
   final List<WarehouseMaterial> filtered;
   final _StatusFilter status;
+  final Set<String> lowStockIds;
   final ValueChanged<_StatusFilter> onStatusChange;
   final bool isLight;
   final VoidCallback onAddTap;
@@ -38,7 +40,7 @@ class _TableSection extends StatelessWidget {
   final VoidCallback onViewLogs;
 
   int _statusCount(_StatusFilter s) =>
-      all.where(s.matches).length;
+      all.where((m) => s.matches(m, lowStockIds)).length;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,7 @@ class _TableSection extends StatelessWidget {
           else
             _MaterialsTable(
               rows: filtered,
+              lowStockIds: lowStockIds,
               isLight: isLight,
               onRowTap: onRowTap,
               onMovement: onMovement,
@@ -189,12 +192,14 @@ class _CountBadge extends StatelessWidget {
 class _MaterialsTable extends StatelessWidget {
   const _MaterialsTable({
     required this.rows,
+    required this.lowStockIds,
     required this.isLight,
     required this.onRowTap,
     required this.onMovement,
     required this.onDeactivate,
   });
   final List<WarehouseMaterial> rows;
+  final Set<String> lowStockIds;
   final bool isLight;
   final ValueChanged<WarehouseMaterial> onRowTap;
   final ValueChanged<WarehouseMaterial> onMovement;
@@ -212,6 +217,7 @@ class _MaterialsTable extends StatelessWidget {
         for (var i = 0; i < rows.length; i++)
           _TableDataRow(
             material: rows[i],
+            status: _effectiveStatus(rows[i], lowStockIds),
             isLight: isLight,
             isLast: i == rows.length - 1,
             onTap: () => onRowTap(rows[i]),
@@ -270,6 +276,7 @@ class _HCell extends StatelessWidget {
 class _TableDataRow extends StatelessWidget {
   const _TableDataRow({
     required this.material,
+    required this.status,
     required this.isLight,
     required this.isLast,
     required this.onTap,
@@ -277,6 +284,7 @@ class _TableDataRow extends StatelessWidget {
     required this.onDeactivate,
   });
   final WarehouseMaterial material;
+  final MaterialStatus status;
   final bool isLight;
   final bool isLast;
   final VoidCallback onTap;
@@ -342,7 +350,7 @@ class _TableDataRow extends StatelessWidget {
             ),
             Expanded(
               flex: 2,
-              child: _StockCell(material: material),
+              child: _StockCell(material: material, status: status),
             ),
             Expanded(
               flex: 2,
@@ -383,7 +391,7 @@ class _TableDataRow extends StatelessWidget {
               flex: 2,
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
-                child: _StatusPill(status: material.status),
+                child: _StatusPill(status: status),
               ),
             ),
             Expanded(
@@ -531,8 +539,9 @@ class _CategoryDot extends StatelessWidget {
 }
 
 class _StockCell extends StatelessWidget {
-  const _StockCell({required this.material});
+  const _StockCell({required this.material, required this.status});
   final WarehouseMaterial material;
+  final MaterialStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -540,7 +549,7 @@ class _StockCell extends StatelessWidget {
     final pct = material.minStock > 0
         ? (material.quantity / (material.minStock * 2)).clamp(0.0, 1.0)
         : 1.0;
-    final color = material.status.accentColor;
+    final color = status.accentColor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,

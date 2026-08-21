@@ -83,10 +83,13 @@ class FakeWarehouseBackend {
     _server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
     // ignore: avoid_print
     print('[FakeWarehouseBackend] listening on http://127.0.0.1:$port');
-    _server!.listen(_handle, onError: (Object e) {
-      // ignore: avoid_print
-      print('[FakeWarehouseBackend] listen error: $e');
-    });
+    _server!.listen(
+      _handle,
+      onError: (Object e) {
+        // ignore: avoid_print
+        print('[FakeWarehouseBackend] listen error: $e');
+      },
+    );
   }
 
   Future<void> stop() async {
@@ -169,7 +172,7 @@ class FakeWarehouseBackend {
                     'status': 'new',
                   },
                 ],
-                'new_items': [],
+                'new_items': <Map<String, dynamic>>[],
                 'notes': null,
                 'created_at': DateTime.now().toIso8601String(),
               },
@@ -179,10 +182,13 @@ class FakeWarehouseBackend {
 
         default:
           // ignore: avoid_print
-          print('[FakeWarehouseBackend] UNHANDLED $method $path — the real '
-              'app requested a route the fake backend does not implement.');
-          await _respondJson(
-              request, 404, {'message': 'Not found: $method $path'});
+          print(
+            '[FakeWarehouseBackend] UNHANDLED $method $path — the real '
+            'app requested a route the fake backend does not implement.',
+          );
+          await _respondJson(request, 404, {
+            'message': 'Not found: $method $path',
+          });
       }
     } catch (e, st) {
       // ignore: avoid_print
@@ -208,7 +214,10 @@ class FakeWarehouseBackend {
   }
 
   Future<void> _respondJson(
-      HttpRequest request, int status, Map<String, dynamic> body) async {
+    HttpRequest request,
+    int status,
+    Map<String, dynamic> body,
+  ) async {
     request.response.statusCode = status;
     request.response.headers.contentType = ContentType.json;
     request.response.write(jsonEncode(body));

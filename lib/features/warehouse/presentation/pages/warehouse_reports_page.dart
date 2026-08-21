@@ -1,8 +1,12 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_reports_page.dart
 //
-// صفحة التقارير لنظام المستودع — 4 تبويبات، كلها مربوطة بالباك فعلاً:
-// نظرة عامة (reports/dashboard)، المشتريات، حركة المخزون، طلبات المواد.
+// صفحة التقارير لنظام المستودع — 3 تبويبات، كلها مربوطة بالباك فعلاً:
+// نظرة عامة (reports/dashboard)، المشتريات، حركة المخزون.
+//
+// تبويب "طلبات المواد" أُزيل 2026-08-21 — الباك يرمي 500 دائماً (Call to
+// undefined relationship [requester] on model [App\Models\MaterialRequest]).
+// أعد إضافته بعد ما يُصلَح الباك (راجع warehouse_reports_repository.dart).
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -30,7 +34,6 @@ class WarehouseReportsPage extends StatelessWidget {
       create: (_) => WarehouseReportsCubit(sl<WarehouseReportsRepository>())
         ..load()
         ..loadStockMovement()
-        ..loadMaterialRequests()
         ..loadDashboard(),
       child: AppShellLayout(
         system: AppSystemType.warehouse,

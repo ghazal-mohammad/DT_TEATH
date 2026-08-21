@@ -45,6 +45,10 @@ class ReportExportData {
 class ReportExporter {
   ReportExporter._();
 
+  /// إيميل مركز DT.Teeth الثابت — كل تقرير يُرسَل عليه حصراً (المستخدم ما
+  /// بيقدر يغيّر الوجهة)، يطابق حقل email بـ admin/updateCenterInfo.
+  static const String _centerEmail = 'info@dtteeth.com';
+
   static pw.Font? _font;
 
   static Future<pw.Font> _loadFont() async {
@@ -258,8 +262,9 @@ class ReportExporter {
 
     final subject = Uri.encodeComponent(data.title);
     final body = Uri.encodeComponent(buffer.toString());
+    final to = Uri.encodeComponent(_centerEmail);
     final gmailUri = Uri.parse(
-      'https://mail.google.com/mail/?view=cm&fs=1&su=$subject&body=$body',
+      'https://mail.google.com/mail/?view=cm&fs=1&to=$to&su=$subject&body=$body',
     );
 
     // على الويب: mailto غير موثوق — المتصفّح أحياناً "ينجح" (launchUrl يرجع
@@ -279,7 +284,8 @@ class ReportExporter {
 
     // على الموبايل/الديسكتوب: mailto موثوق (يفتح تطبيق البريد المثبّت فعلياً
     // أو يرجع false بوضوح لو ما في تطبيق بريد مُعرَّف).
-    final mailtoUri = Uri(scheme: 'mailto', query: 'subject=$subject&body=$body');
+    final mailtoUri = Uri(
+        scheme: 'mailto', path: _centerEmail, query: 'subject=$subject&body=$body');
     var launched = false;
     try {
       launched = await launchUrl(mailtoUri, mode: LaunchMode.externalApplication);

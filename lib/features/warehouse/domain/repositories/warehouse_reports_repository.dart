@@ -1,12 +1,16 @@
 // ════════════════════════════════════════════════════════════════════════════
 // warehouse_reports_repository.dart
 //
-// عقد تقارير المستودع: المشتريات، حركة المخزون، طلبات المواد (بفترة زمنية)،
-// والنظرة العامة (reports/dashboard). الأربعة مربوطة فعلياً بالباك.
+// عقد تقارير المستودع: المشتريات، حركة المخزون، والنظرة العامة
+// (reports/dashboard). الثلاثة مربوطة فعلياً بالباك.
+//
+// تقرير "طلبات المواد" أُزيل نهائياً 2026-08-21 — الباك يرمي خطأ 500
+// (Call to undefined relationship [requester] on model [App\Models\
+// MaterialRequest]) لأن العلاقة غير معرَّفة بالموديل؛ حتى يُصلَح الباك، لا
+// داعي لواجهة معطوبة دائماً بالفرونت.
 // ════════════════════════════════════════════════════════════════════════════
 
 import '../entities/warehouse_dashboard_report.dart';
-import '../entities/warehouse_material_requests_report.dart';
 import '../entities/warehouse_purchases_report.dart';
 import '../entities/warehouse_stock_movement_report.dart';
 
@@ -19,12 +23,6 @@ abstract class WarehouseReportsRepository {
 
   /// تقرير حركة المخزون ضمن نطاق [from]–[to] (null ⇒ الافتراضي: هذا الشهر).
   Future<WarehouseStockMovementReport> getStockMovementReport({
-    DateTime? from,
-    DateTime? to,
-  });
-
-  /// تقرير طلبات المواد ضمن نطاق [from]–[to] (null ⇒ الافتراضي: هذا الشهر).
-  Future<WarehouseMaterialRequestsReport> getMaterialRequestsReport({
     DateTime? from,
     DateTime? to,
   });

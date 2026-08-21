@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'package:dt_teeth/core/constants/app_urls.dart';
 import 'package:dt_teeth/core/network/dio_client.dart';
 import 'package:dt_teeth/features/auth/presentation/pages/set_password_page.dart';
 import 'package:dt_teeth/features/auth/presentation/widgets/auth_outline_button.dart';
@@ -56,6 +57,15 @@ Future<void> _pumpUntilFound(
   }
   // One last pump/check so the failure assertion below has fresh state.
   await tester.pump(step);
+  if (!tester.any(finder)) {
+    final texts = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((t) => t.data ?? t.textSpan?.toPlainText() ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList();
+    // ignore: avoid_print
+    print('DIAG: on-screen texts at timeout: $texts');
+  }
   expect(finder, findsWidgets,
       reason: 'Timed out after $timeout waiting for $finder');
 }
@@ -92,6 +102,8 @@ void main() {
       // ── Boot the REAL app (real DI, real GoRouter, real Dio) ───────────
       await app.main();
       await tester.pump();
+      // ignore: avoid_print
+      print('DIAG: AppUrls.baseUrl = ${AppUrls.baseUrl}');
 
       // ── Splash: tap to skip its 2.8s animation instead of waiting it out
       // (SplashPage's root GestureDetector calls `_go()` immediately on tap).
@@ -101,6 +113,11 @@ void main() {
       // ── Email entry screen ───────────────────────────────────────────
       await _pumpUntilFound(tester, find.byType(AuthUnderlineField));
 
+      // ignore: avoid_print
+      print('DIAG: AuthUnderlineField count = ${tester.widgetList(find.byType(AuthUnderlineField)).length}, '
+          'TextField count = ${tester.widgetList(find.byType(TextField)).length}, '
+          'AuthOutlineButton count = ${tester.widgetList(find.byType(AuthOutlineButton)).length}');
+
       final Finder emailField = find
           .descendant(
             of: find.byType(AuthUnderlineField),
@@ -109,8 +126,11 @@ void main() {
           .first;
       await tester.enterText(emailField, testEmail);
       await tester.pump(const Duration(milliseconds: 100));
+      // ignore: avoid_print
+      print('DIAG: emailField controller.text after enterText = '
+          '"${tester.widget<TextField>(emailField).controller?.text}"');
 
-      await tester.tap(find.byType(AuthOutlineButton));
+      await tester.tap(find.byType(AuthOutlineButton).first, warnIfMissed: false);
       // Real network round trip to FakeAuthBackend's sendVerification, then
       // a real GoRouter navigation + route-transition animation.
       await _pumpUntilFound(tester, find.byType(OtpInput));

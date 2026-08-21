@@ -41,20 +41,6 @@ class WarehouseReportsRemoteDataSource {
         : <String, dynamic>{};
   }
 
-  /// GET material-requests?from=&to= — يرجّع الاستجابة الخام (مع data).
-  Future<Map<String, dynamic>> materialRequests({String? from, String? to}) async {
-    final res = await _dio.get<dynamic>(
-      ApiEndpoints.warehouseReportMaterialRequests,
-      queryParameters: {
-        if (from != null) 'from': from,
-        if (to != null) 'to': to,
-      },
-    );
-    return res.data is Map
-        ? Map<String, dynamic>.from(res.data as Map)
-        : <String, dynamic>{};
-  }
-
   /// GET reports/dashboard?period=week|month&date= — يرجّع الاستجابة الخام.
   Future<Map<String, dynamic>> dashboard({required String period, String? date}) async {
     final res = await _dio.get<dynamic>(

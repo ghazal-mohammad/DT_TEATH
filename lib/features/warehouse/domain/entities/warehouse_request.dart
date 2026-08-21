@@ -43,11 +43,11 @@ extension WarehouseRequestStatusX on WarehouseRequestStatus {
       this == WarehouseRequestStatus.newReq ||
       this == WarehouseRequestStatus.inProgress;
 
-  /// هل يمكن رفض هذا الطلب؟ (new أو pending) — يطابق
-  /// MaterialRequestController::reject (['new', 'pending']).
-  bool get canReject =>
-      this == WarehouseRequestStatus.newReq ||
-      this == WarehouseRequestStatus.inProgress;
+  /// هل يمكن رفض هذا الطلب؟ (new فقط) — قيد فرونت-إند: بمجرد ما المستودع يبلّش
+  /// يعالج الطلب (pending/inProgress) ما عاد يقدر يرفضه، بس يكمّله (fulfill).
+  /// ⚠️ الباك (MaterialRequestController::reject) لسا يقبل ['new', 'pending']
+  /// بلا تعديل هون — هاد قيد واجهة فقط لحين تعديل الباك ليطابقه.
+  bool get canReject => this == WarehouseRequestStatus.newReq;
 
   /// هل يمكن تحويله إلى "قيد المعالجة"؟ (new فقط) — يطابق
   /// MaterialRequestController::markPending (status !== 'new' يُرفض).

@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/warehouse_dashboard_report.dart';
-import '../../domain/entities/warehouse_material_requests_report.dart';
 import '../../domain/entities/warehouse_purchases_report.dart';
 import '../../domain/entities/warehouse_stock_movement_report.dart';
 import '../../domain/repositories/warehouse_reports_repository.dart';
@@ -30,8 +29,8 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
         to: to != null ? _ymd(to) : null,
       );
       return WarehousePurchasesReport.fromJson(json);
-    } on DioException catch (e) {
-      throw _mapDioError(e, 'تعذّر جلب تقرير المشتريات.');
+    } catch (e) {
+      throw _mapError(e, 'تعذّر جلب تقرير المشتريات.');
     }
   }
 
@@ -46,24 +45,8 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
         to: to != null ? _ymd(to) : null,
       );
       return WarehouseStockMovementReport.fromJson(json);
-    } on DioException catch (e) {
-      throw _mapDioError(e, 'تعذّر جلب تقرير حركة المخزون.');
-    }
-  }
-
-  @override
-  Future<WarehouseMaterialRequestsReport> getMaterialRequestsReport({
-    DateTime? from,
-    DateTime? to,
-  }) async {
-    try {
-      final json = await _remote.materialRequests(
-        from: from != null ? _ymd(from) : null,
-        to: to != null ? _ymd(to) : null,
-      );
-      return WarehouseMaterialRequestsReport.fromJson(json);
-    } on DioException catch (e) {
-      throw _mapDioError(e, 'تعذّر جلب تقرير طلبات المواد.');
+    } catch (e) {
+      throw _mapError(e, 'تعذّر جلب تقرير حركة المخزون.');
     }
   }
 
@@ -78,8 +61,8 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
         date: date != null ? _ymd(date) : null,
       );
       return WarehouseDashboardReport.fromJson(json);
-    } on DioException catch (e) {
-      throw _mapDioError(e, 'تعذّر جلب تقرير النظرة العامة.');
+    } catch (e) {
+      throw _mapError(e, 'تعذّر جلب تقرير النظرة العامة.');
     }
   }
 
@@ -88,7 +71,15 @@ class RemoteWarehouseReportsRepository implements WarehouseReportsRepository {
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 
-  Failure _mapDioError(DioException e, String fallbackMessage) {
+  /// يحوّل أي استثناء (شبكة أو غير متوقع) لـ [Failure] موحّد — بما فيها
+  /// استثناءات fromJson (شكل استجابة غير متوقع من الباك: حقل ناقص/نوع مختلف).
+  /// قبل هالتوحيد، كانت هاي الاستثناءات (غير DioException) تفلت بلا catch،
+  /// فيضل الكيوبت عالق على "جاري التحميل" للأبد بلا أي رسالة أو زر إعادة
+  /// محاولة — هيك كانت الحالة الحقيقية وراء "ما بيفتح" بتقارير المشتريات
+  /// وحركة المخزون (بعكس "بيطلعلي إعادة المحاولة" وهو DioException حقيقي).
+  Failure _mapError(Object e, String fallbackMessage) {
+    if (e is Failure) return e;
+    if (e is! DioException) return ServerFailure(fallbackMessage);
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout) {

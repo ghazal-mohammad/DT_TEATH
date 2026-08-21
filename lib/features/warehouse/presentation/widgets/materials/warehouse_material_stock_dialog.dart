@@ -331,7 +331,9 @@ class _AdjustBatchDialog extends StatefulWidget {
 }
 
 class _AdjustBatchDialogState extends State<_AdjustBatchDialog> {
-  bool _isIn = true;
+  // سحب فقط — الإضافة صارت حصراً عبر فاتورة الشراء (نفس قيد حذف addStockBatch
+  // الموثّق أعلاه)، فلا داعي لخيار "إضافة" هون أصلاً.
+  static const bool _isIn = false;
   final _ctrl = TextEditingController();
   StockMovementReason _reason = StockMovementReason.adjustment;
   String? _error;
@@ -359,7 +361,7 @@ class _AdjustBatchDialogState extends State<_AdjustBatchDialog> {
       setState(() => _error = context.l10n.whMovementInvalid);
       return;
     }
-    if (!_isIn && v > widget.batch.quantity) {
+    if (v > widget.batch.quantity) {
       setState(() => _error = context.l10n.whMovementExceeds);
       return;
     }
@@ -390,28 +392,28 @@ class _AdjustBatchDialogState extends State<_AdjustBatchDialog> {
                   style: AppTextStyles.bodySmall
                       .copyWith(color: AppColors.lightText3)),
               const SizedBox(height: AppSizes.spaceMD),
-              Row(
-                children: [
-                  Expanded(
-                    child: _Seg(
-                      label: l10n.whStockAdd,
-                      icon: Icons.south_west_rounded,
-                      color: AppColors.statusSuccess,
-                      selected: _isIn,
-                      onTap: () => setState(() => _isIn = true),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _Seg(
-                      label: l10n.whStockDeduct,
-                      icon: Icons.north_east_rounded,
-                      color: AppColors.statusUrgent,
-                      selected: !_isIn,
-                      onTap: () => setState(() => _isIn = false),
-                    ),
-                  ),
-                ],
+              // لا خيار "إضافة" — السحب هو الإجراء الوحيد المتاح من هون.
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                decoration: BoxDecoration(
+                  color: AppColors.statusUrgent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSM),
+                  border: Border.all(color: AppColors.statusUrgent, width: 2),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.north_east_rounded,
+                        size: 17, color: AppColors.statusUrgent),
+                    const SizedBox(width: 7),
+                    Text(l10n.whStockDeduct,
+                        style: const TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.statusUrgent)),
+                  ],
+                ),
               ),
               const SizedBox(height: AppSizes.spaceMD),
               TextField(
@@ -432,7 +434,9 @@ class _AdjustBatchDialogState extends State<_AdjustBatchDialog> {
               AppFormSelect<StockMovementReason>(
                 label: l10n.whStockReason,
                 value: _reason,
+                // "purchase" سبب إدخال فقط — لا معنى له بسحب.
                 options: StockMovementReason.values
+                    .where((r) => r != StockMovementReason.purchase)
                     .map((r) => AppSelectOption<StockMovementReason>(
                         value: r, label: _reasonLabel(context, r)))
                     .toList(),
@@ -459,52 +463,6 @@ class _AdjustBatchDialogState extends State<_AdjustBatchDialog> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Seg extends StatelessWidget {
-  const _Seg({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.selected,
-    required this.onTap,
-  });
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(vertical: 11),
-        decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.12) : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppSizes.radiusSM),
-          border: Border.all(
-              color: selected ? color : AppColors.lightBorder,
-              width: selected ? 2 : 1),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 17, color: selected ? color : AppColors.lightText3),
-            const SizedBox(width: 7),
-            Text(label,
-                style: TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w800,
-                    color: selected ? color : AppColors.lightText2)),
-          ],
         ),
       ),
     );

@@ -11,23 +11,31 @@ part of 'warehouse_materials_content.dart';
 // ══════════════════════════════════════════════════════════════════════════
 
 class _StatsRow extends StatelessWidget {
-  const _StatsRow({required this.materials, required this.isLight});
+  const _StatsRow({
+    required this.materials,
+    required this.lowStockIds,
+    required this.isLight,
+  });
   final List<WarehouseMaterial> materials;
+  final Set<String> lowStockIds;
   final bool isLight;
 
   @override
   Widget build(BuildContext context) {
+    final statuses = {
+      for (final m in materials) m.id: _effectiveStatus(m, lowStockIds),
+    };
     final outCount = materials
         .where((m) =>
-            m.status == MaterialStatus.outOfStock ||
-            m.status == MaterialStatus.expired)
+            statuses[m.id] == MaterialStatus.outOfStock ||
+            statuses[m.id] == MaterialStatus.expired)
         .length;
     final lowCount =
-        materials.where((m) => m.status == MaterialStatus.low).length;
+        materials.where((m) => statuses[m.id] == MaterialStatus.low).length;
     final availCount = materials
         .where((m) =>
-            m.status == MaterialStatus.available ||
-            m.status == MaterialStatus.expiringSoon)
+            statuses[m.id] == MaterialStatus.available ||
+            statuses[m.id] == MaterialStatus.expiringSoon)
         .length;
     final total = materials.length;
 

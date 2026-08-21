@@ -2,7 +2,6 @@ import 'package:dt_teeth/core/network/failure.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_dashboard_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_purchases_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_stock_movement_report.dart';
-import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_material_requests_report.dart';
 import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_reports_repository.dart';
 import 'package:dt_teeth/features/warehouse/presentation/bloc/warehouse_reports_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -105,24 +104,6 @@ void main() {
       await cubit.loadStockMovement();
       expect(cubit.state.stockMovementReport, isNull);
       expect(cubit.state.stockMovementError, isNotNull);
-    });
-
-    test('loadMaterialRequests ينجح ⇒ materialRequestsReport محمّل', () async {
-      when(() => repo.getMaterialRequestsReport(
-              from: any(named: 'from'), to: any(named: 'to')))
-          .thenAnswer((_) async => const WarehouseMaterialRequestsReport(
-                totalRequests: 32,
-                fulfilledCount: 0,
-                rejectedCount: 3,
-                pendingCount: 5,
-                fulfillmentRate: '0%',
-                byRequester: [],
-                requests: [],
-              ));
-      final cubit = WarehouseReportsCubit(repo);
-      await cubit.loadMaterialRequests();
-      expect(cubit.state.materialRequestsReport?.totalRequests, 32);
-      expect(cubit.state.materialRequestsError, isNull);
     });
 
     test('loadDashboard ينجح ⇒ dashboardReport محمّل (افتراضياً period=month)',

@@ -11,15 +11,20 @@ import 'package:mocktail/mocktail.dart';
 import 'package:dt_teeth/core/l10n/generated/app_localizations.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/material_category.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_material.dart';
+import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_inventory_repository.dart';
 import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_materials_repository.dart';
+import 'package:dt_teeth/features/warehouse/presentation/bloc/inventory_cubit.dart';
 import 'package:dt_teeth/features/warehouse/presentation/bloc/materials_cubit.dart';
 import 'package:dt_teeth/features/warehouse/presentation/widgets/materials/warehouse_materials_content.dart';
 
 class _MockRepo extends Mock implements WarehouseMaterialsRepository {}
 
+class _MockInventoryRepo extends Mock implements WarehouseInventoryRepository {}
+
 void main() {
   late _MockRepo repo;
   late MaterialsCubit cubit;
+  late InventoryCubit inventoryCubit;
 
   const material = WarehouseMaterial(
     id: '7',
@@ -37,9 +42,13 @@ void main() {
     when(() => repo.watchAll()).thenAnswer((_) => const Stream.empty());
     when(() => repo.delete(any())).thenAnswer((_) async {});
     cubit = MaterialsCubit(repository: repo);
+    inventoryCubit = InventoryCubit(_MockInventoryRepo());
   });
 
-  tearDown(() => cubit.close());
+  tearDown(() {
+    cubit.close();
+    inventoryCubit.close();
+  });
 
   testWidgets('الضغط على إلغاء التفعيل + تأكيد ⇒ يستدعي cubit.delete',
       (tester) async {
@@ -55,8 +64,11 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
-          body: BlocProvider.value(
-            value: cubit,
+          body: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: cubit),
+              BlocProvider.value(value: inventoryCubit),
+            ],
             child: const WarehouseMaterialsContent(),
           ),
         ),

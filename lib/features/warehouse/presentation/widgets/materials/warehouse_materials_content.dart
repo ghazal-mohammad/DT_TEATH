@@ -25,9 +25,11 @@ import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_button.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
+import '../../../domain/entities/inventory_summary.dart';
 import '../../../domain/entities/material_category.dart';
 import '../../../domain/entities/material_status.dart';
 import '../../../domain/entities/warehouse_material.dart';
+import '../../bloc/inventory_cubit.dart';
 import '../../bloc/materials_cubit.dart';
 import '../../bloc/materials_state.dart';
 import '../../pages/warehouse_stock_log_page.dart';
@@ -37,6 +39,28 @@ import 'warehouse_material_stock_dialog.dart';
 part 'warehouse_materials_stats.dart';
 part 'warehouse_materials_filters.dart';
 part 'warehouse_materials_table.dart';
+
+// ══════════════════════════════════════════════════════════════════════════
+//                          الحالة الفعلية (مع إشارة "منخفض" الحقيقية)
+// ══════════════════════════════════════════════════════════════════════════
+//
+// WarehouseMaterial.status لا يقدر أبداً يرجّع MaterialStatus.low: الباك ما
+// يرسل min_stock بعقد formatMaterial (راجع تعليق remote_warehouse_materials_
+// repository.dart)، فـ minStock يضل 0 دائماً، وquantity<=0 عندها بيتحقّق شرط
+// outOfStock قبل ما توصل مقارنة low أصلاً. الإشارة الحقيقية الوحيدة لـ"منخفض"
+// هي is_low من /lowStockMaterials (نفس المصدر يلي بلوحة التحكم وشارة
+// السايدبار) — هاد الـ helper يدمجها فوق status المحسوبة محلياً (نفس ترتيب
+// الأولوية بـ MaterialStatusResolver: expired > outOfStock > low > expiring
+// > available).
+MaterialStatus _effectiveStatus(
+    WarehouseMaterial m, Set<String> lowStockIds) {
+  final base = m.status;
+  if (base == MaterialStatus.outOfStock || base == MaterialStatus.expired) {
+    return base;
+  }
+  if (lowStockIds.contains(m.id)) return MaterialStatus.low;
+  return base;
+}
 
 // ══════════════════════════════════════════════════════════════════════════
 //                             LOCAL FILTERS
@@ -76,8 +100,8 @@ extension on _StatusFilter {
         _StatusFilter.available => l10n.whStatusAvailable,
       };
 
-  bool matches(WarehouseMaterial m) {
-    final s = m.status;
+  bool matches(WarehouseMaterial m, Set<String> lowStockIds) {
+    final s = _effectiveStatus(m, lowStockIds);
     return switch (this) {
       _StatusFilter.all => true,
       _StatusFilter.low => s == MaterialStatus.low,
@@ -105,13 +129,26 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
   _CategoryFilter _category = _CategoryFilter.all;
   _StatusFilter _status = _StatusFilter.all;
 
-  List<WarehouseMaterial> _applyFilters(List<WarehouseMaterial> all) {
-    return all.where(_category.matches).where(_status.matches).toList();
+  List<WarehouseMaterial> _applyFilters(
+      List<WarehouseMaterial> all, Set<String> lowStockIds) {
+    return all
+        .where(_category.matches)
+        .where((m) => _status.matches(m, lowStockIds))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
+    // إشارة "منخفض" الحقيقية الوحيدة (is_low من /lowStockMaterials) — نفس
+    // مصدر شارة السايدبار وبطاقة لوحة التحكم بهاي الصفحة (InventoryCubit
+    // محمّل أصلاً فوق بـ WarehouseMaterialsPage)، بدل minStock المحلي المُصفَّر
+    // دائماً. نستثني isOut لأنها بالفعل outOfStock من الكمية الحقيقية مباشرة.
+    final inventorySummary = context.watch<InventoryCubit>().state.summary;
+    final lowStockIds = <String>{
+      for (final item in inventorySummary?.lowStockItems ?? const <LowStockMaterial>[])
+        if (!item.isOut) item.materialId,
+    };
     return BlocConsumer<MaterialsCubit, MaterialsState>(
       listenWhen: (p, c) =>
           p.actionError != c.actionError && c.actionError != null,
@@ -123,12 +160,12 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
       },
       builder: (context, state) {
         final all = state.materials;
-        final filtered = _applyFilters(all);
+        final filtered = _applyFilters(all, lowStockIds);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _StatsRow(materials: all, isLight: isLight),
+            _StatsRow(materials: all, lowStockIds: lowStockIds, isLight: isLight),
             const SizedBox(height: 14),
             _CategoryFilterBar(
               active: _category,
@@ -143,6 +180,7 @@ class _WarehouseMaterialsContentState extends State<WarehouseMaterialsContent> {
               all: all,
               filtered: filtered,
               status: _status,
+              lowStockIds: lowStockIds,
               onStatusChange: (s) => setState(() => _status = s),
               isLight: isLight,
               onAddTap: () => _openForm(context),

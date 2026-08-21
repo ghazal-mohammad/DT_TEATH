@@ -1261,9 +1261,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get systemAllNormal => 'جميع الأنظمة تعمل بشكل طبيعي';
-
-  @override
   String labLastUpdate(String time) {
     return 'آخر تحديث: $time';
   }
@@ -2339,9 +2336,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String whGreeting(String name) {
     return 'مرحباً، $name';
   }
-
-  @override
-  String get whSystemsNormal => 'جميع الأنظمة تعمل بشكل طبيعي';
 
   @override
   String get whLastUpdateLabel => 'آخر تحديث: ';

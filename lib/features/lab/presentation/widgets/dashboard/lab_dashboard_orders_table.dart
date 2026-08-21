@@ -54,6 +54,10 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
         return all
             .where((o) => o.statusVariant == LabOrderBadgeVariant.ready)
             .toList();
+      case 'cancelled':
+        return all
+            .where((o) => o.statusVariant == LabOrderBadgeVariant.cancelled)
+            .toList();
       default:
         return all;
     }
@@ -71,6 +75,9 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
           .length,
       'ready': all
           .where((o) => o.statusVariant == LabOrderBadgeVariant.ready)
+          .length,
+      'cancelled': all
+          .where((o) => o.statusVariant == LabOrderBadgeVariant.cancelled)
           .length,
     };
     final bool isLight = Theme.of(context).brightness == Brightness.light;
@@ -134,13 +141,20 @@ class _LabDashboardOrdersTableState extends State<LabDashboardOrdersTable> {
                 const Spacer(),
                 // tabs — الستايل الموحّد (نفس شريط المستودع)
                 AppSegmentedTabs<String>(
-                  values: const ['all', 'new', 'manufacturing', 'ready'],
+                  values: const [
+                    'all',
+                    'new',
+                    'manufacturing',
+                    'ready',
+                    'cancelled',
+                  ],
                   selected: _activeFilter,
                   labelOf: (v) => switch (v) {
                     'new' => context.l10n.labOrdersFilterNew,
                     'manufacturing' =>
                       context.l10n.labOrdersFilterManufacturing,
                     'ready' => context.l10n.labOrdersFilterReady,
+                    'cancelled' => context.l10n.statusCancelled,
                     _ => context.l10n.labOrdersFilterAll,
                   },
                   countOf: (v) =>

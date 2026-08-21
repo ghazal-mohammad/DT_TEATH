@@ -159,9 +159,8 @@ class _LabDashboardBody extends StatelessWidget {
       emoji: '🦷',
       greeting: l10n.labGreeting(
           CurrentUser.instance.name ?? MockUserData.labUserName),
-      statusText: l10n.systemAllNormal,
       metas: [
-        AppHeroMeta(_todayLabel(context), faded: true),
+        AppHeroMeta(_todayLabel(context), faded: true, dotBefore: false),
         AppHeroMeta(_lastUpdatedLabel(context), faded: true),
       ],
       stats: [

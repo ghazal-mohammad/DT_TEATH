@@ -9,15 +9,20 @@ import 'package:mocktail/mocktail.dart';
 import 'package:dt_teeth/core/l10n/generated/app_localizations.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/material_category.dart';
 import 'package:dt_teeth/features/warehouse/domain/entities/warehouse_material.dart';
+import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_inventory_repository.dart';
 import 'package:dt_teeth/features/warehouse/domain/repositories/warehouse_materials_repository.dart';
+import 'package:dt_teeth/features/warehouse/presentation/bloc/inventory_cubit.dart';
 import 'package:dt_teeth/features/warehouse/presentation/bloc/materials_cubit.dart';
 import 'package:dt_teeth/features/warehouse/presentation/widgets/materials/warehouse_materials_content.dart';
 
 class _MockRepo extends Mock implements WarehouseMaterialsRepository {}
 
+class _MockInventoryRepo extends Mock implements WarehouseInventoryRepository {}
+
 void main() {
   late _MockRepo repo;
   late MaterialsCubit cubit;
+  late InventoryCubit inventoryCubit;
 
   const material = WarehouseMaterial(
     id: '1',
@@ -34,9 +39,13 @@ void main() {
     when(() => repo.getAll()).thenAnswer((_) async => [material]);
     when(() => repo.watchAll()).thenAnswer((_) => const Stream.empty());
     cubit = MaterialsCubit(repository: repo);
+    inventoryCubit = InventoryCubit(_MockInventoryRepo());
   });
 
-  tearDown(() => cubit.close());
+  tearDown(() {
+    cubit.close();
+    inventoryCubit.close();
+  });
 
   testWidgets('فشل حذف مادة يظهر كـ SnackBar', (tester) async {
     tester.view.physicalSize = const Size(1440, 900);
@@ -51,8 +60,11 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
-          body: BlocProvider.value(
-            value: cubit,
+          body: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: cubit),
+              BlocProvider.value(value: inventoryCubit),
+            ],
             child: const WarehouseMaterialsContent(),
           ),
         ),

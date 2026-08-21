@@ -2540,12 +2540,6 @@ abstract class AppLocalizations {
   /// **'Welcome, {name}'**
   String labGreeting(String name);
 
-  /// No description provided for @systemAllNormal.
-  ///
-  /// In en, this message translates to:
-  /// **'All systems operating normally'**
-  String get systemAllNormal;
-
   /// No description provided for @labLastUpdate.
   ///
   /// In en, this message translates to:
@@ -4609,12 +4603,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hello, {name}'**
   String whGreeting(String name);
-
-  /// No description provided for @whSystemsNormal.
-  ///
-  /// In en, this message translates to:
-  /// **'All systems operating normally'**
-  String get whSystemsNormal;
 
   /// No description provided for @whLastUpdateLabel.
   ///

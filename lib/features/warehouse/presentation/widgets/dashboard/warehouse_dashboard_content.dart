@@ -87,9 +87,8 @@ class WarehouseDashboardContent extends StatelessWidget {
       emoji: '📦',
       greeting: l10n.whGreeting(
           CurrentUser.instance.name ?? MockUserData.defaultUserName),
-      statusText: l10n.whSystemsNormal,
       metas: [
-        AppHeroMeta(l10n.whLastUpdateLabel, faded: true),
+        AppHeroMeta(l10n.whLastUpdateLabel, faded: true, dotBefore: false),
         AppHeroMeta(_lastUpdatedLabel(l10n, invState.lastLoadedAt),
             bold: true, dotBefore: false),
         AppHeroMeta(_todayLabel(l10n), faded: true),

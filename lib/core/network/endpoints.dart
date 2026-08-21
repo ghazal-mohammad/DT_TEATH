@@ -223,8 +223,6 @@ class ApiEndpoints {
       '/api/warehouseManager/stock-movement';
   static const String warehouseReportPurchaseInvoices =
       '/api/warehouseManager/purchase-invoices';
-  static const String warehouseReportMaterialRequests =
-      '/api/warehouseManager/material-requests';
 
   // تقرير التحليلات العام — يحمل بادئة reports/ فعلاً (خلافاً للـ3 أعلاه) —
   // تحقّق مباشر من routes/api.php بتاريخ 2026-08-15، لا افتراضاً.

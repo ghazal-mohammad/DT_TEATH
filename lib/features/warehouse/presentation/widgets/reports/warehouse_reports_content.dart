@@ -3,13 +3,14 @@
 //
 // 3 تبويبات تقارير مستودع بنفس روح تقارير المخبر (ReportsView الموحّد) —
 // الثلاثة مربوطة بالباك فعلاً:
+//   • نظرة عامة — reports/dashboard.
 //   • المشتريات — purchase-invoices.
 //   • حركة المخزون — stock-movement (قُرئ الكونترولر مباشرة 2026-08-15
 //     لتأكيد الشكل، كان بيانات تجريبية محلية فقط قبل هيك).
-//   • طلبات المواد — material-requests (نفس الشيء؛ ⚠️ باغ حقيقي موثَّق
-//     بالباك: fulfilled_count/fulfillment_rate يرجعوا 0 دائماً لأن الكونترولر
-//     يفلتر status=='fulfilled' غير الموجودة أصلاً بالـ enum — القيمة
-//     الحقيقية 'completed'. نعرض ما يرجعه الباك بأمانة، لا "نصلحه" بالفرونت).
+//
+// تبويب "طلبات المواد" (material-requests) أُزيل نهائياً 2026-08-21 — الباك
+// يرمي 500 دائماً (Call to undefined relationship [requester] on model
+// [App\Models\MaterialRequest]). أعد إضافته بعد ما يُصلَح الباك.
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
@@ -22,11 +23,10 @@ import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
 import '../../../../../shared/widgets/reports/reports_view.dart';
 import '../../bloc/warehouse_reports_cubit.dart';
 import '../../../domain/entities/warehouse_dashboard_report.dart';
-import '../../../domain/entities/warehouse_material_requests_report.dart';
 import '../../../domain/entities/warehouse_purchases_report.dart';
 import '../../../domain/entities/warehouse_stock_movement_report.dart';
 
-enum _ReportTab { overview, purchases, stockMovement, materialRequests }
+enum _ReportTab { overview, purchases, stockMovement }
 
 class WarehouseReportsContent extends StatefulWidget {
   const WarehouseReportsContent({super.key});
@@ -52,7 +52,6 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
             _ReportTab.overview => l10n.whReportTypeOverview,
             _ReportTab.purchases => l10n.whReportTypePurchases,
             _ReportTab.stockMovement => l10n.whReportTypeStockMovement,
-            _ReportTab.materialRequests => l10n.whReportTypeMaterialRequests,
           },
           onChanged: (t) => setState(() => _tab = t),
         ),
@@ -61,7 +60,6 @@ class _WarehouseReportsContentState extends State<WarehouseReportsContent> {
           _ReportTab.overview => const _DashboardOverviewReportTab(),
           _ReportTab.purchases => const _PurchasesReportTab(),
           _ReportTab.stockMovement => const _StockMovementReportTab(),
-          _ReportTab.materialRequests => const _MaterialRequestsReportTab(),
         },
       ],
     );
@@ -376,100 +374,3 @@ class _StockMovementReportTab extends StatelessWidget {
 
 String _dayLabel(DateTime d) =>
     '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-
-// ── تبويب طلبات المواد — مربوط بالباك (material-requests) ────────────────
-
-class _MaterialRequestsReportTab extends StatelessWidget {
-  const _MaterialRequestsReportTab();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return BlocBuilder<WarehouseReportsCubit, WarehouseReportsState>(
-      builder: (context, state) {
-        final cubit = context.read<WarehouseReportsCubit>();
-        final report = state.materialRequestsReport;
-        final loading = report == null && state.materialRequestsError == null;
-        return ReportsView(
-          status: loading
-              ? ReportsViewStatus.loading
-              : (report == null
-                  ? ReportsViewStatus.error
-                  : ReportsViewStatus.loaded),
-          selectedPeriod: state.period,
-          onPeriodChanged: (p) {
-            cubit.changePeriod(p);
-            cubit.loadMaterialRequests();
-          },
-          onRetry: cubit.loadMaterialRequests,
-          periodLabel: l10n.whReportMaterialRequestsTitle,
-          exportTitle: l10n.whReportMaterialRequestsTitle,
-          errorMessage: state.materialRequestsError,
-          kpis: _kpis(l10n, report),
-          ordersByType: _byRequester(report),
-          ordersByDay: _byDay(report),
-          teamPerformance: null,
-          byTypeTitle: l10n.whReportByRequester,
-          byDayTitle: l10n.whReportRequestsByDay,
-        );
-      },
-    );
-  }
-
-  List<ReportKpi> _kpis(
-      AppLocalizations l10n, WarehouseMaterialRequestsReport? r) {
-    return [
-      ReportKpi(
-          icon: '📋',
-          value: (r?.totalRequests ?? 0).toString(),
-          label: l10n.whReportStatTotalRequests,
-          accent: AppColors.statusInfo),
-      ReportKpi(
-          icon: '✅',
-          value: (r?.fulfilledCount ?? 0).toString(),
-          label: l10n.whReportStatFulfilled,
-          accent: AppColors.statusSuccess),
-      ReportKpi(
-          icon: '❌',
-          value: (r?.rejectedCount ?? 0).toString(),
-          label: l10n.whReportStatRejected,
-          accent: AppColors.statusUrgent),
-      ReportKpi(
-          icon: '📈',
-          value: r?.fulfillmentRate ?? '0%',
-          label: l10n.whReportStatFulfillmentRate,
-          accent: AppColors.statusProgress),
-    ];
-  }
-
-  List<ReportSegment> _byRequester(WarehouseMaterialRequestsReport? r) {
-    if (r == null || r.byRequester.isEmpty) return const [];
-    final total = r.totalRequests > 0 ? r.totalRequests : 1;
-    final buckets = [...r.byRequester]
-      ..sort((a, b) => b.totalRequests.compareTo(a.totalRequests));
-    return [
-      for (var i = 0; i < buckets.length; i++)
-        ReportSegment(
-          label: buckets[i].requester,
-          percentage: (buckets[i].totalRequests / total * 100).round(),
-          count: buckets[i].totalRequests,
-          color: kReportPalette[i % kReportPalette.length],
-        ),
-    ];
-  }
-
-  /// تجميع الطلبات حسب اليوم من created_at الحقيقي (الباك لا يرجّع تجميعاً
-  /// يومياً جاهزاً لهالتقرير).
-  List<ReportDay> _byDay(WarehouseMaterialRequestsReport? r) {
-    if (r == null) return const [];
-    final counts = <String, int>{};
-    for (final row in r.requests) {
-      final d = row.createdAt;
-      if (d == null) continue;
-      final key = _dayLabel(d);
-      counts[key] = (counts[key] ?? 0) + 1;
-    }
-    final keys = counts.keys.toList()..sort();
-    return [for (final k in keys) ReportDay(label: k, count: counts[k]!)];
-  }
-}
