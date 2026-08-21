@@ -1080,7 +1080,7 @@
   "labReqLabOrder": "Lab order",
   "labReqEmptyCategory": "No invoices in this category",
   "labReqNewRequest": "New invoice",
-  "labReqSearchHint": "Filter material requests... (material, id, company)",
+  "labReqSearchHint": "Filter invoices... (material, id, company)",
   "labReqMaterialPickHint": "Type to search warehouse materials or enter a new one",
   "labReqDeleteTitle": "Delete invoice",
   "labReqDeleteConfirm": "Delete invoice #{id}? This cannot be undone.",

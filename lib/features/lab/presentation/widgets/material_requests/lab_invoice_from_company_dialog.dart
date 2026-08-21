@@ -90,15 +90,23 @@ class _LabInvoiceFromCompanyDialogState extends State<LabInvoiceFromCompanyDialo
       _companyError = company.isEmpty ? l10n.labReqCompanyNameRequired : null;
     });
     final items = <({String materialName, int quantity, String unit, String? reason})>[];
+    var hasPartialRow = false;
     for (final row in _rows) {
       final name = row.nameController.text.trim();
-      final qty = int.tryParse(row.quantityController.text.trim()) ?? 0;
-      if (name.isEmpty || qty <= 0) continue;
+      final qtyText = row.quantityController.text.trim();
+      final qty = int.tryParse(qtyText) ?? 0;
+      if (name.isEmpty && qtyText.isEmpty) continue; // صف فارغ بالكامل — تجاهل بصمت
+      if (name.isEmpty || qty <= 0) {
+        hasPartialRow = true;
+        continue;
+      }
       final reason = row.reasonController.text.trim();
       items.add((materialName: name, quantity: qty, unit: row.unit, reason: reason.isEmpty ? null : reason));
     }
     setState(() {
-      _rowsError = items.isEmpty ? l10n.labReqAtLeastOneItemRequired : null;
+      _rowsError = hasPartialRow
+          ? l10n.labReqQuantityRequired
+          : (items.isEmpty ? l10n.labReqAtLeastOneItemRequired : null);
     });
     if (_companyError != null || _rowsError != null) return;
     final notes = _notes.text.trim();
@@ -189,48 +197,60 @@ class _LabInvoiceFromCompanyDialogState extends State<LabInvoiceFromCompanyDialo
   Widget _materialRow(BuildContext context, int i, bool isLight) {
     final l10n = context.l10n;
     final row = _rows[i];
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 3,
-          child: TextField(
-            key: Key('material_name_$i'),
-            controller: row.nameController,
-            inputFormatters: [LengthLimitingTextInputFormatter(120)],
-            decoration: _decoration(hintText: l10n.labReqFieldMaterial),
-          ),
-        ),
-        const SizedBox(width: AppSizes.spaceSM),
-        Expanded(
-          flex: 2,
-          child: TextField(
-            key: Key('material_qty_$i'),
-            controller: row.quantityController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: _decoration(hintText: l10n.colQuantity),
-          ),
-        ),
-        const SizedBox(width: AppSizes.spaceSM),
-        Expanded(
-          flex: 2,
-          child: AppDropdownMenuTheme(
-            child: DropdownButtonFormField<String>(
-              initialValue: row.unit,
-              isExpanded: true,
-              decoration: _decoration(),
-              dropdownColor: isLight ? Colors.white : AppColors.darkBg1,
-              borderRadius: BorderRadius.circular(AppSizes.radiusLG),
-              items: [for (final u in kMatRequestUnits) DropdownMenuItem(value: u, child: Text(u))],
-              onChanged: (v) => setState(() => row.unit = v ?? row.unit),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: TextField(
+                key: Key('material_name_$i'),
+                controller: row.nameController,
+                inputFormatters: [LengthLimitingTextInputFormatter(120)],
+                decoration: _decoration(hintText: l10n.labReqFieldMaterial),
+              ),
             ),
-          ),
+            const SizedBox(width: AppSizes.spaceSM),
+            Expanded(
+              flex: 2,
+              child: TextField(
+                key: Key('material_qty_$i'),
+                controller: row.quantityController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: _decoration(hintText: l10n.colQuantity),
+              ),
+            ),
+            const SizedBox(width: AppSizes.spaceSM),
+            Expanded(
+              flex: 2,
+              child: AppDropdownMenuTheme(
+                child: DropdownButtonFormField<String>(
+                  initialValue: row.unit,
+                  isExpanded: true,
+                  decoration: _decoration(),
+                  dropdownColor: isLight ? Colors.white : AppColors.darkBg1,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusLG),
+                  items: [for (final u in kMatRequestUnits) DropdownMenuItem(value: u, child: Text(u))],
+                  onChanged: (v) => setState(() => row.unit = v ?? row.unit),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close_rounded, size: 18),
+              onPressed: _rows.length > 1 ? () => _removeRow(i) : null,
+              tooltip: l10n.labReqRemoveRow,
+            ),
+          ],
         ),
-        IconButton(
-          icon: const Icon(Icons.close_rounded, size: 18),
-          onPressed: _rows.length > 1 ? () => _removeRow(i) : null,
-          tooltip: l10n.labReqRemoveRow,
+        const SizedBox(height: AppSizes.spaceSM),
+        TextField(
+          key: Key('material_reason_$i'),
+          controller: row.reasonController,
+          inputFormatters: [LengthLimitingTextInputFormatter(200)],
+          decoration: _decoration(hintText: l10n.labReqReasonHint),
         ),
       ],
     );

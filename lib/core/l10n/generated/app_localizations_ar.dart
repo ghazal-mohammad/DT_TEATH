@@ -2469,7 +2469,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get labReqNewRequest => 'طلب فاتورة جديدة';
 
   @override
-  String get labReqSearchHint => 'فلترة طلبات المواد... (مادة، رقم، شركة)';
+  String get labReqSearchHint => 'فلترة الفواتير... (مادة، رقم، شركة)';
 
   @override
   String get labReqMaterialPickHint =>

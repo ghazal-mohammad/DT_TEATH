@@ -871,7 +871,7 @@
   "labReqLabOrder": "طلبية المخبر",
   "labReqEmptyCategory": "لا توجد فواتير في هذه الفئة",
   "labReqNewRequest": "طلب فاتورة جديدة",
-  "labReqSearchHint": "فلترة طلبات المواد... (مادة، رقم، شركة)",
+  "labReqSearchHint": "فلترة الفواتير... (مادة، رقم، شركة)",
   "labReqMaterialPickHint": "اكتب للبحث في مواد المستودع أو أدخل مادة جديدة",
   "labReqDeleteTitle": "حذف الفاتورة",
   "labReqDeleteConfirm": "هل تريد حذف الفاتورة #{id}؟ لا يمكن التراجع.",

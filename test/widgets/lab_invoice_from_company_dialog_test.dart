@@ -45,6 +45,54 @@ void main() {
     expect(result!.items[1].materialName, 'قفازات');
   });
 
+  testWidgets('حقل السبب لكل صف بينبعت مع العنصر', (tester) async {
+    LabInvoiceFromCompanyResult? result;
+    await tester.pumpWidget(wrap(Builder(builder: (context) {
+      return ElevatedButton(
+        onPressed: () async => result = await LabInvoiceFromCompanyDialog.show(context),
+        child: const Text('open'),
+      );
+    })));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('company_name_field')), 'شركة دنتال سوريا');
+    await tester.enterText(find.byKey(const Key('material_name_0')), 'صمغ طبي خاص');
+    await tester.enterText(find.byKey(const Key('material_qty_0')), '3');
+    await tester.enterText(find.byKey(const Key('material_reason_0')), 'نحتاجها لطلب مستعجل');
+
+    await tester.tap(find.text('إرسال الطلب'));
+    await tester.pumpAndSettle();
+
+    expect(result!.items.single.reason, 'نحتاجها لطلب مستعجل');
+  });
+
+  testWidgets('صف فيه اسم بلا كمية ⇒ يُعتبر ناقص ولا يُغلق الحوار', (tester) async {
+    LabInvoiceFromCompanyResult? result;
+    var popped = false;
+    await tester.pumpWidget(wrap(Builder(builder: (context) {
+      return ElevatedButton(
+        onPressed: () async {
+          result = await LabInvoiceFromCompanyDialog.show(context);
+          popped = true;
+        },
+        child: const Text('open'),
+      );
+    })));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('company_name_field')), 'شركة دنتال سوريا');
+    await tester.enterText(find.byKey(const Key('material_name_0')), 'صمغ طبي خاص');
+    // بلا كمية — صف ناقص، ما لازم ينبلع بصمت.
+
+    await tester.tap(find.text('إرسال الطلب'));
+    await tester.pump();
+
+    expect(popped, isFalse);
+    expect(result, isNull);
+  });
+
   testWidgets('اسم شركة فارغ ⇒ لا يُغلق الحوار', (tester) async {
     LabInvoiceFromCompanyResult? result;
     var popped = false;

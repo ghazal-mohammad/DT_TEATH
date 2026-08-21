@@ -2490,8 +2490,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labReqNewRequest => 'New invoice';
 
   @override
-  String get labReqSearchHint =>
-      'Filter material requests... (material, id, company)';
+  String get labReqSearchHint => 'Filter invoices... (material, id, company)';
 
   @override
   String get labReqMaterialPickHint =>

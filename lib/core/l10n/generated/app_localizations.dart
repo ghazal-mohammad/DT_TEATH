@@ -4841,7 +4841,7 @@ abstract class AppLocalizations {
   /// No description provided for @labReqSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Filter material requests... (material, id, company)'**
+  /// **'Filter invoices... (material, id, company)'**
   String get labReqSearchHint;
 
   /// No description provided for @labReqMaterialPickHint.
