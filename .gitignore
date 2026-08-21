@@ -49,3 +49,11 @@ app.*.map.json
 .github/copilot-instructions.md
 /memory/
 /.superpowers/
+/docs/superpowers/
+/~/
+
+# نواتج تشغيل مؤقتة (اختبارات أداء / تحليل) — لا تُرفَع.
+/perf.json
+/perf-*.txt
+/analyze-output.txt
+/performance-output.txt
