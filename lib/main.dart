@@ -27,6 +27,7 @@ import 'core/di/injection_container.dart' as di;
 import 'core/monitoring/crash_reporter.dart';
 import 'core/l10n/generated/app_localizations.dart';
 import 'core/network/dio_client.dart';
+import 'core/notifications/fcm_service.dart';
 import 'core/offline/outbox.dart';
 import 'core/offline/outbox_processor.dart';
 import 'core/router/app_router.dart';
@@ -56,6 +57,7 @@ const Duration _kIdleTimeout = Duration(minutes: 15);
 /// قفل الجلسة عند الخمول: تسجيل خروج صامت (يُبطل التوكن في الباك ويمسح محلياً)
 /// ثم توجيه لشاشة الدخول. صامت (بلا نافذة تأكيد) لأنه تلقائي.
 void _onIdleTimeout() {
+  di.sl<FcmService>().unregister();
   di.sl<AuthRepository>().logout();
   AppRouter.router.go(RouteNames.login);
 }

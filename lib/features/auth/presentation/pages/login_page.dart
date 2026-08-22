@@ -19,11 +19,14 @@
 //   ✅ AppSizes.spaceXxx     ← بدل SizedBox يدوية
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/auth/auth_models.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../core/notifications/fcm_service.dart';
 import '../../domain/auth_flow_mode.dart';
 import '../../../../core/l10n/build_context_l10n.dart';
 import '../../../../core/router/route_names.dart';
@@ -103,6 +106,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     setState(() => _loading = false);
 
     if (state.status == LoginStatus.success) {
+      // تسجيل push حقيقي (FCM) — المخبر والمستودع فقط حالياً. لا ننتظره
+      // (لا يجب أن يؤخّر أو يكسر تسجيل الدخول لو رفض المستخدم إذن الإشعارات).
+      final role = state.user?.role;
+      if (role == EmployeeRole.labManager ||
+          role == EmployeeRole.warehouseManager) {
+        unawaited(sl<FcmService>().initAndRegister());
+      }
       // الخروج السلس يتكفّل به انتقال الراوت.
       context.go(_dashboardForRole(state.user?.role));
     } else {

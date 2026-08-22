@@ -10,6 +10,8 @@
 // المرجع: DT_Teeth_Warehouse_v6_Enhanced.html
 // ════════════════════════════════════════════════════════════════════════════
 
+import '../../domain/entities/warehouse_notification.dart';
+
 // ══════════════════════════════════════════════════════════════════════════
 //                          ORDERS MOCK DATA
 // ══════════════════════════════════════════════════════════════════════════
@@ -356,27 +358,7 @@ class WarehouseReportsMockData {
 //                          NOTIFICATIONS MOCK DATA
 // ══════════════════════════════════════════════════════════════════════════
 
-enum NotificationCategory { low, expiry, order, general }
-
-class WarehouseNotification {
-  const WarehouseNotification({
-    required this.id,
-    required this.title,
-    required this.body,
-    required this.time,
-    required this.category,
-    this.isRead = false,
-    this.actionLabel,
-  });
-
-  final String id;
-  final String title;
-  final String body;
-  final String time;
-  final NotificationCategory category;
-  final bool isRead;
-  final String? actionLabel;
-}
+// النموذج انتقل لـ domain/entities/warehouse_notification.dart عند ربط الباك.
 
 class WarehouseNotificationsMockData {
   WarehouseNotificationsMockData._();

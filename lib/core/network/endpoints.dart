@@ -234,4 +234,7 @@ class ApiEndpoints {
       '/api/warehouseManager/notifications';
   static String warehouseMarkNotificationRead(Object id) =>
       '/api/warehouseManager/notifications/$id/read';
+
+  // ── FCM (push حقيقي — مشترك لكل الأدوار) ─────────────────────────────────
+  static const String fcmToken = '/api/fcm-token';
 }

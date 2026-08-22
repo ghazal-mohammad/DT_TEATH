@@ -27,8 +27,12 @@ class NotificationItem {
     required this.icon,
     this.action,
     this.isRead = false,
+    this.id,
   });
 
+  /// معرّف الإشعار بالباك — null بالبيانات الوهمية (Mock) القديمة.
+  /// مطلوب لاستدعاء "تحديد كمقروء" على عنصر واحد بالـ Remote repository.
+  final Object? id;
   final NotificationKind kind;
   final String title;
   final String description;

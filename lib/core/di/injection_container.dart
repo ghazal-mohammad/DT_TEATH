@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../monitoring/crash_reporter.dart';
 import '../network/dio_client.dart';
+import '../notifications/fcm_service.dart';
 import '../offline/local_store.dart';
 import '../offline/outbox.dart';
 import '../offline/outbox_processor.dart';
@@ -34,6 +35,9 @@ import '../../features/warehouse/data/repositories/remote_warehouse_requests_rep
 import '../../features/warehouse/data/repositories/remote_warehouse_inventory_repository.dart';
 import '../../features/warehouse/data/repositories/remote_purchase_invoices_repository.dart';
 import '../../features/warehouse/data/repositories/remote_warehouse_reports_repository.dart';
+import '../../features/warehouse/data/datasources/warehouse_notifications_remote_datasource.dart';
+import '../../features/warehouse/data/repositories/remote_warehouse_notifications_repository.dart';
+import '../../features/warehouse/domain/repositories/warehouse_notifications_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_materials_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_stock_repository.dart';
 import '../../features/warehouse/domain/repositories/warehouse_requests_repository.dart';
@@ -62,18 +66,21 @@ import '../../features/lab/data/datasources/lab_orders_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_material_requests_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_reports_remote_datasource.dart';
 import '../../features/lab/data/datasources/lab_stock_remote_datasource.dart';
+import '../../features/lab/data/datasources/lab_notifications_remote_datasource.dart';
 import '../../features/lab/data/repositories/lab_repository_impl.dart';
 import '../../features/lab/data/repositories/remote_lab_products_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_orders_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_material_requests_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_reports_repository.dart';
 import '../../features/lab/data/repositories/remote_lab_stock_repository.dart';
+import '../../features/lab/data/repositories/remote_lab_notifications_repository.dart';
 import '../../features/lab/domain/repositories/lab_repository.dart';
 import '../../features/lab/domain/repositories/lab_products_repository.dart';
 import '../../features/lab/domain/repositories/lab_orders_repository.dart';
 import '../../features/lab/domain/repositories/lab_material_requests_repository.dart';
 import '../../features/lab/domain/repositories/lab_reports_repository.dart';
 import '../../features/lab/domain/repositories/lab_stock_repository.dart';
+import '../../features/lab/domain/repositories/lab_notifications_repository.dart';
 
 /// الحاوية الرئيسية للـ DI.
 final GetIt sl = GetIt.instance;
@@ -85,6 +92,9 @@ Future<void> initDependencies() async {
 
   // ── رصد الأعطال (مركزي، قابل للاستبدال بـ Sentry لاحقاً) ─────────────────
   sl.registerLazySingleton<CrashReporter>(() => const ConsoleCrashReporter());
+
+  // ── Push حقيقي (FCM) — ويب فقط، يُستدعى بعد الدخول (main.dart) ──────────
+  sl.registerLazySingleton<FcmService>(() => FcmService(sl<Dio>()));
 
   // ── Offline core (كاش دائم + طابور صادر) ────────────────────────────────
   // نُهيّئ SharedPreferences مبكّراً (async) لأن الكاش والطابور يعتمدان عليه.
@@ -259,6 +269,24 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WarehouseReportsRepository>(
     () => RemoteWarehouseReportsRepository(
         sl<WarehouseReportsRemoteDataSource>()),
+  );
+
+  // ── Lab Notifications — Remote عبر labManager/notifications ────────────
+  sl.registerLazySingleton<LabNotificationsRemoteDataSource>(
+    () => LabNotificationsRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<LabNotificationsRepository>(
+    () => RemoteLabNotificationsRepository(
+        sl<LabNotificationsRemoteDataSource>()),
+  );
+
+  // ── Warehouse Notifications — Remote عبر warehouseManager/notifications ─
+  sl.registerLazySingleton<WarehouseNotificationsRemoteDataSource>(
+    () => WarehouseNotificationsRemoteDataSource(sl<Dio>()),
+  );
+  sl.registerLazySingleton<WarehouseNotificationsRepository>(
+    () => RemoteWarehouseNotificationsRepository(
+        sl<WarehouseNotificationsRemoteDataSource>()),
   );
 }
 

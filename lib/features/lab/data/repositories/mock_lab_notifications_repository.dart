@@ -46,6 +46,14 @@ class MockLabNotificationsRepository implements LabNotificationsRepository {
   }
 
   @override
+  Future<void> markRead(Object id) async {
+    for (final n in _items) {
+      if (n.id == id) n.isRead = true;
+    }
+    _emit();
+  }
+
+  @override
   Stream<List<NotificationItem>> watchAll() => _controller.stream;
 
   // ── بذرة الإشعارات (مؤقّتة حتى ربط الـ API) ───────────────────────────────

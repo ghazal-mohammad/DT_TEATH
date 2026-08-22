@@ -24,6 +24,30 @@ class AppDate {
     return '$d/$m/$y';
   }
 
+  /// يحوّل تاريخ/وقت الباك (ISO، عادة created_at) لتسمية نسبية بالعربي:
+  /// "الآن" / "منذ N دقيقة" / "منذ N ساعة" / "أمس" / "dd/MM/yyyy" لما أقدم.
+  /// مستخدَم بقوائم الإشعارات (المخبر والمستودع) لتفادي تكرار المنطق.
+  static String relative(String? iso, {DateTime? now}) {
+    if (iso == null || iso.trim().isEmpty) return '';
+    final dt = DateTime.tryParse(iso);
+    if (dt == null) return iso;
+    final local = dt.isUtc ? dt.toLocal() : dt;
+    final ref = now ?? DateTime.now();
+    final diff = ref.difference(local);
+
+    if (diff.inSeconds < 60) return 'الآن';
+    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
+    if (diff.inHours < 24 && _isSameDay(local, ref)) {
+      return 'منذ ${diff.inHours} ساعة';
+    }
+    final refYesterday = ref.subtract(const Duration(days: 1));
+    if (_isSameDay(local, refYesterday)) return 'أمس';
+    return display(iso);
+  }
+
+  static bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
   /// عكس [display]: من `dd/MM/yyyy` (أو dd-MM-yyyy) إلى `yyyy-MM-dd` للإرسال للباك.
   /// يرجّع null لو غير صالح (فلا يُرسل ويتفادى 422).
   static String? toApi(String? input) {

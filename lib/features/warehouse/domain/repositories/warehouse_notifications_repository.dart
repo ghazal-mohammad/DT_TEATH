@@ -1,22 +1,21 @@
 // ════════════════════════════════════════════════════════════════════════════
-// lab_notifications_repository.dart
+// warehouse_notifications_repository.dart
 //
-// عقد الوصول لإشعارات المخبر. عند ربط الباك: Remote يستبدل الـ Mock.
+// عقد الوصول لإشعارات المستودع.
 // ════════════════════════════════════════════════════════════════════════════
 
-import '../entities/lab_notification.dart';
+import '../entities/warehouse_notification.dart';
 
-/// عقد الوصول لإشعارات المخبر.
-abstract class LabNotificationsRepository {
-  /// يجلب كل الإشعارات.
-  Future<List<NotificationItem>> getAll();
+abstract class WarehouseNotificationsRepository {
+  /// يجلب كل إشعارات المستخدم الحالي.
+  Future<List<WarehouseNotification>> getAll();
+
+  /// تحديد إشعار واحد كمقروء.
+  Future<void> markRead(String id);
 
   /// تحديد كل الإشعارات كمقروءة.
   Future<void> markAllRead();
 
-  /// تحديد إشعار واحد كمقروء.
-  Future<void> markRead(Object id);
-
   /// stream للإشعارات — لتحديث الـ UI تلقائياً.
-  Stream<List<NotificationItem>> watchAll();
+  Stream<List<WarehouseNotification>> watchAll();
 }

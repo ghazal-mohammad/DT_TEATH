@@ -11,6 +11,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/l10n/build_context_l10n.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
@@ -19,7 +20,9 @@ import '../../../../../core/theme/app_sizes.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/feedback/app_empty_state.dart';
 import '../../../../../shared/widgets/primitives/app_segmented_tabs.dart';
-import '../../../../warehouse/data/mock/warehouse_pages_mock_data.dart';
+import '../../../domain/entities/warehouse_notification.dart';
+import '../../bloc/warehouse_notifications_cubit.dart';
+import '../../bloc/warehouse_notifications_state.dart';
 
 part 'warehouse_notifications_parts.dart';
 
@@ -67,30 +70,34 @@ bool _isUrgent(WarehouseNotification n) =>
 //                              MAIN CONTENT
 // ══════════════════════════════════════════════════════════════════════════
 
-class WarehouseNotificationsContent extends StatefulWidget {
+class WarehouseNotificationsContent extends StatelessWidget {
   const WarehouseNotificationsContent({super.key, this.query = ''});
 
   /// نص البحث القادم من شريط الـ topbar الموحّد (لا بحث داخل الصفحة).
   final String query;
 
   @override
-  State<WarehouseNotificationsContent> createState() =>
-      _WarehouseNotificationsContentState();
+  Widget build(BuildContext context) {
+    // الـ WarehouseNotificationsCubit يُنشَأ بمستوى الصفحة (BlocProvider في
+    // warehouse_notifications_page.dart) — لازم عشان تقدر تعرض unread count
+    // بشريط الـ topbar (notificationCount) خارج نطاق هالـ widget.
+    return _WarehouseNotificationsBody(query: query);
+  }
 }
 
-class _WarehouseNotificationsContentState
-    extends State<WarehouseNotificationsContent> {
-  _NotifFilter _filter = _NotifFilter.all;
-  late List<WarehouseNotification> _notifications;
+class _WarehouseNotificationsBody extends StatefulWidget {
+  const _WarehouseNotificationsBody({required this.query});
+
+  final String query;
 
   @override
-  void initState() {
-    super.initState();
-    _notifications = List.from(WarehouseNotificationsMockData.notifications);
-  }
+  State<_WarehouseNotificationsBody> createState() =>
+      _WarehouseNotificationsBodyState();
+}
 
-  int _count(_NotifFilter f) =>
-      _notifications.where(f.matches).length;
+class _WarehouseNotificationsBodyState
+    extends State<_WarehouseNotificationsBody> {
+  _NotifFilter _filter = _NotifFilter.all;
 
   bool _matchesQuery(WarehouseNotification n) {
     final q = widget.query.trim().toLowerCase();
@@ -99,81 +106,68 @@ class _WarehouseNotificationsContentState
         n.body.toLowerCase().contains(q);
   }
 
-  List<WarehouseNotification> get _filtered => _notifications
-      .where((n) => _filter.matches(n) && _matchesQuery(n))
-      .toList();
-
-  int get _unreadCount => _notifications.where((n) => !n.isRead).length;
-
-  void _markAllRead() {
-    setState(() {
-      _notifications =
-          _notifications.map((n) => _copyAsRead(n)).toList(growable: false);
-    });
-  }
-
-  void _markOneRead(String id) {
-    setState(() {
-      _notifications = _notifications
-          .map((n) => n.id == id ? _copyAsRead(n) : n)
-          .toList(growable: false);
-    });
-  }
-
-  WarehouseNotification _copyAsRead(WarehouseNotification n) =>
-      WarehouseNotification(
-        id: n.id,
-        title: n.title,
-        body: n.body,
-        time: n.time,
-        category: n.category,
-        isRead: true,
-        actionLabel: n.actionLabel,
-      );
-
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final l10n = context.l10n;
-    final filtered = _filtered;
-    final grouped = _groupByDay(filtered, l10n);
+    final cubit = context.read<WarehouseNotificationsCubit>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // البحث صار عبر شريط الـ topbar الموحّد (زي المخبر).
-        // ── شريط الفلاتر + زر تحديد الكل كمقروء ─────────────────────────
-        _FilterAndActionRow(
-          filter: _filter,
-          counts: {
-            for (final f in _NotifFilter.values) f: _count(f),
-          },
-          onChanged: (f) => setState(() => _filter = f),
-          showMarkAll: _unreadCount > 0,
-          onMarkAll: _markAllRead,
-          isLight: isLight,
-        ),
+    return BlocBuilder<WarehouseNotificationsCubit, WarehouseNotificationsState>(
+      builder: (context, state) {
+        final items = state.items;
+        final filtered = items
+            .where((n) => _filter.matches(n) && _matchesQuery(n))
+            .toList();
+        final grouped = _groupByDay(filtered, l10n);
+        final unreadCount = items.where((n) => !n.isRead).length;
 
-        const SizedBox(height: 14),
-
-        // ── المحتوى ────────────────────────────────────────────────────
-        if (filtered.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
-            child: AppEmptyState(
-              icon: Icons.notifications_none_outlined,
-              title: l10n.notifEmptyTitle,
-              message: l10n.notifEmptyMessage,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // البحث صار عبر شريط الـ topbar الموحّد (زي المخبر).
+            // ── شريط الفلاتر + زر تحديد الكل كمقروء ─────────────────────
+            _FilterAndActionRow(
+              filter: _filter,
+              counts: {
+                for (final f in _NotifFilter.values)
+                  f: items.where(f.matches).length,
+              },
+              onChanged: (f) => setState(() => _filter = f),
+              showMarkAll: unreadCount > 0,
+              onMarkAll: cubit.markAllRead,
+              isLight: isLight,
             ),
-          )
-        else
-          _buildGroups(grouped, isLight),
-      ],
+
+            const SizedBox(height: 14),
+
+            // ── المحتوى ────────────────────────────────────────────────
+            if (state.status == WarehouseNotificationsStatus.loading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 48),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (filtered.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: AppEmptyState(
+                  icon: Icons.notifications_none_outlined,
+                  title: l10n.notifEmptyTitle,
+                  message: l10n.notifEmptyMessage,
+                ),
+              )
+            else
+              _buildGroups(grouped, isLight, cubit),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildGroups(
-      Map<String, List<WarehouseNotification>> grouped, bool isLight) {
+    Map<String, List<WarehouseNotification>> grouped,
+    bool isLight,
+    WarehouseNotificationsCubit cubit,
+  ) {
     final entries = grouped.entries.toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -187,7 +181,7 @@ class _WarehouseNotificationsContentState
                 child: _NotificationCard(
                   isLight: isLight,
                   notification: n,
-                  onMarkRead: () => _markOneRead(n.id),
+                  onMarkRead: () => cubit.markRead(n.id),
                 ),
               )),
         ],

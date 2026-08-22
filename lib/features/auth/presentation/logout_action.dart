@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/di/injection_container.dart';
+import '../../../core/notifications/fcm_service.dart';
 import '../../../core/router/route_names.dart';
 import '../domain/repositories/auth_repository.dart';
 
@@ -41,6 +42,8 @@ Future<void> performLogout(BuildContext context) async {
 
   if (confirmed != true) return;
 
+  // حذف رمز الـ push قبل إبطال التوكن (يحتاج Authorization صالح بالطلب).
+  await sl<FcmService>().unregister();
   // logout() يمسح التوكن محلياً حتى لو فشل طلب الـ API — فما في داعي try/catch.
   await sl<AuthRepository>().logout();
   if (context.mounted) context.go(RouteNames.login);
