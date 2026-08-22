@@ -24,10 +24,17 @@ class FcmService {
   final Dio _dio;
   String? _lastToken;
 
+  /// يمنع التهيئة المتكرّرة — يُستدعى هالميثود من نقطتين (نجاح تسجيل الدخول
+  /// الصريح، وبناء AppShellLayout لجلسة محفوظة سابقاً) فلازم يشتغل مرّة
+  /// وحدة بس بعمر التطبيق.
+  bool _started = false;
+
   /// يهيّئ Firebase، يطلب صلاحية الإشعارات من المتصفح، ويسجّل رمز الجهاز
   /// بالباك. بلا رمي أخطاء للخارج — فشل الـ push الحقيقي لا يجب أن يكسر
   /// تسجيل الدخول (الإشعارات داخل التطبيق تشتغل بغضّ النظر عنه).
   Future<void> initAndRegister() async {
+    if (_started) return;
+    _started = true;
     try {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -78,5 +85,6 @@ class FcmService {
       debugPrint('[FCM] token deletion failed: $e');
     }
     _lastToken = null;
+    _started = false; // يسمح بإعادة التسجيل لو دخل مستخدم تاني بنفس التبويب.
   }
 }

@@ -45,12 +45,16 @@
 //     للـ submethods لتجنّب multiple subscriptions.
 // ════════════════════════════════════════════════════════════════════════════
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/auth/auth_models.dart';
 import '../../../core/auth/current_user.dart';
+import '../../../core/di/injection_container.dart';
+import '../../../core/notifications/fcm_service.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../core/mock_user_data.dart';
@@ -182,6 +186,13 @@ class AppShellLayout extends StatelessWidget {
     final bool isMobile = width < kShellMobileBreakpoint;
     final bool isCollapsed = width < kShellCollapsedBreakpoint && !isMobile;
     final bool isLight = Theme.of(context).brightness == Brightness.light;
+
+    // تسجيل push حقيقي (FCM) — مضمون يشتغل حتى لو المستخدم دخل بجلسة محفوظة
+    // (توكن مخزّن) بدون ما يمرّ فعلياً بشاشة تسجيل الدخول بهالتشغيلة. الدالة
+    // idempotent (تشتغل مرّة وحدة بعمر التطبيق) فآمنة الاستدعاء بكل build.
+    if (system == AppSystemType.lab || system == AppSystemType.warehouse) {
+      unawaited(sl<FcmService>().initAndRegister());
+    }
 
     return Scaffold(
       backgroundColor: isLight ? AppColors.lightBg : AppColors.darkBg,
