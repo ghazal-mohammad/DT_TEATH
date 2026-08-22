@@ -237,4 +237,8 @@ class ApiEndpoints {
 
   // ── FCM (push حقيقي — مشترك لكل الأدوار) ─────────────────────────────────
   static const String fcmToken = '/api/fcm-token';
+
+  // ── عدّاد الإشعارات غير المقروءة (مشترك لكل الأدوار — لبادج الـ topbar) ───
+  static const String notificationsUnreadCount =
+      '/api/notifications/unread-count';
 }

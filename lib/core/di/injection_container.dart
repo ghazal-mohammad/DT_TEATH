@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../monitoring/crash_reporter.dart';
 import '../network/dio_client.dart';
 import '../notifications/fcm_service.dart';
+import '../notifications/notification_badge_cubit.dart';
 import '../offline/local_store.dart';
 import '../offline/outbox.dart';
 import '../offline/outbox_processor.dart';
@@ -95,6 +96,11 @@ Future<void> initDependencies() async {
 
   // ── Push حقيقي (FCM) — ويب فقط، يُستدعى بعد الدخول (main.dart) ──────────
   sl.registerLazySingleton<FcmService>(() => FcmService(sl<Dio>()));
+
+  // ── عدّاد الإشعارات غير المقروءة — بادج الـ topbar بكل الصفحات ──────────
+  sl.registerLazySingleton<NotificationBadgeCubit>(
+    () => NotificationBadgeCubit(sl<Dio>()),
+  );
 
   // ── Offline core (كاش دائم + طابور صادر) ────────────────────────────────
   // نُهيّئ SharedPreferences مبكّراً (async) لأن الكاش والطابور يعتمدان عليه.

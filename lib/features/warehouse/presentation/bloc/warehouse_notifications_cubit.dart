@@ -8,7 +8,9 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/network/failure.dart';
+import '../../../../core/notifications/notification_badge_cubit.dart';
 import '../../domain/entities/warehouse_notification.dart';
 import '../../domain/repositories/warehouse_notifications_repository.dart';
 import 'warehouse_notifications_state.dart';
@@ -31,6 +33,7 @@ class WarehouseNotificationsCubit extends Cubit<WarehouseNotificationsState> {
         items: items,
         clearError: true,
       ));
+      unawaited(sl<NotificationBadgeCubit>().refresh(force: true));
       _subscription?.cancel();
       _subscription = _repository.watchAll().listen(
             (list) => emit(state.copyWith(items: list)),
@@ -47,9 +50,15 @@ class WarehouseNotificationsCubit extends Cubit<WarehouseNotificationsState> {
     }
   }
 
-  Future<void> markRead(String id) => _repository.markRead(id);
+  Future<void> markRead(String id) async {
+    await _repository.markRead(id);
+    unawaited(sl<NotificationBadgeCubit>().refresh(force: true));
+  }
 
-  Future<void> markAllRead() => _repository.markAllRead();
+  Future<void> markAllRead() async {
+    await _repository.markAllRead();
+    unawaited(sl<NotificationBadgeCubit>().refresh(force: true));
+  }
 
   @override
   Future<void> close() async {

@@ -8,7 +8,9 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/network/failure.dart';
+import '../../../../core/notifications/notification_badge_cubit.dart';
 import '../../domain/entities/lab_notification.dart';
 import '../../domain/repositories/lab_notifications_repository.dart';
 import 'lab_notifications_state.dart';
@@ -33,6 +35,7 @@ class LabNotificationsCubit extends Cubit<LabNotificationsState> {
         items: items,
         clearError: true,
       ));
+      unawaited(sl<NotificationBadgeCubit>().refresh(force: true));
       _subscription?.cancel();
       _subscription = _repository.watchAll().listen(
             (list) => emit(state.copyWith(items: list)),
@@ -56,7 +59,10 @@ class LabNotificationsCubit extends Cubit<LabNotificationsState> {
   }
 
   /// تحديد كل الإشعارات كمقروءة.
-  Future<void> markAllRead() => _repository.markAllRead();
+  Future<void> markAllRead() async {
+    await _repository.markAllRead();
+    unawaited(sl<NotificationBadgeCubit>().refresh(force: true));
+  }
 
   @override
   Future<void> close() async {

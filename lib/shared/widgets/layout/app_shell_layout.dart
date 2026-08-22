@@ -55,6 +55,7 @@ import '../../../core/auth/auth_models.dart';
 import '../../../core/auth/current_user.dart';
 import '../../../core/di/injection_container.dart';
 import '../../../core/notifications/fcm_service.dart';
+import '../../../core/notifications/notification_badge_cubit.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../core/mock_user_data.dart';
@@ -192,6 +193,7 @@ class AppShellLayout extends StatelessWidget {
     // idempotent (تشتغل مرّة وحدة بعمر التطبيق) فآمنة الاستدعاء بكل build.
     if (system == AppSystemType.lab || system == AppSystemType.warehouse) {
       unawaited(sl<FcmService>().initAndRegister());
+      unawaited(sl<NotificationBadgeCubit>().refresh());
     }
 
     return Scaffold(
@@ -328,16 +330,30 @@ class AppShellLayout extends StatelessWidget {
     // البحث وزرّ الإشعارات فقط. الثيم واللغة في صفحة الإعدادات حصراً.
     // نمرّر الـ placeholder كما هو (قد يكون null)؛ AppTopbar يحلّ الافتراضي
     // عبر context.l10n.search عند العرض.
-    return AppTopbar(
-      title: pageTitle,
-      subtitle: pageSubtitle,
-      showSearch: showSearch && !isMobile,
-      onSearchChanged: onSearchChanged,
-      searchPlaceholder: searchPlaceholder,
-      notificationCount: notificationCount,
-      onMenuTap: isMobile ? onMenuTap : null,
-      showMenuButton: isMobile,
-      onNotificationTap: showTopbarActions ? onNotificationTap : null,
+    //
+    // عدّاد البادج: للمخبر/المستودع نستخدم [NotificationBadgeCubit] المشترك
+    // (يشتغل بكل صفحة، مو بس صفحة الإشعارات) — أي صفحة تانية (أو نظام غير
+    // مدعوم بعد) تستخدم [notificationCount] الممرَّر يدوياً كما هو.
+    final bool useSharedBadge =
+        system == AppSystemType.lab || system == AppSystemType.warehouse;
+
+    Widget topbarWith(int count) => AppTopbar(
+          title: pageTitle,
+          subtitle: pageSubtitle,
+          showSearch: showSearch && !isMobile,
+          onSearchChanged: onSearchChanged,
+          searchPlaceholder: searchPlaceholder,
+          notificationCount: count,
+          onMenuTap: isMobile ? onMenuTap : null,
+          showMenuButton: isMobile,
+          onNotificationTap: showTopbarActions ? onNotificationTap : null,
+        );
+
+    if (!useSharedBadge) return topbarWith(notificationCount);
+
+    return BlocBuilder<NotificationBadgeCubit, int>(
+      bloc: sl<NotificationBadgeCubit>(),
+      builder: (context, unread) => topbarWith(unread),
     );
   }
 
